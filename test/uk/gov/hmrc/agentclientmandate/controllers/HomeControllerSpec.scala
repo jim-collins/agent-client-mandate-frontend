@@ -24,9 +24,12 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import org.mockito.Mockito._
+import play.api.mvc.Result
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
+
+import scala.concurrent.Future
 
 class HomeControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
@@ -68,13 +71,10 @@ class HomeControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSug
     "login authorised users with Org account to go to client home page" when {
 
       "client users log in with correct credentials and authorisations" in {
-        val userId = s"user-${UUID.randomUUID}"
-        implicit val hc: HeaderCarrier = HeaderCarrier()
-        implicit val user = AuthBuilder.createOrgUserAuthority(userId)
-        AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-        val result = TestHomeController.home().apply(SessionBuilder.buildRequestWithSession(userId))
-        redirectLocation(result) must be(None)
-        status(result) must be(OK)
+        homeWithAuthorisedUser { result =>
+          redirectLocation(result) must be(None)
+          status(result) must be(OK)
+        }
       }
 
     }
@@ -83,12 +83,21 @@ class HomeControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSug
 
   val mockAuthConnector = mock[AuthConnector]
 
-  override def beforeEach() = {
+  override def beforeEach() {
     reset(mockAuthConnector)
   }
 
   object TestHomeController extends HomeController {
     override val authConnector = mockAuthConnector
+  }
+
+  def homeWithAuthorisedUser(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    val result = TestHomeController.home().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
   }
 
 

@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentclientmandate.builders
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import uk.gov.hmrc.domain._
+import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{OrgAccount, PayeAccount, _}
 
@@ -27,6 +28,10 @@ import scala.concurrent.Future
 object AuthBuilder {
 
   val nino = new Generator().nextNino
+
+  def createOrgAuthContext(userId: String, userName: String): AuthContext = {
+    AuthContext(authority = createOrgUserAuthority(userId), nameFromSession = Some(userName))
+  }
 
   def createOrgUserAuthority(userId: String): Authority = {
     Authority(

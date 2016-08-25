@@ -21,7 +21,6 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 
 class ClientSearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {

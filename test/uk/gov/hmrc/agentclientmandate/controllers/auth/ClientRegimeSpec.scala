@@ -21,9 +21,6 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
 
-/**
-  * Created by avinash on 25/08/16.
-  */
 class ClientRegimeSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
 
   "ClientRegime" must {
