@@ -1,3 +1,4 @@
 # microservice specific routes
 
-GET        /hello-world             uk.gov.hmrc.agentclientmandate.controllers.HelloWorld.helloWorld
+GET         /home                                   uk.gov.hmrc.agentclientmandate.controllers.HomeController.home
+GET         /client-search-mandate                  uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.searchMandate
