@@ -21,6 +21,8 @@ import play.api.Play.{configuration, current}
 object ExternalUrls {
   val companyAuthHost = s"${configuration.getString(s"microservice.services.auth.company-auth.host").getOrElse("")}"
   val loginPath = s"${configuration.getString(s"microservice.services.auth.login-path").getOrElse("gg/sign-in")}"
-  val loginCallbackAgent = s"${configuration.getString(s"microservice.services.auth.login-callback-agent.url").getOrElse("/agent-client-mandate/home")}"
-  val loginCallbackClient = s"${configuration.getString(s"microservice.services.auth.login-callback-client.url").getOrElse("/agent-client-mandate/client-search-mandate")}"
+  val loginCallbackAgent = s"${configuration.getString(s"microservice.services.auth.login-callback-agent.url").
+    getOrElse("/agent-client-mandate/home")}"
+  val loginCallbackClient = s"${configuration.getString(s"microservice.services.auth.login-callback-client.url").
+    getOrElse("/agent-client-mandate/client-search-mandate")}"
 }

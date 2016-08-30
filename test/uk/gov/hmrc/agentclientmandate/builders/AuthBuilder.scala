@@ -56,7 +56,8 @@ object AuthBuilder {
       credentialStrength = CredentialStrength.Weak,
       confidenceLevel = ConfidenceLevel.L50,
       userDetailsLink = Some("/user-details/1234567890"),
-      enrolments = Some("/auth/oid/1234567890/enrolments")
+      enrolments = Some("/auth/oid/1234567890/enrolments"),
+      ids = None
     )
   }
 
@@ -69,7 +70,8 @@ object AuthBuilder {
       credentialStrength = CredentialStrength.Weak,
       confidenceLevel = ConfidenceLevel.L50,
       userDetailsLink = Some("/user-details/1234567890"),
-      enrolments = Some("/auth/oid/1234567890/enrolments")
+      enrolments = Some("/auth/oid/1234567890/enrolments"),
+      ids = None
     )
   }
 
@@ -82,7 +84,8 @@ object AuthBuilder {
       credentialStrength = CredentialStrength.Weak,
       confidenceLevel = ConfidenceLevel.L50,
       userDetailsLink = None,
-      enrolments = None
+      enrolments = None,
+      ids = None
     )
   }
 
