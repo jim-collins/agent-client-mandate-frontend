@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.auth
 
+import uk.gov.hmrc.agentclientmandate.controllers.auth.ExternalUrls._
 import uk.gov.hmrc.play.frontend.auth.GovernmentGateway
-import ExternalUrls._
 
-object ClientGovernmentGateway extends GovernmentGateway {
+object AgentGovernmentGateway extends GovernmentGateway {
 
   override val loginURL = s"$companyAuthHost/$loginPath"
-  override val continueURL = s"$loginCallbackClient"
+  override val continueURL = s"$loginCallbackAgent"
 
 }
 

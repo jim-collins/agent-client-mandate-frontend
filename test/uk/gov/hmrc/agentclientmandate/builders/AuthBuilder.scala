@@ -28,9 +28,36 @@ import scala.concurrent.Future
 object AuthBuilder {
 
   val nino = new Generator().nextNino
+  val agentRefNumber = new AgentBusinessUtrGenerator().nextAgentBusinessUtr
 
   def createOrgAuthContext(userId: String, userName: String): AuthContext = {
     AuthContext(authority = createOrgUserAuthority(userId), nameFromSession = Some(userName))
+  }
+
+  def createInvalidAuthContext(userId: String, userName: String): AuthContext = {
+    AuthContext(authority = createInvalidAuthority(userId), nameFromSession = Some(userName))
+  }
+
+  def createRegisteredAgentAuthContext(userId: String, userName: String): AuthContext = {
+    AuthContext(authority = createRegisteredAgentAuthority(userId), nameFromSession = Some(userName))
+  }
+
+  def createRegisteredAgentAuthority(userId: String): Authority = {
+    Authority(
+      uri = userId,
+      accounts = Accounts(agent = Some(AgentAccount(link = "/agent/ABC",
+        agentCode = AgentCode("ABC"),
+        agentUserId = AgentUserId(s"$userId"),
+        agentUserRole = AgentAdmin,
+        payeReference = None,
+        agentBusinessUtr = Some(agentRefNumber)))),
+      loggedInAt = None,
+      previouslyLoggedInAt = None,
+      credentialStrength = CredentialStrength.Weak,
+      confidenceLevel = ConfidenceLevel.L50,
+      userDetailsLink = Some("/user-details/1234567890"),
+      enrolments = Some("/auth/oid/1234567890/enrolments")
+    )
   }
 
   def createOrgUserAuthority(userId: String): Authority = {
@@ -63,6 +90,12 @@ object AuthBuilder {
   def mockAuthorisedClient(userId: String, mockAuthConnector: AuthConnector) {
     when(mockAuthConnector.currentAuthority(Matchers.any())) thenReturn {
       Future.successful(Some(createOrgUserAuthority(userId)))
+    }
+  }
+
+  def mockAuthorisedAgent(userId: String, mockAuthConnector: AuthConnector) {
+    when(mockAuthConnector.currentAuthority(Matchers.any())) thenReturn {
+      Future.successful(Some(createRegisteredAgentAuthority(userId)))
     }
   }
 

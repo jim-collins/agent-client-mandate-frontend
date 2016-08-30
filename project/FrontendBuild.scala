@@ -26,12 +26,14 @@ private object AppDependencies {
   private val scalaTestVersion = "2.2.6"
   private val scalaTestPlusVersion = "1.2.0"
   private val pegdownVersion = "1.6.0"
+  private val domainVersion = "3.7.0"
   
   val compile = Seq(
     ws,
     "uk.gov.hmrc" %% "frontend-bootstrap" % frontendBootstrapVersion,
     "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
     "uk.gov.hmrc" %% "play-authorised-frontend" % playAuthorisedFrontendVersion,
+    "uk.gov.hmrc" %% "domain" % domainVersion,
     "uk.gov.hmrc" %% "play-config" % playConfigVersion,
     "uk.gov.hmrc" %% "play-json-logger" % playJsonLoggerVersion,
     "uk.gov.hmrc" %% "govuk-template" % govukTemplateVersion,

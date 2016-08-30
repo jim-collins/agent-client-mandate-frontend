@@ -25,6 +25,6 @@ object ClientRegime extends TaxRegime {
 
   override def authenticationType: AuthenticationProvider = ClientGovernmentGateway
 
-  override def unauthorisedLandingPage: Option[String] = super.unauthorisedLandingPage
+  override def unauthorisedLandingPage: Option[String] = None
 
 }

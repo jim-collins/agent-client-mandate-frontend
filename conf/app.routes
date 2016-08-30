@@ -1,4 +1,5 @@
 # microservice specific routes
 
-GET         /home                                   uk.gov.hmrc.agentclientmandate.controllers.HomeController.home
-GET         /client-search-mandate                  uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.searchMandate
+#GET        /home                           uk.gov.hmrc.agentclientmandate.controllers.HomeController.home
+GET         /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.searchMandate
+POST        /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.submit

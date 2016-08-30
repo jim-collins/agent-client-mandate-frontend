@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.auth
 
-import uk.gov.hmrc.play.frontend.auth.GovernmentGateway
-import ExternalUrls._
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
+import uk.gov.hmrc.play.frontend.auth.{AuthenticationProvider, TaxRegime}
 
-object ClientGovernmentGateway extends GovernmentGateway {
+object AgentRegime extends TaxRegime {
 
-  override val loginURL = s"$companyAuthHost/$loginPath"
-  override val continueURL = s"$loginCallbackClient"
+  override def isAuthorised(accounts: Accounts): Boolean = accounts.agent.flatMap(_.agentBusinessUtr).isDefined
+
+  override def authenticationType: AuthenticationProvider = AgentGovernmentGateway
+
+  override def unauthorisedLandingPage: Option[String] = None
 
 }
-

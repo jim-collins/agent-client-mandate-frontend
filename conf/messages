@@ -1,3 +1,10 @@
+submit-button = Submit
+
+agent-client-mandate.error.summaryHeader = There is a problem with the form
+
 #client search mandate
-client.search-mandate.title = Search your banana
-client.search-mandate.header = Search your banana
+client.search-mandate.title = Search your mandate
+client.search-mandate.header = Search your mandate
+client.search-mandate.field.id.label = Enter your mandate number
+client.search-mandate.error.general.id = There is a problem with the mandate question
+client.search-mandate.error.id = You must answer mandate number question

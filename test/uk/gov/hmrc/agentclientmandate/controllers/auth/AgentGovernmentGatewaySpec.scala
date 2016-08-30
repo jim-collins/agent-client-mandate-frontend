@@ -16,13 +16,23 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.auth
 
-import uk.gov.hmrc.play.frontend.auth.GovernmentGateway
-import ExternalUrls._
+import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 
-object ClientGovernmentGateway extends GovernmentGateway {
+class AgentGovernmentGatewaySpec extends PlaySpec with OneServerPerSuite {
 
-  override val loginURL = s"$companyAuthHost/$loginPath"
-  override val continueURL = s"$loginCallbackClient"
+  "AgentGovernmentGateway" must {
 
+    "extend Government gateway trait" when {
+
+      "overriding loginURL" in {
+        AgentGovernmentGateway.loginURL must be("http://localhost:9025/gg/sign-in")
+      }
+
+      "overriding continueURL" in {
+        AgentGovernmentGateway.continueURL must be("http://localhost:9959/agent-client-mandate/home")
+      }
+
+    }
+  }
+  
 }
-

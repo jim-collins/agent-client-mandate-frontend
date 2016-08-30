@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers
+package uk.gov.hmrc.agentclientmandate.viewModelsAndForms
 
-import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
-import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
-import uk.gov.hmrc.play.frontend.auth.Actions
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import play.api.data.Form
+import play.api.data.Forms._
+import play.api.i18n.Messages
+import play.api.libs.json.Json
 
-object HomeController extends HomeController {
-  val authConnector = FrontendAuthConnector
+case class SearchClientMandate(id: String)
+
+object SearchClientMandate {
+  implicit val formats = Json.format[SearchClientMandate]
 }
 
-trait HomeController extends FrontendController with Actions {
-
-  def home = AuthorisedFor(ClientRegime, GGConfidence) {
-    implicit user => implicit request => Ok
-  }
-
+object SearchClientMandateForm {
+  val searchClientMandateForm =
+    Form(
+      mapping(
+        "id" -> text.verifying(Messages("client.search-mandate.error.id"), id => id.nonEmpty)
+      )(SearchClientMandate.apply)(SearchClientMandate.unapply)
+    )
 }

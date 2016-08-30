@@ -16,21 +16,31 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.client
 
-import play.api.mvc.Action
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+
 import uk.gov.hmrc.agentclientmandate._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
+import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.SearchClientMandateForm.searchClientMandateForm
 import uk.gov.hmrc.play.frontend.auth.Actions
+import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 object ClientSearchMandateController extends ClientSearchMandateController {
   val authConnector = FrontendAuthConnector
 }
 
-trait ClientSearchMandateController extends FrontendController  with Actions {
+trait ClientSearchMandateController extends FrontendController with Actions {
 
-  def searchMandate = Action {
-    implicit request =>
-    Ok(views.html.client.searchMandate())
+  def searchMandate = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit request =>
+      Ok(views.html.client.searchMandate(searchClientMandateForm))
+  }
+
+  def submit = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit request =>
+      searchClientMandateForm.bindFromRequest.fold(
+        formWithError => BadRequest(views.html.client.searchMandate(formWithError)),
+        data => Ok
+      )
   }
 
 }
