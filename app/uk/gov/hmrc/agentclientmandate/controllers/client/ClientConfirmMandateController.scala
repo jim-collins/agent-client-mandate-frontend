@@ -16,30 +16,22 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.client
 
-import uk.gov.hmrc.agentclientmandate._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ApproveClientMandateForm.approveClientMandateForm
+import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-object ClientAcceptMandateController extends ClientAcceptMandateController {
-  val authConnector: AuthConnector = FrontendAuthConnector
+trait ClientConfirmMandateController extends FrontendController with Actions {
+
+  def accepted = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit user => Ok(views.html.client.clientAcceptMandate())
+  }
+
 }
 
-trait ClientAcceptMandateController extends FrontendController with Actions {
 
-  def approve = AuthorisedFor(ClientRegime, GGConfidence) {
-    implicit authContext => implicit user => Ok(views.html.client.approveMandate(approveClientMandateForm))
-  }
-
-  def submit = AuthorisedFor(ClientRegime, GGConfidence) {
-    implicit authContext => implicit user =>
-      approveClientMandateForm.bindFromRequest.fold(
-        formWithError => BadRequest(views.html.client.approveMandate(formWithError)),
-        data => Ok
-      )
-  }
-
+object ClientConfirmMandateController extends ClientConfirmMandateController {
+  val authConnector: AuthConnector = FrontendAuthConnector
 }

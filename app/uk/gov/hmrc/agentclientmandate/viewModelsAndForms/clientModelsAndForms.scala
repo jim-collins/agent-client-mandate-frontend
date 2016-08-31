@@ -35,3 +35,18 @@ object SearchClientMandateForm {
       )(SearchClientMandate.apply)(SearchClientMandate.unapply)
     )
 }
+
+case class ApproveClientMandate(approved: Option[Boolean] = None)
+
+object ApproveClientMandate {
+  implicit val formats = Json.format[ApproveClientMandate]
+}
+
+object ApproveClientMandateForm {
+  val approveClientMandateForm =
+    Form(
+      mapping(
+        "approved" -> optional(boolean).verifying(Messages("client.approve-mandate.error.approved"),x => x.isDefined)
+      )(ApproveClientMandate.apply)(ApproveClientMandate.unapply)
+    )
+}

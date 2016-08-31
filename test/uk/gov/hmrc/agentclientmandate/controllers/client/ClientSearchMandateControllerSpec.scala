@@ -150,4 +150,5 @@ class ClientSearchMandateControllerSpec extends PlaySpec with OneServerPerSuite 
     test(result)
   }
 
+
 }

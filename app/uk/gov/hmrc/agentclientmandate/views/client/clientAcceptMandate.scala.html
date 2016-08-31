@@ -1,0 +1,16 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.client._
+
+@()(implicit request: Request[_])
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+
+@main_template(title = Messages("client.confirm-mandate.title")) {
+
+  <div class="transaction-banner--complete" id="banner">
+    <h1 id="header" class="hero__heading-large">
+       @Messages("client.confirm-mandate.header")
+    </h1>
+  </div>
+
+
+}
