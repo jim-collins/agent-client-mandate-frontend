@@ -1,0 +1,11 @@
+@()(implicit request: Request[_])
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+
+@main_template(title = Messages("client reject confirmation")) {
+
+<div class="transaction-banner--complete" id="banner">
+    <h1 id="header"> @Messages("client reject confirmation") </h1>
+</div>
+
+}

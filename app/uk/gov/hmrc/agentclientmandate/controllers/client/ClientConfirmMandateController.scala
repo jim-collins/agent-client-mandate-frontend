@@ -29,6 +29,10 @@ trait ClientConfirmMandateController extends FrontendController with Actions {
     implicit authContext => implicit user => Ok(views.html.client.clientAcceptMandate())
   }
 
+  def rejected = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit user => Ok(views.html.client.clientRejectMandate())
+  }
+
 }
 
 

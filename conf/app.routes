@@ -11,3 +11,5 @@ GET         /client-approve-mandate         uk.gov.hmrc.agentclientmandate.contr
 POST        /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientAcceptMandateController.submit
 
 GET         /client-accepted-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.accepted
+
+GET         /client-rejected-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.rejected

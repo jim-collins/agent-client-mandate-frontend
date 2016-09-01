@@ -41,6 +41,12 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
         status(result) mustNot be(NOT_FOUND)
       }
 
+      "GET /agent-client-mandate/client-rejected-mandate" in {
+        val result = route(FakeRequest(GET, "/agent-client-mandate/client-rejected-mandate")).get
+        status(result) mustNot be(NOT_FOUND)
+      }
+
+
       //      "POST /agent-client-mandate/client-search-mandate" in {
       //        val result = route(FakeRequest(POST, "/agent-client-mandate/client-approve-mandate")).get
       //        status(result) mustNot be(NOT_FOUND)
@@ -71,7 +77,7 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
 
     }
 
-    "return search mandate view for AUTHORISED client" when {
+    "return confirm mandate view for AUTHORISED client" when {
 
       "client requests(GET) for search mandate view" in {
         approveAuthorisedClient { result =>
@@ -79,6 +85,19 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Mandate confirmation")
           document.getElementById("header").text() must be("Mandate confirmation")
+        }
+      }
+
+    }
+
+    "return confirm reject mandate view for AUTHORISED client" when {
+
+      "client requests(GET) for search mandate view" in {
+        rejectAuthorisedClient { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Mandate reject confirmation")
+          document.getElementById("header").text() must be("Mandate reject confirmation")
         }
       }
 
@@ -108,5 +127,15 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
     val result = TestClientConfirmMandateController.accepted().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
+
+  def rejectAuthorisedClient(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    val result = TestClientConfirmMandateController.accepted().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
 
 }
