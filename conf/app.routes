@@ -1,5 +1,7 @@
 # microservice specific routes
 
+GET         /assets/*file                   controllers.Assets.at(path="/public", file)
+
 #GET        /home                           uk.gov.hmrc.agentclientmandate.controllers.HomeController.home
 GET         /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.searchMandate
 POST        /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.submit
