@@ -38,4 +38,3 @@ trait ClientConfirmMandateController extends FrontendController with Actions {
   }
 
 }
-

@@ -25,4 +25,3 @@ object AgentGovernmentGateway extends GovernmentGateway {
   override val continueURL = s"$loginCallbackAgent"
 
 }
-
