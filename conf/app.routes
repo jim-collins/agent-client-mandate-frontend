@@ -7,9 +7,8 @@ GET         /client-search-mandate          uk.gov.hmrc.agentclientmandate.contr
 POST        /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.submit
 
 
-GET         /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientAcceptMandateController.approve
-POST        /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientAcceptMandateController.submit
+GET         /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientApproveMandateController.approve
+POST        /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientApproveMandateController.submit
 
 GET         /client-accepted-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.accepted
-
-GET         /client-rejected-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.rejected
+GET         /client-rejected-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.rejected

@@ -24,11 +24,11 @@ import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-object ClientAcceptMandateController extends ClientAcceptMandateController {
+object ClientApproveMandateController extends ClientApproveMandateController {
   val authConnector: AuthConnector = FrontendAuthConnector
 }
 
-trait ClientAcceptMandateController extends FrontendController with Actions {
+trait ClientApproveMandateController extends FrontendController with Actions {
 
   def approve = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit user => Ok(views.html.client.approveMandate(approveClientMandateForm))
@@ -38,7 +38,9 @@ trait ClientAcceptMandateController extends FrontendController with Actions {
     implicit authContext => implicit user =>
       approveClientMandateForm.bindFromRequest.fold(
         formWithError => BadRequest(views.html.client.approveMandate(formWithError)),
-        data => Ok
+        data =>
+          if(data.approved.getOrElse(false)) Redirect(routes.ClientConfirmMandateController.accepted())
+          else Redirect(routes.ClientConfirmMandateController.rejected())
       )
   }
 

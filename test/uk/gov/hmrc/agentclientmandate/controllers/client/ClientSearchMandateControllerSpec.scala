@@ -86,11 +86,12 @@ class ClientSearchMandateControllerSpec extends PlaySpec with OneServerPerSuite 
 
     }
 
-    "returns OK" when {
+    "redirect to approve mandate page" when {
       "valid form is submitted" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("id" -> "1")
         submitMandateAuthorisedClient(fakeRequest) { result =>
-          status(result) must be(OK)
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/agent-client-mandate/client-approve-mandate"))
         }
       }
     }

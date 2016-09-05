@@ -23,6 +23,10 @@ import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
+object ClientConfirmMandateController extends ClientConfirmMandateController {
+  val authConnector: AuthConnector = FrontendAuthConnector
+}
+
 trait ClientConfirmMandateController extends FrontendController with Actions {
 
   def accepted = AuthorisedFor(ClientRegime, GGConfidence) {
@@ -35,7 +39,3 @@ trait ClientConfirmMandateController extends FrontendController with Actions {
 
 }
 
-
-object ClientConfirmMandateController extends ClientConfirmMandateController {
-  val authConnector: AuthConnector = FrontendAuthConnector
-}

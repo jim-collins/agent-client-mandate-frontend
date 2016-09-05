@@ -39,7 +39,7 @@ trait ClientSearchMandateController extends FrontendController with Actions {
     implicit authContext => implicit request =>
       searchClientMandateForm.bindFromRequest.fold(
         formWithError => BadRequest(views.html.client.searchMandate(formWithError)),
-        data => Ok
+        data => Redirect(routes.ClientApproveMandateController.approve())
       )
   }
 

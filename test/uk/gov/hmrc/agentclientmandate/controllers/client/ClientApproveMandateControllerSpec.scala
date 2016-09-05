@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class ClientAcceptMandateControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
+class ClientApproveMandateControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
 
   "ClientAcceptMandateController" must {
 
@@ -85,11 +85,19 @@ class ClientAcceptMandateControllerSpec extends PlaySpec with OneServerPerSuite 
 
     }
 
-    "returns OK" when {
-      "valid form is submitted" in {
+    "returns to respective page " when {
+      "valid form is submitted, if approval is accepted - redirect to client accepted confirmation page" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("approved" -> "true")
         submitMandateAuthorisedClient(fakeRequest) { result =>
-          status(result) must be(OK)
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/agent-client-mandate/client-accepted-mandate"))
+        }
+      }
+      "valid form is submitted, if approval is rejected - redirect to client rejected confirmation page" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("approved" -> "false")
+        submitMandateAuthorisedClient(fakeRequest) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/agent-client-mandate/client-rejected-mandate"))
         }
       }
     }
@@ -110,7 +118,7 @@ class ClientAcceptMandateControllerSpec extends PlaySpec with OneServerPerSuite 
 
   val mockAuthConnector = mock[AuthConnector]
 
-  object TestClientAcceptMandateController extends ClientAcceptMandateController {
+  object TestClientApproveMandateController extends ClientApproveMandateController {
     val authConnector = mockAuthConnector
   }
 
@@ -118,7 +126,7 @@ class ClientAcceptMandateControllerSpec extends PlaySpec with OneServerPerSuite 
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestClientAcceptMandateController.approve().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestClientApproveMandateController.approve().apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -127,7 +135,7 @@ class ClientAcceptMandateControllerSpec extends PlaySpec with OneServerPerSuite 
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestClientAcceptMandateController.approve().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientApproveMandateController.approve().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -136,7 +144,7 @@ class ClientAcceptMandateControllerSpec extends PlaySpec with OneServerPerSuite 
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestClientAcceptMandateController.approve().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientApproveMandateController.approve().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -145,7 +153,7 @@ class ClientAcceptMandateControllerSpec extends PlaySpec with OneServerPerSuite 
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestClientAcceptMandateController.submit().apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestClientApproveMandateController.submit().apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

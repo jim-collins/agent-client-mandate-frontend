@@ -46,13 +46,6 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
         status(result) mustNot be(NOT_FOUND)
       }
 
-
-      //      "POST /agent-client-mandate/client-search-mandate" in {
-      //        val result = route(FakeRequest(POST, "/agent-client-mandate/client-approve-mandate")).get
-      //        status(result) mustNot be(NOT_FOUND)
-      //      }
-
-
     }
 
     "redirect to login page for UNAUTHENTICATED client" when {
@@ -83,8 +76,8 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
         approveAuthorisedClient { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Mandate confirmation")
-          document.getElementById("header").text() must be("Mandate confirmation")
+          document.title() must be("Client accept confirmation")
+          document.getElementById("header").text() must be("Client accept confirmation")
         }
       }
 
@@ -96,8 +89,8 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
         rejectAuthorisedClient { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Mandate reject confirmation")
-          document.getElementById("header").text() must be("Mandate reject confirmation")
+          document.title() must be("Client reject confirmation")
+          document.getElementById("header").text() must be("Client reject confirmation")
         }
       }
 
@@ -133,7 +126,7 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestClientConfirmMandateController.accepted().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientConfirmMandateController.rejected().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

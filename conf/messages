@@ -18,6 +18,11 @@ client.approve-mandate.field.approve.legend = Do you approve your mandate?
 client.approve-mandate.error.general.approved = There is a problem with the mandate question
 client.approve-mandate.error.approved = You must answer mandate number question
 
-#client confirm mandate
-client.confirm-mandate.title = Mandate confirmation
-client.confirm-mandate.header = Mandate confirmation
+#client accept mandate
+client.accept-mandate.title = Client accept confirmation
+client.accept-mandate.header = Client accept confirmation
+
+
+#client reject mandate
+client.reject-mandate.title = Client reject confirmation
+client.reject-mandate.header = Client reject confirmation
