@@ -1,3 +1,14 @@
 # microservice specific routes
 
-GET        /hello-world             uk.gov.hmrc.agentclientmandate.controllers.HelloWorld.helloWorld
+GET         /assets/*file                   controllers.Assets.at(path="/public", file)
+
+#GET        /home                           uk.gov.hmrc.agentclientmandate.controllers.HomeController.home
+GET         /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.searchMandate
+POST        /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.submit
+
+
+GET         /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientApproveMandateController.approve
+POST        /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientApproveMandateController.submit
+
+GET         /client-accepted-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.accepted
+GET         /client-rejected-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.rejected

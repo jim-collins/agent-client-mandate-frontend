@@ -1,0 +1,28 @@
+submit-button = Submit
+radio-yes = Yes
+radio-no = No
+
+agent-client-mandate.error.summaryHeader = There is a problem with the form
+
+#client search mandate
+client.search-mandate.title = Search your mandate
+client.search-mandate.header = Search your mandate
+client.search-mandate.field.id.label = Enter your mandate number
+client.search-mandate.error.general.id = There is a problem with the mandate question
+client.search-mandate.error.id = You must answer mandate number question
+
+#client approve mandate
+client.approve-mandate.title = Approve your mandate
+client.approve-mandate.header = Approve your mandate
+client.approve-mandate.field.approve.legend = Do you approve your mandate?
+client.approve-mandate.error.general.approved = There is a problem with the mandate question
+client.approve-mandate.error.approved = You must answer mandate number question
+
+#client accept mandate
+client.accept-mandate.title = Client accept confirmation
+client.accept-mandate.header = Client accept confirmation
+
+
+#client reject mandate
+client.reject-mandate.title = Client reject confirmation
+client.reject-mandate.header = Client reject confirmation

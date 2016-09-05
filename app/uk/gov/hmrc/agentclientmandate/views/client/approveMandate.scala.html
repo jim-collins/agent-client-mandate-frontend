@@ -1,0 +1,40 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.client.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+
+@(approveMandateForm: Form[ApproveClientMandate])(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@implicitFormInstance = @{ Some(approveMandateForm) }
+
+@main_template(title = Messages("client.approve-mandate.title")) {
+
+  <h1 id="header" class="heading-xlarge">
+    @Messages("client.approve-mandate.header")
+  </h1>
+
+  @mandateErrorSummary(approveMandateForm, "client.approve-mandate.error.general")
+
+  @form(action = routes.ClientApproveMandateController.submit()) {
+
+    <div class="form-group" id="approved">
+      @mandateInputRadioGroup(
+        approveMandateForm("approved"),
+        Seq("true" -> Messages("radio-yes"),
+        "false" -> Messages("radio-no")),
+        '_groupClass -> "inline",
+        '_legend -> Messages("client.approve-mandate.field.approve.legend"),
+        '_labelClass -> "block-label",
+        '_labelAfter -> true
+      )
+    </div>
+
+    <div class="form-group">
+      <button class="button" id="submit" type="submit">@Messages("submit-button")</button>
+    </div>
+
+  }
+
+}
