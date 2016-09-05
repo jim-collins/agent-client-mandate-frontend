@@ -1,0 +1,38 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@(agentEmailForm: Form[AgentEmail], service: String)(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@implicitFormInstance = @{ Some(agentEmailForm) }
+
+@main_template(title = Messages("agent.enter-email.title")) {
+  <h1 id="header" class="heading-xlarge">
+    @Messages("agent.enter-email.header")
+  </h1>
+
+  @mandateErrorSummary(agentEmailForm, "agent.enter-email.error.general")
+
+  <p id="info" class="lede">
+    @Messages("agent.enter-email.info.text", service.toUpperCase)
+  </p>
+
+  @form(action = routes.CollectAgentEmailController.submit(service)) {
+
+    @mandateInput(agentEmailForm("email"),
+      '_label -> Messages("agent.enter-email.field.email.label"),
+      '_showConstraints -> false)
+
+    @mandateInput(agentEmailForm("confirmEmail"),
+      '_label -> Messages("agent.enter-email.field.confirmEmail.label"),
+      '_showConstraints -> false)
+
+    <div class="form-group">
+      <button class="button" id="submit" type="submit">@Messages("submit-button")</button>
+    </div>
+
+  }
+
+}

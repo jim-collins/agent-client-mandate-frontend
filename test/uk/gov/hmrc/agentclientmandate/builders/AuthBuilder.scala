@@ -108,7 +108,17 @@ object AuthBuilder {
     }
   }
 
+  def mockUnAuthorisedAgent(userId: String, mockAuthConnector: AuthConnector) {
+    when(mockAuthConnector.currentAuthority(Matchers.any())) thenReturn {
+      Future.successful(Some(createInvalidAuthority(userId)))
+    }
+  }
+
   def mockUnAuthenticatedClient(userId: String, mockAuthConnector: AuthConnector) {
+    when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(None))
+  }
+
+  def mockUnAuthenticatedCAgent(userId: String, mockAuthConnector: AuthConnector) {
     when(mockAuthConnector.currentAuthority(Matchers.any())).thenReturn(Future.successful(None))
   }
 
