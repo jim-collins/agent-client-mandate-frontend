@@ -3,6 +3,7 @@ radio-yes = Yes
 radio-no = No
 
 agent-client-mandate.error.summaryHeader = There is a problem with the form
+agent.add-a-client.sub-header = Add a client
 
 #client search mandate
 client.search-mandate.title = Search your mandate
