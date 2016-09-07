@@ -42,8 +42,22 @@ agent.enter-email.field.confirmEmail.label = Confirm email address
 # agent - is client overseas question
 agent.overseas-client-question.title = Does your client have an overseas company without a UK Unique Tax Reference?
 agent.overseas-client-question.header = Does your client have an overseas company without a UK Unique Tax Reference?
-
 agent.overseas-client-question.error.general.isOverseas = There is a problem with the overseas client question
 agent.overseas-client-question.error.isOverseas = You must answer overseas client question
+
+# agent unique reference
+agent.unique-reference.title = Your unique agent reference for your client is {0}
+agent.unique-reference.header = Your unique agent reference for your client is {0}
+agent.unique-reference.text1 = You need to give this agent reference to your client so they can authorise you.
+agent.unique-reference.important-text = Each client you have will need a unique agent reference. <a href="{0}">Generate a new agent reference for another client</a>
+agent.unique-reference.view-all-my-client.button = View all my clients
+
+agent.unique-reference.ated.text1 = Your client will then need to:
+agent.unique-reference.ated.client.list.text-1 = Register their company to use the new <a href="#">ATED service</a>, they may need to create a new organisational Government Gateway account.
+agent.unique-reference.ated.client.list.text-2 = Enter the agent reference you gave them.
+agent.unique-reference.ated.client.text2 = Once they have done this you will receive an email notification to:
+agent.unique-reference.ated.agent.text1 = They have 28 days to sign in and accept the agent request.
+agent.unique-reference.ated.agent.text2 = The ATED1 and 64-8 do not cover you for this service.
+agent.unique-reference.ated.agent.text3 = If you have a number of agents working on ATED within your organisation you may want to filter your clients. To do this you need to add administrators to your account in Government Gateway.
 
 
