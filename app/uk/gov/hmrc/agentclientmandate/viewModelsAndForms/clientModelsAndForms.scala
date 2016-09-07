@@ -50,3 +50,23 @@ object ApproveClientMandateForm {
       )(ApproveClientMandate.apply)(ApproveClientMandate.unapply)
     )
 }
+
+case class ClientAddEmail(email: String, confirmEmail: String)
+
+object ClientAddEmail {
+  implicit val formats = Json.format[ClientAddEmail]
+}
+
+object ClientAddEmailForm {
+  val emailLength = 241
+  val clientAddEmailForm =
+    Form(
+      mapping(
+        "email" -> text
+          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength)),
+        "confirmEmail" -> text
+         .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
+      )
+      (ClientAddEmail.apply)(ClientAddEmail.unapply)
+    )
+}

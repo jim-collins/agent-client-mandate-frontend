@@ -1,4 +1,5 @@
 submit-button = Submit
+continue-button = Continue
 radio-yes = Yes
 radio-no = No
 
@@ -26,3 +27,10 @@ client.accept-mandate.header = Client accept confirmation
 #client reject mandate
 client.reject-mandate.title = Client reject confirmation
 client.reject-mandate.header = Client reject confirmation
+
+#client add email
+client.add-email.title = What is your email address?
+client.add-email.header = What is your email address?
+client.add-email.lede = We need this to send you notifications relating to the ATED online service. This should be your address not your agents.
+client.add-email = Email address
+client.add-email.confirm-email = Confirm email address

@@ -1,0 +1,41 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.client.routes
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+
+@(addEmailForm: Form[ClientAddEmail])(implicit request: Request[_])
+
+@main_template(title = Messages("client.add-email.title")) {
+
+
+
+    <h1 id="header" class="heading-xlarge">
+        <span class="pre-heading" id="pre-heading">@Messages("Appoint an agent")</span>
+        @Messages("client.add-email.header")
+    </h1>
+
+    <p class="lede" id="lede">
+        @Messages("client.add-email.lede")
+    </p>
+
+    @mandateErrorSummary(addEmailForm, "client.search-mandate.error.general")
+
+
+        <div class="form-group">
+
+            @mandateInput(addEmailForm("email"),
+            '_label -> Messages("client.add-email"),
+            '_showConstraints -> false)
+
+            @mandateInput(addEmailForm("confirmEmail"),
+            '_label -> Messages("client.add-email.confirm-email"),
+            '_showConstraints -> false)
+
+        </div>
+
+        <div class="form-group">
+            <button class="button" id="confirm_btn" type="submit">@Messages("continue-button")</button>
+        </div>
+
+
+}
