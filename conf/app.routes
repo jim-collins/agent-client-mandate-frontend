@@ -14,3 +14,5 @@ GET         /client-accepted-mandate        uk.gov.hmrc.agentclientmandate.contr
 GET         /client-rejected-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.rejected
 
 GET         /client-add-email               uk.gov.hmrc.agentclientmandate.controllers.client.AddEmailController.addEmail
+
+GET         /client-agent-reference         uk.gov.hmrc.agentclientmandate.controllers.client.ClientAgentReferenceController.agentReference

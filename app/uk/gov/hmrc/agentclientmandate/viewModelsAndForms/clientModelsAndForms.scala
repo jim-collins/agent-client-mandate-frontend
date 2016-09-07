@@ -70,3 +70,21 @@ object ClientAddEmailForm {
       (ClientAddEmail.apply)(ClientAddEmail.unapply)
     )
 }
+
+case class ClientAgentReference(agentRef: String)
+
+object ClientAgentReference {
+  implicit val formats = Json.format[ClientAgentReference]
+}
+
+object ClientAgentReferenceForm {
+  val agentRefLength = 35
+  val clientAgentRefForm =
+    Form(
+      mapping(
+        "email" -> text
+          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= agentRefLength))
+      )
+      (ClientAgentReference.apply)(ClientAgentReference.unapply)
+    )
+}
