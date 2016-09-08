@@ -1,26 +1,30 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
-@(serviceText: Option[Html] = None)(implicit request: Request[_])
+@()(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 
 
 @main_template(title = Messages("agent.unique-reference.title")) {
   <h1 id="header" class="heading-xlarge">
-    <span id="pre-header" class="pre-heading">@Messages("agent.add-a-client.sub-header")</span>
     @Messages("agent.unique-reference.title")
   </h1>
 
-  <p id="text-1">@Messages("agent.unique-reference.text1")</p>
+  <p class="heading-medium">@Messages("agent.unique-reference.next.heading.text")</p>
 
-  @serviceText.map { a =>
-    @a
-  }
+  <p id="text-1">@Messages("agent.unique-reference.text1")</p>
+  <p id="text-2">@Messages("agent.unique-reference.text2")</p>
+
+  <ol class="list-number">
+    <li>@Messages("agent.unique-reference.ated.list.text1")</li>
+    <li>@Messages("agent.unique-reference.ated.list.text2")</li>
+  </ol>
+
+  <p id="text-3">@Messages("agent.unique-reference.text3")</p>
+  <p id="text-4">@Messages("agent.unique-reference.text4")</p>
+  <p id="text-5">@Messages("agent.unique-reference.text5")</p>
 
   <div class="form-group">
-    <div class="confirmation-notice">
-      <div class="icon-important"></div>
-      <div class="ated-icon-important-text"><strong>@Messages("ated.choose-reliefs-further.information.text")</strong></div>
-    </div>
+    <a class="button" id="submit" href="#">@Messages("agent.unique-reference.button")</a>
   </div>
 
 }

@@ -31,8 +31,7 @@ trait UniqueAgentReferenceController extends FrontendController with Actions {
 
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      val x = uk.gov.hmrc.agentclientmandate.utils.AgentDynamicTemplateLoader.returnOptTemplate(service)
-      Ok(views.html.agent.uniqueAgentReference(x))
+      Ok(views.html.agent.uniqueAgentReference())
   }
 
 }
