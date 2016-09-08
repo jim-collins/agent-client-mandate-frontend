@@ -39,7 +39,5 @@ trait DataCacheService {
 }
 
 object DataCacheService extends DataCacheService {
-  // $COVERAGE-OFF$
   val sessionCache: SessionCache = AgentClientMandateSessionCache
-  // $COVERAGE-ON$
 }

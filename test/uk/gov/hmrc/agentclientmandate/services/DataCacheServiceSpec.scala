@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import org.mockito.Mockito._
 import play.api.libs.json.Json
 import play.api.test.Helpers._
+import uk.gov.hmrc.agentclientmandate.config.AgentClientMandateSessionCache
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -38,6 +39,10 @@ class DataCacheServiceSpec extends PlaySpec with OneServerPerSuite with MockitoS
   }
 
   "DataCacheService" must {
+
+    "use correct session cache" in {
+      DataCacheService.sessionCache must be(AgentClientMandateSessionCache)
+    }
 
     "return None" when {
       "formId of the cached form does not exist for defined data type" in {

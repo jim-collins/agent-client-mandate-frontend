@@ -21,6 +21,17 @@ import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 
+case class AgentSelectService(service: Option[String] = None)
+
+object AgentSelectServiceForm {
+  val selectServiceForm =
+    Form(
+      mapping(
+        "service" -> optional(text).verifying(Messages("agent.select-service.error.service"), serviceOpt => serviceOpt.isDefined)
+      )(AgentSelectService.apply)(AgentSelectService.unapply)
+    )
+}
+
 case class AgentEmail(email: String, confirmEmail: String)
 
 object AgentEmail {
