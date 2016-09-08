@@ -5,8 +5,27 @@
 
 @(clientAgentRefForm: Form[ClientAgentReference])(implicit request: Request[_])
 
-@main_template(title = Messages("agent reference")) {
+@main_template(title = Messages("client.agent-ref.title")) {
 
+<h1 id="header" class="heading-xlarge">
+    <span class="pre-heading" id="pre-heading">@Messages("client.agent-ref.title")</span>
+    @Messages("client.agent-ref.header")
+</h1>
+
+@mandateErrorSummary(clientAgentRefForm, "client.search-mandate.error.general")
+
+<div class="form-group">
+
+    @mandateInput(clientAgentRefForm("agentRef"),
+    '_label -> Messages("client.agent-ref.label"),
+    '_fieldsetAttributesHelpQuestion -> "agent-reference-help-question",
+    '_fieldsetQuestion -> Messages("client.agent-ref.help.question"),
+    '_HelpQuestionAnswer -> Html(Messages("client.agent-ref.help.answer")),
+    '_showConstraints -> false)
+
+</div>
+
+<button class="button" id="submit" type="submit">@Messages("continue-button")</button>
 
 
 }

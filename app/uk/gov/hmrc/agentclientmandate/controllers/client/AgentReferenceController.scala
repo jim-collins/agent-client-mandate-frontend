@@ -21,13 +21,14 @@ import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientAgentReferenceForm, ClientAddEmailForm}
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
+import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 
 object AgentReferenceController extends AgentReferenceController {
   val authConnector = FrontendAuthConnector
 }
 
-trait AgentReferenceController extends AgentReferenceController with Actions {
+trait AgentReferenceController extends FrontendController with Actions {
 
   def agentReference = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>

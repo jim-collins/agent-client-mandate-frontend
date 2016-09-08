@@ -30,7 +30,15 @@ client.reject-mandate.header = Client reject confirmation
 
 #client add email
 client.add-email.title = What is your email address?
+client.add-email.preheader = Appoint an agent
 client.add-email.header = What is your email address?
 client.add-email.lede = We need this to send you notifications relating to the ATED online service. This should be your address not your agents.
 client.add-email = Email address
 client.add-email.confirm-email = Confirm email address
+
+#client agent reference
+client.agent-ref.title = What is the agent''s reference?
+client.agent-ref.header = What is the agent''s reference?
+client.agent-ref.label = Agent reference
+client.agent-ref.help.question = What is an agent reference?
+client.agent-ref.help.answer = Your agent must set up their agency for ATED and send you their agent reference.
