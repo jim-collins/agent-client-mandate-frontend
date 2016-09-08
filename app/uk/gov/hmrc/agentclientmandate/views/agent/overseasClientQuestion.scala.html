@@ -1,0 +1,42 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+
+@(overseasClientQuestionForm: Form[OverseasClientQuestion], service: String)(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@implicitFormInstance = @{ Some(overseasClientQuestionForm) }
+
+@main_template(title = Messages("agent.overseas-client-question.title")) {
+
+  <h1 id="header" class="heading-xlarge">
+    <span id="pre-header" class="pre-heading">@Messages("agent.add-a-client.sub-header")</span>
+    @Messages("agent.overseas-client-question.header")
+  </h1>
+
+  @mandateErrorSummary(overseasClientQuestionForm, "agent.overseas-client-question.error.general")
+
+  @form(action = routes.OverseasClientQuestionController.submit(service)) {
+
+    <div class="form-group" id="isOverseas">
+      @mandateInputRadioGroup(
+      overseasClientQuestionForm("isOverseas"),
+        Seq("true" -> Messages("radio-yes"),
+        "false" -> Messages("radio-no")),
+        '_groupClass -> "inline",
+        '_legendClass -> "screen-reader-text",
+        '_legend -> Messages("agent.overseas-client-question.header"),
+        '_labelClass -> "block-label",
+        '_labelAfter -> true
+      )
+    </div>
+
+    <div class="form-group">
+      <button class="button" id="submit" type="submit">@Messages("submit-button")</button>
+    </div>
+
+  }
+
+}

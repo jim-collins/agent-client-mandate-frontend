@@ -1,0 +1,30 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@()(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+
+
+@main_template(title = Messages("agent.unique-reference.title")) {
+  <h1 id="header" class="heading-xlarge">
+    @Messages("agent.unique-reference.title")
+  </h1>
+
+  <p class="heading-medium">@Messages("agent.unique-reference.next.heading.text")</p>
+
+  <p id="text-1">@Messages("agent.unique-reference.text1")</p>
+  <p id="text-2">@Messages("agent.unique-reference.text2")</p>
+
+  <ol class="list-number">
+    <li>@Messages("agent.unique-reference.ated.list.text1")</li>
+    <li>@Messages("agent.unique-reference.ated.list.text2")</li>
+  </ol>
+
+  <p id="text-3">@Messages("agent.unique-reference.text3")</p>
+  <p id="text-4">@Messages("agent.unique-reference.text4")</p>
+  <p id="text-5">@Messages("agent.unique-reference.text5")</p>
+
+  <div class="form-group">
+    <a class="button" id="submit" href="#">@Messages("agent.unique-reference.button")</a>
+  </div>
+
+}
