@@ -1,0 +1,16 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.client.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@()(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@main_template(title = Messages("review agent")) {
+
+    <h1 id="header" class="heading-xlarge">
+        @Messages("Check that this is the agent that you want to appoint")
+    </h1>
+
+
+}
