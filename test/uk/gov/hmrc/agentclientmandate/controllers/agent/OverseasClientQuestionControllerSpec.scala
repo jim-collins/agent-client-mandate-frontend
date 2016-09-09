@@ -87,11 +87,21 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
 
     }
 
-    "return OK" when {
-      "valid form is submitted" in {
+    "redirect agent to 'nrl page' on business-customer-frontend" when {
+      "valid form is submitted and overseas is answered as yes" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "true")
         submitWithAuthorisedAgent(fakeRequest) { result =>
-          status(result) must be(OK)
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("http://localhost:9923/business-customer/registration/non-uk/nrl/ated"))
+        }
+      }
+    }
+    "redirect agent to 'mandate confirmation page'" when {
+      "valid form is submitted and overseas is answered as no" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "false")
+        submitWithAuthorisedAgent(fakeRequest) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some(s"/agent-client-mandate/unique-agent-reference/$service"))
         }
       }
     }
