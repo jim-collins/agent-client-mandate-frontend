@@ -42,3 +42,13 @@ client.agent-ref.header = What is the agent''s reference?
 client.agent-ref.label = Agent reference
 client.agent-ref.help.question = What is an agent reference?
 client.agent-ref.help.answer = Your agent must set up their agency for ATED and send you their agent reference.
+
+#client review agent
+client.review-agent.title = Check that this is the agent that you want to appoint
+client.review-agent.header = Check that this is the agent that you want to appoint
+client.review-agent.preheader = Appoint an agent
+client.review-agent.table-head = Agent Limited
+client.review-agent.agent-reference = Agent reference
+client.review-agent.email = Your email address
+client.review-agent.submit = Confirm and appoint agent
+

@@ -65,9 +65,9 @@ class ClientReviewAgentControllerSpec extends PlaySpec with OneServerPerSuite wi
         document.title() must be ("Check that this is the agent that you want to appoint")
         document.getElementById("header").text() must include("Check that this is the agent that you want to appoint")
         document.getElementById("pre-heading").text() must include("Appoint an agent")
-        document.getElementById("email_field").text() must be("Email address")
-        document.getElementById("confirmEmail_field").text() must be("Confirm email address")
-        document.getElementById("confirm_btn").text() must be("Continue")
+        document.getElementById("email-address").text() must be("Your email address")
+        document.getElementById("agent-reference").text() must be("Agent reference")
+        document.getElementById("submit").text() must be("Confirm and appoint agent")
       }
     }
 

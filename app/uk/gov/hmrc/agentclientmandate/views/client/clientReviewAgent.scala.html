@@ -6,11 +6,36 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@main_template(title = Messages("review agent")) {
+@main_template(title = Messages("client.review-agent.title")) {
 
     <h1 id="header" class="heading-xlarge">
-        @Messages("Check that this is the agent that you want to appoint")
+        <span class="pre-heading" id="pre-heading">@Messages("client.review-agent.preheader")</span>
+        @Messages("client.review-agent.header")
     </h1>
+
+<table>
+    <tr>
+        <th id ="table-head">@Messages("client.review-agent.table-head")</th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr>
+        <td id="agent-reference">@Messages("client.review-agent.agent-reference")</td>
+        <td id="email-address">@Messages("client.review-agent.email")</td>
+        <td><a href="#">Edit</a></td>
+    </tr>
+    <tr>
+        <td>@Messages("Your email address")</td>
+        <td>@Messages("name@company.com")</td>
+        <td><a href="#">Edit</a></td>
+    </tr>
+</table>
+
+<div class="form-group">
+    <button class="button" id="submit" type="submit" onclick="ga('send', 'event', 'Client - requests agent - review', 'button clicked')">
+        @Messages("client.review-agent.submit")
+    </button>
+</div>
 
 
 }
