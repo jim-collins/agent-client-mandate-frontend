@@ -16,9 +16,12 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.client
 
-/**
- * Created by ed on 09/09/16.
- */
-class ClientDeclarationControllerSpec {
+import org.scalatest.mock.MockitoSugar
+import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
+
+class ClientReviewAgentControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
+
+
+
 
 }
