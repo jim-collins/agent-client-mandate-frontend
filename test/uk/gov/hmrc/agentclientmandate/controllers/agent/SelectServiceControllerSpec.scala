@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 import java.util.UUID
 
 import org.jsoup.Jsoup
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
@@ -30,20 +31,19 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
+class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
-class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
-
-  "OverseasClientQuestionController" must {
+  "SelectServiceController" must {
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/overseas-client-question/:service" in {
-        val result = route(FakeRequest(GET, s"/agent-client-mandate/overseas-client-question/$service")).get
+      "GET /agent-client-mandate/select-service" in {
+        val result = route(FakeRequest(GET, s"/agent-client-mandate/select-service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
-      "POST /agent-client-mandate/overseas-client-question/:service" in {
-        val result = route(FakeRequest(POST, s"/agent-client-mandate/overseas-client-question/$service")).get
+      "POST /agent-client-mandate/select-service" in {
+        val result = route(FakeRequest(POST, s"/agent-client-mandate/select-service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -51,8 +51,8 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
 
     "redirect to login page for UNAUTHENTICATED agent" when {
 
-      "agent requests(GET) for 'overseas client question' view" in {
-        viewWithUnAuthenticatedAgent { result =>
+      "agent requests(GET) for 'select service question' view" in {
+        selectWithUnAuthenticatedAgent { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -62,8 +62,8 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
 
     "redirect to unauthorised page for UNAUTHORISED agent" when {
 
-      "agent requests(GET) for 'overseas client question' view" in {
-        viewWithUnAuthorisedAgent { result =>
+      "agent requests(GET) for 'select service question' view" in {
+        selectWithUnAuthorisedAgent { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -71,86 +71,75 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
 
     }
 
-    "return 'overseas client question' view for AUTHORISED agent" when {
+    "return 'select service question' view for AUTHORISED agent" when {
 
-      "agent requests(GET) for 'overseas client question' view" in {
-        viewWithAuthorisedAgent { result =>
+      "agent requests(GET) for 'select service question' view" in {
+        selectWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Does your client have an overseas company without a UK Unique Tax Reference?")
-          document.getElementById("header").text() must include("Does your client have an overseas company without a UK Unique Tax Reference?")
+          document.title() must be("Select a service")
+          document.getElementById("header").text() must include("Select a service")
           document.getElementById("pre-header").text() must be("Add a client")
-          document.getElementById("isOverseas_legend").text() must be("Does your client have an overseas company without a UK Unique Tax Reference?")
+          document.getElementById("service_legend").text() must be("Select a service")
           document.getElementById("submit").text() must be("Submit")
         }
       }
 
     }
 
-    "redirect agent to 'nrl page' on business-customer-frontend" when {
-      "valid form is submitted and overseas is answered as yes" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "true")
+    "redirect to 'collect agent email question' Page" when {
+      "valid form is submitted" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("service" -> "ated")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("http://localhost:9923/business-customer/registration/non-uk/nrl/ated"))
-        }
-      }
-    }
-    "redirect agent to 'mandate confirmation page'" when {
-      "valid form is submitted and overseas is answered as no" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "false")
-        submitWithAuthorisedAgent(fakeRequest) { result =>
-          status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/agent-client-mandate/unique-agent-reference/$service"))
+          redirectLocation(result) must be(Some("/agent-client-mandate/collect-agent-email/ated"))
         }
       }
     }
 
     "returns BAD_REQUEST" when {
       "invalid form is submitted" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("service" -> "")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the overseas client question")
-          document.getElementsByClass("error-notification").text() must include("You must answer overseas client question")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the select service question")
+          document.getElementsByClass("error-notification").text() must include("You must select one service")
         }
       }
     }
 
-
   }
 
   val mockAuthConnector = mock[AuthConnector]
-  val service = "ATED"
 
-  object TestOverseasClientQuestionController extends OverseasClientQuestionController {
+  object TestSelectServiceController extends SelectServiceController {
     override val authConnector = mockAuthConnector
   }
 
-  def viewWithUnAuthenticatedAgent(test: Future[Result] => Any) {
+  def selectWithUnAuthenticatedAgent(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestOverseasClientQuestionController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestSelectServiceController.select().apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def viewWithUnAuthorisedAgent(test: Future[Result] => Any) {
+  def selectWithUnAuthorisedAgent(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestOverseasClientQuestionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestSelectServiceController.select().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def viewWithAuthorisedAgent(test: Future[Result] => Any) {
+  def selectWithAuthorisedAgent(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestOverseasClientQuestionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestSelectServiceController.select().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -159,7 +148,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestOverseasClientQuestionController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestSelectServiceController.submit().apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

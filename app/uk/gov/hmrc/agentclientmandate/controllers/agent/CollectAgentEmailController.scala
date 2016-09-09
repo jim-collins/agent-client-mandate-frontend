@@ -18,28 +18,45 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmailForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
+import scala.concurrent.Future
+
 object CollectAgentEmailController extends CollectAgentEmailController {
   val authConnector: AuthConnector = FrontendAuthConnector
+  val dataCacheService: DataCacheService = DataCacheService
+  val formId: String = "agent-email"
 }
 
 trait CollectAgentEmailController extends FrontendController with Actions {
 
-  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def dataCacheService: DataCacheService
+
+  def formId: String
+
+  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit user => implicit request =>
-      Ok(views.html.agent.agentEnterEmail(agentEmailForm, service))
+      dataCacheService.fetchAndGetFormData[AgentEmail](formId) map {
+        case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(agentEmail), service))
+        case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service))
+      }
   }
 
-  def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       agentEmailForm.bindFromRequest.fold(
-        formWithError => BadRequest(views.html.agent.agentEnterEmail(formWithError, service)),
-        data => Redirect(routes.OverseasClientQuestionController.view(service))
+        formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service))),
+        data => {
+          dataCacheService.cacheFormData[AgentEmail](formId, data) flatMap { dataCached =>
+            Future.successful(Redirect(routes.OverseasClientQuestionController.view(service)))
+          }
+        }
       )
   }
 

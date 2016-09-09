@@ -28,6 +28,15 @@ client.accept-mandate.header = Client accept confirmation
 client.reject-mandate.title = Client reject confirmation
 client.reject-mandate.header = Client reject confirmation
 
+#agent select service
+agent.select-service.title = Select a service
+agent.select-service.header = Select a service
+agent.select-service.error.general.service = There is a problem with the select service question
+agent.select-service.error.service = You must select one service
+
+#services
+agent.select-service.services.ated = ATED
+
 #agent enter email
 agent.enter-email.title = What is your email address?
 agent.enter-email.header = What is your email address?
