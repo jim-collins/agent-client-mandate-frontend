@@ -19,5 +19,7 @@ GET         /client-agent-reference         uk.gov.hmrc.agentclientmandate.contr
 
 GET         /client-review-agent            uk.gov.hmrc.agentclientmandate.controllers.client.ClientReviewAgentController.reviewAgent
 
+GET         /client-agent-declaration       uk.gov.hmrc.agentclientmandate.controllers.client.ClientAgentDeclarationController.clientAgentDeclaration
+
 
 
