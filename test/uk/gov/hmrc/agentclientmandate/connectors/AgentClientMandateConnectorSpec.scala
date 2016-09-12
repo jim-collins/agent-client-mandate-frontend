@@ -23,14 +23,14 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.libs.json.{JsValue, Json}
+import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.models.{ClientMandateDto, ContactDetailsDto, PartyDto, ServiceDto}
 import uk.gov.hmrc.play.http._
-import play.api.test.Helpers._
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
 
 import scala.concurrent.Future
 
-class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach{
+class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
   class MockHttp extends WSGet with WSPost with WSDelete {
     override val hooks = NoneRequired
@@ -40,7 +40,12 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
   object TestAgentClientMandateConnector extends AgentClientMandateConnector {
     override def serviceUrl: String = baseUrl("agent-client-mandate")
+
     override def http: HttpGet with HttpPost with HttpDelete = mockWSHttp
+  }
+
+  override def beforeEach(): Unit = {
+    reset(mockWSHttp)
   }
 
   val mandateDto: ClientMandateDto =
@@ -53,23 +58,22 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
   "AgentClientMandateConnector" must {
 
     "have a service url" in {
-      AgentClientMandateConnector.serviceUrl == "agent-client-mandate"
+      AgentClientMandateConnector.serviceUrl must be("http://localhost:9960")
     }
 
-   "create a mandate" in {
-     val successResponse = Json.toJson(mandateDto)
-     implicit val hc: HeaderCarrier = HeaderCarrier()
+    "create a mandate" in {
+      val successResponse = Json.toJson(mandateDto)
+      implicit val hc: HeaderCarrier = HeaderCarrier()
 
-     when(mockWSHttp.POST[JsValue, HttpResponse]
-       (Matchers.any(), Matchers.any(), Matchers.any())
-       (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+      when(mockWSHttp.POST[JsValue, HttpResponse]
+        (Matchers.any(), Matchers.any(), Matchers.any())
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
-     val response = TestAgentClientMandateConnector.createMandate(mandateDto)
-     await(response).status must be(OK)
+      val response = TestAgentClientMandateConnector.createMandate(mandateDto)
+      await(response).status must be(OK)
 
-   }
+    }
 
   }
-
 
 }
