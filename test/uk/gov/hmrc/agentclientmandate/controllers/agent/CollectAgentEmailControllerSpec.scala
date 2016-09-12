@@ -28,7 +28,7 @@ import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
-import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -42,6 +42,10 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
     "use DataCacheService" in {
       CollectAgentEmailController.dataCacheService must be(DataCacheService)
+    }
+
+    "use EmailService" in {
+      CollectAgentEmailController.emailService must be(EmailService)
     }
 
     "not return NOT_FOUND at route " when {
@@ -119,11 +123,12 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     }
 
     "redirect to 'overseas client question' Page" when {
-      "valid form is submitted" in {
+      "valid form is submitted with valid email" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@aa.com")
-        submitEmailAuthorisedAgent(fakeRequest) { result =>
+        submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("/agent-client-mandate/overseas-client-question/ATED"))
+          verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
@@ -140,6 +145,19 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           document.getElementsByClass("error-list").text() must include("There is a problem with the confirm email address question")
           document.getElementsByClass("error-notification").text() must include("You must answer email address question")
           document.getElementsByClass("error-notification").text() must include("You must answer confirm email address question")
+          verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
+      "invalid email id is passed" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@invalid.com", "confirmEmail" -> "aa@invalid.com")
+        submitEmailAuthorisedAgent(fakeRequest, isValidEmail = false) { result =>
+          status(result) must be(BAD_REQUEST)
+          val document = Jsoup.parse(contentAsString(result))
+          document.getElementsByClass("error-list").text() must include("This email is invalid")
+          verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
@@ -150,6 +168,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
   val mockAuthConnector = mock[AuthConnector]
   val mockDataCacheService: DataCacheService = mock[DataCacheService]
+  val mockEmailService: EmailService = mock[EmailService]
   val service = "ated".toUpperCase
   val formId1 = "agent-email"
   val agentEmail = AgentEmail("aa@aa.com", "aa@aa.com")
@@ -157,11 +176,13 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
   object TestCollectAgentEmailController extends CollectAgentEmailController {
     override val authConnector = mockAuthConnector
     override val dataCacheService = mockDataCacheService
+    override val emailService = mockEmailService
     override val formId = formId1
   }
 
   override def beforeEach(): Unit = {
     reset(mockDataCacheService)
+    reset(mockEmailService)
     reset(mockAuthConnector)
   }
 
@@ -192,11 +213,12 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     test(result)
   }
 
-  def submitEmailAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded])(test: Future[Result] => Any) {
+  def submitEmailAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded], isValidEmail: Boolean = false)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    when(mockEmailService.validate(Matchers.any())(Matchers.any())).thenReturn(Future.successful(isValidEmail))
     when(mockDataCacheService.cacheFormData[AgentEmail](Matchers.eq(formId1), Matchers.eq(agentEmail))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(agentEmail))
     val result = TestCollectAgentEmailController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)

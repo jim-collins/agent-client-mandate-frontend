@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.http._
 
 import scala.concurrent.Future
 
-trait AgentClientMandateConnector extends ServicesConfig {
+trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
 
   def serviceUrl: String
 
@@ -37,7 +37,7 @@ trait AgentClientMandateConnector extends ServicesConfig {
   def createMandate(mandateDto: ClientMandateDto)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val postUrl = s"$serviceUrl/$agentClientMandateUrl/$mandate"
     val jsonData = Json.toJson(mandateDto)
-    Logger.info(s"[AgentClientMandateConnector][createMandate] - POST - $postUrl and JSON Data - $jsonData" )
+    Logger.info(s"[AgentClientMandateConnector][createMandate] - POST - $postUrl and JSON Data - $jsonData")
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 

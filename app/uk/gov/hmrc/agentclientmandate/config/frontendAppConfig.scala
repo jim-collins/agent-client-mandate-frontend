@@ -42,6 +42,7 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
 
-  def nrlUri(service: String): String = s"""${configuration.getString("microservice.services.business-customer-frontend.nrl-uri").getOrElse("")}/${service.toLowerCase}"""
+  def nrlUri(service: String): String = s"""${configuration.getString("microservice.services.business-customer-frontend.nrl-uri").
+    getOrElse("")}/${service.toLowerCase}"""
 
 }
