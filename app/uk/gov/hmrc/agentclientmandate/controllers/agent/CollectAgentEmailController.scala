@@ -54,7 +54,7 @@ trait CollectAgentEmailController extends FrontendController with Actions {
 
   def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      agentEmailForm.bindFromRequest.fold(
+      validateConfirmEmail(agentEmailForm.bindFromRequest).fold(
         formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service))),
         data => {
           emailService.validate(data.email) flatMap { isValidEmail =>

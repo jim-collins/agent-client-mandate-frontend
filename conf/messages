@@ -49,6 +49,7 @@ agent.enter-email.field.email.label = Email address
 agent.enter-email.field.confirmEmail.label = Confirm email address
 agent.enter-email.error.email.invalid-by-email-service = This email is invalid
 agent.enter-email.error.general.agent-enter-email-form = This email is invalid
+agent.enter-email.error.confirm-email.not-equal = You must enter same email address in confirm email address
 
 # agent - is client overseas question
 agent.overseas-client-question.title = Does your client have an overseas company without a UK Unique Tax Reference?

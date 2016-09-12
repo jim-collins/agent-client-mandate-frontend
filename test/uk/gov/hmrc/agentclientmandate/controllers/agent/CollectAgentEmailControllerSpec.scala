@@ -136,7 +136,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     }
 
     "returns BAD_REQUEST" when {
-      "invalid form is submitted" in {
+      "empty form is submitted" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "", "confirmEmail" -> "")
         submitEmailAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
@@ -145,6 +145,19 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           document.getElementsByClass("error-list").text() must include("There is a problem with the confirm email address question")
           document.getElementsByClass("error-notification").text() must include("You must answer email address question")
           document.getElementsByClass("error-notification").text() must include("You must answer confirm email address question")
+          verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
+      "confirmEmail field value is not equal to email field value" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@bb.com")
+        submitEmailAuthorisedAgent(fakeRequest) { result =>
+          status(result) must be(BAD_REQUEST)
+          val document = Jsoup.parse(contentAsString(result))
+          document.getElementsByClass("error-list").text() must include("There is a problem with the confirm email address question")
+          document.getElementsByClass("error-notification").text() must include("You must enter same email address in confirm email address")
           verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
