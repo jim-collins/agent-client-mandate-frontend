@@ -41,36 +41,38 @@ class ClientAgentDeclarationControllerSpec extends PlaySpec with OneServerPerSui
       }
     }
 
-  }
 
 
-  "redirect to login page for UNAUTHENTICATED client" when {
 
-    "client requests(GET) for search mandate view" in {
-      clientAgentDeclarationUnAuthenticatedClient { result =>
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result).get must include("/gg/sign-in")
+    "redirect to login page for UNAUTHENTICATED client" when {
+
+      "client requests(GET) for search mandate view" in {
+        clientAgentDeclarationUnAuthenticatedClient { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must include("/gg/sign-in")
+        }
+      }
+
+    }
+
+    "return agent declaration view for AUTHORISED client" when {
+
+      "client requests(GET) for search declaration view" in {
+        clientAgentDeclarationAuthenticatedClient { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Declaration and consent")
+          document.getElementById("header").text() must include("Declaration and consent")
+          document.getElementById("pre-heading").text() must include("Appoint an agent")
+          document.getElementById("declaration-info").text() must be("This authority allows HMRC to exchange and disclose information about you with your agent and to deal with them on matters relating to ATED.\n\nYou as the property owner will remain responsible for all aspects of you dealings with HMRC, even if your agent submits returns and makes payments on your behalf.")
+          document.getElementById("declare-title").text() must be("I declare that:")
+          document.getElementById("agent-name").text() must be("the nominated agent [Agent Name] has agreed to act on my behalf in respect of ATED")
+          document.getElementById("dec-info").text() must be("that the information I have provided is correct and complete")
+          document.getElementById("confirm_btn").text() must be("Continue")
+        }
       }
     }
 
-  }
-
-  "return agent declaration view for AUTHORISED client" when {
-
-    "client requests(GET) for search mandate view" in {
-      clientAgentDeclarationUnAuthenticatedClient { result =>
-        status(result) must be(OK)
-        val document = Jsoup.parse(contentAsString(result))
-        document.title() must be("Declaration and consent")
-        document.getElementById("header").text() must include("Declaration and consent")
-        document.getElementById("pre-heading").text() must include("Appoint an agent")
-        document.getElementById("declaration-info").text() must be("This authority allows HMRC to exchange and disclose information about you with your agent and to deal with them on matters relating to ATED.\n\nYou as the property owner will remain responsible for all aspects of you dealings with HMRC, even if your agent submits returns and makes payments on your behalf.")
-        document.getElementById("declare-title").text() must be("I declare that:")
-        document.getElementById("agent-name").text() must be("the nominated agent [Agent Name] has agreed to act on my behalf in respect of ATED")
-        document.getElementById("dec-info").text() must be("that the information I have provided is correct and complete")
-        document.getElementById("confirm_btn").text() must be("Continue")
-      }
-    }
   }
 
   val mockAuthConnector = mock[AuthConnector]
@@ -95,6 +97,17 @@ class ClientAgentDeclarationControllerSpec extends PlaySpec with OneServerPerSui
     val result = TestClientAgentDeclarationController.clientAgentDeclaration().apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
+
+
+  def clientAgentDeclarationAuthorisedClient(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    val result = TestClientAgentDeclarationController.clientAgentDeclaration().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
 
   def clientAgentDeclaration(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
