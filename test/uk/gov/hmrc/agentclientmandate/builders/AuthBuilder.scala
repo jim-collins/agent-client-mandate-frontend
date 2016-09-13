@@ -42,6 +42,10 @@ object AuthBuilder {
     AuthContext(authority = createRegisteredAgentAuthority(userId), nameFromSession = Some(userName))
   }
 
+  def createNonRegisteredAgentAuthContext(userId: String, userName: String): AuthContext = {
+    AuthContext(authority = createNonRegisteredAgent(userId), nameFromSession = Some(userName))
+  }
+
   def createRegisteredAgentAuthority(userId: String): Authority = {
     Authority(
       uri = userId,
@@ -89,6 +93,24 @@ object AuthBuilder {
     )
   }
 
+  def createNonRegisteredAgent(userId: String): Authority = {
+    Authority(
+      uri = userId,
+      accounts = Accounts(agent = Some(AgentAccount(link = "/agent/ABC",
+        agentCode = AgentCode("ABC"),
+        agentUserId = AgentUserId(s"$userId"),
+        agentUserRole = AgentAdmin,
+        payeReference = None,
+        agentBusinessUtr = None))),
+      loggedInAt = None,
+      previouslyLoggedInAt = None,
+      credentialStrength = CredentialStrength.Weak,
+      confidenceLevel = ConfidenceLevel.L50,
+      userDetailsLink = Some("/user-details/1234567890"),
+      enrolments = Some("/auth/oid/1234567890/enrolments"),
+      ids = None
+    )
+  }
 
   def mockAuthorisedClient(userId: String, mockAuthConnector: AuthConnector) {
     when(mockAuthConnector.currentAuthority(Matchers.any())) thenReturn {

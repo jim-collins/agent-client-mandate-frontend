@@ -17,6 +17,8 @@
 package uk.gov.hmrc.agentclientmandate.connectors
 
 
+import java.util.UUID
+
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -26,6 +28,7 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.agentclientmandate.models.{ClientMandateDto, ContactDetailsDto, PartyDto, ServiceDto}
 import uk.gov.hmrc.play.http._
 import play.api.test.Helpers._
+import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
 
 import scala.concurrent.Future
@@ -43,6 +46,8 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     override def http: HttpGet with HttpPost with HttpDelete = mockWSHttp
   }
 
+  val mandateId = "12345678"
+
   val mandateDto: ClientMandateDto =
     ClientMandateDto(
       PartyDto("JARN123456", "Joe Bloggs", "Organisation"),
@@ -50,10 +55,13 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       ServiceDto("ATED")
     )
 
+  val userId = s"user-${UUID.randomUUID}"
+  implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+
   "AgentClientMandateConnector" must {
 
     "have a service url" in {
-      AgentClientMandateConnector.serviceUrl == "agent-client-mandate"
+      AgentClientMandateConnector.serviceUrl must be("http://localhost:9960")
     }
 
    "create a mandate" in {
@@ -68,6 +76,19 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
      await(response).status must be(OK)
 
    }
+
+    "fetch a valid mandate" in {
+      val successResponse = Json.toJson(mandateDto)
+      implicit val hc: HeaderCarrier = HeaderCarrier()
+
+      when(mockWSHttp.GET[HttpResponse]
+        (Matchers.any())
+        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+
+      val response = TestAgentClientMandateConnector.fetchMandate(mandateId)
+      await(response).status must be(OK)
+
+    }
 
   }
 

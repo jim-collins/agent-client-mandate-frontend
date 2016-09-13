@@ -18,13 +18,18 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import java.util.UUID
 
+import org.joda.time.DateTime
 import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.models.{Service, _}
+import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -83,10 +88,13 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
   }
 
   val mockAuthConnector = mock[AuthConnector]
+  val mockAgentClientMandateService = mock[AgentClientMandateService]
   val service = "ated".toUpperCase
+
 
   object TestUniqueAgentReferenceController extends UniqueAgentReferenceController {
     override val authConnector = mockAuthConnector
+    override val agentClientMandateService = mockAgentClientMandateService
   }
 
   def viewWithUnAuthenticatedAgent(test: Future[Result] => Any) {
@@ -111,6 +119,13 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    val clientMandate = ClientMandate("12345", hc.gaUserId.getOrElse("credid"),
+      Party("JARN123456", "Joe Bloggs", "Organisation", ContactDetails("test@test.com", "0123456789")),
+      MandateStatus(Status.Pending, DateTime.now(), "credid"), None, Service(None, "ATED"))
+
+    when(mockAgentClientMandateService.createMandate(Matchers.eq(service))(Matchers.any(), Matchers.any()))
+      .thenReturn(Future.successful(Some(clientMandate)))
+
     val result = TestUniqueAgentReferenceController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }

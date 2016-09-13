@@ -24,6 +24,7 @@ import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
+import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 
 object OverseasClientQuestionController extends OverseasClientQuestionController {
   val authConnector: AuthConnector = FrontendAuthConnector
