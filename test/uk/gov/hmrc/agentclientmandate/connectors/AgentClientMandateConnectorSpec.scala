@@ -17,8 +17,6 @@
 package uk.gov.hmrc.agentclientmandate.connectors
 
 
-import java.util.UUID
-
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -28,7 +26,6 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.agentclientmandate.models.{ClientMandateDto, ContactDetailsDto, PartyDto, ServiceDto}
 import uk.gov.hmrc.play.http._
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
 
 import scala.concurrent.Future
@@ -55,9 +52,6 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       ServiceDto("ATED")
     )
 
-  val userId = s"user-${UUID.randomUUID}"
-  implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-
   "AgentClientMandateConnector" must {
 
     "have a service url" in {
@@ -82,7 +76,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       implicit val hc: HeaderCarrier = HeaderCarrier()
 
       when(mockWSHttp.GET[HttpResponse]
-        (Matchers.any())
+        (Matchers.any(), Matchers.any())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
       val response = TestAgentClientMandateConnector.fetchMandate(mandateId)

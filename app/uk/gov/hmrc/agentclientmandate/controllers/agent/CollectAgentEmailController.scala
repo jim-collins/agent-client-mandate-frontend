@@ -16,9 +16,10 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
+import play.api.i18n.Messages
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
-import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmailForm._
 import uk.gov.hmrc.agentclientmandate.views
@@ -31,12 +32,15 @@ import scala.concurrent.Future
 object CollectAgentEmailController extends CollectAgentEmailController {
   val authConnector: AuthConnector = FrontendAuthConnector
   val dataCacheService: DataCacheService = DataCacheService
+  val emailService: EmailService = EmailService
   val formId: String = "agent-email"
 }
 
 trait CollectAgentEmailController extends FrontendController with Actions {
 
   def dataCacheService: DataCacheService
+
+  def emailService: EmailService
 
   def formId: String
 
@@ -50,11 +54,19 @@ trait CollectAgentEmailController extends FrontendController with Actions {
 
   def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      agentEmailForm.bindFromRequest.fold(
+      validateConfirmEmail(agentEmailForm.bindFromRequest).fold(
         formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service))),
         data => {
-          dataCacheService.cacheFormData[AgentEmail](formId, data) flatMap { dataCached =>
-            Future.successful(Redirect(routes.OverseasClientQuestionController.view(service)))
+          emailService.validate(data.email) flatMap { isValidEmail =>
+            if (isValidEmail) {
+              dataCacheService.cacheFormData[AgentEmail](formId, data) flatMap { cachedData =>
+                Future.successful(Redirect(routes.OverseasClientQuestionController.view(service)))
+              }
+            } else {
+              val errorMsg = Messages("agent.enter-email.error.email.invalid-by-email-service")
+              val errorForm = agentEmailForm.withError(key = "agent-enter-email-form", message = errorMsg).fill(data)
+              Future.successful(BadRequest(views.html.agent.agentEnterEmail(errorForm, service)))
+            }
           }
         }
       )

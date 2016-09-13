@@ -22,13 +22,17 @@
 
   @form(action = routes.CollectAgentEmailController.submit(service)) {
 
-    @mandateInput(agentEmailForm("email"),
-      '_label -> Messages("agent.enter-email.field.email.label"),
-      '_showConstraints -> false)
+    <div id="agent-enter-email-form">
 
-    @mandateInput(agentEmailForm("confirmEmail"),
-      '_label -> Messages("agent.enter-email.field.confirmEmail.label"),
-      '_showConstraints -> false)
+      @mandateInput(agentEmailForm("email"),
+        '_label -> Messages("agent.enter-email.field.email.label"),
+        '_showConstraints -> false)
+
+      @mandateInput(agentEmailForm("confirmEmail"),
+        '_label -> Messages("agent.enter-email.field.confirmEmail.label"),
+        '_showConstraints -> false)
+
+    </div>
 
     <div class="form-group">
       <button class="button" id="submit" type="submit">@Messages("submit-button")</button>
