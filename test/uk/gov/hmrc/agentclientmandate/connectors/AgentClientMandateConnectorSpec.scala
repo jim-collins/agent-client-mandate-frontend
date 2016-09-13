@@ -76,7 +76,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       implicit val hc: HeaderCarrier = HeaderCarrier()
 
       when(mockWSHttp.GET[HttpResponse]
-        (Matchers.any(), Matchers.any())
+        (Matchers.any())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
       val response = TestAgentClientMandateConnector.fetchMandate(mandateId)
