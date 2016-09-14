@@ -46,7 +46,7 @@ object ApproveClientMandateForm {
   val approveClientMandateForm =
     Form(
       mapping(
-        "approved" -> optional(boolean).verifying(Messages("client.approve-mandate.error.approved"),x => x.isDefined)
+        "approved" -> optional(boolean).verifying(Messages("client.approve-mandate.error.approved"), x => x.isDefined)
       )(ApproveClientMandate.apply)(ApproveClientMandate.unapply)
     )
 }
@@ -65,7 +65,7 @@ object ClientAddEmailForm {
         "email" -> text
           .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength)),
         "confirmEmail" -> text
-         .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
+          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
       )
       (ClientAddEmail.apply)(ClientAddEmail.unapply)
     )

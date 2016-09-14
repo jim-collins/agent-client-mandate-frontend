@@ -5,6 +5,7 @@
   bodyClasses: Option[String] = None,
   sidebar: Html = HtmlFormat.empty,
   contentHeader: Option[Html] = None,
+  userLoggedIn: Boolean = true,
   mainContent: Html = HtmlFormat.empty,
   serviceInfoContent: Html = HtmlFormat.empty,
   scriptElem: Option[Html] = None)(implicit request: Request[_])
@@ -30,6 +31,10 @@
          data-journey-click="primary-navigation:Click:Home">Home</a></li>
 }
 
+@article = {
+  @uiLayouts.article(content = mainContent, includeGridWrapper = false, articleClasses = None)
+}
+
 @insideHeader = {
     @uiLayouts.header_nav(
       navTitle = Some("agent-client-mandate-frontend"),
@@ -53,9 +58,18 @@
 @footerTop = {}
 @footerLinks = {}
 
+@betaBanner = {
+  @uiLayouts.betaBanner(
+    userLoggedIn = userLoggedIn,
+    betaFeedbackUrl = appConfig.betaFeedbackUrl,
+    betaFeedbackUnauthenticatedUrl = appConfig.betaFeedbackUnauthenticatedUrl,
+    showFeedbackLinkInBetaBanner = true
+  )
+}
+
 @serviceInfo = {
     @uiLayouts.serviceInfo(
-      betaBanner = HtmlFormat.empty,
+      betaBanner = betaBanner,
       includeGridWrapper = false,
       serviceInfoContent = Some(serviceInfoContent))
 }
@@ -70,7 +84,7 @@
 
 @content = {
     @uiLayouts.main_content(
-      article = mainContent,
+      article = article,
       mainClass = mainClass,
       mainDataAttributes = mainDataAttributes,
       mainContentHeader = mainContentHeader,

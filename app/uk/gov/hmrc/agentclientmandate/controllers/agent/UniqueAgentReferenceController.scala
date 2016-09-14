@@ -14,30 +14,33 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.client
+package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
-import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientAddEmailForm
+import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
+import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
+import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-object AddEmailController extends AddEmailController {
-  val authConnector = FrontendAuthConnector
+object UniqueAgentReferenceController extends UniqueAgentReferenceController {
+  val authConnector: AuthConnector = FrontendAuthConnector
+  val agentClientMandateService: AgentClientMandateService = AgentClientMandateService
 }
 
-trait AddEmailController extends FrontendController with Actions {
+trait UniqueAgentReferenceController extends FrontendController with Actions {
 
-  def addEmail = AuthorisedFor(ClientRegime, GGConfidence) {
+  def agentClientMandateService: AgentClientMandateService
+
+  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      Ok(views.html.client.clientAddEmail(ClientAddEmailForm.clientAddEmailForm))
+      for {
+        clientMandate <- agentClientMandateService.createMandate(service)
+      } yield {
+        Ok(views.html.agent.uniqueAgentReference(clientMandate))
+      }
   }
-
-  def continue = AuthorisedFor(ClientRegime, GGConfidence) {
-    implicit authContext => implicit request =>
-      Redirect(routes.AgentReferenceController.agentReference())
-  }
-
 }
+
 

@@ -66,4 +66,5 @@ object SessionBuilder {
       TOKEN -> "RANDOMTOKEN"
     )
   }
+
 }

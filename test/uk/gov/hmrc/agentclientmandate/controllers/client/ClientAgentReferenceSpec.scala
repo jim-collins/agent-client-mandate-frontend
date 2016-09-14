@@ -20,11 +20,11 @@ import java.util.UUID
 
 import org.jsoup.Jsoup
 import org.scalatest.mock.MockitoSugar
-import org.scalatestplus.play.{PlaySpec, OneServerPerSuite}
+import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.builders.{SessionBuilder, AuthBuilder}
+import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 

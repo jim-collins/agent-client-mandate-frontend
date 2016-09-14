@@ -1,17 +1,16 @@
 # microservice specific routes
 
-GET         /assets/*file                   controllers.Assets.at(path="/public", file)
+GET     /assets/*file                   controllers.Assets.at(path="/public", file)
 
-#GET        /home                           uk.gov.hmrc.agentclientmandate.controllers.HomeController.home
-GET         /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.searchMandate
-POST        /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.submit
+GET     /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.searchMandate
+POST    /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.submit
 
 
-GET         /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientApproveMandateController.approve
-POST        /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientApproveMandateController.submit
+GET     /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientApproveMandateController.approve
+POST    /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientApproveMandateController.submit
 
-GET         /client-accepted-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.accepted
-GET         /client-rejected-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.rejected
+GET     /client-accepted-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.accepted
+GET     /client-rejected-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.rejected
 
 GET         /client-add-email               uk.gov.hmrc.agentclientmandate.controllers.client.AddEmailController.addEmail
 
@@ -26,4 +25,16 @@ GET         /client-review-agent            uk.gov.hmrc.agentclientmandate.contr
 GET         /client-agent-declaration       uk.gov.hmrc.agentclientmandate.controllers.client.ClientAgentDeclarationController.clientAgentDeclaration
 
 GET         /client-agent-confirmation      uk.gov.hmrc.agentclientmandate.controllers.client.ClientAgentConfirmationController.clientAgentConfirmation
+
+
+GET     /select-service                 uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.select
+POST    /select-service                 uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.submit
+
+GET     /collect-agent-email/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.view(service: String)
+POST    /collect-agent-email/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.submit(service: String)
+
+GET     /overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.view(service: String)
+POST    /overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.submit(service: String)
+
+GET     /unique-agent-reference/:service        uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 

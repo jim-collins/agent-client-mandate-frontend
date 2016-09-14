@@ -39,7 +39,7 @@ trait ClientApproveMandateController extends FrontendController with Actions {
       approveClientMandateForm.bindFromRequest.fold(
         formWithError => BadRequest(views.html.client.approveMandate(formWithError)),
         data =>
-          if(data.approved.getOrElse(false)) Redirect(routes.ClientConfirmMandateController.accepted())
+          if (data.approved.getOrElse(false)) Redirect(routes.ClientConfirmMandateController.accepted())
           else Redirect(routes.ClientConfirmMandateController.rejected())
       )
   }

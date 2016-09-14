@@ -24,9 +24,7 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.builders.{SessionBuilder, AuthBuilder}
-import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
-import uk.gov.hmrc.agentclientmandate.views
+import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -42,7 +40,7 @@ class ClientReviewAgentControllerSpec extends PlaySpec with OneServerPerSuite wi
         status(result) mustNot be(NOT_FOUND)
       }
     }
-    
+
   }
 
   "redirect to login page for UNAUTHENTICATED client" when {
@@ -62,7 +60,7 @@ class ClientReviewAgentControllerSpec extends PlaySpec with OneServerPerSuite wi
       reviewAgent { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
-        document.title() must be ("Check that this is the agent that you want to appoint")
+        document.title() must be("Check that this is the agent that you want to appoint")
         document.getElementById("header").text() must include("Check that this is the agent that you want to appoint")
         document.getElementById("pre-heading").text() must include("Appoint an agent")
         document.getElementById("email-address").text() must be("Your email address")

@@ -25,18 +25,28 @@ trait AppConfig {
   val analyticsHost: String
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
+  val betaFeedbackUrl: String
+  val betaFeedbackUnauthenticatedUrl: String
+
+  def nrlUri(service: String): String
 }
 
 object FrontendAppConfig extends AppConfig with ServicesConfig {
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private val contactHost = configuration.getString(s"contact-frontend.host").getOrElse("")
-  private val contactFormServiceIdentifier = "MyService"
+  private val contactHost = configuration.getString("contact-frontend.host").getOrElse("")
+  private val contactFormServiceIdentifier = "agent-client-mandate-frontend"
 
-  override lazy val assetsPrefix = loadConfig(s"assets.url") + loadConfig(s"assets.version")
-  override lazy val analyticsToken = loadConfig(s"google-analytics.token")
-  override lazy val analyticsHost = loadConfig(s"google-analytics.host")
+  override lazy val assetsPrefix = loadConfig("assets.url") + loadConfig("assets.version")
+  override lazy val analyticsToken = loadConfig("google-analytics.token")
+  override lazy val analyticsHost = loadConfig("google-analytics.host")
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  override lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback"
+  override lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
+
+  def nrlUri(service: String): String = s"""${configuration.getString("microservice.services.business-customer-frontend.nrl-uri").
+    getOrElse("")}/${service.toLowerCase}"""
+
 }

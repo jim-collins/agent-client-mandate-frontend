@@ -7,6 +7,7 @@ i-agree = I agree
 mandate.back = Back
 
 agent-client-mandate.error.summaryHeader = There is a problem with the form
+agent.add-a-client.sub-header = Add a client
 
 #client search mandate
 client.search-mandate.title = Search your mandate
@@ -77,4 +78,47 @@ client.agent-confirmation.finish-signout = Finish and sign out
 
 
 
+
+
+#agent select service
+agent.select-service.title = Select a service
+agent.select-service.header = Select a service
+agent.select-service.error.general.service = There is a problem with the select service question
+agent.select-service.error.service = You must select one service
+
+#services
+agent.select-service.services.ated = ATED
+
+#agent enter email
+agent.enter-email.title = What is your email address?
+agent.enter-email.header = What is your email address?
+agent.enter-email.error.general.email = There is a problem with the email address question
+agent.enter-email.error.general.confirmEmail = There is a problem with the confirm email address question
+agent.enter-email.error.email = You must answer email address question
+agent.enter-email.error.confirmEmail = You must answer confirm email address question
+agent.enter-email.info.text = We need this to send you notifications relating to this client''s activity within the {0} online service.
+agent.enter-email.field.email.label = Email address
+agent.enter-email.field.confirmEmail.label = Confirm email address
+agent.enter-email.error.email.invalid-by-email-service = This email is invalid
+agent.enter-email.error.general.agent-enter-email-form = This email is invalid
+agent.enter-email.error.confirm-email.not-equal = You must enter same email address in confirm email address
+
+# agent - is client overseas question
+agent.overseas-client-question.title = Does your client have an overseas company without a UK Unique Tax Reference?
+agent.overseas-client-question.header = Does your client have an overseas company without a UK Unique Tax Reference?
+agent.overseas-client-question.error.general.isOverseas = There is a problem with the overseas client question
+agent.overseas-client-question.error.isOverseas = You must answer overseas client question
+
+# agent unique reference
+agent.unique-reference.title = Your unique agent reference for {0} is {1}
+agent.unique-reference.header = Your unique agent reference for {0} is {1}
+agent.unique-reference.next.heading.text = What happens next?
+agent.unique-reference.text1 = You need to give this agent reference to your client so they can authorise you.
+agent.unique-reference.text2 = Your client will then need to:
+agent.unique-reference.ated.list.text1 = Register their company to use the new ATED service, they may need to create a new organisational Government Gateway account.
+agent.unique-reference.ated.list.text2 = Enter the agent reference you gave them.
+agent.unique-reference.text3 = Once they have done this you will receive an email notification.
+agent.unique-reference.text4 = You have 28 days to sign in and accept their request.
+agent.unique-reference.text5 = If you have a number of agents working on ATED within your organisation you may want to filter your clients. To do this you need to add administrators to your account in Government Gateway.
+agent.unique-reference.button = View all my clients
 

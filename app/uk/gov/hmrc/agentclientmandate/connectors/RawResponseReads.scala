@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.auth
+package uk.gov.hmrc.agentclientmandate.connectors
 
-import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
+import uk.gov.hmrc.play.http.{HttpReads, HttpResponse}
 
-class ClientGovernmentGatewaySpec extends PlaySpec with OneServerPerSuite {
-
-  "ClientGovernmentGateway" must {
-
-    "extend Government gateway trait" when {
-
-      "overriding loginURL" in {
-        ClientGovernmentGateway.loginURL must be("http://localhost:9025/gg/sign-in")
-      }
-
-      "overriding continueURL" in {
-        ClientGovernmentGateway.continueURL must be("http://localhost:9959/agent-client-mandate/client-add-email")
-      }
-
-    }
+trait RawResponseReads {
+  implicit val httpReads: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
+    override def read(method: String, url: String, response: HttpResponse) = response
   }
-
 }
