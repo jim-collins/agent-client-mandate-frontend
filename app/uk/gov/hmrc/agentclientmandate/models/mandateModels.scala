@@ -39,6 +39,7 @@ object Status extends Enumeration {
 
   implicit val enumFormat = new Format[Status] {
     def reads(json: JsValue) = JsSuccess(Status.withName(json.as[String]))
+
     def writes(enum: Status) = JsString(enum.toString)
   }
 }
@@ -55,7 +56,14 @@ object Service {
   implicit val formats = Json.format[Service]
 }
 
-case class ClientMandate(id: String, createdBy: String, party: Party, currentStatus: MandateStatus, statusHistory: Option[Seq[MandateStatus]], service: Service)
+case class ClientMandate(
+                          id: String,
+                          createdBy: String,
+                          party: Party,
+                          currentStatus: MandateStatus,
+                          statusHistory: Option[Seq[MandateStatus]],
+                          service: Service
+                        )
 
 object ClientMandate {
   implicit val formats = Json.format[ClientMandate]

@@ -25,14 +25,13 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
 import play.api.libs.json.Json
+import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
 import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.models.{Service, _}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
-import play.api.http.Status._
-import play.api.test.Helpers.{BAD_REQUEST => _, OK => _, SERVICE_UNAVAILABLE => _, _}
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse, InternalServerException}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -52,7 +51,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
       "no agent email is found in the keystore" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        when(mockdataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
+        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
 
         val response = TestAgentClientMandateService.createMandate(service)
         await(response) must be(None)
@@ -63,7 +62,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         val cachedEmail = AgentEmail("aa@aa.com", "aa@aa.com")
 
-        when(mockdataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
+        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
         when(mockAgentClientMandateConnector.createMandate(Matchers.any())(Matchers.any())) thenReturn Future.successful(HttpResponse(SERVICE_UNAVAILABLE, None))
 
         val response = TestAgentClientMandateService.createMandate(service)
@@ -80,7 +79,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         val mandate = createClientMandate("12345", DateTime.now)
         val respJson = Json.toJson(mandate)
 
-        when(mockdataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
+        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
         when(mockAgentClientMandateConnector.createMandate(Matchers.any())(Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
 
         val response = TestAgentClientMandateService.createMandate(service)
@@ -105,13 +104,13 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         val mandate = createClientMandate("12345", DateTime.now)
         val respJson = Json.toJson(mandate)
 
-        when(mockdataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
+        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
 
         val response = TestAgentClientMandateService.createMandate(mandateId)
         val thrown = the[RuntimeException] thrownBy await(response)
         thrown.getMessage must be("No valid agent business UTR found!")
 
-        verify(mockdataCacheService, times(1)).fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())
+        verify(mockDataCacheService, times(1)).fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())
         verify(mockAgentClientMandateConnector, times(0)).createMandate(Matchers.any())(Matchers.any())
       }
 
@@ -148,20 +147,20 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
     )
 
   val mockAgentClientMandateConnector = mock[AgentClientMandateConnector]
-  val mockdataCacheService = mock[DataCacheService]
+  val mockDataCacheService = mock[DataCacheService]
 
   val validFormId: String = "some-from-id"
   val service = "ATED"
   val mandateId = "12345678"
 
   object TestAgentClientMandateService extends AgentClientMandateService {
-    override val dataCacheService = mockdataCacheService
+    override val dataCacheService = mockDataCacheService
     override val agentClientMandateConnector = mockAgentClientMandateConnector
     override val formId: String = validFormId
   }
 
   override def beforeEach(): Unit = {
-    reset(mockdataCacheService)
+    reset(mockDataCacheService)
     reset(mockAgentClientMandateConnector)
   }
 
