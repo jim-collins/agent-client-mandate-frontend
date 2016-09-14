@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.agentclientmandate.viewModelsAndForms
 
-import play.api.data.{Form, FormError}
 import play.api.data.Forms._
+import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 
@@ -83,7 +83,7 @@ object OverseasClientQuestionForm {
   val overseasClientQuestionForm =
     Form(
       mapping(
-        "isOverseas" -> optional(boolean).verifying(Messages("agent.overseas-client-question.error.isOverseas"),x => x.isDefined)
+        "isOverseas" -> optional(boolean).verifying(Messages("agent.overseas-client-question.error.isOverseas"), x => x.isDefined)
       )(OverseasClientQuestion.apply)(OverseasClientQuestion.unapply)
     )
 }

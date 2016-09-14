@@ -17,15 +17,15 @@
 package uk.gov.hmrc.agentclientmandate.services
 
 import org.mockito.Matchers
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
-import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
-import org.mockito.Mockito._
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.config.AgentClientMandateSessionCache
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future

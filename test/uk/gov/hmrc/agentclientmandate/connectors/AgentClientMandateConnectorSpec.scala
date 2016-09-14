@@ -48,10 +48,6 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     override def http: HttpGet with HttpPost with HttpDelete = mockWSHttp
   }
 
-  override def beforeEach(): Unit = {
-    reset(mockWSHttp)
-  }
-
   val mandateId = "12345678"
 
   val mandateDto: ClientMandateDto =
