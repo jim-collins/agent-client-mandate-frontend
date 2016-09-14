@@ -29,7 +29,7 @@ class ExternalUrlsSpec extends PlaySpec with OneServerPerSuite {
     }
 
     "contain loginCallback for Client" in {
-      ExternalUrls.loginCallbackClient must be("http://localhost:9959/agent-client-mandate/client-search-mandate")
+      ExternalUrls.loginCallbackClient must be("http://localhost:9959/agent-client-mandate/client-add-email")
     }
     "contain loginPath" in {
       ExternalUrls.loginPath must be("gg/sign-in")

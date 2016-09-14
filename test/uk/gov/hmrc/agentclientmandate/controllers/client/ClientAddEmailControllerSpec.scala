@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
-import play.api.mvc.Result
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{SessionBuilder, AuthBuilder}
@@ -62,7 +62,7 @@ class ClientAddEmailControllerSpec extends PlaySpec with OneServerPerSuite with 
         clientAddEmail { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be ("What is your email address?")
+          document.title() must be("What is your email address?")
           document.getElementById("header").text() must include("What is your email address?")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("email_field").text() must be("Email address")
@@ -73,6 +73,16 @@ class ClientAddEmailControllerSpec extends PlaySpec with OneServerPerSuite with 
 
     }
 
+    "redirect to respective page " when {
+
+      "valid form is submitted" in {
+        continueWithAuthorisedClient { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/agent-client-mandate/client-agent-reference"))
+        }
+      }
+
+    }
 
   }
 
@@ -82,7 +92,7 @@ class ClientAddEmailControllerSpec extends PlaySpec with OneServerPerSuite with 
     override val authConnector = mockAuthConnector
   }
 
-  override def beforeEach {
+  override def beforeEach() = {
     reset(mockAuthConnector)
   }
 
@@ -102,5 +112,14 @@ class ClientAddEmailControllerSpec extends PlaySpec with OneServerPerSuite with 
     val result = TestAddEmailController.addEmail().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
+
+  def continueWithAuthorisedClient(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    val result = TestAddEmailController.continue().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
 
 }

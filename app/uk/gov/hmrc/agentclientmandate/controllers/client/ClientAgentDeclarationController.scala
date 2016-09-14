@@ -28,11 +28,10 @@ object ClientAgentDeclarationController extends ClientAgentDeclarationController
 
 trait ClientAgentDeclarationController extends FrontendController with Actions {
 
-
-    def clientAgentDeclaration = AuthorisedFor(ClientRegime, GGConfidence) {
-      implicit authContext => implicit request =>
-        Ok(views.html.client.clientAgentDeclaration())
-    }
+  def clientAgentDeclaration = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit request =>
+      Ok(views.html.client.clientAgentDeclaration())
+  }
 
 
 }

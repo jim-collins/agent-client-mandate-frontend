@@ -15,10 +15,15 @@ GET         /client-rejected-mandate        uk.gov.hmrc.agentclientmandate.contr
 
 GET         /client-add-email               uk.gov.hmrc.agentclientmandate.controllers.client.AddEmailController.addEmail
 
+POST        /client-add-email               uk.gov.hmrc.agentclientmandate.controllers.client.AddEmailController.continue
+
 GET         /client-agent-reference         uk.gov.hmrc.agentclientmandate.controllers.client.AgentReferenceController.agentReference
+
+POST        /client-agent-reference        uk.gov.hmrc.agentclientmandate.controllers.client.AgentReferenceController.continue
 
 GET         /client-review-agent            uk.gov.hmrc.agentclientmandate.controllers.client.ClientReviewAgentController.reviewAgent
 
 GET         /client-agent-declaration       uk.gov.hmrc.agentclientmandate.controllers.client.ClientAgentDeclarationController.clientAgentDeclaration
 
 GET         /client-agent-confirmation      uk.gov.hmrc.agentclientmandate.controllers.client.ClientAgentConfirmationController.clientAgentConfirmation
+

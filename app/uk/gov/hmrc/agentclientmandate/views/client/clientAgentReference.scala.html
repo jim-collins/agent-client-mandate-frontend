@@ -2,30 +2,37 @@
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@import uk.gov.hmrc.play.views.html.helpers._
 
 @(clientAgentRefForm: Form[ClientAgentReference])(implicit request: Request[_])
 
 @main_template(title = Messages("client.agent-ref.title")) {
 
-<h1 id="header" class="heading-xlarge">
+  <h1 id="header" class="heading-xlarge">
     <span class="pre-heading" id="pre-heading">@Messages("client.agent-ref.title")</span>
     @Messages("client.agent-ref.header")
-</h1>
+  </h1>
 
-@mandateErrorSummary(clientAgentRefForm, "client.search-mandate.error.general")
+  @mandateErrorSummary(clientAgentRefForm, "client.search-mandate.error.general")
 
-<div class="form-group">
+  @form(action = routes.AgentReferenceController.continue()) {
 
-    @mandateInput(clientAgentRefForm("agentRef"),
-    '_label -> Messages("client.agent-ref.label"),
-    '_fieldsetAttributesHelpQuestion -> "agent-reference-help-question",
-    '_fieldsetQuestion -> Messages("client.agent-ref.help.question"),
-    '_HelpQuestionAnswer -> Html(Messages("client.agent-ref.help.answer")),
-    '_showConstraints -> false)
+    <div class="form-group">
 
-</div>
+      @mandateInput(clientAgentRefForm("agentRef"),
+      '_label -> Messages("client.agent-ref.label"),
+      '_fieldsetAttributesHelpQuestion -> "agent-reference-help-question",
+      '_fieldsetQuestion -> Messages("client.agent-ref.help.question"),
+      '_HelpQuestionAnswer -> Html(Messages("client.agent-ref.help.answer")),
+      '_showConstraints -> false)
 
-<button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+
+
+    <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+  }
+
+  </div>
+  <a href="@uk.gov.hmrc.agentclientmandate.controllers.client.routes.AddEmailController.addEmail" id="back" class="back-link">@Messages("mandate.back")</a>
 
 
 }

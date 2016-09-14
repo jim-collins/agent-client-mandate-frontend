@@ -1,6 +1,8 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
 @()(implicit request: Request[_])
 
 
@@ -24,6 +26,8 @@
         <li id="dec-info">@Messages("client.agent-declaration.information")</li>
     </ul>
 
+  @form(action = routes.ClientAgentConfirmationController.clientAgentConfirmation()) {
+
     <div class="form-group">
         <label class="block-label" for="confirm">
             <input id="agree" type="checkbox" name="agree" value="I agree">
@@ -34,6 +38,12 @@
     <div class="form-group">
         <button class="button" id="confirm_btn" type="submit">@Messages("continue-button")</button>
     </div>
+
+  }
+  </div>
+  <a href="@uk.gov.hmrc.agentclientmandate.controllers.client.routes.ClientReviewAgentController.reviewAgent" id="back" class="back-link">@Messages("mandate.back")</a>
+
+
 
 
 }

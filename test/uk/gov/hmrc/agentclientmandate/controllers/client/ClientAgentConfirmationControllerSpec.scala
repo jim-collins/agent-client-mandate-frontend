@@ -41,11 +41,6 @@ class ClientAgentConfirmationControllerSpec extends PlaySpec with OneServerPerSu
         status(result) mustNot be(NOT_FOUND)
       }
 
-      "POST /agent-client-mandate/client-agent-confirmation" in {
-        val result = route(FakeRequest(POST, "/agent-client-mandate/client-agent-confirmation")).get
-        status(result) mustNot be(NOT_FOUND)
-      }
-
     }
 
     "redirect to login page for UNAUTHENTICATED client" when {
@@ -76,11 +71,11 @@ class ClientAgentConfirmationControllerSpec extends PlaySpec with OneServerPerSu
         agentConfirmAuthorisedClient { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Your request to appoint Agent Limited has been successfully submitted")
+          document.title() must be("What happens next?")
           document.getElementById("notification").text() must be("Your agent will receive an email notification.")
-          document.getElementById("header").text() must be("What happens next?")
-          document.getElementById("list").text() must include("Your agent has 28 days to accept the request your request by accessing the ATED service.\nYour request is shown in your agents ATED online service with the client name Gilbert.")
-          document.getElementById("submit").text() must be("Finish and sign out")
+          document.getElementById("heading").text() must be("What happens next?")
+          document.getElementById("list").text() must include("Your agent has 28 days to accept the request your request by accessing the ATED service.")
+          document.getElementById("finish_btn").text() must be("Finish and sign out")
         }
       }
 

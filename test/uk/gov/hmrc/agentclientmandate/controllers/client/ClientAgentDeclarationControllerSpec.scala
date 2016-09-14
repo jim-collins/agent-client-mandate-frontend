@@ -25,6 +25,7 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{SessionBuilder, AuthBuilder}
+import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -33,6 +34,11 @@ import scala.concurrent.Future
 class ClientAgentDeclarationControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
 
   "ClientDeclarationControllerSpec" must {
+
+
+    "use correct authConnector" in {
+      ClientAgentDeclarationController.authConnector must be(FrontendAuthConnector)
+    }
 
     "not return NOT_FOUND at route " when {
       "GET /agent-client-mandate/client-review-agent" in {
@@ -58,13 +64,12 @@ class ClientAgentDeclarationControllerSpec extends PlaySpec with OneServerPerSui
     "return agent declaration view for AUTHORISED client" when {
 
       "client requests(GET) for search declaration view" in {
-        clientAgentDeclarationAuthenticatedClient { result =>
+        clientAgentDeclaration { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Declaration and consent")
           document.getElementById("header").text() must include("Declaration and consent")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
-          document.getElementById("declaration-info").text() must be("This authority allows HMRC to exchange and disclose information about you with your agent and to deal with them on matters relating to ATED.\n\nYou as the property owner will remain responsible for all aspects of you dealings with HMRC, even if your agent submits returns and makes payments on your behalf.")
           document.getElementById("declare-title").text() must be("I declare that:")
           document.getElementById("agent-name").text() must be("the nominated agent [Agent Name] has agreed to act on my behalf in respect of ATED")
           document.getElementById("dec-info").text() must be("that the information I have provided is correct and complete")

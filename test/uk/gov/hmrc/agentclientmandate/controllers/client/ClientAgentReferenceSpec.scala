@@ -82,6 +82,17 @@ class ClientAgentReferenceSpec extends PlaySpec with OneServerPerSuite with Mock
 
   }
 
+  "redirect to respective page " when {
+
+    "valid form is submitted" in {
+      continueWithAuthorisedClient { result =>
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result) must be(Some("/agent-client-mandate/client-review-agent"))
+      }
+    }
+
+  }
+
   val mockAuthConnector = mock[AuthConnector]
 
   object TestAgentReferenceController extends AgentReferenceController {
@@ -102,6 +113,14 @@ class ClientAgentReferenceSpec extends PlaySpec with OneServerPerSuite with Mock
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     val result = TestAgentReferenceController.agentReference().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def continueWithAuthorisedClient(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    val result = TestAgentReferenceController.continue().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

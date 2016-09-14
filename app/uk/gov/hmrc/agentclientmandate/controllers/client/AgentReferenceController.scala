@@ -35,4 +35,10 @@ trait AgentReferenceController extends FrontendController with Actions {
       Ok(views.html.client.clientAgentReference(ClientAgentReferenceForm.clientAgentRefForm))
   }
 
+  def continue = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit request =>
+      Redirect(routes.ClientReviewAgentController.reviewAgent())
+  }
+
+
 }
