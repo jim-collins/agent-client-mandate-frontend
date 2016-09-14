@@ -1,5 +1,7 @@
+@import uk.gov.hmrc.agentclientmandate.models._
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
-@()(implicit request: Request[_])
+
+@(clientMandate: Option[ClientMandate])(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 

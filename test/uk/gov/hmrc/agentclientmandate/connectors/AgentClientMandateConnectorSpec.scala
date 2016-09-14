@@ -36,6 +36,10 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     override val hooks = NoneRequired
   }
 
+  override def beforeEach(): Unit = {
+    reset(mockWSHttp)
+  }
+
   val mockWSHttp = mock[MockHttp]
 
   object TestAgentClientMandateConnector extends AgentClientMandateConnector {
@@ -47,6 +51,8 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
   override def beforeEach(): Unit = {
     reset(mockWSHttp)
   }
+
+  val mandateId = "12345678"
 
   val mandateDto: ClientMandateDto =
     ClientMandateDto(
@@ -74,6 +80,20 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
     }
 
+    "fetch a valid mandate" in {
+      val successResponse = Json.toJson(mandateDto)
+      implicit val hc: HeaderCarrier = HeaderCarrier()
+
+      when(mockWSHttp.GET[HttpResponse]
+        (Matchers.any())
+        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+
+      val response = TestAgentClientMandateConnector.fetchMandate(mandateId)
+      await(response).status must be(OK)
+
+    }
+
   }
+
 
 }

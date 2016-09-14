@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
+import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.OverseasClientQuestionForm._
@@ -23,7 +24,6 @@ import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 
 object OverseasClientQuestionController extends OverseasClientQuestionController {
   val authConnector: AuthConnector = FrontendAuthConnector
@@ -40,9 +40,9 @@ trait OverseasClientQuestionController extends FrontendController with Actions {
     implicit authContext => implicit request =>
       overseasClientQuestionForm.bindFromRequest.fold(
         formWithError => BadRequest(views.html.agent.overseasClientQuestion(formWithError, service)),
-        data =>{
+        data => {
           val isOverSeas = data.isOverseas.getOrElse(false)
-          if(isOverSeas) Redirect(nrlUri(service))
+          if (isOverSeas) Redirect(nrlUri(service))
           else Redirect(routes.UniqueAgentReferenceController.view(service))
         }
       )
