@@ -14,33 +14,23 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.agent
+package uk.gov.hmrc.agentclientmandate.controllers.client
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
-import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
-import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
+import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
-import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-object UniqueAgentReferenceController extends UniqueAgentReferenceController {
-  val authConnector: AuthConnector = FrontendAuthConnector
-  val agentClientMandateService: AgentClientMandateService = AgentClientMandateService
+object ClientAgentConfirmationController extends ClientAgentConfirmationController {
+  val authConnector = FrontendAuthConnector
 }
 
-trait UniqueAgentReferenceController extends FrontendController with Actions {
+trait ClientAgentConfirmationController extends FrontendController with Actions {
 
-  def agentClientMandateService: AgentClientMandateService
-
-  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def clientAgentConfirmation = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      for {
-        clientMandate <- agentClientMandateService.createMandate(service)
-      } yield {
-        Ok(views.html.agent.uniqueAgentReference(clientMandate))
-      }
+      Ok(views.html.client.clientAgentConfirmation())
   }
+
 }
-
-

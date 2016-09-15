@@ -46,7 +46,45 @@ object ApproveClientMandateForm {
   val approveClientMandateForm =
     Form(
       mapping(
-        "approved" -> optional(boolean).verifying(Messages("client.approve-mandate.error.approved"),x => x.isDefined)
+        "approved" -> optional(boolean).verifying(Messages("client.approve-mandate.error.approved"), x => x.isDefined)
       )(ApproveClientMandate.apply)(ApproveClientMandate.unapply)
+    )
+}
+
+case class ClientAddEmail(email: String, confirmEmail: String)
+
+object ClientAddEmail {
+  implicit val formats = Json.format[ClientAddEmail]
+}
+
+object ClientAddEmailForm {
+  val emailLength = 241
+  val clientAddEmailForm =
+    Form(
+      mapping(
+        "email" -> text
+          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength)),
+        "confirmEmail" -> text
+          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
+      )
+      (ClientAddEmail.apply)(ClientAddEmail.unapply)
+    )
+}
+
+case class ClientAgentReference(agentRef: String)
+
+object ClientAgentReference {
+  implicit val formats = Json.format[ClientAgentReference]
+}
+
+object ClientAgentReferenceForm {
+  val agentRefLength = 35
+  val clientAgentRefForm =
+    Form(
+      mapping(
+        "email" -> text
+          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= agentRefLength))
+      )
+      (ClientAgentReference.apply)(ClientAgentReference.unapply)
     )
 }

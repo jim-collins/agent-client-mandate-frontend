@@ -1,7 +1,11 @@
 submit-button = Submit
+continue-button = Continue
 radio-yes = Yes
 radio-no = No
-continue-button = Continue
+i-agree = I agree
+
+mandate.back = Back
+
 
 agent-client-mandate.error.summaryHeader = There is a problem with the form
 agent.add-a-client.sub-header = Add a client
@@ -28,6 +32,54 @@ client.accept-mandate.header = Client accept confirmation
 #client reject mandate
 client.reject-mandate.title = Client reject confirmation
 client.reject-mandate.header = Client reject confirmation
+
+#client add email
+client.add-email.title = What is your email address?
+client.add-email.preheader = Appoint an agent
+client.add-email.header = What is your email address?
+client.add-email.lede = We need this to send you notifications relating to the ATED online service. This should be your address not your agents.
+client.add-email = Email address
+client.add-email.confirm-email = Confirm email address
+
+#client agent reference
+client.agent-ref.title = What is the agent''s reference?
+client.agent-ref.header = What is the agent''s reference?
+client.agent-ref.label = Agent reference
+client.agent-ref.help.question = What is an agent reference?
+client.agent-ref.help.answer = Your agent must set up their agency for ATED and send you their agent reference.
+
+#client review agent
+client.review-agent.title = Check that this is the agent that you want to appoint
+client.review-agent.header = Check that this is the agent that you want to appoint
+client.review-agent.preheader = Appoint an agent
+client.review-agent.table-head = Agent Limited
+client.review-agent.agent-reference = Agent reference
+client.review-agent.email = Your email address
+client.review-agent.submit = Confirm and appoint agent
+
+#client agent declaration
+client.agent-declaration.title = Declaration and consent
+client.agent-declaration.header = Declaration and consent
+client.agent-declaration.pre-heading = Appoint an agent
+client.agent-declaration.declaration-info = <p>This authority allows HMRC to exchange and disclose information about you with your agent and to deal with them on matters relating to ATED.</p><p>You as the property owner will remain responsible for all aspects of you dealings with HMRC, even if your agent submits returns and makes payments on your behalf.</p>
+client.agent-declaration.declare-header = I declare that:
+client.agent-declaration.agent-name = the nominated agent [Agent Name] has agreed to act on my behalf in respect of ATED
+client.agent-declaration.information = that the information I have provided is correct and complete
+
+#client agent confirmation
+client.agent-confirmation.title = What happens next?
+client.agent-confirmation.banner-text = Your request to appoint Agent Limited has been successfully submitted
+client.agent-confirmation.notification = Your agent will receive an email notification.
+client.agent-confirmation.header = What happens next?
+client.agent-confirmation.your-agent = Your agent has 28 days to accept the request your request by accessing the ATED service.
+client.agent-confirmation.your-request = Your request is shown in your agents ATED online service with the client name Gilbert.
+client.agent-confirmation.this-authority = This authority will remain in place until you <a href="#">change or cancel your agent.</a>
+client.agent-confirmation.sign-in = You can sign in at any point to view your <a href="#">ATED online service</a>
+client.agent-confirmation.finish-signout = Finish and sign out
+
+
+
+
 
 #agent select service
 agent.select-service.title = Select a service

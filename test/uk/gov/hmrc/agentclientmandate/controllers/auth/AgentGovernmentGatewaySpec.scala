@@ -34,5 +34,5 @@ class AgentGovernmentGatewaySpec extends PlaySpec with OneServerPerSuite {
 
     }
   }
-  
+
 }

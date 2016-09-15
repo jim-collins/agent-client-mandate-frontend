@@ -18,9 +18,9 @@ package uk.gov.hmrc.agentclientmandate.service
 
 import play.api.Logger
 import play.api.libs.json.Json
+import play.mvc.Http.Status.OK
 import uk.gov.hmrc.agentclientmandate.connectors.EmailServiceConnector
 import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
-import play.mvc.Http.Status.OK
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

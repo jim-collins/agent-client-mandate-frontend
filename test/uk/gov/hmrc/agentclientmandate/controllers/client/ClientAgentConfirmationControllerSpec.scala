@@ -30,19 +30,14 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
+class ClientAgentConfirmationControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
 
-  "ClientConfirmMandateController" must {
+  "ClientSearchMandateController" must {
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/client-accepted-mandate" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/client-accepted-mandate")).get
-        status(result) mustNot be(NOT_FOUND)
-      }
-
-      "GET /agent-client-mandate/client-rejected-mandate" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/client-rejected-mandate")).get
+      "GET /agent-client-mandate/client-agent-confirmation" in {
+        val result = route(FakeRequest(GET, "/agent-client-mandate/client-agent-confirmation")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -50,8 +45,8 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
 
     "redirect to login page for UNAUTHENTICATED client" when {
 
-      "client requests(GET) for search mandate view" in {
-        approveUnAuthenticatedClient { result =>
+      "client requests(GET) for agent confirm view" in {
+        agentConfirmUnAuthenticatedClient { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -61,8 +56,8 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
 
     "redirect to unauthorised page for UNAUTHORISED client" when {
 
-      "client requests(GET) for search mandate view" in {
-        approveUnAuthenticatedClient { result =>
+      "client requests(GET) for agent confirm view" in {
+        agentConfirmUnAuthorisedClient { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -70,27 +65,17 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
 
     }
 
-    "return confirm mandate view for AUTHORISED client" when {
+    "return search mandate view for AUTHORISED client" when {
 
-      "client requests(GET) for search mandate view" in {
-        approveAuthorisedClient { result =>
+      "client requests(GET) for agent confirm view" in {
+        agentConfirmAuthorisedClient { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Client accept confirmation")
-          document.getElementById("header").text() must be("Client accept confirmation")
-        }
-      }
-
-    }
-
-    "return confirm reject mandate view for AUTHORISED client" when {
-
-      "client requests(GET) for search mandate view" in {
-        rejectAuthorisedClient { result =>
-          status(result) must be(OK)
-          val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Client reject confirmation")
-          document.getElementById("header").text() must be("Client reject confirmation")
+          document.title() must be("What happens next?")
+          document.getElementById("notification").text() must be("Your agent will receive an email notification.")
+          document.getElementById("heading").text() must be("What happens next?")
+          document.getElementById("list").text() must include("Your agent has 28 days to accept the request your request by accessing the ATED service.")
+          document.getElementById("finish_btn").text() must be("Finish and sign out")
         }
       }
 
@@ -100,33 +85,34 @@ class ClientConfirmMandateControllerSpec extends PlaySpec with OneServerPerSuite
 
   val mockAuthConnector = mock[AuthConnector]
 
-  object TestClientConfirmMandateController extends ClientConfirmMandateController {
+  object TestClientAgentConfirmationController extends ClientAgentConfirmationController {
     val authConnector = mockAuthConnector
   }
 
-  def approveUnAuthenticatedClient(test: Future[Result] => Any) {
+  def agentConfirmUnAuthenticatedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestClientConfirmMandateController.accepted().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestClientAgentConfirmationController.clientAgentConfirmation().apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def approveAuthorisedClient(test: Future[Result] => Any) {
+
+  def agentConfirmUnAuthorisedClient(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
+    AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
+    val result = TestClientAgentConfirmationController.clientAgentConfirmation().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def agentConfirmAuthorisedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestClientConfirmMandateController.accepted().apply(SessionBuilder.buildRequestWithSession(userId))
-    test(result)
-  }
-
-  def rejectAuthorisedClient(test: Future[Result] => Any) {
-    val userId = s"user-${UUID.randomUUID}"
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
-    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestClientConfirmMandateController.rejected().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientAgentConfirmationController.clientAgentConfirmation().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

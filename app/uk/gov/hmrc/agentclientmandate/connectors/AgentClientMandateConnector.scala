@@ -41,6 +41,11 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 
+  def fetchMandate(mandateId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val getUrl = s"$serviceUrl/$agentClientMandateUrl/$mandate/$mandateId"
+    Logger.info(s"[AgentClientMandateConnector][fetchMandate] - GET - $getUrl")
+    http.GET[HttpResponse](getUrl)
+  }
 }
 
 object AgentClientMandateConnector extends AgentClientMandateConnector {
