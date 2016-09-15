@@ -35,7 +35,7 @@ trait AgentClientMandateService {
 
   def formId: String
 
-  def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[ClientMandate]] = {
+  def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[CreateMandateResponse]] = {
     dataCacheService.fetchAndGetFormData[AgentEmail](formId) flatMap {
       case Some(cachedEmail) =>
         //TODO: Change exception message
@@ -49,7 +49,7 @@ trait AgentClientMandateService {
         val mandateDto = ClientMandateDto(partyDto, contactDto, serviceDto)
         agentClientMandateConnector.createMandate(mandateDto) map {
           response => response.status match {
-            case OK => response.json.asOpt[ClientMandate]
+            case CREATED => response.json.asOpt[CreateMandateResponse]
             case status => None
           }
         }

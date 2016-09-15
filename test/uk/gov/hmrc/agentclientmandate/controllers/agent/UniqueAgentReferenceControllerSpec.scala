@@ -78,7 +78,7 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Your unique agent reference for {0} is {1}")
-          document.getElementById("header").text() must include("Your unique agent reference for {0} is {1}")
+          document.getElementById("header").text() must include("Your unique agent reference for [client name] is 123456789")
 
         }
       }
@@ -119,9 +119,7 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val clientMandate = ClientMandate("12345", hc.gaUserId.getOrElse("credid"),
-      Party("JARN123456", "Joe Bloggs", "Organisation", ContactDetails("test@test.com", "0123456789")),
-      MandateStatus(Status.Pending, DateTime.now(), "credid"), None, Service(None, "ATED"))
+    val clientMandate = CreateMandateResponse(mandateId = "123456789")
 
     when(mockAgentClientMandateService.createMandate(Matchers.eq(service))(Matchers.any(), Matchers.any()))
       .thenReturn(Future.successful(Some(clientMandate)))
