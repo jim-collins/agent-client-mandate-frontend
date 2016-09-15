@@ -20,6 +20,12 @@ import org.joda.time.DateTime
 import play.api.libs.json._
 import uk.gov.hmrc.agentclientmandate.models.Status.Status
 
+case class CreateMandateResponse(mandateId: String)
+
+object CreateMandateResponse {
+  implicit val formats = Json.format[CreateMandateResponse]
+}
+
 case class ContactDetails(email: String, phone: String)
 
 object ContactDetails {
@@ -32,6 +38,7 @@ object Party {
   implicit val formats = Json.format[Party]
 }
 
+// $COVERAGE-OFF$
 object Status extends Enumeration {
   type Status = Value
 
@@ -43,6 +50,7 @@ object Status extends Enumeration {
     def writes(enum: Status) = JsString(enum.toString)
   }
 }
+// $COVERAGE-ON$
 
 case class MandateStatus(status: Status, timestamp: DateTime, updatedBy: String)
 

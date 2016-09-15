@@ -1,14 +1,15 @@
 @import uk.gov.hmrc.agentclientmandate.models._
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 
-@(clientMandate: Option[ClientMandate])(implicit request: Request[_])
+@(clientMandate: Option[CreateMandateResponse])(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 
 
 @main_template(title = Messages("agent.unique-reference.title")) {
-  <h1 id="header" class="heading-xlarge">
-    @Messages("agent.unique-reference.title")
+
+   <h1 id="header" class="heading-xlarge">
+    @Messages("agent.unique-reference.header", "[client name]", clientMandate.map(_.mandateId).getOrElse("xyz"))
   </h1>
 
   <p class="heading-medium">@Messages("agent.unique-reference.next.heading.text")</p>
@@ -28,5 +29,7 @@
   <div class="form-group">
     <a class="button" id="submit" href="#">@Messages("agent.unique-reference.button")</a>
   </div>
+
+
 
 }

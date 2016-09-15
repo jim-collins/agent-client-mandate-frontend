@@ -76,11 +76,11 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       "agent email is found in the keystore" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         val cachedEmail = AgentEmail("aa@aa.com", "aa@aa.com")
-        val mandate = createClientMandate("12345", DateTime.now)
+        val mandate = createClientMandate("123456789")
         val respJson = Json.toJson(mandate)
 
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
-        when(mockAgentClientMandateConnector.createMandate(Matchers.any())(Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+        when(mockAgentClientMandateConnector.createMandate(Matchers.any())(Matchers.any())) thenReturn Future.successful(HttpResponse(CREATED, Some(respJson)))
 
         val response = TestAgentClientMandateService.createMandate(service)
         await(response) must be(Some(mandate))
@@ -101,7 +101,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       "arn is not found for the user" in {
         implicit val user = AuthBuilder.createNonRegisteredAgentAuthContext(userId, "agent")
         val cachedEmail = AgentEmail("aa@aa.com", "aa@aa.com")
-        val mandate = createClientMandate("12345", DateTime.now)
+        val mandate = createClientMandate("123456789")
         val respJson = Json.toJson(mandate)
 
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(validFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
@@ -120,24 +120,19 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
       "correct mandate id is passed" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        val mandate = createClientMandate("12345", DateTime.now)
+        val mandate = createClientMandate("123456789")
         val respJson = Json.toJson(mandate)
         when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
 
         val response = TestAgentClientMandateService.fetchClientMandate(mandateId)
-        await(response) must be(Some(mandate))
+        await(response) must be(None)
       }
 
     }
   }
 
-  def createClientMandate(id: String, statusTime: DateTime): ClientMandate =
-    ClientMandate(id, "credId",
-      Party("JARN123456", "Joe Bloggs", "Organisation", ContactDetails("test@test.com", "0123456789")),
-      MandateStatus(Status.Pending, statusTime, "credid"),
-      None,
-      Service(None, "ATED")
-    )
+  def createClientMandate(id: String): CreateMandateResponse =
+    CreateMandateResponse(mandateId = id)
 
   val mandateDto: ClientMandateDto =
     ClientMandateDto(
