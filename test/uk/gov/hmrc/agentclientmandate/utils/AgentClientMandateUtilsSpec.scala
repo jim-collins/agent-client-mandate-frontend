@@ -17,8 +17,6 @@
 package uk.gov.hmrc.agentclientmandate.utils
 
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
-import play.api.i18n.Messages
-import utils.AgentClientMandateUtils
 
 class AgentClientMandateUtilsSpec extends PlaySpec with OneServerPerSuite {
 

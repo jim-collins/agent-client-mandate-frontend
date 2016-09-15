@@ -20,7 +20,7 @@ import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 import play.api.libs.json.Json
-import utils.AgentClientMandateUtils._
+import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils._
 
 import scala.annotation.tailrec
 
