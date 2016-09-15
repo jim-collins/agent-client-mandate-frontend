@@ -20,6 +20,7 @@ import play.api.data.Forms._
 import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
 import play.api.libs.json.Json
+import utils.AgentClientMandateUtils._
 
 import scala.annotation.tailrec
 
@@ -86,5 +87,29 @@ object OverseasClientQuestionForm {
         "isOverseas" -> optional(boolean).verifying(Messages("agent.overseas-client-question.error.isOverseas"), x => x.isDefined)
       )(OverseasClientQuestion.apply)(OverseasClientQuestion.unapply)
     )
+}
+
+case class CollectClientBusinessDetails(businessName: String, utr: String)
+
+object CollectClientBusinessDetails {
+  implicit val formats = Json.format[CollectClientBusinessDetails]
+}
+
+object CollectClientBusinessDetailsForm {
+
+  val length40 = 40
+  val length0 = 0
+  val length105 = 105
+
+  val collectClientBusinessDetails = Form(mapping(
+    "businessName" -> text
+      .verifying(Messages("agent.enter-business-details-error.businessName"), x => x.length > length0)
+      .verifying(Messages("agent.enter-business-details-error.businessName.length"), x => x.isEmpty || (x.nonEmpty && x.length <= length105)),
+    "utr" -> text
+      .verifying(Messages("agent.enter-business-details-error.utr"), x => x.length > length0)
+      .verifying(Messages("agent.enter-business-details-error.utr.length"), x => x.isEmpty || (x.nonEmpty && x.matches("""^[0-9]{10}$""")))
+      .verifying(Messages("agent.enter-business-details-error.invalidUTR"), x => x.isEmpty || (validateUTR(Option(x)) || !x.matches("""^[0-9]{10}$""")))
+
+  )(CollectClientBusinessDetails.apply)(CollectClientBusinessDetails.unapply))
 }
 

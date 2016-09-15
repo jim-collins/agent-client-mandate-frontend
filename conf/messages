@@ -6,6 +6,7 @@ i-agree = I agree
 
 mandate.back = Back
 
+
 agent-client-mandate.error.summaryHeader = There is a problem with the form
 agent.add-a-client.sub-header = Add a client
 
@@ -108,6 +109,24 @@ agent.overseas-client-question.title = Does your client have an overseas company
 agent.overseas-client-question.header = Does your client have an overseas company without a UK Unique Tax Reference?
 agent.overseas-client-question.error.general.isOverseas = There is a problem with the overseas client question
 agent.overseas-client-question.error.isOverseas = You must answer overseas client question
+
+# agent enter business details
+agent.enter-business-details-error.businessName = You must enter a company name.
+agent.enter-business-details-error.businessName.length = A business name cannot be more than 105 characters.
+agent.enter-business-details-error.utr = You must enter a Unique Tax Reference number.
+agent.enter-business-details-error.utr.length = A Unique Tax Reference number must be 10 digits.
+agent.enter-business-details-error.invalidUTR = Unique Tax Reference number is not valid.
+agent.enter-business-details.business-name.label = Display name
+agent.enter-business-details.utr.label = Unique Tax Reference (UTR)
+agent.enter-business-details.title = What are your clients company details?
+agent.enter-business-details.header = What are your clients company details?
+agent.enter-business-details.business-name.hint = This does not change the official company name.
+agent.enter-business-details.utr.hint = A UTR number is made up of 10 or 13 digits, If it is 13 digits only enter the last 10.
+agent.enter-business-details.utr.help.question = Where to find their UTR
+agent.enter-business-details.utr.help.answer = <p>It is issued by HMRC when you register your business or for Self-Assessment. If your UTR is 13 digits only enter the last 10.</p><p>It can usually be found in the header of any letter issued by HMRC next to headings such as ''Tax Reference'', ''UTR'' or ''Official Use''</p>
+agent.enter-business-details-error.businessName.businessName = There is a problem with the Display name field
+agent.enter-business-details-error.businessName.utr = There is a problem with the Unique Tax Reference field
+
 
 # agent unique reference
 agent.unique-reference.title = Your unique agent reference for {0} is {1}

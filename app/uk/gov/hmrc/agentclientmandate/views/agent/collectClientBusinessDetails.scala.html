@@ -1,0 +1,46 @@
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+
+@(collectClientBusinessDetails: Form[CollectClientBusinessDetails], service: String)(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@implicitFormInstance = @{ Some(collectClientBusinessDetails) }
+
+@main_template(title = Messages("agent.enter-business-details.title")) {
+<h1 id="header" class="heading-xlarge">
+  <span id="pre-header" class="pre-heading">@Messages("agent.add-a-client.sub-header")</span>
+  @Messages("agent.enter-business-details.header")
+</h1>
+
+@mandateErrorSummary(collectClientBusinessDetails, "agent.enter-business-details-error.businessName")
+
+@form(action = routes.CollectClientBusinessDetailsController.submit(service)) {
+
+<div id="agent-enter-business-details-form">
+
+  @mandateInput(collectClientBusinessDetails("businessName"),
+  '_label -> Messages("agent.enter-business-details.business-name.label"),
+  '_hintText -> Messages("agent.enter-business-details.business-name.hint"),
+  '_id -> "businessName",
+  '_showConstraints -> false)
+
+  @mandateInput(collectClientBusinessDetails("utr"),
+  '_label -> Messages("agent.enter-business-details.utr.label"),
+  '_hintText -> Messages("agent.enter-business-details.utr.hint"),
+  '_id -> "utr",
+  '_fieldsetQuestion -> Messages("agent.enter-business-details.utr.help.question"),
+  '_HelpQuestionAnswer -> Html(Messages("agent.enter-business-details.utr.help.answer")),
+  '_showConstraints -> false)
+
+</div>
+
+<div class="form-group">
+  <button class="button" id="continue" type="submit">@Messages("continue-button")</button>
+</div>
+
+}
+
+}
