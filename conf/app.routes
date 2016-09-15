@@ -26,6 +26,8 @@ GET         /client-agent-declaration       uk.gov.hmrc.agentclientmandate.contr
 
 GET         /client-agent-confirmation      uk.gov.hmrc.agentclientmandate.controllers.client.ClientAgentConfirmationController.clientAgentConfirmation
 
+GET         /agent-client-details           uk.gov.hmrc.agentclientmandate.controllers.agent.CheckClientDetailsController.checkClientDetails
+
 
 GET     /select-service                 uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.select
 POST    /select-service                 uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.submit

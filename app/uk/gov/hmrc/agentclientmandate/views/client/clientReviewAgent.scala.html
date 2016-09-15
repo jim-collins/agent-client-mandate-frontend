@@ -16,9 +16,7 @@
   @form(action = routes.ClientAgentDeclarationController.clientAgentDeclaration()) {
   <table>
     <tr>
-        <th id ="table-head">@Messages("client.review-agent.table-head")</th>
-        <th></th>
-        <th></th>
+        <td id ="table-head" colspan="3"><span class="heading-medium">@Messages("client.review-agent.table-head")</span></td>
     </tr>
     <tr>
         <td id="agent-reference">@Messages("client.review-agent.agent-reference")</td>
@@ -39,7 +37,6 @@
   </div>
 
   }
-  </div>
   <a href="@uk.gov.hmrc.agentclientmandate.controllers.client.routes.AgentReferenceController.agentReference" id="back" class="back-link">@Messages("mandate.back")</a>
 
 

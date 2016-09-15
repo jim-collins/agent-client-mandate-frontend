@@ -141,3 +141,10 @@ agent.unique-reference.text4 = You have 28 days to sign in and accept their requ
 agent.unique-reference.text5 = If you have a number of agents working on ATED within your organisation you may want to filter your clients. To do this you need to add administrators to your account in Government Gateway.
 agent.unique-reference.button = View all my clients
 
+# agent client details
+agent.check-client-details.title = Add a client
+agent.check-client-details.header = Check your clients details
+agent.check-client-details.your-email = Your email address
+agent.check-client-details.registered-name = Registered name
+agent.check-client-details.utr = Unique tax reference
+agent.check-client-details.confirm = Confirm and add client
