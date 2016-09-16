@@ -17,7 +17,7 @@
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
-import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
+import uk.gov.hmrc.agentclientmandate.controllers.auth.{AgentRegime, ClientRegime}
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -28,7 +28,8 @@ object CheckClientDetailsController extends CheckClientDetailsController {
 }
 
 trait CheckClientDetailsController extends FrontendController with Actions {
-  def checkClientDetails = AuthorisedFor(ClientRegime, GGConfidence) {
+
+  def checkClientDetails = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit authContext => implicit request =>
       Ok(views.html.agent.checkClientDetails())
   }

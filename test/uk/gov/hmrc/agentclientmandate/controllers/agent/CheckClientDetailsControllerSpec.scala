@@ -46,10 +46,10 @@ class CheckClientDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
 
     }
 
-    "return check client details view for AUTHORISED client" when {
+    "return check client details view for AUTHORISED agent" when {
 
       "client requests(GET) for check client details view" in {
-        checkClientDetails { result =>
+        checkClientDetailsAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Check your clients details")
@@ -58,6 +58,17 @@ class CheckClientDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
           document.getElementById("registered-name").text must be("Registered name")
           document.getElementById("utr").text must be("Unique tax reference")
           document.getElementById("submit").text must be("Confirm and add client")
+        }
+      }
+
+    }
+
+    "redirect client details view for UNAUTHORISED agent" when {
+
+      "agent requests(GET) for 'what is your email address' view" in {
+        checkClientDetailsUnAuthorisedAgent { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must include("/gg/sign-in")
         }
       }
 
@@ -76,14 +87,28 @@ class CheckClientDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
   }
 
 
-  def checkClientDetails(test: Future[Result] => Any) {
+  def checkClientDetailsAuthorisedAgent(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
-    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
     val result = TestCheckClientDetailsController.checkClientDetails().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
+
+  def checkClientDetailsUnAuthorisedAgent(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
+    AuthBuilder.mockUnAuthorisedAgent(userId, mockAuthConnector)
+    val result = TestCheckClientDetailsController.checkClientDetails().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+
+
+
+
 
 
 }
