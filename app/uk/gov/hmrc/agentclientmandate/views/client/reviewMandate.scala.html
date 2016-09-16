@@ -1,7 +1,7 @@
-@import uk.gov.hmrc.agentclientmandate.controllers.client.routes
-@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @()(implicit request: Request[_])
 
+@import uk.gov.hmrc.agentclientmandate.controllers.client.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
@@ -13,31 +13,35 @@
     @Messages("client.review-agent.header")
   </h1>
 
-  @form(action = routes.ClientAgentDeclarationController.clientAgentDeclaration()) {
-  <table>
-    <tr>
-        <td id ="table-head" colspan="3"><span class="heading-medium">@Messages("client.review-agent.table-head")</span></td>
-    </tr>
-    <tr>
+  @form(action = routes.MandateDeclarationController.view()) {
+    <table>
+      <tr>
+        <th id ="table-head">@Messages("client.review-agent.table-head")</th>
+        <th></th>
+        <th></th>
+      </tr>
+      <tr>
         <td id="agent-reference">@Messages("client.review-agent.agent-reference")</td>
         <td id="email-address">@Messages("client.review-agent.email")</td>
         <td><a href="#">Edit</a></td>
-    </tr>
-    <tr>
+      </tr>
+      <tr>
         <td>@Messages("Your email address")</td>
         <td>@Messages("name@company.com")</td>
         <td><a href="#">Edit</a></td>
-    </tr>
-  </table>
+      </tr>
+    </table>
 
-  <div class="form-group">
-    <button class="button" id="submit" type="submit" onclick="ga('send', 'event', 'Client - requests agent - review', 'button clicked')">
+    <div class="form-group">
+      <button class="button" id="submit" type="submit">
         @Messages("client.review-agent.submit")
-    </button>
-  </div>
+      </button>
+    </div>
 
   }
-  <a href="@uk.gov.hmrc.agentclientmandate.controllers.client.routes.AgentReferenceController.agentReference" id="back" class="back-link">@Messages("mandate.back")</a>
 
+  <div class="form-group">
+    <a href="@routes.SearchMandateController.view" id="back" class="back-link">@Messages("mandate.back")</a>
+  </div>
 
 }

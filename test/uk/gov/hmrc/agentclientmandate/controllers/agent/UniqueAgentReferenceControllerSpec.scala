@@ -78,7 +78,18 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Your unique agent reference for {0} is {1}")
-          document.getElementById("header").text() must include("Your unique agent reference for [client name] is 123456789")
+          document.getElementById("banner-text").text() must include("Your unique agent reference for [client name] is 123456789")
+          document.getElementById("what-happens-next").text must be("What happens next?")
+          document.getElementById("authorise-instruction").text must be("You need to give this agent reference to your client so they can authorise you.")
+          document.getElementById("client-instruction").text must be("Your client will then need to:")
+          document.getElementById("client-instruction-1").text must be("Register their company to use the new ATED service, they may need to create a new organisational Government Gateway account.")
+          document.getElementById("client-instruction-2").text must be("Enter the agent reference you gave them.")
+          document.getElementById("email-instruction").text must be("Once they have done this you will receive an email notification.")
+          document.getElementById("request-expire").text must be("You have 28 days to sign in and accept their request.")
+          document.getElementById("admin-instruction").text must be("If you have a number of agents working on ATED within your organisation you may want to filter your clients. To do this you need to add administrators to your account in Government Gateway.")
+          document.getElementById("submit").attr("href") must be("#")
+          document.getElementById("ated-service").attr("href") must be("#")
+          document.getElementById("admin").attr("href") must be("#")
 
         }
       }

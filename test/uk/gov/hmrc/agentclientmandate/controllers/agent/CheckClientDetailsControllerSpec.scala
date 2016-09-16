@@ -26,8 +26,7 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.builders.{SessionBuilder, AuthBuilder}
-import uk.gov.hmrc.agentclientmandate.controllers.client.AddEmailController
+import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -39,7 +38,7 @@ class CheckClientDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
   "CheckClientDetailsControllerSpec" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /agent-client-details/check-client-details" in {
+      "GET /agent-client-details/agent-client-details" in {
         val result = route(FakeRequest(GET, "/agent-client-mandate/agent-client-details")).get
         status(result) mustNot be(NOT_FOUND)
       }
@@ -104,11 +103,5 @@ class CheckClientDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     val result = TestCheckClientDetailsController.checkClientDetails().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
-
-
-
-
-
-
 
 }

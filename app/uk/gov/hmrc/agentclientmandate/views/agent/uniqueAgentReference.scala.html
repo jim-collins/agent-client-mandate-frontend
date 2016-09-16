@@ -8,23 +8,29 @@
 
 @main_template(title = Messages("agent.unique-reference.title")) {
 
-   <h1 id="header" class="heading-xlarge">
-    @Messages("agent.unique-reference.header", "[client name]", clientMandate.map(_.mandateId).getOrElse("xyz"))
-  </h1>
 
-  <p class="heading-medium">@Messages("agent.unique-reference.next.heading.text")</p>
+<div class="transaction-banner--complete" id="banner">
+  <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'> @Html(Messages("agent.unique-reference.header", "[client name]", clientMandate.map(_.mandateId).getOrElse("xyz"))) </h1>
+</div>
 
-  <p id="text-1">@Messages("agent.unique-reference.text1")</p>
-  <p id="text-2">@Messages("agent.unique-reference.text2")</p>
+
+
+  <p class="heading-medium" id="what-happens-next">@Messages("agent.unique-reference.next.heading.text")</p>
+
+  <p id="authorise-instruction">@Messages("agent.unique-reference.text1")</p>
+
+<div class = "form-group">
+  <p id="client-instruction">@Messages("agent.unique-reference.text2")</p>
 
   <ol class="list-number">
-    <li>@Messages("agent.unique-reference.ated.list.text1")</li>
-    <li>@Messages("agent.unique-reference.ated.list.text2")</li>
+    <li id="client-instruction-1">@Html(Messages("agent.unique-reference.ated.list.text1"))</li>
+    <li id="client-instruction-2">@Messages("agent.unique-reference.ated.list.text2")</li>
   </ol>
+</div>
 
-  <p id="text-3">@Messages("agent.unique-reference.text3")</p>
-  <p id="text-4">@Messages("agent.unique-reference.text4")</p>
-  <p id="text-5">@Messages("agent.unique-reference.text5")</p>
+  <p id="email-instruction">@Messages("agent.unique-reference.text3")</p>
+  <p id="request-expire">@Messages("agent.unique-reference.text4")</p>
+  <p id="admin-instruction">@Html(Messages("agent.unique-reference.text5"))</p>
 
   <div class="form-group">
     <a class="button" id="submit" href="#">@Messages("agent.unique-reference.button")</a>

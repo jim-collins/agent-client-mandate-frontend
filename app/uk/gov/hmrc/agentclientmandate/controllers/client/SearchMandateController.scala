@@ -16,32 +16,29 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.client
 
-import uk.gov.hmrc.agentclientmandate._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ApproveClientMandateForm.approveClientMandateForm
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientAgentReferenceForm
+import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
-import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-object ClientApproveMandateController extends ClientApproveMandateController {
-  val authConnector: AuthConnector = FrontendAuthConnector
+
+object SearchMandateController extends SearchMandateController {
+  val authConnector = FrontendAuthConnector
 }
 
-trait ClientApproveMandateController extends FrontendController with Actions {
+trait SearchMandateController extends FrontendController with Actions {
 
-  def approve = AuthorisedFor(ClientRegime, GGConfidence) {
-    implicit authContext => implicit user => Ok(views.html.client.approveMandate(approveClientMandateForm))
+  def view = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit request =>
+      Ok(views.html.client.searchMandate(ClientAgentReferenceForm.clientAgentRefForm))
   }
 
   def submit = AuthorisedFor(ClientRegime, GGConfidence) {
-    implicit authContext => implicit user =>
-      approveClientMandateForm.bindFromRequest.fold(
-        formWithError => BadRequest(views.html.client.approveMandate(formWithError)),
-        data =>
-          if (data.approved.getOrElse(false)) Redirect(routes.ClientConfirmMandateController.accepted())
-          else Redirect(routes.ClientConfirmMandateController.rejected())
-      )
+    implicit authContext => implicit request =>
+      Redirect(routes.ReviewMandateController.view())
   }
+
 
 }

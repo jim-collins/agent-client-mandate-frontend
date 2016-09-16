@@ -19,23 +19,26 @@
 
   @mandateErrorSummary(addEmailForm, "client.search-mandate.error.general")
 
-  @form(action = routes.AddEmailController.continue()) {
+  @form(action = routes.CollectEmailController.submit()) {
 
     <div class="form-group">
 
-        @mandateInput(addEmailForm("email"),
+      @mandateInput(addEmailForm("email"),
         '_label -> Messages("client.add-email"),
-        '_showConstraints -> false)
+        '_showConstraints -> false
+      )
 
-        @mandateInput(addEmailForm("confirmEmail"),
+      @mandateInput(addEmailForm("confirmEmail"),
         '_label -> Messages("client.add-email.confirm-email"),
-        '_showConstraints -> false)
+        '_showConstraints -> false
+      )
 
     </div>
 
     <div class="form-group">
         <button class="button" id="confirm_btn" type="submit">@Messages("continue-button")</button>
     </div>
+
   }
 
 }

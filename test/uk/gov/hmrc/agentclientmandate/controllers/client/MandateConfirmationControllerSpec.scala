@@ -30,14 +30,14 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class ClientAgentConfirmationControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
+class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
 
-  "ClientSearchMandateController" must {
+  "MandateConfirmationController" must {
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/client-agent-confirmation" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/client-agent-confirmation")).get
+      "GET /agent-client-mandate/mandate-confirmation" in {
+        val result = route(FakeRequest(GET, "/agent-client-mandate/mandate-confirmation")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -46,7 +46,7 @@ class ClientAgentConfirmationControllerSpec extends PlaySpec with OneServerPerSu
     "redirect to login page for UNAUTHENTICATED client" when {
 
       "client requests(GET) for agent confirm view" in {
-        agentConfirmUnAuthenticatedClient { result =>
+        viewUnAuthenticatedClient { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -57,7 +57,7 @@ class ClientAgentConfirmationControllerSpec extends PlaySpec with OneServerPerSu
     "redirect to unauthorised page for UNAUTHORISED client" when {
 
       "client requests(GET) for agent confirm view" in {
-        agentConfirmUnAuthorisedClient { result =>
+        viewUnAuthorisedClient { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -68,7 +68,7 @@ class ClientAgentConfirmationControllerSpec extends PlaySpec with OneServerPerSu
     "return search mandate view for AUTHORISED client" when {
 
       "client requests(GET) for agent confirm view" in {
-        agentConfirmAuthorisedClient { result =>
+        viewAuthorisedClient { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What happens next?")
@@ -85,34 +85,34 @@ class ClientAgentConfirmationControllerSpec extends PlaySpec with OneServerPerSu
 
   val mockAuthConnector = mock[AuthConnector]
 
-  object TestClientAgentConfirmationController extends ClientAgentConfirmationController {
+  object TestMandateConfirmationController extends MandateConfirmationController {
     val authConnector = mockAuthConnector
   }
 
-  def agentConfirmUnAuthenticatedClient(test: Future[Result] => Any) {
+  def viewUnAuthenticatedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestClientAgentConfirmationController.clientAgentConfirmation().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
 
-  def agentConfirmUnAuthorisedClient(test: Future[Result] => Any) {
+  def viewUnAuthorisedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestClientAgentConfirmationController.clientAgentConfirmation().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def agentConfirmAuthorisedClient(test: Future[Result] => Any) {
+  def viewAuthorisedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestClientAgentConfirmationController.clientAgentConfirmation().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
