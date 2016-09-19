@@ -37,8 +37,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   "CollectEmailController" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /agent-client-mandate/collect-email" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/collect-email")).get
+      "GET /mandate/client/collect-email" in {
+        val result = route(FakeRequest(GET, "/mandate/client/collect-email")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -77,7 +77,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       "valid form is submitted" in {
         continueWithAuthorisedClient { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/agent-client-mandate/search-mandate"))
+          redirectLocation(result) must be(Some("/mandate/client/search-mandate"))
         }
       }
 

@@ -35,8 +35,8 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
   "MandateDeclarationController" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /agent-client-mandate/mandate-declaration" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/mandate-declaration")).get
+      "GET /mandate/client/mandate-declaration" in {
+        val result = route(FakeRequest(GET, "/mandate/client/mandate-declaration")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }

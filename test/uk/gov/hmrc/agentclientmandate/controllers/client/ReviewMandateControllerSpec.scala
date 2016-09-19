@@ -35,8 +35,8 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
   "ClientReviewAgentControllerSpec" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /agent-client-mandate/review-mandate" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/review-mandate")).get
+      "GET /mandate/client/review-mandate" in {
+        val result = route(FakeRequest(GET, "/mandate/client/review-mandate")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }

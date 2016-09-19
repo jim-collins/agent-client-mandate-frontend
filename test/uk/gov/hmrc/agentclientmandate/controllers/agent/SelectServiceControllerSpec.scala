@@ -37,13 +37,13 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/select-service" in {
-        val result = route(FakeRequest(GET, s"/agent-client-mandate/select-service")).get
+      "GET /mandate/agent/select-service" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/select-service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
-      "POST /agent-client-mandate/select-service" in {
-        val result = route(FakeRequest(POST, s"/agent-client-mandate/select-service")).get
+      "POST /mandate/agent/select-service" in {
+        val result = route(FakeRequest(POST, s"/mandate/agent/select-service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -92,7 +92,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("service" -> "ated")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/agent-client-mandate/collect-agent-email/ated"))
+          redirectLocation(result) must be(Some("/mandate/agent/collect-email/ated"))
         }
       }
     }

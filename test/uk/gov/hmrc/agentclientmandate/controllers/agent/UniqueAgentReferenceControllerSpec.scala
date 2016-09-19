@@ -18,7 +18,6 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import java.util.UUID
 
-import org.joda.time.DateTime
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
@@ -28,7 +27,7 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
-import uk.gov.hmrc.agentclientmandate.models.{Service, _}
+import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -42,8 +41,8 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/unique-agent-reference/:service" in {
-        val result = route(FakeRequest(GET, s"/agent-client-mandate/unique-agent-reference/$service")).get
+      "GET /mandate/agent/unique-agent-reference/:service" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/unique-agent-reference/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 

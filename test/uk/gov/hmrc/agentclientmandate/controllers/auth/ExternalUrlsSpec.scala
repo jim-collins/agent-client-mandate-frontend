@@ -25,11 +25,11 @@ class ExternalUrlsSpec extends PlaySpec with OneServerPerSuite {
       ExternalUrls.companyAuthHost must be("http://localhost:9025")
     }
     "contain loginCallback for Agent" in {
-      ExternalUrls.loginCallbackAgent must be("http://localhost:9959/agent-client-mandate/select-service")
+      ExternalUrls.loginCallbackAgent must be("http://localhost:9959/mandate/agent/select-service")
     }
 
     "contain loginCallback for Client" in {
-      ExternalUrls.loginCallbackClient must be("http://localhost:9959/agent-client-mandate/client-add-email")
+      ExternalUrls.loginCallbackClient must be("http://localhost:9959/mandate/client/collect-email")
     }
     "contain loginPath" in {
       ExternalUrls.loginPath must be("gg/sign-in")
