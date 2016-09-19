@@ -10,29 +10,6 @@ mandate.back = Back
 agent-client-mandate.error.summaryHeader = There is a problem with the form
 agent.add-a-client.sub-header = Add a client
 
-#client search mandate
-client.search-mandate.title = Search your mandate
-client.search-mandate.header = Search your mandate
-client.search-mandate.field.id.label = Enter your mandate number
-client.search-mandate.error.general.id = There is a problem with the mandate question
-client.search-mandate.error.id = You must answer mandate number question
-
-#client approve mandate
-client.approve-mandate.title = Approve your mandate
-client.approve-mandate.header = Approve your mandate
-client.approve-mandate.field.approve.legend = Do you approve your mandate?
-client.approve-mandate.error.general.approved = There is a problem with the mandate question
-client.approve-mandate.error.approved = You must answer mandate number question
-
-#client accept mandate
-client.accept-mandate.title = Client accept confirmation
-client.accept-mandate.header = Client accept confirmation
-
-
-#client reject mandate
-client.reject-mandate.title = Client reject confirmation
-client.reject-mandate.header = Client reject confirmation
-
 #client collect email
 client.collect-email.title = What is your email address?
 client.collect-email.preheader = Appoint an agent
@@ -50,12 +27,18 @@ client.collect-email.error.confirm-email.not-equal = You must enter same email a
 client.collect-email.error.email.invalid-by-email-service = This email is invalid
 client.collect-email.error.general.client-collect-email-form = This email is invalid
 
-#client agent reference
-client.agent-ref.title = What is the agent''s reference?
-client.agent-ref.header = What is the agent''s reference?
-client.agent-ref.label = Agent reference
-client.agent-ref.help.question = What is an agent reference?
-client.agent-ref.help.answer = Your agent must set up their agency for ATED and send you their agent reference.
+#client search mandate
+client.search-mandate.title = What is the agent''s reference?
+client.search-mandate.header = What is the agent''s reference?
+client.search-mandate.label = Agent reference
+client.search-mandate.help.question = What is an agent reference?
+client.search-mandate.help.answer = Your agent must set up their agency for ATED and send you their agent reference.
+client.search-mandate.error.general.mandateRef = There is a problem with the agent reference question
+client.search-mandate.error.mandateRef = You must answer agent reference question
+client.search-mandate.error.mandateRef.length = Agent reference cannot be more than 10 characters.
+client.search-mandate.error.general.mandate-ref-form = The agent reference you entered was not found. Please check and try again.
+client.search-mandate.error.mandateRef.not-found-by-mandate-service = The agent reference you entered was not found. Please check and try again.
+
 
 #client review agent
 client.review-agent.title = Check that this is the agent that you want to appoint

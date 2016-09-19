@@ -49,7 +49,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
     "redirect to login page for UNAUTHENTICATED client" when {
 
-      "client requests(GET) for search mandate view" in {
+      "client requests(GET) for collect email view" in {
         viewWithUnAuthenticatedClient { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
@@ -60,7 +60,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
     "return search mandate view for AUTHORISED client" when {
 
-      "client requests(GET) for search mandate view and the data hasn't been cached" in {
+      "client requests(GET) for collect email view and the data hasn't been cached" in {
         viewWithAuthorisedClient() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -69,11 +69,13 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("email_field").text() must be("Email address")
           document.getElementById("confirmEmail_field").text() must be("Confirm email address")
+          document.getElementById("email").`val`() must be("")
+          document.getElementById("confirmEmail").`val`() must be("")
           document.getElementById("confirm_btn").text() must be("Continue")
         }
       }
 
-      "client requests(GET) for search mandate view and the data has been cached" in {
+      "client requests(GET) for collect email view pre-populated and the data has been cached" in {
         val cached = ClientCache(email = Some(ClientEmail("aa@mail.com", "aa@mail.com")))
         viewWithAuthorisedClient(Some(cached)) { result =>
           status(result) must be(OK)
@@ -170,6 +172,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
+
     }
 
   }

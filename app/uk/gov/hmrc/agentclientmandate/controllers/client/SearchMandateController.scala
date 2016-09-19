@@ -16,28 +16,62 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.client
 
+import play.api.i18n.Messages
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
+import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
+import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientCache
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.MandateReferenceForm.mandateRefForm
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
+import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+
+import scala.concurrent.Future
 
 
 object SearchMandateController extends SearchMandateController {
-  val authConnector = FrontendAuthConnector
+  val authConnector: AuthConnector = FrontendAuthConnector
+  val dataCacheService: DataCacheService = DataCacheService
+  val mandateService: AgentClientMandateService = AgentClientMandateService
 }
 
-trait SearchMandateController extends FrontendController with Actions {
+trait SearchMandateController extends FrontendController with Actions with MandateConstants {
 
-  def view = AuthorisedFor(ClientRegime, GGConfidence) {
+  def dataCacheService: DataCacheService
+
+  def mandateService: AgentClientMandateService
+
+  def view = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      Ok(views.html.client.searchMandate(mandateRefForm))
+      dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map { a =>
+        a.flatMap(_.mandate) match {
+          case Some(x) => Ok(views.html.client.searchMandate(mandateRefForm.fill(x)))
+          case None => Ok(views.html.client.searchMandate(mandateRefForm))
+        }
+      }
   }
 
-  def submit = AuthorisedFor(ClientRegime, GGConfidence) {
+  def submit = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      Redirect(routes.ReviewMandateController.view())
+      mandateRefForm.bindFromRequest.fold(
+        formWithErrors => Future.successful(BadRequest(views.html.client.searchMandate(formWithErrors))),
+        data => mandateService.fetchClientMandate(data.mandateRef) flatMap {
+          case Some(x) => dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
+            case Some(y) => dataCacheService.cacheFormData[ClientCache](clientFormId, y.copy(mandate = Some(data))) flatMap { cachedData =>
+              Future.successful(Redirect(routes.ReviewMandateController.view()))
+            }
+            case None => dataCacheService.cacheFormData[ClientCache](clientFormId, ClientCache(mandate = Some(data))) flatMap { cachedData =>
+              Future.successful(Redirect(routes.ReviewMandateController.view()))
+            }
+          }
+          case None =>
+            val errorMsg = Messages("client.search-mandate.error.mandateRef.not-found-by-mandate-service")
+            val errorForm = mandateRefForm.withError(key = "mandate-ref-form", message = errorMsg).fill(data)
+            Future.successful(BadRequest(views.html.client.searchMandate(errorForm)))
+        }
+      )
   }
 
 
