@@ -36,8 +36,8 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/mandate-confirmation" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/mandate-confirmation")).get
+      "GET /mandate/client/mandate-confirmation" in {
+        val result = route(FakeRequest(GET, "/mandate/client/mandate-confirmation")).get
         status(result) mustNot be(NOT_FOUND)
       }
 

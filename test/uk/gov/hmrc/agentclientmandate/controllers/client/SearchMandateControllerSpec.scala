@@ -36,8 +36,8 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/search-mandate" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/search-mandate")).get
+      "GET /mandate/client/search-mandate" in {
+        val result = route(FakeRequest(GET, "/mandate/client/search-mandate")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -86,7 +86,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     "valid form is submitted" in {
       submitWithAuthorisedClient { result =>
         status(result) must be(SEE_OTHER)
-        redirectLocation(result) must be(Some("/agent-client-mandate/review-mandate"))
+        redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
       }
     }
 

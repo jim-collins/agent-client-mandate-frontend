@@ -38,8 +38,8 @@ class CheckClientDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
   "CheckClientDetailsControllerSpec" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /agent-client-details/agent-client-details" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/agent-client-details")).get
+      "GET /mandate/agent/agent-client-details" in {
+        val result = route(FakeRequest(GET, "/mandate/agent/agent-client-details")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
