@@ -16,23 +16,69 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
+import java.util.UUID
+
+import org.jsoup.Jsoup
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.agentclientmandate.builders.{SessionBuilder, AuthBuilder}
+import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.play.http.HeaderCarrier
+
+import scala.concurrent.Future
 
 class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
   "EditMandateDetailsControllerSpec" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /agent-client-mandate/agent-edit-mandate" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/agent-edit-details")).get
+      "GET /mandate/agent/agent-edit-client" in {
+        val result = route(FakeRequest(GET, "/mandate/agent/agent-edit-client")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
 
+    "return 'edit mandate' view for AUTHORISED agent" when {
+
+      "client requests(GET) for edit mandate view" in {
+        viewWithAuthorisedAgent { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Edit ACME Limited")
+          document.getElementById("header").text() must include("Manage your ATED service Edit ACME Limited")
+          document.getElementById("sub-heading").text() must be("Unique agent reference GG123456")
+          document.getElementById("displayName_field").text() must include("Display name")
+          document.getElementById("displayName_hint").text() must include("This does not change the official company name.")
+          document.getElementById("utr_field").text() must include("Unique tax reference")
+          document.getElementById("utr_hint").text() must include("A UTR number is made up of 10 or 13 digits, If it is 13 digits only enter the last 10.")
+          document.getElementById("utr-help-question").text() must be("Where to find their UTR")
+        }
+      }
+
+    }
+
   }
+
+  val mockAuthConnector = mock[AuthConnector]
+  val service = "ATED"
+
+  object TestEditMandateDetailsController extends EditMandateController {
+    override val authConnector = mockAuthConnector
+  }
+
+  def viewWithAuthorisedAgent(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    val result = TestEditMandateDetailsController.view.apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+
 
 }

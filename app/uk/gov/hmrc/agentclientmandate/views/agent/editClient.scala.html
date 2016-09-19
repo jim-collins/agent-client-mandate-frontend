@@ -4,14 +4,51 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@()(implicit request: Request[_])
 
-@main_template(title = Messages("Edit")) {
+@(editMandateDetailsForm: Form[EditMandateDetails])(implicit request: Request[_])
+
+@main_template(title = Messages("agent.edit-mandate-details.title")) {
 
 <h1 id="header" class="heading-xlarge">
-    <span class="pre-heading" id="pre-heading">@Messages("Manage your ATED service")</span>
-    @Messages("Edit ACME Limited")
+    <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header")</span>
+    @Messages("agent.edit-mandate-details.header")
 </h1>
+
+<h2 id="sub-heading">@Messages("Unique agent reference GG123456")</h2>
+
+@form(action = routes.EditMandateController.submit()) {
+
+<div class="form-group">
+
+    <div class="form-field">
+    @mandateInput(editMandateDetailsForm("displayName"),
+    '_label -> Messages("agent.edit-mandate-details.displayName"),
+    '_hintText -> Messages("agent.edit-mandate-details.hint"),
+    '_showConstraints -> false)
+    </div>
+
+    <div class="form-field">
+    @mandateInput(editMandateDetailsForm("utr"),
+    '_label -> Messages("agent.edit-mandate-details.utr"),
+    '_hintText -> Messages("agent.edit-mandate-details.utr-hint"),
+    '_fieldsetAttributesHelpQuestion -> "utr-help-question",
+    '_fieldsetQuestion -> "Where to find their UTR",
+    '_HelpQuestionAnswer -> Html(Messages("agent.edit-mandate-details.answer")),
+    '_showConstraints -> false)
+    </div>
+
+    <div class="form-field">
+    @mandateInput(editMandateDetailsForm("email"),
+    '_label -> Messages("agent.edit-mandate-details.email"),
+    '_showConstraints -> false)
+    </div>
+
+    <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+
+</div>
+
+}
+
 
 }
 
