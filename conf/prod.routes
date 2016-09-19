@@ -1,6 +1,6 @@
 # Add all the application routes to the app.routes file
 
-->          /agent-client-mandate           app.Routes
+->          /mandate                        app.Routes
 
 ->          /                               health.Routes
 

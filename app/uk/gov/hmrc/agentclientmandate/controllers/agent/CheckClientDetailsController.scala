@@ -14,31 +14,24 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.client
+package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
-import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientAgentReferenceForm
+import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 
-object AgentReferenceController extends AgentReferenceController {
+object CheckClientDetailsController extends CheckClientDetailsController {
   val authConnector = FrontendAuthConnector
 }
 
-trait AgentReferenceController extends FrontendController with Actions {
+trait CheckClientDetailsController extends FrontendController with Actions {
 
-  def agentReference = AuthorisedFor(ClientRegime, GGConfidence) {
+  def checkClientDetails = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.clientAgentReference(ClientAgentReferenceForm.clientAgentRefForm))
+      Ok(views.html.agent.checkClientDetails())
   }
-
-  def continue = AuthorisedFor(ClientRegime, GGConfidence) {
-    implicit authContext => implicit request =>
-      Redirect(routes.ClientReviewAgentController.reviewAgent())
-  }
-
 
 }

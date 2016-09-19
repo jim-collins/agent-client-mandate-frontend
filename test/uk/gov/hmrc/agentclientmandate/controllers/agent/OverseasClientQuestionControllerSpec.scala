@@ -37,13 +37,13 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/overseas-client-question/:service" in {
-        val result = route(FakeRequest(GET, s"/agent-client-mandate/overseas-client-question/$service")).get
+      "GET /mandate/agent/overseas-client-question/:service" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/overseas-client-question/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
-      "POST /agent-client-mandate/overseas-client-question/:service" in {
-        val result = route(FakeRequest(POST, s"/agent-client-mandate/overseas-client-question/$service")).get
+      "POST /mandate/agent/overseas-client-question/:service" in {
+        val result = route(FakeRequest(POST, s"/mandate/agent/overseas-client-question/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -101,7 +101,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/agent-client-mandate/unique-agent-reference/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/unique-agent-reference/$service"))
         }
       }
     }

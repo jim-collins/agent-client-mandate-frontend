@@ -18,20 +18,27 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientAgentReferenceForm
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 
-object ClientReviewAgentController extends ClientReviewAgentController {
+object SearchMandateController extends SearchMandateController {
   val authConnector = FrontendAuthConnector
 }
 
-trait ClientReviewAgentController extends FrontendController with Actions {
+trait SearchMandateController extends FrontendController with Actions {
 
-  def reviewAgent = AuthorisedFor(ClientRegime, GGConfidence) {
+  def view = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.clientReviewAgent())
+      Ok(views.html.client.searchMandate(ClientAgentReferenceForm.clientAgentRefForm))
   }
+
+  def submit = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit request =>
+      Redirect(routes.ReviewMandateController.view())
+  }
+
 
 }

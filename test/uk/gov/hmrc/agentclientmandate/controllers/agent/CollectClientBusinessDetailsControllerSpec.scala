@@ -20,7 +20,6 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 import java.util.UUID
 
 import org.jsoup.Jsoup
-import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
@@ -29,13 +28,11 @@ import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
-import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
-
 
 
 class CollectClientBusinessDetailsControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
@@ -44,17 +41,17 @@ class CollectClientBusinessDetailsControllerSpec extends PlaySpec with OneServer
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/collect-client-business-details/:service" in {
+      "GET /mandate/agent/collect-client-business-details/:service" in {
 
-        val result = route(FakeRequest(GET, s"/agent-client-mandate/collect-client-business-details/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/collect-client-business-details/$service")).get
         status(result) mustNot be(NOT_FOUND)
 
 
       }
 
-      "POST /agent-client-mandate/collect-client-business-details/:service" in {
+      "POST /mandate/agent/collect-client-business-details/:service" in {
 
-        val result = route(FakeRequest(POST, s"/agent-client-mandate/collect-client-business-details/$service")).get
+        val result = route(FakeRequest(POST, s"/mandate/agent/collect-client-business-details/$service")).get
         status(result) mustNot be(NOT_FOUND)
 
       }
@@ -132,8 +129,7 @@ class CollectClientBusinessDetailsControllerSpec extends PlaySpec with OneServer
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
     val result = TestCollectClientBusinessDetailsControllerSpec.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
-
-
   }
+
 }
 

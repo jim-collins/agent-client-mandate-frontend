@@ -30,15 +30,14 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
+class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
 
-class ClientAgentReferenceSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
-
-  "ClientAgentReferenceSpec" must {
+  "SearchMandateController" must {
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/client-add-email" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/client-agent-reference")).get
+      "GET /mandate/client/search-mandate" in {
+        val result = route(FakeRequest(GET, "/mandate/client/search-mandate")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -49,7 +48,7 @@ class ClientAgentReferenceSpec extends PlaySpec with OneServerPerSuite with Mock
   "redirect to login page for UNAUTHENTICATED client" when {
 
     "client requests(GET) for search mandate view" in {
-      agentRefUnAuthenticatedClient { result =>
+      viewUnAuthenticatedClient { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result).get must include("/gg/sign-in")
       }
@@ -60,7 +59,7 @@ class ClientAgentReferenceSpec extends PlaySpec with OneServerPerSuite with Mock
   "redirect to unauthorised page for UNAUTHORISED client" when {
 
     "client requests for agent reference view" in {
-      agentRefUnAuthenticatedClient { result =>
+      viewUnAuthenticatedClient { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result).get must include("/gg/sign-in")
       }
@@ -71,7 +70,7 @@ class ClientAgentReferenceSpec extends PlaySpec with OneServerPerSuite with Mock
   "return agent reference view for AUTHORISED client" when {
 
     "client requests for agent reference view" in {
-      agentRefAuthorisedClient { result =>
+      viewAuthorisedClient { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
         document.title() must be("What is the agent's reference?")
@@ -85,9 +84,9 @@ class ClientAgentReferenceSpec extends PlaySpec with OneServerPerSuite with Mock
   "redirect to respective page " when {
 
     "valid form is submitted" in {
-      continueWithAuthorisedClient { result =>
+      submitWithAuthorisedClient { result =>
         status(result) must be(SEE_OTHER)
-        redirectLocation(result) must be(Some("/agent-client-mandate/client-review-agent"))
+        redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
       }
     }
 
@@ -95,32 +94,32 @@ class ClientAgentReferenceSpec extends PlaySpec with OneServerPerSuite with Mock
 
   val mockAuthConnector = mock[AuthConnector]
 
-  object TestAgentReferenceController extends AgentReferenceController {
+  object TestSearchMandateController extends SearchMandateController {
     val authConnector = mockAuthConnector
   }
 
-  def agentRefUnAuthenticatedClient(test: Future[Result] => Any) {
+  def viewUnAuthenticatedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestAgentReferenceController.agentReference().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestSearchMandateController.view().apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def agentRefAuthorisedClient(test: Future[Result] => Any) {
+  def viewAuthorisedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestAgentReferenceController.agentReference().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestSearchMandateController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def continueWithAuthorisedClient(test: Future[Result] => Any) {
+  def submitWithAuthorisedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestAgentReferenceController.continue().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestSearchMandateController.submit().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

@@ -20,21 +20,18 @@ import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
-import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-object ClientConfirmMandateController extends ClientConfirmMandateController {
-  val authConnector: AuthConnector = FrontendAuthConnector
+object MandateDeclarationController extends MandateDeclarationController {
+  val authConnector = FrontendAuthConnector
 }
 
-trait ClientConfirmMandateController extends FrontendController with Actions {
+trait MandateDeclarationController extends FrontendController with Actions {
 
-  def accepted = AuthorisedFor(ClientRegime, GGConfidence) {
-    implicit authContext => implicit user => Ok(views.html.client.clientAcceptMandate())
+  def view = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit request =>
+      Ok(views.html.client.mandateDeclaration())
   }
 
-  def rejected = AuthorisedFor(ClientRegime, GGConfidence) {
-    implicit authContext => implicit user => Ok(views.html.client.clientRejectMandate())
-  }
 
 }

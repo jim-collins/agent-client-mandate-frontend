@@ -22,16 +22,15 @@ import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-object ClientAgentDeclarationController extends ClientAgentDeclarationController {
+object MandateConfirmationController extends MandateConfirmationController {
   val authConnector = FrontendAuthConnector
 }
 
-trait ClientAgentDeclarationController extends FrontendController with Actions {
+trait MandateConfirmationController extends FrontendController with Actions {
 
-  def clientAgentDeclaration = AuthorisedFor(ClientRegime, GGConfidence) {
+  def view = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.clientAgentDeclaration())
+      Ok(views.html.client.mandateConfirmation())
   }
-
 
 }

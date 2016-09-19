@@ -19,8 +19,6 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 import java.util.UUID
 
 import org.jsoup.Jsoup
-import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
@@ -32,23 +30,21 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
+class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
 
-class ClientAddEmailControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
-
-  "ClientAddEmailControllerSpec" must {
+  "MandateDeclarationController" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /agent-client-mandate/client-add-email" in {
-        val result = route(FakeRequest(GET, "/agent-client-mandate/client-add-email")).get
+      "GET /mandate/client/mandate-declaration" in {
+        val result = route(FakeRequest(GET, "/mandate/client/mandate-declaration")).get
         status(result) mustNot be(NOT_FOUND)
       }
-
     }
 
     "redirect to login page for UNAUTHENTICATED client" when {
 
       "client requests(GET) for search mandate view" in {
-        addEmailUnAuthenticatedClient { result =>
+        viewUnAuthenticatedClient { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -56,70 +52,46 @@ class ClientAddEmailControllerSpec extends PlaySpec with OneServerPerSuite with 
 
     }
 
-    "return search mandate view for AUTHORISED client" when {
+    "return agent declaration view for AUTHORISED client" when {
 
-      "client requests(GET) for search mandate view" in {
-        clientAddEmail { result =>
+      "client requests(GET) for search declaration view" in {
+        viewAuthorisedClient { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your email address?")
-          document.getElementById("header").text() must include("What is your email address?")
+          document.title() must be("Declaration and consent")
+          document.getElementById("header").text() must include("Declaration and consent")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
-          document.getElementById("email_field").text() must be("Email address")
-          document.getElementById("confirmEmail_field").text() must be("Confirm email address")
+          document.getElementById("declare-title").text() must be("I declare that:")
+          document.getElementById("agent-name").text() must be("the nominated agent [Agent Name] has agreed to act on my behalf in respect of ATED")
+          document.getElementById("dec-info").text() must be("that the information I have provided is correct and complete")
           document.getElementById("confirm_btn").text() must be("Continue")
         }
       }
-
-    }
-
-    "redirect to respective page " when {
-
-      "valid form is submitted" in {
-        continueWithAuthorisedClient { result =>
-          status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/agent-client-mandate/client-agent-reference"))
-        }
-      }
-
     }
 
   }
 
   val mockAuthConnector = mock[AuthConnector]
 
-  object TestAddEmailController extends AddEmailController {
-    override val authConnector = mockAuthConnector
+  object TestMandateDeclarationController extends MandateDeclarationController {
+    val authConnector = mockAuthConnector
   }
 
-  override def beforeEach() = {
-    reset(mockAuthConnector)
-  }
-
-  def addEmailUnAuthenticatedClient(test: Future[Result] => Any) {
+  def viewUnAuthenticatedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestAddEmailController.addEmail().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestMandateDeclarationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def clientAddEmail(test: Future[Result] => Any) {
+  def viewAuthorisedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestAddEmailController.addEmail().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestMandateDeclarationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
-
-  def continueWithAuthorisedClient(test: Future[Result] => Any) {
-    val userId = s"user-${UUID.randomUUID}"
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestAddEmailController.continue().apply(SessionBuilder.buildRequestWithSession(userId))
-    test(result)
-  }
-
 
 }

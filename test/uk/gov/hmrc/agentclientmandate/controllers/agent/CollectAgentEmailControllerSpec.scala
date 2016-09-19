@@ -50,13 +50,13 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
     "not return NOT_FOUND at route " when {
 
-      "GET /agent-client-mandate/collect-agent-email/:service" in {
-        val result = route(FakeRequest(GET, s"/agent-client-mandate/collect-agent-email/$service")).get
+      "GET /mandate/collect-agent-email/:service" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/collect-email/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
-      "POST /agent-client-mandate/collect-agent-email/:service" in {
-        val result = route(FakeRequest(POST, s"/agent-client-mandate/collect-agent-email/$service")).get
+      "POST /mandate/collect-agent-email/:service" in {
+        val result = route(FakeRequest(POST, s"/mandate/agent/collect-email/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -127,7 +127,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@aa.com")
         submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/agent-client-mandate/overseas-client-question/ATED"))
+          redirectLocation(result) must be(Some("/mandate/agent/overseas-client-question/ATED"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())

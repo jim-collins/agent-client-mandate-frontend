@@ -21,36 +21,6 @@ import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 
-case class SearchClientMandate(id: String)
-
-object SearchClientMandate {
-  implicit val formats = Json.format[SearchClientMandate]
-}
-
-object SearchClientMandateForm {
-  val searchClientMandateForm =
-    Form(
-      mapping(
-        "id" -> text.verifying(Messages("client.search-mandate.error.id"), id => id.nonEmpty)
-      )(SearchClientMandate.apply)(SearchClientMandate.unapply)
-    )
-}
-
-case class ApproveClientMandate(approved: Option[Boolean] = None)
-
-object ApproveClientMandate {
-  implicit val formats = Json.format[ApproveClientMandate]
-}
-
-object ApproveClientMandateForm {
-  val approveClientMandateForm =
-    Form(
-      mapping(
-        "approved" -> optional(boolean).verifying(Messages("client.approve-mandate.error.approved"), x => x.isDefined)
-      )(ApproveClientMandate.apply)(ApproveClientMandate.unapply)
-    )
-}
-
 case class ClientAddEmail(email: String, confirmEmail: String)
 
 object ClientAddEmail {

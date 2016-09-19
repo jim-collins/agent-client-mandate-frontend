@@ -1,45 +1,35 @@
-# microservice specific routes
+# micro-service specific routes
 
 GET     /assets/*file                   controllers.Assets.at(path="/public", file)
 
-GET     /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.searchMandate
-POST    /client-search-mandate          uk.gov.hmrc.agentclientmandate.controllers.client.ClientSearchMandateController.submit
+GET     /client/collect-email              uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.view
+POST    /client/collect-email              uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.submit
+
+GET     /client/search-mandate             uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.view
+POST    /client/search-mandate             uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.submit
+
+GET     /client/review-mandate             uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.view
+
+GET     /client/mandate-declaration        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.view
+
+GET     /client/mandate-confirmation       uk.gov.hmrc.agentclientmandate.controllers.client.MandateConfirmationController.view
+
+GET     /agent/agent-client-details       uk.gov.hmrc.agentclientmandate.controllers.agent.CheckClientDetailsController.checkClientDetails
 
 
-GET     /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientApproveMandateController.approve
-POST    /client-approve-mandate         uk.gov.hmrc.agentclientmandate.controllers.client.ClientApproveMandateController.submit
+GET     /agent/select-service             uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.select
+POST    /agent/select-service             uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.submit
 
-GET     /client-accepted-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.accepted
-GET     /client-rejected-mandate        uk.gov.hmrc.agentclientmandate.controllers.client.ClientConfirmMandateController.rejected
+GET     /agent/collect-email/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.view(service: String)
+POST    /agent/collect-email/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.submit(service: String)
 
-GET         /client-add-email               uk.gov.hmrc.agentclientmandate.controllers.client.AddEmailController.addEmail
+GET     /agent/overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.view(service: String)
+POST    /agent/overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.submit(service: String)
 
-POST        /client-add-email               uk.gov.hmrc.agentclientmandate.controllers.client.AddEmailController.continue
+GET     /agent/collect-client-business-details/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.CollectClientBusinessDetailsController.view(service: String)
+POST    /agent/collect-client-business-details/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.CollectClientBusinessDetailsController.submit(service: String)
 
-GET         /client-agent-reference         uk.gov.hmrc.agentclientmandate.controllers.client.AgentReferenceController.agentReference
-
-POST        /client-agent-reference        uk.gov.hmrc.agentclientmandate.controllers.client.AgentReferenceController.continue
-
-GET         /client-review-agent            uk.gov.hmrc.agentclientmandate.controllers.client.ClientReviewAgentController.reviewAgent
-
-GET         /client-agent-declaration       uk.gov.hmrc.agentclientmandate.controllers.client.ClientAgentDeclarationController.clientAgentDeclaration
-
-GET         /client-agent-confirmation      uk.gov.hmrc.agentclientmandate.controllers.client.ClientAgentConfirmationController.clientAgentConfirmation
-
-
-GET     /select-service                 uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.select
-POST    /select-service                 uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.submit
-
-GET     /collect-agent-email/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.view(service: String)
-POST    /collect-agent-email/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.submit(service: String)
-
-GET     /overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.view(service: String)
-POST    /overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.submit(service: String)
-
-GET     /collect-client-business-details/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.CollectClientBusinessDetailsController.view(service: String)
-POST    /collect-client-business-details/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.CollectClientBusinessDetailsController.submit(service: String)
-
-GET     /unique-agent-reference/:service        uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
+GET     /agent/unique-agent-reference/:service        uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 
 GET     /agent-edit-client             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateController.editMandate
 

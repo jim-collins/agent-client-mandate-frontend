@@ -1,30 +1,38 @@
-@import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
-@(searchMandateForm: Form[SearchClientMandate])(implicit request: Request[_])
 
+@(clientAgentRefForm: Form[ClientAgentReference])(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@implicitFormInstance = @{ Some(searchMandateForm) }
+@main_template(title = Messages("client.agent-ref.title")) {
 
-@main_template(title = Messages("client.search-mandate.title")) {
   <h1 id="header" class="heading-xlarge">
-    @Messages("client.search-mandate.header")
+    <span class="pre-heading" id="pre-heading">@Messages("client.agent-ref.title")</span>
+    @Messages("client.agent-ref.header")
   </h1>
 
-  @mandateErrorSummary(searchMandateForm, "client.search-mandate.error.general")
+  @mandateErrorSummary(clientAgentRefForm, "client.search-mandate.error.general")
 
-  @form(action = routes.ClientSearchMandateController.submit()) {
-
-    @mandateInput(searchMandateForm("id"),
-      '_label -> Messages("client.search-mandate.field.id.label"),
-      '_showConstraints -> false)
+  @form(action = routes.SearchMandateController.submit()) {
 
     <div class="form-group">
-      <button class="button" id="submit" type="submit">@Messages("submit-button")</button>
-    </div>
 
+      @mandateInput(clientAgentRefForm("agentRef"),
+      '_label -> Messages("client.agent-ref.label"),
+      '_fieldsetAttributesHelpQuestion -> "agent-reference-help-question",
+      '_fieldsetQuestion -> Messages("client.agent-ref.help.question"),
+      '_HelpQuestionAnswer -> Html(Messages("client.agent-ref.help.answer")),
+      '_showConstraints -> false)
+
+      <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+
+    </div>
   }
+  <div class="form-group">
+    <a href="@routes.CollectEmailController.view" id="back" class="back-link">@Messages("mandate.back")</a>
+  </div>
 
 }
