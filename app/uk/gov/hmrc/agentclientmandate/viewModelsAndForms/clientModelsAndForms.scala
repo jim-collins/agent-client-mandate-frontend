@@ -21,15 +21,15 @@ import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 
-case class ClientAddEmail(email: String, confirmEmail: String)
+case class ClientEmail(email: String, confirmEmail: String)
 
-object ClientAddEmail {
-  implicit val formats = Json.format[ClientAddEmail]
+object ClientEmail {
+  implicit val formats = Json.format[ClientEmail]
 }
 
-object ClientAddEmailForm {
+object ClientEmailForm {
   val emailLength = 241
-  val clientAddEmailForm =
+  val clientEmailForm =
     Form(
       mapping(
         "email" -> text
@@ -37,24 +37,31 @@ object ClientAddEmailForm {
         "confirmEmail" -> text
           .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
       )
-      (ClientAddEmail.apply)(ClientAddEmail.unapply)
+      (ClientEmail.apply)(ClientEmail.unapply)
     )
 }
 
-case class ClientAgentReference(agentRef: String)
+case class MandateReference(mandateRef: String)
 
-object ClientAgentReference {
-  implicit val formats = Json.format[ClientAgentReference]
+object MandateReference {
+  implicit val formats = Json.format[MandateReference]
 }
 
-object ClientAgentReferenceForm {
-  val agentRefLength = 35
-  val clientAgentRefForm =
+object MandateReferenceForm {
+  val mandateRefLength = 35
+
+  val mandateRefForm =
     Form(
       mapping(
-        "email" -> text
-          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= agentRefLength))
+        "mandateRef" -> text
+          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= mandateRefLength))
       )
-      (ClientAgentReference.apply)(ClientAgentReference.unapply)
+      (MandateReference.apply)(MandateReference.unapply)
     )
+}
+
+case class ClientCache(email: Option[ClientEmail] = None, mandate: Option[MandateReference] = None)
+
+object ClientCache {
+  implicit val formats = Json.format[ClientCache]
 }

@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 import java.util.UUID
 
 import org.jsoup.Jsoup
+import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
@@ -27,6 +28,8 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, ClientEmail}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -57,8 +60,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
     "return search mandate view for AUTHORISED client" when {
 
-      "client requests(GET) for search mandate view" in {
-        clientAddEmail { result =>
+      "client requests(GET) for search mandate view and the data hasn't been cached" in {
+        viewWithAuthorisedClient() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What is your email address?")
@@ -66,6 +69,22 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("email_field").text() must be("Email address")
           document.getElementById("confirmEmail_field").text() must be("Confirm email address")
+          document.getElementById("confirm_btn").text() must be("Continue")
+        }
+      }
+
+      "client requests(GET) for search mandate view and the data has been cached" in {
+        val cached = ClientCache(email = Some(ClientEmail("aa@mail.com", "aa@mail.com")))
+        viewWithAuthorisedClient(Some(cached)) { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What is your email address?")
+          document.getElementById("header").text() must include("What is your email address?")
+          document.getElementById("pre-heading").text() must include("Appoint an agent")
+          document.getElementById("email_field").text() must be("Email address")
+          document.getElementById("confirmEmail_field").text() must be("Confirm email address")
+          document.getElementById("email").`val`() must be("aa@mail.com")
+          document.getElementById("confirmEmail").`val`() must be("aa@mail.com")
           document.getElementById("confirm_btn").text() must be("Continue")
         }
       }
@@ -86,13 +105,16 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   }
 
   val mockAuthConnector = mock[AuthConnector]
+  val mockDataCacheService: DataCacheService = mock[DataCacheService]
 
   object TestCollectEmailController extends CollectEmailController {
     override val authConnector = mockAuthConnector
+    override val dataCacheService = mockDataCacheService
   }
 
   override def beforeEach() = {
     reset(mockAuthConnector)
+    reset(mockDataCacheService)
   }
 
   def addEmailUnAuthenticatedClient(test: Future[Result] => Any) {
@@ -103,11 +125,13 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     test(result)
   }
 
-  def clientAddEmail(test: Future[Result] => Any) {
+  def viewWithAuthorisedClient(cachedData: Option[ClientCache] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))
+      (Matchers.any(), Matchers.any())) thenReturn Future.successful(cachedData)
     val result = TestCollectEmailController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
