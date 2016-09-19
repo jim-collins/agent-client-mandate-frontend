@@ -6,30 +6,30 @@
 
 @(addEmailForm: Form[ClientEmail])(implicit request: Request[_])
 
-@main_template(title = Messages("client.add-email.title")) {
+@main_template(title = Messages("client.collect-email.title")) {
 
   <h1 id="header" class="heading-xlarge">
-    <span class="pre-heading" id="pre-heading">@Messages("client.add-email.preheader")</span>
-    @Messages("client.add-email.header")
+    <span class="pre-heading" id="pre-heading">@Messages("client.collect-email.preheader")</span>
+    @Messages("client.collect-email.header")
   </h1>
 
   <p class="lede" id="lede">
-    @Messages("client.add-email.lede")
+    @Messages("client.collect-email.lede")
   </p>
 
-  @mandateErrorSummary(addEmailForm, "client.search-mandate.error.general")
+  @mandateErrorSummary(addEmailForm, "client.collect-email.error.general")
 
   @form(action = routes.CollectEmailController.submit()) {
 
     <div class="form-group">
 
       @mandateInput(addEmailForm("email"),
-        '_label -> Messages("client.add-email"),
+        '_label -> Messages("client.collect-email.email"),
         '_showConstraints -> false
       )
 
       @mandateInput(addEmailForm("confirmEmail"),
-        '_label -> Messages("client.add-email.confirm-email"),
+        '_label -> Messages("client.collect-email.confirm-email"),
         '_showConstraints -> false
       )
 

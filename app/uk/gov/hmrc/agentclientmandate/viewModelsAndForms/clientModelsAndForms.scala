@@ -16,10 +16,12 @@
 
 package uk.gov.hmrc.agentclientmandate.viewModelsAndForms
 
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.libs.json.Json
+
+import scala.annotation.tailrec
 
 case class ClientEmail(email: String, confirmEmail: String)
 
@@ -28,17 +30,44 @@ object ClientEmail {
 }
 
 object ClientEmailForm {
+
   val emailLength = 241
+
   val clientEmailForm =
     Form(
       mapping(
         "email" -> text
-          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength)),
+          .verifying(Messages("client.collect-email.error.email"), email => email.nonEmpty)
+          .verifying(Messages("client.collect-email.error.email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength)),
         "confirmEmail" -> text
-          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
+          .verifying(Messages("client.collect-email.error.confirmEmail"), email => email.nonEmpty)
+          .verifying(Messages("client.collect-email.error.confirmEmail.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
       )
       (ClientEmail.apply)(ClientEmail.unapply)
     )
+
+  def validateConfirmEmail(emailForm: Form[ClientEmail]): Form[ClientEmail] = {
+    def validate = {
+      val email = emailForm.data.get("email").map(_.trim)
+      val confirmEmail = emailForm.data.get("confirmEmail").map(_.trim)
+      (email, confirmEmail) match {
+        case (Some(e1), Some(e2)) if e1 == e2 => Seq()
+        case (Some(e1), Some(e2)) => Seq(Some(FormError("confirmEmail", Messages("client.collect-email.error.confirm-email.not-equal"))))
+        case _ => Seq()
+      }
+    }
+    addErrorsToForm(emailForm, validate.flatten)
+  }
+
+  private def addErrorsToForm[A](form: Form[A], formErrors: Seq[FormError]): Form[A] = {
+    @tailrec
+    def y(f: Form[A], fe: Seq[FormError]): Form[A] = {
+      if (fe.isEmpty) f
+      else y(f.withError(fe.head), fe.tail)
+    }
+    y(form, formErrors)
+  }
+
 }
 
 case class MandateReference(mandateRef: String)
@@ -48,6 +77,7 @@ object MandateReference {
 }
 
 object MandateReferenceForm {
+
   val mandateRefLength = 35
 
   val mandateRefForm =

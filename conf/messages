@@ -33,13 +33,22 @@ client.accept-mandate.header = Client accept confirmation
 client.reject-mandate.title = Client reject confirmation
 client.reject-mandate.header = Client reject confirmation
 
-#client add email
-client.add-email.title = What is your email address?
-client.add-email.preheader = Appoint an agent
-client.add-email.header = What is your email address?
-client.add-email.lede = We need this to send you notifications relating to the ATED online service. This should be your address not your agents.
-client.add-email = Email address
-client.add-email.confirm-email = Confirm email address
+#client collect email
+client.collect-email.title = What is your email address?
+client.collect-email.preheader = Appoint an agent
+client.collect-email.header = What is your email address?
+client.collect-email.lede = We need this to send you notifications relating to the ATED online service. This should be your address not your agents.
+client.collect-email.email = Email address
+client.collect-email.confirm-email = Confirm email address
+client.collect-email.error.general.email = There is a problem with the email address question
+client.collect-email.error.general.confirmEmail = There is a problem with the confirm email address question
+client.collect-email.error.email = You must answer email address question
+client.collect-email.error.email.length = Email address cannot be more than 241 characters.
+client.collect-email.error.confirmEmail = You must answer confirm email address question
+client.collect-email.error.confirmEmail.length = Confirm email address cannot be more than 241 characters.
+client.collect-email.error.confirm-email.not-equal = You must enter same email address in confirm email address
+client.collect-email.error.email.invalid-by-email-service = This email is invalid
+client.collect-email.error.general.client-collect-email-form = This email is invalid
 
 #client agent reference
 client.agent-ref.title = What is the agent''s reference?
