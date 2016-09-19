@@ -18,7 +18,7 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientAgentReferenceForm
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.MandateReferenceForm.mandateRefForm
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -32,7 +32,7 @@ trait SearchMandateController extends FrontendController with Actions {
 
   def view = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.searchMandate(ClientAgentReferenceForm.clientAgentRefForm))
+      Ok(views.html.client.searchMandate(mandateRefForm))
   }
 
   def submit = AuthorisedFor(ClientRegime, GGConfidence) {

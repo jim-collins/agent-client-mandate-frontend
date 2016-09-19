@@ -16,45 +16,82 @@
 
 package uk.gov.hmrc.agentclientmandate.viewModelsAndForms
 
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 
-case class ClientAddEmail(email: String, confirmEmail: String)
+import scala.annotation.tailrec
 
-object ClientAddEmail {
-  implicit val formats = Json.format[ClientAddEmail]
+case class ClientEmail(email: String, confirmEmail: String)
+
+object ClientEmail {
+  implicit val formats = Json.format[ClientEmail]
 }
 
-object ClientAddEmailForm {
+object ClientEmailForm {
+
   val emailLength = 241
-  val clientAddEmailForm =
+
+  val clientEmailForm =
     Form(
       mapping(
         "email" -> text
-          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength)),
+          .verifying(Messages("client.collect-email.error.email"), email => email.nonEmpty)
+          .verifying(Messages("client.collect-email.error.email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength)),
         "confirmEmail" -> text
-          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
+          .verifying(Messages("client.collect-email.error.confirmEmail"), email => email.nonEmpty)
+          .verifying(Messages("client.collect-email.error.confirmEmail.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
       )
-      (ClientAddEmail.apply)(ClientAddEmail.unapply)
+      (ClientEmail.apply)(ClientEmail.unapply)
     )
+
+  def validateConfirmEmail(emailForm: Form[ClientEmail]): Form[ClientEmail] = {
+    def validate = {
+      val email = emailForm.data.get("email").map(_.trim)
+      val confirmEmail = emailForm.data.get("confirmEmail").map(_.trim)
+      (email, confirmEmail) match {
+        case (Some(e1), Some(e2)) if e1 == e2 => Seq()
+        case (Some(e1), Some(e2)) => Seq(Some(FormError("confirmEmail", Messages("client.collect-email.error.confirm-email.not-equal"))))
+        case _ => Seq()
+      }
+    }
+    addErrorsToForm(emailForm, validate.flatten)
+  }
+
+  private def addErrorsToForm[A](form: Form[A], formErrors: Seq[FormError]): Form[A] = {
+    @tailrec
+    def y(f: Form[A], fe: Seq[FormError]): Form[A] = {
+      if (fe.isEmpty) f
+      else y(f.withError(fe.head), fe.tail)
+    }
+    y(form, formErrors)
+  }
+
 }
 
-case class ClientAgentReference(agentRef: String)
+case class MandateReference(mandateRef: String)
 
-object ClientAgentReference {
-  implicit val formats = Json.format[ClientAgentReference]
+object MandateReference {
+  implicit val formats = Json.format[MandateReference]
 }
 
-object ClientAgentReferenceForm {
-  val agentRefLength = 35
-  val clientAgentRefForm =
+object MandateReferenceForm {
+
+  val mandateRefLength = 35
+
+  val mandateRefForm =
     Form(
       mapping(
-        "email" -> text
-          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= agentRefLength))
+        "mandateRef" -> text
+          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= mandateRefLength))
       )
-      (ClientAgentReference.apply)(ClientAgentReference.unapply)
+      (MandateReference.apply)(MandateReference.unapply)
     )
+}
+
+case class ClientCache(email: Option[ClientEmail] = None, mandate: Option[MandateReference] = None)
+
+object ClientCache {
+  implicit val formats = Json.format[ClientCache]
 }

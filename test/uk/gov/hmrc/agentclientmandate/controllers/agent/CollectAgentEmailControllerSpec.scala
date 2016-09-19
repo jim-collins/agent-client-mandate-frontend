@@ -108,14 +108,8 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What is your email address?")
-          document.getElementById("header").text() must include("What is your email address?")
-          document.getElementById("pre-header").text() must be("Add a client")
-          document.getElementById("info").text() must be(s"We need this to send you notifications relating to this client's activity within the $service online service.")
-          document.getElementById("email_field").text() must be("Email address")
           document.getElementById("email").`val`() must be("aa@aa.com")
           document.getElementById("confirmEmail").`val`() must be("aa@aa.com")
-          document.getElementById("confirmEmail_field").text() must be("Confirm email address")
-          document.getElementById("submit").text() must be("Submit")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
