@@ -78,13 +78,14 @@ object MandateReference {
 
 object MandateReferenceForm {
 
-  val mandateRefLength = 35
+  val mandateRefLength = 10
 
   val mandateRefForm =
     Form(
       mapping(
         "mandateRef" -> text
-          .verifying(Messages("ated.contact-details-email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= mandateRefLength))
+          .verifying(Messages("client.search-mandate.error.mandateRef"), x => x.nonEmpty)
+          .verifying(Messages("client.search-mandate.error.mandateRef.length"), x => x.isEmpty || (x.nonEmpty && x.length <= mandateRefLength))
       )
       (MandateReference.apply)(MandateReference.unapply)
     )
