@@ -105,7 +105,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "ABC123")
       val cachedData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")))
       val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")), mandate = Some(MandateReference("ABC123")))
-      val clientMandate = ClientMandate(id = "ABC123", createdBy = "", party = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Service(id = Some("ated-ref-no"), name = ""))
+      val clientMandate = Mandate(id = "ABC123", createdBy = User("", None), agentParty = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), clientParty = None, currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Subscription(referenceNumber = None , service = Service(id = "ated-ref-no", name = "")))
       submitWithAuthorisedClient(fakeRequest, Some(cachedData), Some(clientMandate), returnData) { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
@@ -118,7 +118,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     "valid form is submitted, while creating new client cache object" in {
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "ABC123")
       val returnData = ClientCache(mandate = Some(MandateReference("ABC123")))
-      val clientMandate = ClientMandate(id = "ABC123", createdBy = "", party = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Service(id = Some("ated-ref-no"), name = ""))
+      val clientMandate = Mandate(id = "ABC123", createdBy = User("", None), agentParty = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), clientParty = None, currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Subscription(referenceNumber = None , service = Service(id = "ated-ref-no", name = "")))
       submitWithAuthorisedClient(fakeRequest, None, Some(clientMandate), returnData) { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
@@ -207,7 +207,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
   def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded],
                                  cachedData: Option[ClientCache] = None,
-                                 mandate: Option[ClientMandate] = None,
+                                 mandate: Option[Mandate] = None,
                                  returnCache: ClientCache = ClientCache())(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()

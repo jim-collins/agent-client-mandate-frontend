@@ -57,10 +57,10 @@ trait AgentClientMandateService {
     }
   }
 
-  def fetchClientMandate(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[ClientMandate]] = {
+  def fetchClientMandate(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandate]] = {
     agentClientMandateConnector.fetchMandate(mandateId) map {
       response => response.status match {
-        case OK => response.json.asOpt[ClientMandate]
+        case OK => response.json.asOpt[Mandate]
         case status => None
       }
     }
