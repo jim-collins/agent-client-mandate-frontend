@@ -56,6 +56,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
           document.getElementById("utr_field").text() must include("Unique tax reference")
           document.getElementById("utr_hint").text() must include("A UTR number is made up of 10 or 13 digits, If it is 13 digits only enter the last 10.")
           document.getElementById("utr-help-question").text() must be("Where to find their UTR")
+          document.getElementById("submit").text() must be("Save changes")
         }
       }
 
