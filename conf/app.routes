@@ -32,3 +32,7 @@ POST    /agent/collect-client-business-details/:service      uk.gov.hmrc.agentcl
 
 GET     /agent/unique-agent-reference/:service        uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 
+GET     /agent/agent-edit-client             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateController.view
+POST    /agent/agent-edit-client             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateController.submit
+
+
