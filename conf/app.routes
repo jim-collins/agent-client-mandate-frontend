@@ -9,6 +9,7 @@ GET     /client/search-mandate             uk.gov.hmrc.agentclientmandate.contro
 POST    /client/search-mandate             uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.submit
 
 GET     /client/review-mandate             uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.view
+POST    /client/review-mandate             uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.submit
 
 GET     /client/mandate-declaration        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.view
 

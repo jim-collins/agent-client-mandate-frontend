@@ -76,7 +76,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
   "return search mandate view for AUTHORISED client" when {
 
-    "client requests(GET) for search mandate view and the data hasn't been cached" in {
+    "client requests(GET) for search mandate view" in {
       viewWithAuthorisedClient() { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
@@ -87,16 +87,6 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       }
     }
 
-    "client requests(GET) for search mandate view pre-populated and the data has been cached" in {
-      val cached = ClientCache(email = Some(ClientEmail("aa@mail.com", "aa@mail.com")), mandate = Some(MandateReference("ABC123")))
-      viewWithAuthorisedClient(cachedData = Some(cached)) { result =>
-        status(result) must be(OK)
-        val document = Jsoup.parse(contentAsString(result))
-        document.title() must be("What is the agent's reference?")
-        document.getElementById("mandateRef").`val`() must be("ABC123")
-      }
-    }
-
   }
 
   "redirect to respective page " when {
@@ -104,9 +94,9 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     "valid form is submitted, while updating existing client cache object" in {
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "ABC123")
       val cachedData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")))
-      val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")), mandate = Some(MandateReference("ABC123")))
-      val clientMandate = Mandate(id = "ABC123", createdBy = User("", None), agentParty = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), clientParty = None, currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Subscription(referenceNumber = None , service = Service(id = "ated-ref-no", name = "")))
-      submitWithAuthorisedClient(fakeRequest, Some(cachedData), Some(clientMandate), returnData) { result =>
+      val mandate = Mandate(id = "ABC123", createdBy = User("credid", "Joe Bloggs", None), agentParty = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), clientParty = None, currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
+      val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")), mandate = Some(mandate))
+      submitWithAuthorisedClient(fakeRequest, Some(cachedData), Some(mandate), returnData) { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
         verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
@@ -115,11 +105,11 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       }
     }
 
-    "valid form is submitted, while creating new client cache object" in {
+    "valid form is submitted, but the cache doesn't exist - this redirects to enter your email page" in {
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "ABC123")
-      val returnData = ClientCache(mandate = Some(MandateReference("ABC123")))
-      val clientMandate = Mandate(id = "ABC123", createdBy = User("", None), agentParty = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), clientParty = None, currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Subscription(referenceNumber = None , service = Service(id = "ated-ref-no", name = "")))
-      submitWithAuthorisedClient(fakeRequest, None, Some(clientMandate), returnData) { result =>
+      val mandate = Mandate(id = "ABC123", createdBy = User("", None), agentParty = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), clientParty = None, currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
+      val returnData = ClientCache(mandateReference = Some(MandateReference("ABC123")), mandate = Some(mandate))
+      submitWithAuthorisedClient(fakeRequest, None, Some(mandate), returnData) { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
         verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())

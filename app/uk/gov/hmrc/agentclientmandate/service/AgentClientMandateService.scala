@@ -35,25 +35,17 @@ trait AgentClientMandateService {
 
   def formId: String
 
-  def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[CreateMandateResponse]] = {
+  def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[String] = {
     dataCacheService.fetchAndGetFormData[AgentEmail](formId) flatMap {
       case Some(cachedEmail) =>
-        //TODO: Change exception message
-        val arn = ac.principal.accounts.agent.flatMap(_.agentBusinessUtr.map(_.utr)).
-          getOrElse(throw new RuntimeException("No valid agent business UTR found!"))
-        val agentName = ac.principal.name.getOrElse("")
-        val email = cachedEmail.email
-        val partyDto = PartyDto(id = arn, name = agentName, `type` = "Agent")
-        val serviceDto = ServiceDto(service)
-        val contactDto = ContactDetailsDto(email, "")
-        val mandateDto = ClientMandateDto(partyDto, contactDto, serviceDto)
+        val mandateDto = CreateMandateDto(cachedEmail.email, service)
         agentClientMandateConnector.createMandate(mandateDto) map {
           response => response.status match {
-            case CREATED => response.json.asOpt[CreateMandateResponse]
-            case status => None
+            case CREATED => (response.json \ "mandateId").as[String]
+            case status => throw new RuntimeException("Mandate not created")
           }
         }
-      case None => Future.successful(None)
+      case None => throw new RuntimeException("Email not found in cache")
     }
   }
 

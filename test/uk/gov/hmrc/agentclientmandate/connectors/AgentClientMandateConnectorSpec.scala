@@ -24,7 +24,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.models.{ClientMandateDto, ContactDetailsDto, PartyDto, ServiceDto}
+import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
 
@@ -50,12 +50,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
   val mandateId = "12345678"
 
-  val mandateDto: ClientMandateDto =
-    ClientMandateDto(
-      PartyDto("JARN123456", "Joe Bloggs", "Organisation"),
-      ContactDetailsDto("test@test.com", "0123456789"),
-      ServiceDto("ATED")
-    )
+  val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED")
 
   "AgentClientMandateConnector" must {
 

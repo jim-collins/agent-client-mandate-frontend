@@ -18,7 +18,6 @@ package uk.gov.hmrc.agentclientmandate.services
 
 import java.util.UUID
 
-import org.joda.time.DateTime
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -28,7 +27,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
 import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
-import uk.gov.hmrc.agentclientmandate.models.{Service, _}
+import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
@@ -134,11 +133,11 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   def createClientMandate(id: String): CreateMandateResponse =
     CreateMandateResponse(mandateId = id)
 
-  val mandateDto: ClientMandateDto =
-    ClientMandateDto(
+  val mandateDto: MandateDto =
+    MandateDto(
       PartyDto("JARN123456", "Joe Bloggs", "Organisation"),
       ContactDetailsDto("test@test.com", "0123456789"),
-      ServiceDto("ATED")
+      ServiceDto(None, "ATED")
     )
 
   val mockAgentClientMandateConnector = mock[AgentClientMandateConnector]
