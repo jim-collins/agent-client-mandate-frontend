@@ -19,7 +19,7 @@ package uk.gov.hmrc.agentclientmandate.service
 import play.api.libs.json.Format
 import uk.gov.hmrc.agentclientmandate.config.AgentClientMandateSessionCache
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,6 +34,10 @@ trait DataCacheService {
 
   def cacheFormData[T](formId: String, formData: T)(implicit hc: HeaderCarrier, formats: Format[T]): Future[T] = {
     sessionCache.cache[T](formId, formData).map(cacheMap => formData)
+  }
+
+  def clearCache()(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    sessionCache.remove()
   }
 
 }

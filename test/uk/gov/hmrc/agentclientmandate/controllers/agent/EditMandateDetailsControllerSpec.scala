@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
-  "EditMandateDetailsControllerSpec" must {
+  "EditMandateControllerSpec" must {
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/agent/agent-edit-client" in {
@@ -67,7 +67,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
   val mockAuthConnector = mock[AuthConnector]
   val service = "ATED"
 
-  object TestEditMandateDetailsController extends EditMandateController {
+  object TestEditMandateController extends EditMandateController {
     override val authConnector = mockAuthConnector
   }
 
@@ -76,7 +76,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestEditMandateDetailsController.view.apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestEditMandateController.view.apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

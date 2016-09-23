@@ -26,7 +26,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.config.AgentClientMandateSessionCache
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
-import uk.gov.hmrc.play.http.HeaderCarrier
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
 
@@ -70,6 +70,13 @@ class DataCacheServiceSpec extends PlaySpec with OneServerPerSuite with MockitoS
           Future.successful(cacheMap)
         }
         await(TestDataCacheService.cacheFormData[FormData](formId, formData)) must be(formData)
+      }
+    }
+
+    "clear cache" when {
+      "asked to do so" in {
+        when(mockSessionCache.remove()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
+        await(TestDataCacheService.clearCache()).status must be(OK)
       }
     }
 

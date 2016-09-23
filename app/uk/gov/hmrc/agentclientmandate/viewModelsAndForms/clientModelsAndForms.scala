@@ -20,6 +20,7 @@ import play.api.data.{Form, FormError}
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.libs.json.Json
+import uk.gov.hmrc.agentclientmandate.models.Mandate
 
 import scala.annotation.tailrec
 
@@ -91,7 +92,10 @@ object MandateReferenceForm {
     )
 }
 
-case class ClientCache(email: Option[ClientEmail] = None, mandate: Option[MandateReference] = None)
+case class ClientCache(
+                        email: Option[ClientEmail] = None,
+                        mandate: Option[Mandate] = None
+                      )
 
 object ClientCache {
   implicit val formats = Json.format[ClientCache]

@@ -43,14 +43,9 @@ trait SearchMandateController extends FrontendController with Actions with Manda
 
   def mandateService: AgentClientMandateService
 
-  def view = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map { a =>
-        a.flatMap(_.mandate) match {
-          case Some(x) => Ok(views.html.client.searchMandate(mandateRefForm.fill(x)))
-          case None => Ok(views.html.client.searchMandate(mandateRefForm))
-        }
-      }
+      Ok(views.html.client.searchMandate(mandateRefForm))
   }
 
   def submit = AuthorisedFor(ClientRegime, GGConfidence).async {
@@ -59,12 +54,13 @@ trait SearchMandateController extends FrontendController with Actions with Manda
         formWithErrors => Future.successful(BadRequest(views.html.client.searchMandate(formWithErrors))),
         data => mandateService.fetchClientMandate(data.mandateRef) flatMap {
           case Some(x) => dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
-            case Some(y) => dataCacheService.cacheFormData[ClientCache](clientFormId, y.copy(mandate = Some(data))) flatMap { cachedData =>
+            case Some(y) => dataCacheService.cacheFormData[ClientCache](
+              clientFormId,
+              y.copy(mandate = Some(x))
+            ) flatMap { cachedData =>
               Future.successful(Redirect(routes.ReviewMandateController.view()))
             }
-            case None => dataCacheService.cacheFormData[ClientCache](clientFormId, ClientCache(mandate = Some(data))) flatMap { cachedData =>
-              Future.successful(Redirect(routes.ReviewMandateController.view()))
-            }
+            case None => Future.successful(Redirect(routes.CollectEmailController.view()))
           }
           case None =>
             val errorMsg = Messages("client.search-mandate.error.mandateRef.not-found-by-mandate-service")
