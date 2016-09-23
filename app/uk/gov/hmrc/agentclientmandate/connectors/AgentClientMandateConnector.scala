@@ -20,6 +20,7 @@ import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.agentclientmandate.config.WSHttp
 import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto
+import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
@@ -44,7 +45,8 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
   }
 
   def fetchMandate(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
-    val getUrl = s"$serviceUrl/$agentMandateUrl/$mandate/$mandateId"
+    val authLink = AuthUtils.getAuthLink
+    val getUrl = s"$serviceUrl$authLink/$mandate/$mandateId"
     Logger.info(s"[AgentClientMandateConnector][fetchMandate] - GET - $getUrl")
     http.GET[HttpResponse](getUrl)
   }
