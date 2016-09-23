@@ -31,7 +31,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, ClientEmail, MandateReference}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientCache, ClientEmail, MandateReference}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -50,116 +50,101 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     }
 
-  }
+    "redirect to login page for UNAUTHENTICATED client" when {
 
-  "redirect to login page for UNAUTHENTICATED client" when {
-
-    "client requests(GET) for search mandate view" in {
-      viewUnAuthenticatedClient { result =>
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result).get must include("/gg/sign-in")
+      "client requests(GET) for search mandate view" in {
+        viewUnAuthenticatedClient { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must include("/gg/sign-in")
+        }
       }
+
+    }
+
+    "redirect to unauthorised page for UNAUTHORISED client" when {
+
+      "client requests for search mandate view" in {
+        viewUnAuthenticatedClient { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must include("/gg/sign-in")
+        }
+      }
+
+    }
+
+    "return search mandate view for AUTHORISED client" when {
+
+      "client requests(GET) for search mandate view" in {
+        viewWithAuthorisedClient() { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What is the agent's reference?")
+          document.getElementById("header").text() must include("What is the agent's reference?")
+          document.getElementById("mandateRef").`val`() must be("")
+          document.getElementById("submit").text() must be("Continue")
+        }
+      }
+
+    }
+
+    "redirect to 'Review Mandate view' view for Authorised Client" when {
+      "valid form is submitted, mandate is found from backend, cache object exists and update of cache with mandate is successful" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> s"$mandateId")
+        val cachedData = ClientCache(email = Some(ClientEmail("aa@mail.com", "aa@mail.com")))
+        val returnCache = cachedData.copy(mandate = Some(mandate))
+        submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate), returnCache = returnCache) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+        }
+      }
+    }
+
+
+    "returns BAD_REQUEST" when {
+      "empty form is submitted" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "")
+        submitWithAuthorisedClient(fakeRequest) { result =>
+          status(result) must be(BAD_REQUEST)
+          val document = Jsoup.parse(contentAsString(result))
+          document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference question")
+          document.getElementsByClass("error-notification").text() must include("You must answer agent reference question")
+          verify(mockMandateService, times(0)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
+      "mandateRef field has more than expected length" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "a" * 11)
+        submitWithAuthorisedClient(fakeRequest) { result =>
+          status(result) must be(BAD_REQUEST)
+          val document = Jsoup.parse(contentAsString(result))
+          document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference question")
+          document.getElementsByClass("error-notification").text() must include("Agent reference cannot be more than 10 characters.")
+          verify(mockMandateService, times(0)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
+      "invalid agent reference is passed" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "invalidId")
+        submitWithAuthorisedClient(fakeRequest) { result =>
+          status(result) must be(BAD_REQUEST)
+          val document = Jsoup.parse(contentAsString(result))
+          document.getElementsByClass("error-list").text() must include("The agent reference you entered was not found. Please check and try again.")
+          verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
     }
 
   }
 
-  "redirect to unauthorised page for UNAUTHORISED client" when {
-
-    "client requests for search mandate view" in {
-      viewUnAuthenticatedClient { result =>
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result).get must include("/gg/sign-in")
-      }
-    }
-
-  }
-
-  "return search mandate view for AUTHORISED client" when {
-
-    "client requests(GET) for search mandate view" in {
-      viewWithAuthorisedClient() { result =>
-        status(result) must be(OK)
-        val document = Jsoup.parse(contentAsString(result))
-        document.title() must be("What is the agent's reference?")
-        document.getElementById("header").text() must include("What is the agent's reference?")
-        document.getElementById("mandateRef").`val`() must be("")
-        document.getElementById("submit").text() must be("Continue")
-      }
-    }
-
-  }
-
-  "redirect to respective page " when {
-
-    "valid form is submitted, while updating existing client cache object" in {
-      val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "ABC123")
-      val cachedData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")))
-      val mandate = Mandate(id = "ABC123", createdBy = User("credid", "Joe Bloggs", None), agentParty = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), clientParty = None, currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
-      val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")), mandate = Some(mandate))
-      submitWithAuthorisedClient(fakeRequest, Some(cachedData), Some(mandate), returnData) { result =>
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
-        verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
-        verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
-        verify(mockDataCacheService, times(1)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
-      }
-    }
-
-    "valid form is submitted, but the cache doesn't exist - this redirects to enter your email page" in {
-      val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "ABC123")
-      val mandate = Mandate(id = "ABC123", createdBy = User("", None), agentParty = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), clientParty = None, currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
-      val returnData = ClientCache(mandateReference = Some(MandateReference("ABC123")), mandate = Some(mandate))
-      submitWithAuthorisedClient(fakeRequest, None, Some(mandate), returnData) { result =>
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
-        verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
-        verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
-        verify(mockDataCacheService, times(1)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
-      }
-    }
-
-  }
-
-  "returns BAD_REQUEST" when {
-    "empty form is submitted" in {
-      val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "")
-      submitWithAuthorisedClient(fakeRequest) { result =>
-        status(result) must be(BAD_REQUEST)
-        val document = Jsoup.parse(contentAsString(result))
-        document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference question")
-        document.getElementsByClass("error-notification").text() must include("You must answer agent reference question")
-        verify(mockMandateService, times(0)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
-        verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
-        verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
-      }
-    }
-
-    "mandateRef field has more than expected length" in {
-      val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "a" * 11)
-      submitWithAuthorisedClient(fakeRequest) { result =>
-        status(result) must be(BAD_REQUEST)
-        val document = Jsoup.parse(contentAsString(result))
-        document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference question")
-        document.getElementsByClass("error-notification").text() must include("Agent reference cannot be more than 10 characters.")
-        verify(mockMandateService, times(0)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
-        verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
-        verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
-      }
-    }
-
-    "invalid agent reference is passed" in {
-      val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "invalidId")
-      submitWithAuthorisedClient(fakeRequest) { result =>
-        status(result) must be(BAD_REQUEST)
-        val document = Jsoup.parse(contentAsString(result))
-        document.getElementsByClass("error-list").text() must include("The agent reference you entered was not found. Please check and try again.")
-        verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
-        verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
-        verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
-      }
-    }
-
-  }
+  val mandateId = "ABC123"
+  val mandate = Mandate(id = mandateId, createdBy = User("cerdId", "Joe Bloggs"), agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation, contactDetails = ContactDetails("aa@aa.com", None)), clientParty = None, currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""), statusHistory = None, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
 
   val mockAuthConnector = mock[AuthConnector]
   val mockDataCacheService = mock[DataCacheService]

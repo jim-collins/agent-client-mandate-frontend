@@ -21,21 +21,21 @@ import java.util.UUID
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
-import uk.gov.hmrc.agentclientmandate.models._
-import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
 
-class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
+class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
   "UniqueAgentReferenceController" must {
 
@@ -77,7 +77,7 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Your unique agent reference for {0} is {1}")
-          document.getElementById("banner-text").text() must include("Your unique agent reference for [client name] is 123456789")
+          document.getElementById("banner-text").text() must include("Your unique agent reference for [client name] is ABC123")
           document.getElementById("what-happens-next").text must be("What happens next?")
           document.getElementById("authorise-instruction").text must be("You need to give this agent reference to your client so they can authorise you.")
           document.getElementById("client-instruction").text must be("Your client will then need to:")
@@ -98,13 +98,19 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
   }
 
   val mockAuthConnector = mock[AuthConnector]
-  val mockAgentClientMandateService = mock[AgentClientMandateService]
+  val mockDataCacheService = mock[DataCacheService]
   val service = "ated".toUpperCase
+  val mandateId = "ABC123"
 
 
   object TestUniqueAgentReferenceController extends UniqueAgentReferenceController {
     override val authConnector = mockAuthConnector
-    override val agentClientMandateService = mockAgentClientMandateService
+    override val dataCacheService = mockDataCacheService
+  }
+
+  override def beforeEach(): Unit = {
+    reset(mockAuthConnector)
+    reset(mockDataCacheService)
   }
 
   def viewWithUnAuthenticatedAgent(test: Future[Result] => Any) {
@@ -129,10 +135,8 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val clientMandate = CreateMandateResponse(mandateId = "123456789")
 
-    when(mockAgentClientMandateService.createMandate(Matchers.eq(service))(Matchers.any(), Matchers.any()))
-      .thenReturn(Future.successful(Some(clientMandate)))
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestUniqueAgentReferenceController.agentRefCacheId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(mandateId)))
 
     val result = TestUniqueAgentReferenceController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)

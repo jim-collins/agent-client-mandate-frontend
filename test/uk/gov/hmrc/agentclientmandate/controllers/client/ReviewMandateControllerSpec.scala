@@ -64,8 +64,9 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
   "return review mandate view for AUTHORISED client" when {
 
     "client requests(GET) for review mandate view, and mandate has been cached on search mandate submit" in {
-      val mandate = Mandate(id = "ABC123", createdBy = User("", None), agentParty = Party("ated-ref-no", "name", `type` = "Organisation", contactDetails = ContactDetails("", "")), clientParty = None, currentStatus = MandateStatus(status = Status.Pending, DateTime.now(), updatedBy = ""), statusHistory = None, Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
-      val returnData = ClientCache(mandateReference = Some(MandateReference("ABC123")), mandate = Some(mandate))
+      val mandate = Mandate(id = "ABC123", createdBy = User("cerdId", "Joe Bloggs"), agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation, contactDetails = ContactDetails("aa@aa.com", None)), clientParty = None, currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""), statusHistory = None, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
+
+      val returnData = ClientCache(mandate = Some(mandate))
       viewWithAuthorisedClient(Some(returnData)) { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))

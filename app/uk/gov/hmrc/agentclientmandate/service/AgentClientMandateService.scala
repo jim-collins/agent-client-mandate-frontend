@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentclientmandate.service
 import play.api.http.Status._
 import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.models._
+import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -27,21 +28,25 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 
-trait AgentClientMandateService {
+trait AgentClientMandateService extends MandateConstants {
 
   def dataCacheService: DataCacheService
 
   def agentClientMandateConnector: AgentClientMandateConnector
 
-  def formId: String
-
   def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[String] = {
-    dataCacheService.fetchAndGetFormData[AgentEmail](formId) flatMap {
+    dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) flatMap {
       case Some(cachedEmail) =>
         val mandateDto = CreateMandateDto(cachedEmail.email, service)
-        agentClientMandateConnector.createMandate(mandateDto) map {
+        agentClientMandateConnector.createMandate(mandateDto) flatMap {
           response => response.status match {
-            case CREATED => (response.json \ "mandateId").as[String]
+            case CREATED =>
+              val mandateId = (response.json \ "mandateId").as[String]
+              dataCacheService.clearCache() flatMap { clearCacheResponse =>
+                dataCacheService.cacheFormData[String](agentRefCacheId, mandateId) flatMap { cachingResponse =>
+                  Future.successful(mandateId)
+                }
+              }
             case status => throw new RuntimeException("Mandate not created")
           }
         }
@@ -63,5 +68,4 @@ trait AgentClientMandateService {
 object AgentClientMandateService extends AgentClientMandateService {
   val dataCacheService = DataCacheService
   val agentClientMandateConnector = AgentClientMandateConnector
-  val formId = "agent-email"
 }

@@ -101,7 +101,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/unique-agent-reference/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/details/$service"))
         }
       }
     }

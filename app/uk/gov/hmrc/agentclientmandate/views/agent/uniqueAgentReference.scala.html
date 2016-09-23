@@ -1,7 +1,7 @@
+@(mandateId: String)(implicit request: Request[_])
+
 @import uk.gov.hmrc.agentclientmandate.models._
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
-
-@(clientMandate: Option[CreateMandateResponse])(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 
@@ -10,7 +10,7 @@
 
 
 <div class="transaction-banner--complete" id="banner">
-  <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'> @Html(Messages("agent.unique-reference.header", "[client name]", clientMandate.map(_.mandateId).getOrElse("xyz"))) </h1>
+  <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'> @Html(Messages("agent.unique-reference.header", "[client name]", mandateId)) </h1>
 </div>
 
 

@@ -40,14 +40,6 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
   "CollectAgentEmailController" must {
 
-    "use DataCacheService" in {
-      CollectAgentEmailController.dataCacheService must be(DataCacheService)
-    }
-
-    "use EmailService" in {
-      CollectAgentEmailController.emailService must be(EmailService)
-    }
-
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/collect-agent-email/:service" in {
@@ -184,7 +176,6 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     override val authConnector = mockAuthConnector
     override val dataCacheService = mockDataCacheService
     override val emailService = mockEmailService
-    override val formId = formId1
   }
 
   override def beforeEach(): Unit = {
