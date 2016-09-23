@@ -73,7 +73,7 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
     "return 'what is your email address' for AUTHORISED agent" when {
 
       "agent requests(GET) for 'Your unique agent reference' view" in {
-        viewWithAuthorisedAgent { result =>
+        viewWithAuthorisedAgent(Some(mandateId)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Your unique agent reference for {0} is {1}")
@@ -93,6 +93,15 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
         }
       }
 
+    }
+
+    "redirect agent to select service page" when {
+      "mandate ID is not found in cache" in {
+        viewWithAuthorisedAgent() { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/agent/select-service"))
+        }
+      }
     }
 
   }
@@ -130,13 +139,13 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
     test(result)
   }
 
-  def viewWithAuthorisedAgent(test: Future[Result] => Any) {
+  def viewWithAuthorisedAgent(mandateId: Option[String] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
 
-    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestUniqueAgentReferenceController.agentRefCacheId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(mandateId)))
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestUniqueAgentReferenceController.agentRefCacheId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mandateId))
 
     val result = TestUniqueAgentReferenceController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)

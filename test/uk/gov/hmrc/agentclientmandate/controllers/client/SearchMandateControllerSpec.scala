@@ -99,6 +99,17 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       }
     }
 
+    "redirect to 'collect email' view for authorised client" when {
+      "valid form is submitted, mandate is found from backend, but cache object doesn't exist" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> s"$mandateId")
+        val returnCache = ClientCache(mandate = Some(mandate))
+        submitWithAuthorisedClient(request = fakeRequest, cachedData = None, mandate = Some(mandate), returnCache = returnCache) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/collect-email"))
+        }
+      }
+    }
+
 
     "returns BAD_REQUEST" when {
       "empty form is submitted" in {

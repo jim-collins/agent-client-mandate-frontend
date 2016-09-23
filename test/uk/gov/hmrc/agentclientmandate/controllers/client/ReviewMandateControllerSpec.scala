@@ -92,6 +92,15 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
   }
 
+  "redirect Authorised Client to 'Mandate declaration' page" when {
+    "client submits form" in {
+      submitWithAuthorisedClient { result =>
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result) must be(Some("/mandate/client/mandate-declaration"))
+      }
+    }
+  }
+
   val mockAuthConnector = mock[AuthConnector]
   val mockDataCacheService = mock[DataCacheService]
 
@@ -120,6 +129,15 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestReviewMandateController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestReviewMandateController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def submitWithAuthorisedClient(test: Future[Result] => Any): Unit = {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    val result = TestReviewMandateController.submit().apply(SessionBuilder.updateRequestFormWithSession(FakeRequest().withFormUrlEncodedBody(), userId))
     test(result)
   }
 

@@ -85,6 +85,15 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
 
     }
 
+    "redirect Authorised Agent to 'unique agent reference' view" when {
+      "form is submitted" in {
+        submitWithAuthorisedAgent { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some(s"/mandate/agent/unique-agent-reference/$service"))
+        }
+      }
+    }
+
   }
 
   val mockAuthConnector = mock[AuthConnector]
@@ -105,6 +114,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
 
   val service = "ated"
   val agentEmail = AgentEmail("aa@mail.com", "aa@mail.com")
+  val mandateId = "AS12345678"
 
   def viewWithUnAuthorisedAgent(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
@@ -122,6 +132,17 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestMandateDetailsController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def submitWithAuthorisedAgent(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    when(mockMandateService.createMandate(Matchers.eq(service))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mandateId))
+    val fakeRequest = FakeRequest().withFormUrlEncodedBody()
+    val result = TestMandateDetailsController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId))
     test(result)
   }
 

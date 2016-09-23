@@ -17,7 +17,7 @@
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
-import uk.gov.hmrc.agentclientmandate.controllers.auth.{AgentRegime}
+import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.EditMandateDetailsForm
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
@@ -33,11 +33,6 @@ trait EditMandateController extends FrontendController with Actions {
   def view = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit authContext => implicit request =>
       Ok(views.html.agent.editClient(EditMandateDetailsForm.editMandateDetailsForm))
-  }
-
-  def submit = AuthorisedFor(AgentRegime, GGConfidence) {
-    implicit authContext => implicit request =>
-      Redirect(routes.EditMandateController.view())
   }
 
 }
