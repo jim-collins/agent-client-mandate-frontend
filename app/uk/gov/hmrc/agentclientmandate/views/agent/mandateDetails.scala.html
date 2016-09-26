@@ -1,0 +1,39 @@
+@(email: String, service: String)(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+
+@main_template(title = Messages("agent.check-client-details.header")) {
+
+  <h1 id="header" class="heading-xlarge">
+    <span class="pre-heading" id="pre-heading">@Messages("agent.add-a-client.sub-header")</span>
+    @Messages("agent.check-client-details.header")
+  </h1>
+
+  <table>
+    <tr>
+      <th id ="your-email">@Messages("agent.check-client-details.your-email")</th>
+      <td id ="email-address">@email</td>
+      <td><a href="#">Edit</a></td>
+    </tr>
+  </table>
+
+  @form(action = routes.MandateDetailsController.submit(service)) {
+
+    <div class="form-group">
+      <button class="button" id="submit" type="submit">
+        @Messages("agent.check-client-details.confirm")
+      </button>
+    </div>
+  }
+
+  <div class="form-field">
+    <a href="#" id="back" class="back-link">@Messages("mandate.back")</a>
+  </div>
+
+}

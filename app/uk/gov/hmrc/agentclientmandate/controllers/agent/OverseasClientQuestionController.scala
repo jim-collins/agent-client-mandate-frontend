@@ -26,7 +26,9 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 object OverseasClientQuestionController extends OverseasClientQuestionController {
+  // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
+  // $COVERAGE-ON$
 }
 
 trait OverseasClientQuestionController extends FrontendController with Actions {
@@ -43,7 +45,7 @@ trait OverseasClientQuestionController extends FrontendController with Actions {
         data => {
           val isOverSeas = data.isOverseas.getOrElse(false)
           if (isOverSeas) Redirect(nrlUri(service))
-          else Redirect(routes.UniqueAgentReferenceController.view(service))
+          else Redirect(routes.MandateDetailsController.view(service))
         }
       )
   }

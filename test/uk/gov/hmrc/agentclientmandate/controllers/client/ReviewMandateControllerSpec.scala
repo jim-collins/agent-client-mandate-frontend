@@ -18,19 +18,26 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 
 import java.util.UUID
 
+import org.joda.time.DateTime
 import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.models._
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, MandateReference}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
+class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
   "ClientReviewAgentControllerSpec" must {
 
@@ -46,7 +53,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
   "redirect to login page for UNAUTHENTICATED client" when {
 
     "client requests(GET) for search mandate view" in {
-      viewUnAuthenticatedClient { result =>
+      viewWithUnAuthenticatedClient { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result).get must include("/gg/sign-in")
       }
@@ -54,10 +61,13 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
   }
 
-  "return search mandate view for AUTHORISED client" when {
+  "return review mandate view for AUTHORISED client" when {
 
-    "client requests(GET) for search mandate view" in {
-      viewAuthorised { result =>
+    "client requests(GET) for review mandate view, and mandate has been cached on search mandate submit" in {
+      val mandate = Mandate(id = "ABC123", createdBy = User("cerdId", "Joe Bloggs"), agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation, contactDetails = ContactDetails("aa@aa.com", None)), clientParty = None, currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""), statusHistory = None, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
+
+      val returnData = ClientCache(mandate = Some(mandate))
+      viewWithAuthorisedClient(Some(returnData)) { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
         document.title() must be("Check that this is the agent that you want to appoint")
@@ -71,13 +81,40 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
   }
 
-  val mockAuthConnector = mock[AuthConnector]
+  "redirect to search mandate view for AUTHORISED client" when {
 
-  object TestReviewMandateController extends ReviewMandateController {
-    val authConnector = mockAuthConnector
+    "client requests(GET) for review mandate view, but mandate has not been cached on search mandate submit" in {
+      viewWithAuthorisedClient() { result =>
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result) must be(Some("/mandate/client/search-mandate"))
+      }
+    }
+
   }
 
-  def viewUnAuthenticatedClient(test: Future[Result] => Any) {
+  "redirect Authorised Client to 'Mandate declaration' page" when {
+    "client submits form" in {
+      submitWithAuthorisedClient { result =>
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result) must be(Some("/mandate/client/mandate-declaration"))
+      }
+    }
+  }
+
+  val mockAuthConnector = mock[AuthConnector]
+  val mockDataCacheService = mock[DataCacheService]
+
+  object TestReviewMandateController extends ReviewMandateController {
+    override val authConnector = mockAuthConnector
+    override val dataCacheService = mockDataCacheService
+  }
+
+  override def beforeEach(): Unit = {
+    reset(mockAuthConnector)
+    reset(mockDataCacheService)
+  }
+
+  def viewWithUnAuthenticatedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
@@ -85,12 +122,22 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     test(result)
   }
 
-  def viewAuthorised(test: Future[Result] => Any) {
+  def viewWithAuthorisedClient(cachedData: Option[ClientCache] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestReviewMandateController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestReviewMandateController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def submitWithAuthorisedClient(test: Future[Result] => Any): Unit = {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    val result = TestReviewMandateController.submit().apply(SessionBuilder.updateRequestFormWithSession(FakeRequest().withFormUrlEncodedBody(), userId))
     test(result)
   }
 

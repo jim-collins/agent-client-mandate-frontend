@@ -18,26 +18,9 @@ package uk.gov.hmrc.agentclientmandate.models
 
 import play.api.libs.json.Json
 
-case class PartyDto(id: String, name: String, `type`: String)
+case class CreateMandateDto(email: String, serviceName: String)
 
-object PartyDto {
-  implicit val formats = Json.format[PartyDto]
+object CreateMandateDto {
+  implicit val formats = Json.format[CreateMandateDto]
 }
 
-case class ContactDetailsDto(email: String, phone: String)
-
-object ContactDetailsDto {
-  implicit val formats = Json.format[ContactDetailsDto]
-}
-
-case class ServiceDto(name: String)
-
-object ServiceDto {
-  implicit val formats = Json.format[ServiceDto]
-}
-
-case class ClientMandateDto(party: PartyDto, contactDetails: ContactDetailsDto, service: ServiceDto)
-
-object ClientMandateDto {
-  implicit val formats = Json.format[ClientMandateDto]
-}

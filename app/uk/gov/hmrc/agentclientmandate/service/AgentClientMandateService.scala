@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentclientmandate.service
 import play.api.http.Status._
 import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.models._
+import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -27,40 +28,36 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 
-trait AgentClientMandateService {
+trait AgentClientMandateService extends MandateConstants {
 
   def dataCacheService: DataCacheService
 
   def agentClientMandateConnector: AgentClientMandateConnector
 
-  def formId: String
-
-  def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[CreateMandateResponse]] = {
-    dataCacheService.fetchAndGetFormData[AgentEmail](formId) flatMap {
+  def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[String] = {
+    dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) flatMap {
       case Some(cachedEmail) =>
-        //TODO: Change exception message
-        val arn = ac.principal.accounts.agent.flatMap(_.agentBusinessUtr.map(_.utr)).
-          getOrElse(throw new RuntimeException("No valid agent business UTR found!"))
-        val agentName = ac.principal.name.getOrElse("")
-        val email = cachedEmail.email
-        val partyDto = PartyDto(id = arn, name = agentName, `type` = "Agent")
-        val serviceDto = ServiceDto(service)
-        val contactDto = ContactDetailsDto(email, "")
-        val mandateDto = ClientMandateDto(partyDto, contactDto, serviceDto)
-        agentClientMandateConnector.createMandate(mandateDto) map {
+        val mandateDto = CreateMandateDto(cachedEmail.email, service)
+        agentClientMandateConnector.createMandate(mandateDto) flatMap {
           response => response.status match {
-            case CREATED => response.json.asOpt[CreateMandateResponse]
-            case status => None
+            case CREATED =>
+              val mandateId = (response.json \ "mandateId").as[String]
+              dataCacheService.clearCache() flatMap { clearCacheResponse =>
+                dataCacheService.cacheFormData[String](agentRefCacheId, mandateId) flatMap { cachingResponse =>
+                  Future.successful(mandateId)
+                }
+              }
+            case status => throw new RuntimeException("Mandate not created")
           }
         }
-      case None => Future.successful(None)
+      case None => throw new RuntimeException("Email not found in cache")
     }
   }
 
-  def fetchClientMandate(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[ClientMandate]] = {
+  def fetchClientMandate(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandate]] = {
     agentClientMandateConnector.fetchMandate(mandateId) map {
       response => response.status match {
-        case OK => response.json.asOpt[ClientMandate]
+        case OK => response.json.asOpt[Mandate]
         case status => None
       }
     }
@@ -80,5 +77,4 @@ trait AgentClientMandateService {
 object AgentClientMandateService extends AgentClientMandateService {
   val dataCacheService = DataCacheService
   val agentClientMandateConnector = AgentClientMandateConnector
-  val formId = "agent-email"
 }

@@ -19,6 +19,8 @@ package uk.gov.hmrc.agentclientmandate.utils
 trait MandateConstants {
 
   val agentFormId: String = "agent-form-id"
+  val agentEmailFormId: String = "agent-email"
+  val agentRefCacheId: String = "agent-ref-id"
   val clientFormId: String = "client-form-id"
 
 }

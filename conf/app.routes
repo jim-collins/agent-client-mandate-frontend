@@ -9,13 +9,15 @@ GET     /client/search-mandate             uk.gov.hmrc.agentclientmandate.contro
 POST    /client/search-mandate             uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.submit
 
 GET     /client/review-mandate             uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.view
+POST    /client/review-mandate             uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.submit
 
 GET     /client/mandate-declaration        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.view
 
 GET     /client/mandate-confirmation       uk.gov.hmrc.agentclientmandate.controllers.client.MandateConfirmationController.view
 
-GET     /agent/agent-client-details       uk.gov.hmrc.agentclientmandate.controllers.agent.CheckClientDetailsController.checkClientDetails
 
+GET     /agent/details/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.view(service: String)
+POST    /agent/details/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.submit(service: String)
 
 GET     /agent/select-service             uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.select
 POST    /agent/select-service             uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.submit
@@ -31,4 +33,8 @@ POST    /agent/collect-client-business-details/:service      uk.gov.hmrc.agentcl
 
 GET     /agent/unique-agent-reference/:service        uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 
+
 GET     /agent/agent-client-summary                 uk.gov.hmrc.agentclientmandate.controllers.agent.AgentClientSummaryController.view
+
+GET     /agent/agent-edit-client             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateController.view
+

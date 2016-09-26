@@ -20,6 +20,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
+import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmailForm._
 import uk.gov.hmrc.agentclientmandate.views
@@ -30,23 +31,22 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import scala.concurrent.Future
 
 object CollectAgentEmailController extends CollectAgentEmailController {
+  // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
   val dataCacheService: DataCacheService = DataCacheService
   val emailService: EmailService = EmailService
-  val formId: String = "agent-email"
+  // $COVERAGE-ON$
 }
 
-trait CollectAgentEmailController extends FrontendController with Actions {
+trait CollectAgentEmailController extends FrontendController with Actions with MandateConstants {
 
   def dataCacheService: DataCacheService
 
   def emailService: EmailService
 
-  def formId: String
-
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit user => implicit request =>
-      dataCacheService.fetchAndGetFormData[AgentEmail](formId) map {
+      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) map {
         case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(agentEmail), service))
         case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service))
       }
@@ -59,7 +59,7 @@ trait CollectAgentEmailController extends FrontendController with Actions {
         data => {
           emailService.validate(data.email) flatMap { isValidEmail =>
             if (isValidEmail) {
-              dataCacheService.cacheFormData[AgentEmail](formId, data) flatMap { cachedData =>
+              dataCacheService.cacheFormData[AgentEmail](agentEmailFormId, data) flatMap { cachedData =>
                 Future.successful(Redirect(routes.OverseasClientQuestionController.view(service)))
               }
             } else {

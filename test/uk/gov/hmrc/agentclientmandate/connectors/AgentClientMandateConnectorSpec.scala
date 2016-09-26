@@ -24,9 +24,11 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.models.{ClientMandateDto, ContactDetailsDto, PartyDto, ServiceDto}
+import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto
+import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
+import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder._
 
 import scala.concurrent.Future
 
@@ -50,12 +52,10 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
   val mandateId = "12345678"
 
-  val mandateDto: ClientMandateDto =
-    ClientMandateDto(
-      PartyDto("JARN123456", "Joe Bloggs", "Organisation"),
-      ContactDetailsDto("test@test.com", "0123456789"),
-      ServiceDto("ATED")
-    )
+  val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED")
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val ac: AuthContext = createRegisteredAgentAuthContext("agent", "agentId")
+
 
   "AgentClientMandateConnector" must {
 
@@ -65,7 +65,6 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
     "create a mandate" in {
       val successResponse = Json.toJson(mandateDto)
-      implicit val hc: HeaderCarrier = HeaderCarrier()
 
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
@@ -78,7 +77,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
     "fetch a valid mandate" in {
       val successResponse = Json.toJson(mandateDto)
-      implicit val hc: HeaderCarrier = HeaderCarrier()
+
 
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())

@@ -25,7 +25,9 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 object SelectServiceController extends SelectServiceController {
+  // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
+  // $COVERAGE-ON$
 }
 
 trait SelectServiceController extends FrontendController with Actions {
