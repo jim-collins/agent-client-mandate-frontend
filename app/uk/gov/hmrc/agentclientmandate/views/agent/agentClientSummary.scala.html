@@ -1,0 +1,43 @@
+@()(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@main_template(title = Messages("client.summary.title")){
+
+<h1 id ="header" class="heading-xlarge"> @Messages("client.summary.title")
+
+</h1>
+
+<div class="form-group">
+    <details>
+        <summary><span id="add-client-reveal" class="summary">
+        @Messages("client.summary.add-client-reveal")
+      </span></summary>
+
+        <div class="panel-indent">
+
+            <h2 class="heading-small" id ="what-happens-next-instruction">@Messages("client.summary.reveal-heading")</h2>
+
+            <p id="happens-next-text">@Messages("client.summary.reveal-text")</p>
+
+            <ul class="list-number" type="1">
+                <li id="happens-next-point1">@Html(Messages("client.summary.reveal-point1"))</li>
+                <li id="happens-next-point2">@Messages("client.summary.reveal-point2")</li>
+                <li id="happens-next-point3">@Messages("client.summary.reveal-point3")</li>
+            </ul>
+
+            <p id="happens-next-notification">@Messages("client.summary.reveal-notification")</p>
+
+        </div>
+    </details>
+</div>
+
+
+
+
+}

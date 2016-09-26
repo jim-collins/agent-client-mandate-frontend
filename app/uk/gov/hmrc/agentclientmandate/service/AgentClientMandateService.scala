@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-
 trait AgentClientMandateService extends MandateConstants {
 
   def dataCacheService: DataCacheService
@@ -74,6 +73,15 @@ trait AgentClientMandateService extends MandateConstants {
             }
           }
         case status => Future.successful(None)
+      }
+    }
+  }
+
+  def fetchAllClientMandates(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Seq[ClientMandate]]] = {
+    agentClientMandateConnector.fetchAllMandates(arn,serviceName) map {
+      response => response.status match {
+        case OK => response.json.asOpt[Seq[ClientMandate]]
+        case status => None
       }
     }
   }
