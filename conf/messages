@@ -10,6 +10,19 @@ mandate.back = Back
 agent-client-mandate.error.summaryHeader = There is a problem with the form
 agent.add-a-client.sub-header = Add a client
 
+#agent client summary
+client.summary.title = Your ATED clients
+client.summary.header = Your ATED clients
+client.summary.add-client-reveal = How to add a client
+client.summary.reveal-heading = You should give the agent reference to your clients.
+client.summary.reveal-text = Your client will then need to:
+client.summary.reveal-point1 = Register their company to use the new <a href="https://www.tax.service.gov.uk/ated/welcome">ATED service</a>, they may need to create a new organisational Government Gateway account.
+client.summary.reveal-point2 = Enter the agent reference you gave them.
+client.summary.reveal-point3 = Let you know once they have completed this process.
+client.summary.reveal-notification = You will have 28 days to sign in and accept the agent request. You will not receive an email notification.
+
+
+
 #client collect email
 client.collect-email.title = What is your email address?
 client.collect-email.preheader = Appoint an agent

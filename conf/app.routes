@@ -31,3 +31,4 @@ POST    /agent/collect-client-business-details/:service      uk.gov.hmrc.agentcl
 
 GET     /agent/unique-agent-reference/:service        uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 
+GET     /agent/agent-client-summary                 uk.gov.hmrc.agentclientmandate.controllers.agent.AgentClientSummaryController.view

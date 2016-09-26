@@ -66,6 +66,15 @@ trait AgentClientMandateService {
     }
   }
 
+  def fetchAllClientMandates(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Seq[ClientMandate]]] = {
+    agentClientMandateConnector.fetchAllMandates(arn,serviceName) map {
+      response => response.status match {
+        case OK => response.json.asOpt[Seq[ClientMandate]]
+        case status => None
+      }
+    }
+  }
+
 }
 
 object AgentClientMandateService extends AgentClientMandateService {

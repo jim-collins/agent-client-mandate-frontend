@@ -26,7 +26,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
+import uk.gov.hmrc.agentclientmandate.builders.{AgentBusinessUtrGenerator, AuthBuilder}
 import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.models.{Service, _}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
@@ -129,6 +129,22 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       }
 
     }
+
+    "fetch all mandates" when {
+
+      "correct mandate id's are passed" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val mandate = createClientMandate("123456789")
+        val respJson = Json.toJson(mandate)
+        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(),Matchers.any())(Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+
+        val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
+        await(response) must be(None)
+      }
+
+    }
+
+
   }
 
   def createClientMandate(id: String): CreateMandateResponse =
@@ -144,9 +160,13 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   val mockAgentClientMandateConnector = mock[AgentClientMandateConnector]
   val mockDataCacheService = mock[DataCacheService]
 
+  val arn = new AgentBusinessUtrGenerator().nextAgentBusinessUtr
+
   val validFormId: String = "some-from-id"
   val service = "ATED"
   val mandateId = "12345678"
+  val serviceName = "ATED"
+
 
   object TestAgentClientMandateService extends AgentClientMandateService {
     override val dataCacheService = mockDataCacheService
