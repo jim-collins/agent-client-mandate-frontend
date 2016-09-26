@@ -15,32 +15,34 @@
     @Messages("client.review-agent.header")
   </h1>
 
-  @form(action = routes.MandateDeclarationController.view()) {
-    <table>
-      <tr>
-        <th id ="table-head">@Messages("client.review-agent.table-head")</th>
-        <th></th>
-        <th></th>
-      </tr>
-      <tr>
-        <td id="agent-reference">@Messages("client.review-agent.agent-reference")</td>
-        <td id="email-address">@Messages("client.review-agent.email")</td>
-        <td><a href="#">@Messages("edit-link")</a></td>
-      </tr>
-      <tr>
-        <td>@mandate.id</td>
-        <td>@mandate</td>
-        <td><a href="#">@Messages("edit-link")</a></td>
-      </tr>
-    </table>
+   @form(action = routes.ReviewMandateController.submit()) {
+     <table>
+       <tr>
+         <th class="heading-small td-height" id ="table-head">@mandate.agentParty.name</th>
+         <th></th>
+         <th></th>
+       </tr>
+       <tr>
+         <td class="heading-small td-height" id="agent-reference-label">@Messages("client.review-agent.agent-reference")</td>
+         <td>@mandate.id</td>
+         <td><a href="#">@Messages("edit-link")</a></td>
+       </tr>
+       <tr>
+         <td class="heading-small td-height" id="email-address-label">@Messages("client.review-agent.email")</td>
+         @mandate.clientParty.map { clientParty =>
+         <td>@clientParty.contactDetails.email</td>
+         }
+         <td><a href="#">@Messages("edit-link")</a></td>
+       </tr>
 
-    <div class="form-group">
-      <button class="button" id="submit" type="submit">
+     </table>
+
+     <div class="form-group">
+       <button class="button" id="submit" type="submit">
         @Messages("client.review-agent.submit")
-      </button>
-    </div>
-
-  }
+       </button>
+     </div>
+   }
 
   <div class="form-group">
     <a href="@routes.SearchMandateController.view" id="back" class="back-link">@Messages("mandate.back")</a>

@@ -18,13 +18,19 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 
 import java.util.UUID
 
+import org.joda.time.DateTime
 import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.models.{MandateStatus, Service, Status, Subscription, _}
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, ClientEmail}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -52,29 +58,49 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
 
     }
 
-    "return agent declaration view for AUTHORISED client" when {
+    "return mandate declaration view for AUTHORISED client" when {
 
-      "client requests(GET) for search declaration view" in {
-        viewAuthorisedClient { result =>
+      "client requests(GET) for mandate declaration view" in {
+        val cachedData = Some(ClientCache(email = Some(ClientEmail("bb@bb.com", "bb@bb.com")),mandate = Some(mandate)))
+        viewAuthorisedClient(cachedData) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Declaration and consent")
           document.getElementById("header").text() must include("Declaration and consent")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("declare-title").text() must be("I declare that:")
-          document.getElementById("agent-name").text() must be("the nominated agent [Agent Name] has agreed to act on my behalf in respect of ATED")
+          document.getElementById("agent-name").text() must be("the nominated agent name has agreed to act on my behalf in respect of ATED")
           document.getElementById("dec-info").text() must be("that the information I have provided is correct and complete")
-          document.getElementById("confirm_btn").text() must be("Continue")
+          document.getElementById("submit").text() must be("Continue")
+        }
+      }
+    }
+
+    "redirect to mandate review page for AUTHORISED view" when {
+
+      "client requests(GET) for mandate declaration view but mandate not found in cache" in {
+        viewAuthorisedClient(None) { result =>
+          status(result) must be(SEE_OTHER)
         }
       }
     }
 
   }
 
+  val mandateId = "ABC123"
+  val mandate = Mandate(id = mandateId, createdBy = User("cerdId", "Joe Bloggs"),
+    agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation,
+      contactDetails = ContactDetails("aa@aa.com", None)),
+    clientParty = None,
+    currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
+    statusHistory = None, subscription = Subscription(referenceNumber = None,
+      service = Service(id = "ated-ref-no", name = "")))
   val mockAuthConnector = mock[AuthConnector]
+  val mockDataCacheService = mock[DataCacheService]
 
   object TestMandateDeclarationController extends MandateDeclarationController {
     val authConnector = mockAuthConnector
+    val dataCacheService = mockDataCacheService
   }
 
   def viewUnAuthenticatedClient(test: Future[Result] => Any) {
@@ -85,11 +111,12 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
     test(result)
   }
 
-  def viewAuthorisedClient(test: Future[Result] => Any) {
+  def viewAuthorisedClient(cachedData: Option[ClientCache] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestMandateDeclarationController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestMandateDeclarationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }

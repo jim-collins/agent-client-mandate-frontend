@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 import play.api.i18n.Messages
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
+import uk.gov.hmrc.agentclientmandate.models.{ContactDetails, Party, PartyType}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientCache
@@ -54,9 +55,18 @@ trait SearchMandateController extends FrontendController with Actions with Manda
         formWithErrors => Future.successful(BadRequest(views.html.client.searchMandate(formWithErrors))),
         data => mandateService.fetchClientMandate(data.mandateRef) flatMap {
           case Some(x) => dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
-            case Some(y) => dataCacheService.cacheFormData[ClientCache](
+            case Some(y) =>
+              //id and name as well as type will be updated/populated by mandate backend
+              val clientParty = Party(
+                id = "",
+                name = "",
+                `type` = PartyType.Organisation,
+                contactDetails = ContactDetails(y.email.map(_.email).getOrElse(throw new RuntimeException("email not cached")))
+              )
+              val updatedMandate = x.copy(clientParty = Some(clientParty))
+              dataCacheService.cacheFormData[ClientCache](
               clientFormId,
-              y.copy(mandate = Some(x))
+              y.copy(mandate = Some(updatedMandate))
             ) flatMap { cachedData =>
               Future.successful(Redirect(routes.ReviewMandateController.view()))
             }
