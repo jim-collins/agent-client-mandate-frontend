@@ -64,6 +64,12 @@ class AgentClientSummaryControllerSpec extends PlaySpec with OneServerPerSuite w
           document.getElementById("happens-next-point3").text() must be("Let you know once they have completed this process.")
           document.getElementById("happens-next-notification").text() must be("You will have 28 days to sign in and accept the agent request. You will not receive an email notification.")
           document.getElementById("yourClients-name").text() must be("Name")
+          document.getElementById("yourClients-action").text() must be("Action")
+          document.getElementById("remove-client").text() must be("Remove test client")
+          document.getElementById("client-name-0").text() must be("test client")
+          document.getElementById("pending-client-name-0").text() must be("test client1")
+          println(s"${document.getElementById("accept-1")}")
+          document.getElementById("accept-1").text() must be("Accept")
 
         }
       }
@@ -86,13 +92,14 @@ class AgentClientSummaryControllerSpec extends PlaySpec with OneServerPerSuite w
   val mandateId = "12345678"
   val time1 = DateTime.now()
 
+  val clientParty = Party("12345678", "test client", PartyType.Individual, ContactDetails("a.a@a.com", None))
+  val clientParty1 = Party("12345679", "test client1", PartyType.Individual, ContactDetails("aa.aa@a.com", None))
 
   val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
   val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
   val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
   val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
-
-
+  
 def viewAuthorisedAgent(test: Future[Result] => Any) {
   val userId = s"user-${UUID.randomUUID}"
   implicit val hc: HeaderCarrier = HeaderCarrier()
