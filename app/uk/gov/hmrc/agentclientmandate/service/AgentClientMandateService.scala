@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+case class Mandates(activeMandates: Seq[Mandate], pendingMandates: Seq[Mandate])
 
 trait AgentClientMandateService extends MandateConstants {
 
@@ -63,14 +64,24 @@ trait AgentClientMandateService extends MandateConstants {
     }
   }
 
-  def fetchAllClientMandates(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Seq[ClientMandate]]] = {
+  def fetchAllClientMandates(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandates]] = {
     agentClientMandateConnector.fetchAllMandates(arn,serviceName) map {
       response => response.status match {
-        case OK => response.json.asOpt[Seq[ClientMandate]]
+        case OK =>
+          val mandates = response.json.asOpt[Seq[Mandate]]
+          mandates match {
+            case Some(x) =>
+              val pendingMandates = x.filter(a => a.currentStatus.status == Status.PendingCancellation || a.currentStatus.status == Status.New || a.currentStatus.status == Status.Approved)
+              val activeMandates = x.filter(a => a.currentStatus.status == Status.Active)
+              Some(Mandates(activeMandates, pendingMandates))
+            case None => None
+          }
         case status => None
       }
     }
   }
+
+
 
 }
 
