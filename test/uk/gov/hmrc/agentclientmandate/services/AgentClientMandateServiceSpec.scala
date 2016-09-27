@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AgentBusinessUtrGenerator, AuthBuilder}
 import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.models._
-import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
+import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, Mandates}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 
@@ -141,11 +141,31 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
     "fetch all mandates" when {
 
-      "correct mandate id's are passed" in {
+      "return no mandates when the list is empty" in {
+
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        val mandate = mandateNew
-        val respJson = Json.toJson(mandate)
-        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(),Matchers.any())(Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any())(Matchers.any())) thenReturn Future.successful(HttpResponse(SERVICE_UNAVAILABLE, None))
+
+        val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
+        await(response) must be(None)
+
+      }
+
+      "filter mandates when status is checked" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.toJson(Seq(mandateNew,mandateActive, mandatePendingCancellation, mandateApproved))
+        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any())(Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+
+        val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
+        await(response) must be(Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingCancellation, mandateApproved))))
+
+      }
+
+      "must return none when json wont map to case class" in {
+
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.obj("Wrong" -> "format")
+        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any())(Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
 
         val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
         await(response) must be(None)

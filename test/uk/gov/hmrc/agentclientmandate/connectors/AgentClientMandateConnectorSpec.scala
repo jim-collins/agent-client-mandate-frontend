@@ -25,7 +25,12 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
+<<<<<<< 92043128d4574aa154a7d3bb0e135251755e0230
 import uk.gov.hmrc.agentclientmandate.models._
+=======
+import uk.gov.hmrc.agentclientmandate.builders.AgentBusinessUtrGenerator
+import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto
+>>>>>>> ATED-2380 account summary page created
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
@@ -52,6 +57,8 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
   }
 
   val mandateId = "12345678"
+  val serviceName = "ATED"
+  val arn = new AgentBusinessUtrGenerator().nextAgentBusinessUtr
 
   val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED")
   implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -95,6 +102,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
     }
 
+<<<<<<< 92043128d4574aa154a7d3bb0e135251755e0230
     "return valid response, when client approves it" in {
       val successResponse = Json.toJson(mandate)
 
@@ -104,6 +112,19 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       val response = await(TestAgentClientMandateConnector.approveMandate(mandate))
       response.status must be(OK)
+=======
+    "fetch all valid mandates" in {
+      val successResponse = Json.toJson(mandateDto)
+
+
+      when(mockWSHttp.GET[HttpResponse]
+        (Matchers.any())
+        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+
+      val response = TestAgentClientMandateConnector.fetchAllMandates(arn.utr, serviceName)
+      await(response).status must be(OK)
+
+>>>>>>> ATED-2380 account summary page created
     }
 
   }
