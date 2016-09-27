@@ -20,7 +20,7 @@ import play.api.http.Status._
 import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientCache}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -61,6 +61,21 @@ trait AgentClientMandateService extends MandateConstants {
         case status => None
       }
     }
+  }
+
+  def approveMandate(mandate: Mandate)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandate]] = {
+     agentClientMandateConnector.approveMandate(mandate) flatMap {
+       response => response.status match {
+         case OK =>
+           val mandate = response.json.asOpt[Mandate]
+           dataCacheService.clearCache() flatMap { clearCacheRep =>
+             dataCacheService.cacheFormData[ClientCache](clientFormId, ClientCache(mandate = mandate)) flatMap { cacheResp =>
+               Future.successful(mandate)
+             }
+           }
+         case status => Future.successful(None)
+       }
+     }
   }
 
 }

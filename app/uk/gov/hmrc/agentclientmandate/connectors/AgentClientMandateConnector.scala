@@ -19,7 +19,7 @@ package uk.gov.hmrc.agentclientmandate.connectors
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.agentclientmandate.config.WSHttp
-import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto
+import uk.gov.hmrc.agentclientmandate.models.{CreateMandateDto, Mandate}
 import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.AuthContext
@@ -32,13 +32,14 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
   def serviceUrl: String
 
   val agentMandateUrl = "agent"
-  val mandate = "mandate"
+  val mandateUri = "mandate"
+  val approveUri = "approve"
 
   def http: HttpGet with HttpPost with HttpDelete
 
   def createMandate(mandateDto: CreateMandateDto)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val agentLink = ac.principal.accounts.agent.map(_.link).getOrElse("") // TODO: Change here
-    val postUrl = s"$serviceUrl$agentLink/$mandate"
+    val postUrl = s"$serviceUrl$agentLink/$mandateUri"
     val jsonData = Json.toJson(mandateDto)
     Logger.info(s"[AgentClientMandateConnector][createMandate] - POST - $postUrl and JSON Data - $jsonData")
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
@@ -46,10 +47,19 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
 
   def fetchMandate(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
-    val getUrl = s"$serviceUrl$authLink/$mandate/$mandateId"
+    val getUrl = s"$serviceUrl$authLink/$mandateUri/$mandateId"
     Logger.info(s"[AgentClientMandateConnector][fetchMandate] - GET - $getUrl")
     http.GET[HttpResponse](getUrl)
   }
+
+  def approveMandate(mandate: Mandate)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+    val authLink = AuthUtils.getAuthLink
+    val jsonData = Json.toJson(mandate)
+    val postUrl = s"$serviceUrl$authLink/$mandateUri/$approveUri"
+    Logger.info(s"[AgentClientMandateConnector][approveMandate] - POST - $postUrl and JSON Data - $jsonData")
+    http.POST[JsValue, HttpResponse](postUrl, jsonData)
+  }
+
 }
 
 object AgentClientMandateConnector extends AgentClientMandateConnector {

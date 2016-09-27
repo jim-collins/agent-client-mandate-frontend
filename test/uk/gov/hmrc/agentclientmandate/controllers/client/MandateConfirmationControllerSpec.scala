@@ -18,13 +18,19 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 
 import java.util.UUID
 
+import org.joda.time.DateTime
 import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.models.{MandateStatus, Service, Status, Subscription, _}
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientCache
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -68,7 +74,16 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     "return search mandate view for AUTHORISED client" when {
 
       "client requests(GET) for agent confirm view" in {
-        viewAuthorisedClient { result =>
+        val mandate = Mandate(id = "ABC123", createdBy = User("cerdId", "Joe Bloggs"),
+          agentParty = Party("ated-ref-no", "name",
+            `type` = PartyType.Organisation,
+            contactDetails = ContactDetails("aa@aa.com", None)),
+          clientParty = Some(Party("client-id", "client name",
+            `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None))),
+          currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
+          statusHistory = None, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
+        val returnData = ClientCache(mandate = Some(mandate))
+        viewAuthorisedClient(Some(returnData)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What happens next?")
@@ -84,9 +99,11 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
   }
 
   val mockAuthConnector = mock[AuthConnector]
+  val mockDataCacheService = mock[DataCacheService]
 
   object TestMandateConfirmationController extends MandateConfirmationController {
     val authConnector = mockAuthConnector
+    val dataCacheService = mockDataCacheService
   }
 
   def viewUnAuthenticatedClient(test: Future[Result] => Any) {
@@ -107,11 +124,12 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     test(result)
   }
 
-  def viewAuthorisedClient(test: Future[Result] => Any) {
+  def viewAuthorisedClient(cachedData: Option[ClientCache] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestMandateConfirmationController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
