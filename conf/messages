@@ -7,6 +7,8 @@ edit-link = Edit
 
 mandate.back = Back
 
+mandate.checkbox-i-agree.confirm.error = Please confirm that you want to submit this
+
 
 agent-client-mandate.error.summaryHeader = There is a problem with the form
 agent.add-a-client.sub-header = Add a client
@@ -69,7 +71,7 @@ client.agent-confirmation.your-request = Your request is shown in your agents AT
 client.agent-confirmation.this-authority = This authority will remain in place until you <a href="#">change or cancel your agent.</a>
 client.agent-confirmation.sign-in = You can sign in at any point to view your <a href="#">ATED online service</a>
 client.agent-confirmation.finish-signout = Finish and sign out
-
+client.declaration.error.general.agree = There is a problem with the checkbox.
 
 
 

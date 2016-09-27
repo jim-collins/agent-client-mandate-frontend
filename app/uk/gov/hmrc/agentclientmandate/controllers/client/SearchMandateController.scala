@@ -57,6 +57,7 @@ trait SearchMandateController extends FrontendController with Actions with Manda
           case Some(x) => dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
             case Some(y) =>
               //id and name as well as type will be updated/populated by mandate backend
+              //same applies to mandate current status as well as history
               val clientParty = Party(
                 id = "",
                 name = "",

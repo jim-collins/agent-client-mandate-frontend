@@ -14,6 +14,8 @@
 
 @main_template(title = Messages("Declaration and consent"), scriptElem = Some(pageScripts)) {
 
+  @mandateErrorSummary(declarationForm, "client.declaration.error.general")
+
   <h1 id="header" class="heading-xlarge">
     <span class="pre-heading" id="pre-heading">@Messages("client.agent-declaration.pre-heading")</span>
     @Messages("client.agent-declaration.header")

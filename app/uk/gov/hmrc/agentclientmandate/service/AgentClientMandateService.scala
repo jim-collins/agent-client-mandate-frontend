@@ -64,18 +64,18 @@ trait AgentClientMandateService extends MandateConstants {
   }
 
   def approveMandate(mandate: Mandate)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandate]] = {
-     agentClientMandateConnector.approveMandate(mandate) flatMap {
-       response => response.status match {
-         case OK =>
-           val mandate = response.json.asOpt[Mandate]
-           dataCacheService.clearCache() flatMap { clearCacheRep =>
-             dataCacheService.cacheFormData[ClientCache](clientFormId, ClientCache(mandate = mandate)) flatMap { cacheResp =>
-               Future.successful(mandate)
-             }
-           }
-         case status => Future.successful(None)
-       }
-     }
+    agentClientMandateConnector.approveMandate(mandate) flatMap { response =>
+      response.status match {
+        case OK =>
+          val mandate = response.json.as[Mandate]
+          dataCacheService.clearCache() flatMap { clearCacheRep =>
+            dataCacheService.cacheFormData[Mandate](clientApprovedMandateId, mandate) flatMap { cacheResp =>
+              Future.successful(Some(mandate))
+            }
+          }
+        case status => Future.successful(None)
+      }
+    }
   }
 
 }

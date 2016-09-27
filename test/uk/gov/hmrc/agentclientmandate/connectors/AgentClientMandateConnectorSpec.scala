@@ -17,6 +17,7 @@
 package uk.gov.hmrc.agentclientmandate.connectors
 
 
+import org.joda.time.DateTime
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -24,7 +25,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto
+import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
@@ -56,12 +57,19 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val ac: AuthContext = createRegisteredAgentAuthContext("agent", "agentId")
 
+  val mandate: Mandate =
+    Mandate(
+      id = "ABC123",
+      createdBy = User("cerdId", "Joe Bloggs"),
+      agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation, contactDetails = ContactDetails("aa@aa.com", None)),
+      clientParty = Some(Party("client-id", "client name", `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None))),
+      currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
+      statusHistory = Nil,
+      subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = ""))
+    )
+
 
   "AgentClientMandateConnector" must {
-
-    "have a service url" in {
-      AgentClientMandateConnector.serviceUrl must be("http://localhost:9960")
-    }
 
     "create a mandate" in {
       val successResponse = Json.toJson(mandateDto)
@@ -78,7 +86,6 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "fetch a valid mandate" in {
       val successResponse = Json.toJson(mandateDto)
 
-
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
@@ -86,6 +93,17 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       val response = TestAgentClientMandateConnector.fetchMandate(mandateId)
       await(response).status must be(OK)
 
+    }
+
+    "return valid response, when client approves it" in {
+      val successResponse = Json.toJson(mandate)
+
+      when(mockWSHttp.POST[JsValue, HttpResponse]
+        (Matchers.any(), Matchers.any(), Matchers.any())
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+
+      val response = await(TestAgentClientMandateConnector.approveMandate(mandate))
+      response.status must be(OK)
     }
 
   }

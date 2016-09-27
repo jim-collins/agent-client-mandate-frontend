@@ -61,7 +61,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
     "return mandate declaration view for AUTHORISED client" when {
 
       "client requests(GET) for mandate declaration view" in {
-        val cachedData = Some(ClientCache(email = Some(ClientEmail("bb@bb.com", "bb@bb.com")),mandate = Some(mandate)))
+        val cachedData = Some(ClientCache(email = Some(ClientEmail("bb@bb.com", "bb@bb.com")), mandate = Some(mandate)))
         viewAuthorisedClient(cachedData) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -76,7 +76,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
       }
     }
 
-    "redirect to mandate review page for AUTHORISED view" when {
+    "redirect to mandate review page for AUTHORISED client" when {
 
       "client requests(GET) for mandate declaration view but mandate not found in cache" in {
         viewAuthorisedClient(None) { result =>
@@ -88,7 +88,48 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
     "redirect to mandate confirmation page for AUTHORISED client" when {
 
       "valid form is submitted, mandate is found in cache and updated with status=accepted" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("agree" -> "true")
+        val cacheReturn = Some(ClientCache(mandate = Some(mandate)))
+        val mandateReturned = Some(mandate)
+        submitWithAuthorisedClient(fakeRequest, cacheReturn, mandateReturned) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/mandate-confirmation"))
+        }
+      }
+    }
 
+    "redirect to mandate confirmation page for AUTHORISED client" when {
+
+      "valid form is submitted, mandate is found in cache but update in backend fails" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("agree" -> "true")
+        val cacheReturn = Some(ClientCache(mandate = Some(mandate)))
+        submitWithAuthorisedClient(fakeRequest, cacheReturn) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+        }
+      }
+    }
+
+    "redirect to review Mandate view" when {
+      "mandate is not found in cache" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody()
+        submitWithAuthorisedClient(fakeRequest) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+        }
+      }
+    }
+
+    "return BAD_REQUEST" when {
+      "invalid form is submitted, with mandate found in cache" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody()
+        val cacheReturn = Some(ClientCache(mandate = Some(mandate)))
+        submitWithAuthorisedClient(fakeRequest, cacheReturn) { result =>
+          status(result) must be(BAD_REQUEST)
+          val document = Jsoup.parse(contentAsString(result))
+          document.getElementsByClass("error-list").text() must include("There is a problem with the checkbox.")
+          document.getElementsByClass("error-notification").text() must include("Please confirm that you want to submit this")
+        }
       }
     }
 
@@ -100,7 +141,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
       contactDetails = ContactDetails("aa@aa.com", None)),
     clientParty = None,
     currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
-    statusHistory = None, subscription = Subscription(referenceNumber = None,
+    statusHistory = Nil, subscription = Subscription(referenceNumber = None,
       service = Service(id = "ated-ref-no", name = "")))
   val mockAuthConnector = mock[AuthConnector]
   val mockDataCacheService = mock[DataCacheService]
@@ -130,12 +171,20 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
     test(result)
   }
 
-  def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded])(test: Future[Result] => Any) {
+  def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded],
+                                 clientCache: Option[ClientCache] = None,
+                                 mandate: Option[Mandate] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+
+    when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestMandateDeclarationController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(clientCache))
+
+    when(mockMandateService.approveMandate(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mandate))
+
     val result = TestMandateDeclarationController.submit().apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    test(result)
   }
 
 }

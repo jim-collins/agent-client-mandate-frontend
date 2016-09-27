@@ -33,12 +33,11 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
 
   val agentMandateUrl = "agent"
   val mandateUri = "mandate"
-  val approveUri = "approve"
 
   def http: HttpGet with HttpPost with HttpDelete
 
   def createMandate(mandateDto: CreateMandateDto)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
-    val agentLink = ac.principal.accounts.agent.map(_.link).getOrElse("") // TODO: Change here
+    val agentLink = ac.principal.accounts.agent.map(_.link).getOrElse("")
     val postUrl = s"$serviceUrl$agentLink/$mandateUri"
     val jsonData = Json.toJson(mandateDto)
     Logger.info(s"[AgentClientMandateConnector][createMandate] - POST - $postUrl and JSON Data - $jsonData")
@@ -55,7 +54,7 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
   def approveMandate(mandate: Mandate)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
     val jsonData = Json.toJson(mandate)
-    val postUrl = s"$serviceUrl$authLink/$mandateUri/$approveUri"
+    val postUrl = s"$serviceUrl$authLink/$mandateUri/approve"
     Logger.info(s"[AgentClientMandateConnector][approveMandate] - POST - $postUrl and JSON Data - $jsonData")
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
@@ -63,6 +62,8 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
 }
 
 object AgentClientMandateConnector extends AgentClientMandateConnector {
+  // $COVERAGE-OFF$
   val serviceUrl = baseUrl("agent-client-mandate")
   val http = WSHttp
+  // $COVERAGE-ON$
 }

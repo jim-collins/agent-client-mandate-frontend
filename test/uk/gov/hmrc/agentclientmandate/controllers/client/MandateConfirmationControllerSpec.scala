@@ -81,9 +81,8 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
           clientParty = Some(Party("client-id", "client name",
             `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None))),
           currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
-          statusHistory = None, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
-        val returnData = ClientCache(mandate = Some(mandate))
-        viewAuthorisedClient(Some(returnData)) { result =>
+          statusHistory = Nil, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
+        viewAuthorisedClient(Some(mandate)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What happens next?")
@@ -94,6 +93,15 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
         }
       }
 
+    }
+
+    "redirect client to review page" when {
+      "approved mandate is not returned in response" in {
+        viewAuthorisedClient(None) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+        }
+      }
     }
 
   }
@@ -124,12 +132,12 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     test(result)
   }
 
-  def viewAuthorisedClient(cachedData: Option[ClientCache] = None)(test: Future[Result] => Any) {
+  def viewAuthorisedClient(cachedData: Option[Mandate] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestMandateConfirmationController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
+    when(mockDataCacheService.fetchAndGetFormData[Mandate](Matchers.eq(TestMandateConfirmationController.clientApprovedMandateId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }

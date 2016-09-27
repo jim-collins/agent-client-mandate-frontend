@@ -18,10 +18,9 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
+import uk.gov.hmrc.agentclientmandate.models.Mandate
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientCache
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.DeclarationForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -31,17 +30,15 @@ object MandateConfirmationController extends MandateConfirmationController {
   val dataCacheService = DataCacheService
 }
 
-trait MandateConfirmationController extends FrontendController with Actions with MandateConstants{
+trait MandateConfirmationController extends FrontendController with Actions with MandateConstants {
 
   def dataCacheService: DataCacheService
 
   def view = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map {
-        _.flatMap(_.mandate) match {
-          case Some(x) => Ok(views.html.client.mandateConfirmation(x))
-          case None => Redirect(routes.ReviewMandateController.view())
-        }
+      dataCacheService.fetchAndGetFormData[Mandate](clientApprovedMandateId) map {
+        case Some(x) => Ok(views.html.client.mandateConfirmation(x))
+        case None => Redirect(routes.ReviewMandateController.view())
       }
   }
 

@@ -177,7 +177,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       contactDetails = ContactDetails("aa@aa.com", None)),
     clientParty = None,
     currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
-    statusHistory = None, subscription = Subscription(referenceNumber = None,
+    statusHistory = Nil, subscription = Subscription(referenceNumber = None,
       service = Service(id = "ated-ref-no", name = "")))
 
   val mockAuthConnector = mock[AuthConnector]

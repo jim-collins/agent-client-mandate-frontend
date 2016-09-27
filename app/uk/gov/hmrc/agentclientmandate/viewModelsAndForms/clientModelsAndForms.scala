@@ -110,7 +110,7 @@ object Declaration {
 object DeclarationForm {
 
   val declarationForm = Form(mapping(
-    "agree" -> optional(boolean).verifying(Messages("ated.checkbox-i-agree.confirm.error"), confirm => confirm.isDefined)
+    "agree" -> optional(boolean).verifying(Messages("mandate.checkbox-i-agree.confirm.error"), confirm => confirm.isDefined)
   )(Declaration.apply)(Declaration.unapply))
 
 }
