@@ -30,7 +30,6 @@ import uk.gov.hmrc.agentclientmandate.builders.AgentBusinessUtrGenerator
 import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto
 
 import uk.gov.hmrc.agentclientmandate.models._
-
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
