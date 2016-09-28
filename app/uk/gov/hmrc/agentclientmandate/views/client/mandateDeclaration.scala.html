@@ -1,11 +1,20 @@
-@()(implicit request: Request[_])
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@import uk.gov.hmrc.agentclientmandate.models._
+
+@(mandate: Mandate, declarationForm: Form[Declaration])(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@main_template(title = Messages("Declaration and consent")) {
+@pageScripts = {
+<script type="text/javascript" src='@controllers.routes.Assets.at("javascript/declaration.js")'></script>
+}
+
+@main_template(title = Messages("Declaration and consent"), scriptElem = Some(pageScripts)) {
+
+  @mandateErrorSummary(declarationForm, "client.declaration.error.general")
 
   <h1 id="header" class="heading-xlarge">
     <span class="pre-heading" id="pre-heading">@Messages("client.agent-declaration.pre-heading")</span>
@@ -21,21 +30,18 @@
   </h2>
 
   <ul class="bullets">
-    <li id="agent-name">@Messages("client.agent-declaration.agent-name")</li>
+    <li id="agent-name">@Messages("client.agent-declaration.agent-name", mandate.agentParty.name)</li>
     <li id="dec-info">@Messages("client.agent-declaration.information")</li>
   </ul>
 
-  @form(action = routes.MandateConfirmationController.view()) {
-
+  @form(action = routes.MandateDeclarationController.submit()) {
     <div class="form-group">
-      <label class="block-label" for="agree">
-        <input id="agree" type="checkbox" name="agree" value="I agree">
-        I agree
-      </label>
+      @mandateSingleCheckBox(declarationForm("agree"),
+      '_label -> Messages("i-agree"),
+      '_labelClass -> "block-label")
     </div>
-
     <div class="form-group">
-      <button class="button" id="confirm_btn" type="submit">@Messages("continue-button")</button>
+      <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
     </div>
 
   }

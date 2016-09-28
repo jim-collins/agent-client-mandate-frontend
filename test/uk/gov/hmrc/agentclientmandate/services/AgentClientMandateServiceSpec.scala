@@ -147,13 +147,48 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
     }
 
+    "send approved mandate to backend and caches the response in keystore" when {
+      "client approves it and response status is OK" in {
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "client")
+        val responseJson = Json.toJson(mandateNew)
 
+        when(mockAgentClientMandateConnector.approveMandate(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(responseJson))))
+
+        when(mockDataCacheService.cacheFormData[Mandate](Matchers.eq(TestAgentClientMandateService.clientApprovedMandateId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mandateNew))
+
+        when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
+        val response = TestAgentClientMandateService.approveMandate(mandateNew)
+        await(response) must be(Some(mandateNew))
+      }
+    }
+
+    "return none" when {
+      "backend call failed with status other than OK" in {
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "client")
+        when(mockAgentClientMandateConnector.approveMandate(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful(HttpResponse(BAD_REQUEST)))
+        val response = TestAgentClientMandateService.approveMandate(mandateNew)
+        await(response) must be(None)
+      }
+    }
   }
 
 
   val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED")
   val time1 = DateTime.now()
 
+  val mandateNew: Mandate = Mandate(
+    id = mandateId,
+    createdBy = User("credId", "agentName", Some("agentCode")),
+    None,
+    None,
+    agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)),
+    clientParty = None,
+    currentStatus = MandateStatus(Status.New, time1, "credId"),
+    statusHistory = Seq(MandateStatus(Status.New, time1, "credId")),
+    Subscription(None, Service("ated", "ATED"))
+  )
 
   val mockAgentClientMandateConnector = mock[AgentClientMandateConnector]
   val mockDataCacheService = mock[DataCacheService]
@@ -165,10 +200,9 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   val serviceName = "ATED"
 
 
-  val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = None, Subscription(None, Service("ated", "ATED")))
-  val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Some(Seq(MandateStatus(Status.New, time1, "credId"))), Subscription(None, Service("ated", "ATED")))
-  val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Some(Seq(MandateStatus(Status.New, time1, "credId"))), Subscription(None, Service("ated", "ATED")))
-  val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Some(Seq(MandateStatus(Status.New, time1, "credId"))), Subscription(None, Service("ated", "ATED")))
+  val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
+  val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
+  val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
 
 
   object TestAgentClientMandateService extends AgentClientMandateService {

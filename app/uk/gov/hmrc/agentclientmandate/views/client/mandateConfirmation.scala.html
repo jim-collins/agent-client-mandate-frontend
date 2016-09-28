@@ -1,4 +1,7 @@
-@()(implicit request: Request[_])
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@import uk.gov.hmrc.agentclientmandate.models._
+
+@(mandate: Mandate)(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._

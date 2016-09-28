@@ -64,8 +64,14 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
   "return review mandate view for AUTHORISED client" when {
 
     "client requests(GET) for review mandate view, and mandate has been cached on search mandate submit" in {
-      val mandate = Mandate(id = "ABC123", createdBy = User("cerdId", "Joe Bloggs"), agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation, contactDetails = ContactDetails("aa@aa.com", None)), clientParty = None, currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""), statusHistory = None, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
-
+      val mandate = Mandate(id = "ABC123", createdBy = User("cerdId", "Joe Bloggs"),
+        agentParty = Party("ated-ref-no", "name",
+          `type` = PartyType.Organisation,
+          contactDetails = ContactDetails("aa@aa.com", None)),
+        clientParty = Some(Party("client-id", "client name",
+          `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None))),
+        currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
+        statusHistory = Nil, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
       val returnData = ClientCache(mandate = Some(mandate))
       viewWithAuthorisedClient(Some(returnData)) { result =>
         status(result) must be(OK)
@@ -73,8 +79,8 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         document.title() must be("Check that this is the agent that you want to appoint")
         document.getElementById("header").text() must include("Check that this is the agent that you want to appoint")
         document.getElementById("pre-heading").text() must include("Appoint an agent")
-        document.getElementById("email-address").text() must be("Your email address")
-        document.getElementById("agent-reference").text() must be("Agent reference")
+        document.getElementById("agent-reference-label").text() must be("Agent reference")
+        document.getElementById("email-address-label").text() must be("Your email address")
         document.getElementById("submit").text() must be("Confirm and appoint agent")
       }
     }

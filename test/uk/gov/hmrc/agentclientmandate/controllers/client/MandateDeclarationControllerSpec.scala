@@ -18,13 +18,19 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 
 import java.util.UUID
 
+import org.joda.time.DateTime
 import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
-import play.api.mvc.Result
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.models.{MandateStatus, Service, Status, Subscription, _}
+import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, ClientEmail}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -43,7 +49,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
 
     "redirect to login page for UNAUTHENTICATED client" when {
 
-      "client requests(GET) for search mandate view" in {
+      "client requests(GET) for review mandate view" in {
         viewUnAuthenticatedClient { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
@@ -52,29 +58,99 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
 
     }
 
-    "return agent declaration view for AUTHORISED client" when {
+    "return mandate declaration view for AUTHORISED client" when {
 
-      "client requests(GET) for search declaration view" in {
-        viewAuthorisedClient { result =>
+      "client requests(GET) for mandate declaration view" in {
+        val cachedData = Some(ClientCache(email = Some(ClientEmail("bb@bb.com", "bb@bb.com")), mandate = Some(mandate)))
+        viewAuthorisedClient(cachedData) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Declaration and consent")
           document.getElementById("header").text() must include("Declaration and consent")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("declare-title").text() must be("I declare that:")
-          document.getElementById("agent-name").text() must be("the nominated agent [Agent Name] has agreed to act on my behalf in respect of ATED")
+          document.getElementById("agent-name").text() must be("the nominated agent name has agreed to act on my behalf in respect of ATED")
           document.getElementById("dec-info").text() must be("that the information I have provided is correct and complete")
-          document.getElementById("confirm_btn").text() must be("Continue")
+          document.getElementById("submit").text() must be("Continue")
+        }
+      }
+    }
+
+    "redirect to mandate review page for AUTHORISED client" when {
+
+      "client requests(GET) for mandate declaration view but mandate not found in cache" in {
+        viewAuthorisedClient(None) { result =>
+          status(result) must be(SEE_OTHER)
+        }
+      }
+    }
+
+    "redirect to mandate confirmation page for AUTHORISED client" when {
+
+      "valid form is submitted, mandate is found in cache and updated with status=accepted" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("agree" -> "true")
+        val cacheReturn = Some(ClientCache(mandate = Some(mandate)))
+        val mandateReturned = Some(mandate)
+        submitWithAuthorisedClient(fakeRequest, cacheReturn, mandateReturned) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/mandate-confirmation"))
+        }
+      }
+    }
+
+    "redirect to mandate confirmation page for AUTHORISED client" when {
+
+      "valid form is submitted, mandate is found in cache but update in backend fails" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("agree" -> "true")
+        val cacheReturn = Some(ClientCache(mandate = Some(mandate)))
+        submitWithAuthorisedClient(fakeRequest, cacheReturn) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+        }
+      }
+    }
+
+    "redirect to review Mandate view" when {
+      "mandate is not found in cache" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody()
+        submitWithAuthorisedClient(fakeRequest) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+        }
+      }
+    }
+
+    "return BAD_REQUEST" when {
+      "invalid form is submitted, with mandate found in cache" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody()
+        val cacheReturn = Some(ClientCache(mandate = Some(mandate)))
+        submitWithAuthorisedClient(fakeRequest, cacheReturn) { result =>
+          status(result) must be(BAD_REQUEST)
+          val document = Jsoup.parse(contentAsString(result))
+          document.getElementsByClass("error-list").text() must include("There is a problem with the checkbox.")
+          document.getElementsByClass("error-notification").text() must include("Please confirm that you want to submit this")
         }
       }
     }
 
   }
 
+  val mandateId = "ABC123"
+  val mandate = Mandate(id = mandateId, createdBy = User("cerdId", "Joe Bloggs"),
+    agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation,
+      contactDetails = ContactDetails("aa@aa.com", None)),
+    clientParty = None,
+    currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
+    statusHistory = Nil, subscription = Subscription(referenceNumber = None,
+      service = Service(id = "ated-ref-no", name = "")))
   val mockAuthConnector = mock[AuthConnector]
+  val mockDataCacheService = mock[DataCacheService]
+  val mockMandateService = mock[AgentClientMandateService]
 
   object TestMandateDeclarationController extends MandateDeclarationController {
     val authConnector = mockAuthConnector
+    val dataCacheService = mockDataCacheService
+    val mandateService = mockMandateService
   }
 
   def viewUnAuthenticatedClient(test: Future[Result] => Any) {
@@ -85,12 +161,29 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
     test(result)
   }
 
-  def viewAuthorisedClient(test: Future[Result] => Any) {
+  def viewAuthorisedClient(cachedData: Option[ClientCache] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestMandateDeclarationController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestMandateDeclarationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded],
+                                 clientCache: Option[ClientCache] = None,
+                                 mandate: Option[Mandate] = None)(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+
+    when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestMandateDeclarationController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(clientCache))
+
+    when(mockMandateService.approveMandate(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mandate))
+
+    val result = TestMandateDeclarationController.submit().apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

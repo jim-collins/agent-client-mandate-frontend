@@ -88,13 +88,30 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     }
 
     "redirect to 'Review Mandate view' view for Authorised Client" when {
+
       "valid form is submitted, mandate is found from backend, cache object exists and update of cache with mandate is successful" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> s"$mandateId")
-        val cachedData = ClientCache(email = Some(ClientEmail("aa@mail.com", "aa@mail.com")))
-        val returnCache = cachedData.copy(mandate = Some(mandate))
-        submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate), returnCache = returnCache) { result =>
+        val clientParty = Some(Party("client-id", "client name",
+          `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None)))
+        val cachedData = ClientCache(email = Some(ClientEmail("bb@bb.com", "bb@bb.com")))
+        val mandate1 = mandate.copy(clientParty = clientParty)
+        val returnCache = cachedData.copy(mandate = Some(mandate1))
+        submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+        }
+      }
+
+      "throw an exception when cached email not found from cache" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> s"$mandateId")
+        val clientParty = Some(Party("client-id", "client name",
+          `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None)))
+        val cachedData = ClientCache(email = None)
+        val mandate1 = mandate.copy(clientParty = clientParty)
+        val returnCache = cachedData.copy(mandate = Some(mandate1))
+        submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
+          val thrown = the[RuntimeException] thrownBy (await(result))
+          thrown.getMessage must include("email not cached")
         }
       }
     }
@@ -155,7 +172,13 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
   }
 
   val mandateId = "ABC123"
-  val mandate = Mandate(id = mandateId, createdBy = User("cerdId", "Joe Bloggs"), agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation, contactDetails = ContactDetails("aa@aa.com", None)), clientParty = None, currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""), statusHistory = None, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
+  val mandate = Mandate(id = mandateId, createdBy = User("cerdId", "Joe Bloggs"),
+    agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation,
+      contactDetails = ContactDetails("aa@aa.com", None)),
+    clientParty = None,
+    currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
+    statusHistory = Nil, subscription = Subscription(referenceNumber = None,
+      service = Service(id = "ated-ref-no", name = "")))
 
   val mockAuthConnector = mock[AuthConnector]
   val mockDataCacheService = mock[DataCacheService]
@@ -200,7 +223,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestSearchMandateController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     when(mockMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mandate))
-    when(mockDataCacheService.cacheFormData[ClientCache](Matchers.eq(TestSearchMandateController.clientFormId), Matchers.eq(returnCache))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(returnCache))
+    when(mockDataCacheService.cacheFormData[ClientCache](Matchers.eq(TestSearchMandateController.clientFormId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(returnCache))
     val result = TestSearchMandateController.submit().apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
