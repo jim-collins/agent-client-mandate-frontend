@@ -3,6 +3,8 @@
 
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@import uk.gov.hmrc.agentclientmandate.models._
+@import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils._
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
@@ -90,7 +92,6 @@
         </tbody>
       </table>
     </div>
-
     <div id="tabContent2" data-tab-content="2" role="tabpanel" aria-labelledby="clients">
       <table>
         <thead>
@@ -102,28 +103,31 @@
         </thead>
         <tbody>
         @for((pending, index) <- mandate.pendingMandates.zipWithIndex) {
-          <tr>
-            <td id="pending-client-name-@index">@pending.clientParty.map(_.name)</td>
-            <td id="reject-client">
-              <a id="reject-client-link-@index">
-                @Messages("client.summary.client-reject")
-              </a>
-            </td>
-
-            <td>
-              <a href="#" title="Accept @pending.clientParty.map(_.name)" id="accept-@(index+1)" onclick="ga('send', 'event', 'Agent - accept pending client - end', 'button clicked')">
-                <button type="submit" class="button" value="Accept">@Messages("Accept")</button>
-              </a>
-            </td>
-
+          <tr id="pending-client-data-@index">
+            <td>@pending.clientParty.map(_.name)</td>
+            @if(statusCantBeActioned(pending.currentStatus.status)){
+              <td></td>
+            }else{
+              <td id="reject-client">
+                <a id="reject-client-link-@index">
+                  @Messages("client.summary.client-reject")
+                </a>
+              </td>
+            }
+            @if(statusCantBeActioned(pending.currentStatus.status)){
+              <td>@Messages("client.summary.client.pending-status")</td>
+            }else{
+              <td>
+                <a href="#" title="Accept @pending.clientParty.map(_.name)" id="accept-@(index+1)" onclick="ga('send', 'event', 'Agent - accept pending client - end', 'button clicked')">
+                  <button type="submit" class="button" value="Accept">@Messages("client.summary.client-accept")</button>
+                </a>
+              </td>
+            }
           </tr>
         }
         </tbody>
       </table>
     </div>
   </div>
-
 }
-
-
 }

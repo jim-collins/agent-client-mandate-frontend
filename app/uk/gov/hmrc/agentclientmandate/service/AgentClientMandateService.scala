@@ -19,8 +19,8 @@ package uk.gov.hmrc.agentclientmandate.service
 import play.api.http.Status._
 import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.models._
-import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientCache}
+import uk.gov.hmrc.agentclientmandate.utils.{AgentClientMandateUtils, MandateConstants}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -86,7 +86,7 @@ trait AgentClientMandateService extends MandateConstants {
           val mandates = response.json.asOpt[Seq[Mandate]]
           mandates match {
             case Some(x) =>
-              val pendingMandates = x.filter(a => a.currentStatus.status == Status.PendingCancellation || a.currentStatus.status == Status.New || a.currentStatus.status == Status.Approved)
+              val pendingMandates = x.filter(a => AgentClientMandateUtils.isPendingStatus(a.currentStatus.status))
               val activeMandates = x.filter(a => a.currentStatus.status == Status.Active)
               Some(Mandates(activeMandates, pendingMandates))
             case None => None

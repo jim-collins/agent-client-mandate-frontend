@@ -173,6 +173,32 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
     }
 
+    "send approved mandate to backend and caches the response in keystore" when {
+      "client approves it and response status is OK" in {
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "client")
+        val responseJson = Json.toJson(mandateNew)
+
+        when(mockAgentClientMandateConnector.approveMandate(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(responseJson))))
+
+        when(mockDataCacheService.cacheFormData[Mandate](Matchers.eq(TestAgentClientMandateService.clientApprovedMandateId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mandateNew))
+
+        when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
+        val response = TestAgentClientMandateService.approveMandate(mandateNew)
+        await(response) must be(Some(mandateNew))
+      }
+    }
+
+    "return none" when {
+      "backend call failed with status other than OK" in {
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "client")
+        when(mockAgentClientMandateConnector.approveMandate(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful(HttpResponse(BAD_REQUEST)))
+        val response = TestAgentClientMandateService.approveMandate(mandateNew)
+        await(response) must be(None)
+      }
+    }
+
   }
 
 

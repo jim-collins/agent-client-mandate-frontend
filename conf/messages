@@ -33,6 +33,8 @@ client.summary.client-pending.title = Requests ({0})
 client.summary.client-active.title = Current ({0})
 client.summary.client-details-for = details for
 client.summary.client-remove = Remove
+client.summary.client-accept = Accept
+client.summary.client.pending-status = Pending
 
 
 
