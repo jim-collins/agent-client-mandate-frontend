@@ -34,7 +34,7 @@
     <li id="dec-info">@Messages("client.agent-declaration.information")</li>
   </ul>
 
-  @form(action = routes.MandateConfirmationController.view()) {
+  @form(action = routes.MandateDeclarationController.submit()) {
     <div class="form-group">
       @mandateSingleCheckBox(declarationForm("agree"),
       '_label -> Messages("i-agree"),
