@@ -68,7 +68,6 @@ class AgentClientSummaryControllerSpec extends PlaySpec with OneServerPerSuite w
           document.getElementById("remove-client").text() must be("Remove test client")
           document.getElementById("client-name-0").text() must be("test client")
           document.getElementById("pending-client-name-0").text() must be("test client1")
-          println(s"${document.getElementById("accept-1")}")
           document.getElementById("accept-1").text() must be("Accept")
 
         }
