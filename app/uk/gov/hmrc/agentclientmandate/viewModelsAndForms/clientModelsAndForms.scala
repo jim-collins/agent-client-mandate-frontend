@@ -100,3 +100,17 @@ case class ClientCache(
 object ClientCache {
   implicit val formats = Json.format[ClientCache]
 }
+
+case class Declaration(agree: Option[Boolean])
+
+object Declaration {
+  implicit val formats = Json.format[Declaration]
+}
+
+object DeclarationForm {
+
+  val declarationForm = Form(mapping(
+    "agree" -> optional(boolean).verifying(Messages("mandate.checkbox-i-agree.confirm.error"), confirm => confirm.isDefined)
+  )(Declaration.apply)(Declaration.unapply))
+
+}

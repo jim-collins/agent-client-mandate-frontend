@@ -7,6 +7,8 @@ edit-link = Edit
 
 mandate.back = Back
 
+mandate.checkbox-i-agree.confirm.error = Please confirm that you want to submit this
+
 
 agent-client-mandate.error.summaryHeader = There is a problem with the form
 agent.add-a-client.sub-header = Add a client
@@ -56,7 +58,7 @@ client.agent-declaration.header = Declaration and consent
 client.agent-declaration.pre-heading = Appoint an agent
 client.agent-declaration.declaration-info = <p>This authority allows HMRC to exchange and disclose information about you with your agent and to deal with them on matters relating to ATED.</p><p>You as the property owner will remain responsible for all aspects of you dealings with HMRC, even if your agent submits returns and makes payments on your behalf.</p>
 client.agent-declaration.declare-header = I declare that:
-client.agent-declaration.agent-name = the nominated agent [Agent Name] has agreed to act on my behalf in respect of ATED
+client.agent-declaration.agent-name = the nominated agent {0} has agreed to act on my behalf in respect of ATED
 client.agent-declaration.information = that the information I have provided is correct and complete
 
 #client agent confirmation
@@ -69,7 +71,7 @@ client.agent-confirmation.your-request = Your request is shown in your agents AT
 client.agent-confirmation.this-authority = This authority will remain in place until you <a href="#">change or cancel your agent.</a>
 client.agent-confirmation.sign-in = You can sign in at any point to view your <a href="#">ATED online service</a>
 client.agent-confirmation.finish-signout = Finish and sign out
-
+client.declaration.error.general.agree = There is a problem with the checkbox.
 
 
 
