@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.agentclientmandate.connectors
 
-
 import org.joda.time.DateTime
 import org.mockito.Matchers
 import org.mockito.Mockito._
@@ -112,24 +111,12 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "fetch all valid mandates" in {
       val successResponse = Json.toJson(mandateDto)
 
-
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
       val response = TestAgentClientMandateConnector.fetchAllMandates(arn.utr, serviceName)
       await(response).status must be(OK)
-    }
-
-    "return valid response, when client approves it" in {
-      val successResponse = Json.toJson(mandate)
-
-      when(mockWSHttp.POST[JsValue, HttpResponse]
-        (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
-
-      val response = await(TestAgentClientMandateConnector.approveMandate(mandate))
-      response.status must be(OK)
     }
 
   }
