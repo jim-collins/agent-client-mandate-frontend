@@ -1,0 +1,43 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+
+@(rejectClientForm: Form[RejectClientQuestion], clientName: String, mandateId: String)(implicit request: Request[_])
+
+@main_template(title = Messages("agent.reject-client.title")) {
+
+    <h1 id="header" class="heading-xlarge">
+        <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header")</span>
+        @Messages("agent.reject-client.header", clientName)
+    </h1>
+
+    <p>
+    @Messages("agent.reject-client.text")
+    </p>
+
+    @mandateErrorSummary(rejectClientForm, "agent.reject-client.error.general")
+
+    @form(action = routes.RejectClientController.confirm(mandateId, clientName)) {
+
+        <div class="form-group" id="rejectClient">
+        @mandateInputRadioGroup(
+            rejectClientForm("rejectClient"),
+            Seq("true" -> Messages("radio-yes"),
+                "false" -> Messages("radio-no")),
+            '_groupClass -> "inline",
+            '_legendClass -> "screen-reader-text",
+            '_legend -> Messages("agent.reject-client.header", clientName),
+            '_labelClass -> "block-label",
+            '_labelAfter -> true
+        )
+        </div>
+
+        <div class="form-group">
+            <button class="button" id="submit" type="submit">@Messages("confirm-button")</button>
+        </div>
+
+    }
+
+}
