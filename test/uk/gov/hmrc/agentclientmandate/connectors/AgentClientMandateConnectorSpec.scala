@@ -123,6 +123,15 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       await(response).status must be(OK)
     }
 
+    "reject a client" in {
+      when(mockWSHttp.POST[JsValue, HttpResponse]
+        (Matchers.any(), Matchers.any(), Matchers.any())
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+
+      val response = await(TestAgentClientMandateConnector.rejectClient(mandateId))
+      response.status must be(OK)
+    }
+
   }
 
 

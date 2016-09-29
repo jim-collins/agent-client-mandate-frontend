@@ -182,9 +182,6 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "submitting form " when {
       "submitted with false will redirect to agent summary" in {
         val hc = new HeaderCarrier()
-        val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
-        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
-
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("rejectClient" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
@@ -193,15 +190,25 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       }
 
       "submitted with true will redirect to confirmation" in {
+        when(mockAgentClientMandateService.rejectClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(true)
         val hc = new HeaderCarrier()
-        val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
-        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
-
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("rejectClient" -> "true")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/agent/reject-client/showConfirmation")
         }
+      }
+
+      "submitted with true throws exception" in {
+        when(mockAgentClientMandateService.rejectClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(false)
+        val userId = s"user-${UUID.randomUUID}"
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("rejectClient" -> "true")
+        AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+        val thrown = the[RuntimeException] thrownBy await(TestRejectClientController.confirm("ABC123", "Acme Ltd").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
+
+        thrown.getMessage must include("Client Rejection Failed")
       }
     }
 
