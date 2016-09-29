@@ -4,7 +4,7 @@ radio-yes = Yes
 radio-no = No
 i-agree = I agree
 edit-link = Edit
-
+confirm-button = Confirm
 mandate.back = Back
 
 mandate.checkbox-i-agree.confirm.error = Please confirm that you want to submit this
@@ -32,12 +32,8 @@ client.summary.client-view = View
 client.summary.client-pending.title = Requests ({0})
 client.summary.client-active.title = Current ({0})
 client.summary.client-details-for = details for
-client.summary.client-remove = Remove
 client.summary.client-accept = Accept
 client.summary.client.pending-status = Pending
-
-
-
 
 #client collect email
 client.collect-email.title = What is your email address?
@@ -148,7 +144,6 @@ agent.enter-business-details.utr.help.answer = <p>It is issued by HMRC when you 
 agent.enter-business-details-error.businessName.businessName = There is a problem with the Display name field
 agent.enter-business-details-error.businessName.utr = There is a problem with the Unique Tax Reference field
 
-
 # agent unique reference
 agent.unique-reference.title = Your unique agent reference for {0} is {1}
 agent.unique-reference.header = Your unique agent reference for {0} is<br>{1}
@@ -182,3 +177,20 @@ agent.edit-mandate-details.utr-hint = A UTR number is made up of 10 or 13 digits
 agent.edit-mandate-details.answer = <p>It is issued by HMRC when they register their business or for Self-Assessment.</p> <p>It can usually be found in the header of any letter issued by HMRC next to headings such as 'Tax Reference', 'UTR' or 'Official Use</p>
 agent.edit-mandate-details.email = Your email address
 agent.edit-mandate-details.submit = Save changes
+
+# agent reject client
+agent.reject-client.title = Confirm Client Rejection
+agent.reject-client.header = Are you sure you want to reject the request from {0}?
+agent.reject-client.text = Rejecting a client request means you will not be able to act on their behalf unless they submit another request.
+agent.reject-client.error.mandatory = You must answer question
+agent.reject-client.error.general.rejectClient = There is a problem with the question
+
+# agent reject client confirmation
+agent.reject-client-confirmation.title = Client Rejection Confirmed
+agent.reject-client-confirmation.banner-text = You have rejected {0}
+agent.reject-client-confirmation.banner-text-date = on the {0}
+agent.reject-client-confirmation.notification = Your client will receive an email notification.
+agent.reject-client-confirmation.what-next = What happens next?
+agent.reject-client-confirmation.request-new-client = you can request a new client
+agent.reject-client-confirmation.submit-returns = submit returns for an existing client
+agent.reject-client-confirmation.view-all-clients = View all your clients

@@ -95,9 +95,6 @@ trait AgentClientMandateService extends MandateConstants {
       }
     }
   }
-
-
-
 }
 
 object AgentClientMandateService extends AgentClientMandateService {

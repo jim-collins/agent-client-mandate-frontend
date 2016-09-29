@@ -147,8 +147,6 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
     }
 
-
-
     "send approved mandate to backend and caches the response in keystore" when {
       "client approves it and response status is OK" in {
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "client")
@@ -174,12 +172,10 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         await(response) must be(None)
       }
     }
-
   }
 
 
   val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED")
-
   val time1 = DateTime.now()
 
   val mockAgentClientMandateConnector = mock[AgentClientMandateConnector]
@@ -190,7 +186,6 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   val service = "ATED"
   val mandateId = "12345678"
   val serviceName = "ATED"
-
 
   val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
   val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))

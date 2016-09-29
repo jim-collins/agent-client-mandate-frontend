@@ -34,6 +34,12 @@ POST    /agent/collect-client-business-details/:service      uk.gov.hmrc.agentcl
 
 GET     /agent/unique-agent-reference/:service        uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 
-GET     /agent/agent-edit-client             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateController.view
 
 GET     /agent/agent-client-summary                 uk.gov.hmrc.agentclientmandate.controllers.agent.AgentClientSummaryController.view
+
+GET     /agent/agent-edit-client             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateController.view
+
+GET     /agent/reject-client/:mandateId                     uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.view(mandateId: String)
+POST    /agent/reject-client/:mandateId/:clientName         uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.confirm(mandateId: String, clientName: String)
+GET     /agent/reject-client/showConfirmation/:clientName   uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.showConfirmation(clientName: String)
+

@@ -24,6 +24,10 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
+
+import uk.gov.hmrc.agentclientmandate.builders.AgentBusinessUtrGenerator
+import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto
+
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.builders.AgentBusinessUtrGenerator
 import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto

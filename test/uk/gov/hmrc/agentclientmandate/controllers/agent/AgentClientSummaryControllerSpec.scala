@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.models.{MandateStatus, Service, Status, Subscription, _}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, Mandates}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
@@ -116,6 +117,7 @@ def viewAuthorisedAgent(test: Future[Result] => Any) {
 
   when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn{
     Future.successful(Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates =Seq(mandateNew,mandatePendingActivation, mandateApproved, mandatePendingCancellation))))
+
   }
 
   val result = TestAgentClientSummaryController.view().apply(SessionBuilder.buildRequestWithSession(userId))
