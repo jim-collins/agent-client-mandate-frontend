@@ -172,6 +172,24 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         await(response) must be(None)
       }
     }
+
+    "reject client" when {
+      "agent rejects client status returned ok" in {
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "agent")
+        when(mockAgentClientMandateConnector.rejectClient(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful(HttpResponse(OK)))
+        val response = TestAgentClientMandateService.rejectClient(mandateId)
+        await(response) must be(true)
+      }
+
+      "agent rejects client status returned not ok" in {
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "agent")
+        when(mockAgentClientMandateConnector.rejectClient(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful(HttpResponse(INTERNAL_SERVER_ERROR)))
+        val response = TestAgentClientMandateService.rejectClient(mandateId)
+        await(response) must be(false)
+      }
+    }
   }
 
 

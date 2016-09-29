@@ -44,18 +44,24 @@ trait RejectClientController extends FrontendController with Actions {
       }
   }
 
-  def confirm(mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def confirm(mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
         rejectClientQuestionForm.bindFromRequest.fold(
-            formWithError => BadRequest(views.html.agent.rejectClient(formWithError, clientName, mandateId)),
+            formWithError => Future.successful(BadRequest(views.html.agent.rejectClient(formWithError, clientName, mandateId))),
             data => {
               val rejectClient = data.rejectClient.getOrElse(false)
               if (rejectClient) {
-                //TODO rejection of client
-                Redirect(routes.RejectClientController.showConfirmation(clientName))
+                acmService.rejectClient(mandateId).map { rejectedClient =>
+                  if (rejectedClient) {
+                    Redirect(routes.RejectClientController.showConfirmation(clientName))
+                  }
+                  else {
+                    throw new RuntimeException("Client Rejection Failed")
+                  }
+                }
               }
               else {
-                Redirect(routes.AgentClientSummaryController.view)
+                Future.successful(Redirect(routes.AgentClientSummaryController.view))
               }
             }
         )
