@@ -36,3 +36,4 @@ GET     /agent/unique-agent-reference/:service        uk.gov.hmrc.agentclientman
 
 GET     /agent/agent-edit-client             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateController.view
 
+GET     /agent/agent-client-summary                 uk.gov.hmrc.agentclientmandate.controllers.agent.AgentClientSummaryController.view

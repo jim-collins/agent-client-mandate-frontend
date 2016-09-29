@@ -1,0 +1,133 @@
+@import uk.gov.hmrc.agentclientmandate.service._
+@(mandatesList: Option[Mandates])(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@import uk.gov.hmrc.agentclientmandate.models._
+@import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils._
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@main_template(title = Messages("client.summary.title")){
+
+<h1 id ="header" class="heading-xlarge">@Messages("client.summary.title")</h1>
+
+<div class="form-group">
+    <details>
+        <summary><span id="add-client-reveal" class="summary">
+        @Messages("client.summary.add-client-reveal")
+      </span></summary>
+
+        <div class="panel-indent">
+
+            <h2 class="heading-small" id ="what-happens-next-instruction">@Messages("client.summary.reveal-heading")</h2>
+
+            <p id="happens-next-text">@Messages("client.summary.reveal-text")</p>
+
+            <ul class="list-number" type="1">
+                <li id="happens-next-point1">@Html(Messages("client.summary.reveal-point1"))</li>
+                <li id="happens-next-point2">@Messages("client.summary.reveal-point2")</li>
+                <li id="happens-next-point3">@Messages("client.summary.reveal-point3")</li>
+            </ul>
+
+            <p id="happens-next-notification">@Messages("client.summary.reveal-notification")</p>
+
+        </div>
+    </details>
+</div>
+
+
+
+@mandatesList.map { mandate =>
+
+  <div data-tabs>
+    <ul class="tabs-nav" role="tablist">
+
+    @if(mandate.pendingMandates.isEmpty){
+      <li id="clients" data-tab-link="1" role="tab" aria-selected="true" aria-controls="tabContent1" tabindex="0">
+        <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandate.activeMandates.size">tab1</span>
+    } else {
+      <li id="clients" data-tab-link="1" role="tab" aria-selected="false" aria-controls="tabContent1" tabindex="1">
+        <span class="tabs-nav__tab" data-clients="@mandate.activeMandates.size">@Messages("client.summary.client-active.title", mandate.activeMandates.size)</span>
+      </li>
+    }
+
+    @if(mandate.pendingMandates.isEmpty){
+
+    } else {
+      <li id="pending-clients" data-tab-link="2" role="tab" aria-selected="true" aria-controls="tabContent2" tabindex="0">
+        <span class="tabs-nav__tab tabs-nav__tab--active" data-pending-clients="@mandate.pendingMandates.size">@Messages("client.summary.client-pending.title", mandate.pendingMandates.size)</span>
+      </li>
+    }
+    </ul>
+
+    <div id="tabContent1" data-tab-content="1" role="tabpanel" aria-labelledby="clients">
+      <table>
+        <thead>
+          <tr>
+            <th id="yourClients-name">@Messages("client.summary.client-name.title")</th>
+            <th id="yourClients-action">@Messages("client.summary.client-action.title")</th>
+            <td id="noHeader" colspan="2">  </td>
+          </tr>
+        </thead>
+        <tbody>
+        @for((active, index) <- mandate.activeMandates.zipWithIndex) {
+          <tr>
+            <td id="client-name-@index">@active.clientParty.map(_.name)</td>
+            <td id="remove-client">
+              <a id="remove-client-link-@index">
+                @Messages("client.summary.client-remove") <span class="screen-reader-text">@active.clientParty.map(_.name)</span>
+              </a>
+            </td>
+
+            <td class="tdRight">
+              <a  id="client-link-@index">
+                <button type="submit">@Messages("client.summary.client-view") <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientParty.map(_.name)</span></button>
+              </a>
+            </td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+    <div id="tabContent2" data-tab-content="2" role="tabpanel" aria-labelledby="clients">
+      <table>
+        <thead>
+          <tr>
+            <th id="client-name">@Messages("client.summary.client-name.title")</th>
+            <th id="client-action">@Messages("client.summary.client-action.title")</th>
+            <td id="noHeader2" colspan="2">  </td>
+          </tr>
+        </thead>
+        <tbody>
+        @for((pending, index) <- mandate.pendingMandates.zipWithIndex) {
+          <tr id="pending-client-data-@index">
+            <td>@pending.clientParty.map(_.name)</td>
+            @if(statusCantBeActioned(pending.currentStatus.status)){
+              <td></td>
+            }else{
+              <td id="reject-client">
+                <a id="reject-client-link-@index">
+                  @Messages("client.summary.client-reject")
+                </a>
+              </td>
+            }
+            @if(statusCantBeActioned(pending.currentStatus.status)){
+              <td>@Messages("client.summary.client.pending-status")</td>
+            }else{
+              <td>
+                <a href="#" title="Accept @pending.clientParty.map(_.name)" id="accept-@(index+1)" onclick="ga('send', 'event', 'Agent - accept pending client - end', 'button clicked')">
+                  <button type="submit" class="button" value="Accept">@Messages("client.summary.client-accept")</button>
+                </a>
+              </td>
+            }
+          </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}
+}

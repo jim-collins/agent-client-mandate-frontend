@@ -26,10 +26,10 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
+import uk.gov.hmrc.agentclientmandate.builders.{AgentBusinessUtrGenerator, AuthBuilder}
 import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.models._
-import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
+import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, Mandates}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 
@@ -113,6 +113,42 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
     }
 
+    "fetch all mandates" when {
+
+      "return no mandates when the list is empty" in {
+
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(SERVICE_UNAVAILABLE, None))
+
+        val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
+        await(response) must be(None)
+
+      }
+
+      "filter mandates when status is checked" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.toJson(Seq(mandateNew,mandateActive, mandatePendingCancellation, mandateApproved))
+        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+
+        val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
+        await(response) must be(Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingCancellation, mandateApproved))))
+
+      }
+
+      "must return none when json wont map to case class" in {
+
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.obj("Wrong" -> "format")
+        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+
+        val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
+        await(response) must be(None)
+      }
+
+    }
+
+
+
     "send approved mandate to backend and caches the response in keystore" when {
       "client approves it and response status is OK" in {
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "client")
@@ -143,25 +179,24 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
 
   val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED")
-  val mandateId = "12345678"
-  val service = "ATED"
 
   val time1 = DateTime.now()
 
-  val mandateNew: Mandate = Mandate(
-    id = mandateId,
-    createdBy = User("credId", "agentName", Some("agentCode")),
-    None,
-    None,
-    agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)),
-    clientParty = None,
-    currentStatus = MandateStatus(Status.New, time1, "credId"),
-    statusHistory = Seq(MandateStatus(Status.New, time1, "credId")),
-    Subscription(None, Service("ated", "ATED"))
-  )
-
   val mockAgentClientMandateConnector = mock[AgentClientMandateConnector]
   val mockDataCacheService = mock[DataCacheService]
+  val arn = new AgentBusinessUtrGenerator().nextAgentBusinessUtr
+
+  val validFormId: String = "some-from-id"
+  val service = "ATED"
+  val mandateId = "12345678"
+  val serviceName = "ATED"
+
+
+  val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
+  val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
+  val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
+  val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
+
 
   object TestAgentClientMandateService extends AgentClientMandateService {
     override val dataCacheService = mockDataCacheService

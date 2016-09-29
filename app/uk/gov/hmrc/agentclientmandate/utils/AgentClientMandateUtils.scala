@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.agentclientmandate.utils
 
+import uk.gov.hmrc.agentclientmandate.models.Status
+import uk.gov.hmrc.agentclientmandate.models.Status.Status
+
 object AgentClientMandateUtils {
 
 
@@ -56,5 +59,13 @@ object AgentClientMandateUtils {
     mapOfRemainders.get(remainder).contains(checkDigit)
   }
 
+  def isPendingStatus(status: Status): Boolean = {
+    val pendingStates = Seq(Status.PendingCancellation, Status.New, Status.Approved, Status.PendingActivation, Status.PendingCancellation)
+    pendingStates.contains(status)
+  }
+
+  def statusCantBeActioned(status: Status): Boolean = {
+    status == Status.PendingActivation || status == Status.PendingCancellation
+  }
 
 }
