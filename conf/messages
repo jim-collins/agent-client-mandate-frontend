@@ -32,9 +32,8 @@ client.summary.client-view = View
 client.summary.client-pending.title = Requests ({0})
 client.summary.client-active.title = Current ({0})
 client.summary.client-details-for = details for
-
-
-
+client.summary.client-accept = Accept
+client.summary.client.pending-status = Pending
 
 #client collect email
 client.collect-email.title = What is your email address?

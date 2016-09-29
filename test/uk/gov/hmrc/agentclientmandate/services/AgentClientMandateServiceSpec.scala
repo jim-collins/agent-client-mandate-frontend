@@ -178,18 +178,6 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED")
   val time1 = DateTime.now()
 
-  val mandateNew: Mandate = Mandate(
-    id = mandateId,
-    createdBy = User("credId", "agentName", Some("agentCode")),
-    None,
-    None,
-    agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)),
-    clientParty = None,
-    currentStatus = MandateStatus(Status.New, time1, "credId"),
-    statusHistory = Seq(MandateStatus(Status.New, time1, "credId")),
-    Subscription(None, Service("ated", "ATED"))
-  )
-
   val mockAgentClientMandateConnector = mock[AgentClientMandateConnector]
   val mockDataCacheService = mock[DataCacheService]
   val arn = new AgentBusinessUtrGenerator().nextAgentBusinessUtr
@@ -199,7 +187,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   val mandateId = "12345678"
   val serviceName = "ATED"
 
-
+  val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
   val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
   val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
   val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
