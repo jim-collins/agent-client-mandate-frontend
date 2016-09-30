@@ -71,7 +71,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("confirmEmail_field").text() must be("Confirm email address")
           document.getElementById("email").`val`() must be("")
           document.getElementById("confirmEmail").`val`() must be("")
-          document.getElementById("confirm_btn").text() must be("Continue")
+          document.getElementById("submit").text() must be("Continue")
         }
       }
 
