@@ -190,8 +190,20 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         await(response) must be(false)
       }
     }
+
+    "fetch agent details" in {
+      implicit val user = AuthBuilder.createOrgAuthContext(userId, "agent")
+      when(mockAgentClientMandateConnector.fetchAgentDetails()(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(agentDetails))
+      val response = TestAgentClientMandateService.fetchAgentDetails()
+      await(response) must be(agentDetails)
+    }
   }
 
+
+
+  val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
+  val agentDetails = AgentDetails("Agent Ltd.", registeredAddressDetails)
 
   val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED")
   val time1 = DateTime.now()
