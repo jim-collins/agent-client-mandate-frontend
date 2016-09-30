@@ -37,8 +37,9 @@ trait AgentClientSummaryController extends FrontendController with Actions {
     implicit authContext => implicit request =>
       for {
         mandates <- agentClientMandateService.fetchAllClientMandates("JARN1234567", "ATED")
+        agentDetails <- agentClientMandateService.fetchAgentDetails()
       } yield {
-        Ok(views.html.agent.agentClientSummary(mandates))
+        Ok(views.html.agent.agentClientSummary(mandates, agentDetails))
       }
 
 

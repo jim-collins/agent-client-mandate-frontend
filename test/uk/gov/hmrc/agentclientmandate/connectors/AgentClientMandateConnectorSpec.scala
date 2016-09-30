@@ -75,6 +75,9 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = ""))
     )
 
+  val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
+  val agentDetails = AgentDetails("Agent Ltd.", registeredAddressDetails)
+
   "AgentClientMandateConnector" must {
 
     "create a mandate" in {
@@ -130,6 +133,15 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       val response = await(TestAgentClientMandateConnector.rejectClient(mandateId))
       response.status must be(OK)
+    }
+
+    "get agent details" in {
+      when(mockWSHttp.GET[AgentDetails]
+        (Matchers.any())
+        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(agentDetails))
+
+      val response = await(TestAgentClientMandateConnector.fetchAgentDetails())
+      response.agentName must be("Agent Ltd.")
     }
 
   }

@@ -104,6 +104,10 @@ trait AgentClientMandateService extends MandateConstants {
       }
     }
   }
+
+  def fetchAgentDetails()(implicit hc: HeaderCarrier, ac: AuthContext): Future[AgentDetails] = {
+    agentClientMandateConnector.fetchAgentDetails()
+  }
 }
 
 object AgentClientMandateService extends AgentClientMandateService {

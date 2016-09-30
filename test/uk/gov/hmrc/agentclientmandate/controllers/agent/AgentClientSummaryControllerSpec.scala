@@ -75,7 +75,7 @@ class AgentClientSummaryControllerSpec extends PlaySpec with OneServerPerSuite w
           document.getElementById("pending-client-data-2").child(0).text() must be("test client3")
           document.getElementById("pending-client-data-3").child(0).text() must be("test client4")
           document.getElementById("pending-client-data-1").child(2).text() must be("Pending")
-
+          document.getElementById("sidebar.agentname").text() must be("ABC Ltd.")
         }
       }
     }
@@ -87,12 +87,16 @@ class AgentClientSummaryControllerSpec extends PlaySpec with OneServerPerSuite w
 
   object TestAgentClientSummaryController extends AgentClientSummaryController {
     override val authConnector = mockAuthConnector
-    val agentClientMandateService = mockAgentClientMandateService
+    override val agentClientMandateService = mockAgentClientMandateService
   }
 
   override def beforeEach() = {
     reset(mockAuthConnector)
+    reset(mockAgentClientMandateService)
   }
+
+  val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
+  val agentDetails = AgentDetails("ABC Ltd.", registeredAddressDetails)
 
   val mandateId = "12345678"
   val time1 = DateTime.now()
@@ -109,18 +113,18 @@ class AgentClientSummaryControllerSpec extends PlaySpec with OneServerPerSuite w
   val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty4), currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
   val mandatePendingActivation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123451", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty2), currentStatus = MandateStatus(Status.PendingActivation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
 
-def viewAuthorisedAgent(test: Future[Result] => Any) {
-  val userId = s"user-${UUID.randomUUID}"
-  implicit val hc: HeaderCarrier = HeaderCarrier()
-  implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
-  AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+  def viewAuthorisedAgent(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
 
-  when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn{
-    Future.successful(Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates =Seq(mandateNew,mandatePendingActivation, mandateApproved, mandatePendingCancellation))))
+    when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn{
+      Future.successful(Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates =Seq(mandateNew,mandatePendingActivation, mandateApproved, mandatePendingCancellation))))
+    }
+    when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
 
+    val result = TestAgentClientSummaryController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
   }
-
-  val result = TestAgentClientSummaryController.view().apply(SessionBuilder.buildRequestWithSession(userId))
-  test(result)
-}
 }
