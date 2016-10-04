@@ -64,7 +64,7 @@ trait RemoveAgentController extends FrontendController with Actions {
           val removeAgent = data.yesNo.getOrElse(false)
           if (removeAgent) {
             acmService.removeAgent(mandateId).map { removedAgent =>
-              if (removedAgent) Redirect(routes.ChangeAgentController.view)
+              if (removedAgent) Redirect(routes.ChangeAgentController.view(agentName))
               else throw new RuntimeException("Agent Removal Failed")
             }
           }
@@ -80,8 +80,13 @@ trait RemoveAgentController extends FrontendController with Actions {
       )
   }
 
-//  def showConfirmation(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
-//    implicit authContext => implicit request =>
-//      ??? //Ok(views.html.agent.removeAgentConfirmation(agentName))
-//  }
+  def showConfirmation(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit request =>
+      Ok(views.html.client.removeAgentConfirmation(agentName))
+  }
+
+  def returnToService() = AuthorisedFor(ClientRegime, GGConfidence) {
+    implicit authContext => implicit request =>
+      ???
+  }
 }

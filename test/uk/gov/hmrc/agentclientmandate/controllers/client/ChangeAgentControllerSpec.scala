@@ -57,7 +57,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view.apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestChangeAgentController.view("ACME Ltd").apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -67,7 +67,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view.apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestChangeAgentController.view("ACME Ltd").apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -76,31 +76,31 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view.apply(SessionBuilder.updateRequestWithSession(request, userId))
+    val result = TestChangeAgentController.view("ACME Ltd").apply(SessionBuilder.updateRequestWithSession(request, userId))
     test(result)
   }
 
-//  def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded])(test: Future[Result] => Any) {
-//    val userId = s"user-${UUID.randomUUID}"
-//    implicit val hc: HeaderCarrier = HeaderCarrier()
-//    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
-//    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-//
-//    val result = TestChangeAgentController.confirm("1", "agent ltd").apply(SessionBuilder.updateRequestFormWithSession(request, userId))
-//    test(result)
-//  }
+  def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded])(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+
+    val result = TestChangeAgentController.confirm("ACME Ltd").apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    test(result)
+  }
 
   "ChangeAgentController" must {
     "not return NOT_FOUND at route " when {
-      "GET /mandate/client/change-agent" in {
-        val result = route(FakeRequest(GET, "/mandate/client/change-agent")).get
+      "GET /mandate/client/change-agent/agentName" in {
+        val result = route(FakeRequest(GET, "/mandate/client/change-agent/ACME")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
-//      "POST /mandate/agent/remove-agent/1" in {
-//        val result = route(FakeRequest(POST, s"/mandate/client/change-agent")).get
-//        status(result) mustNot be(NOT_FOUND)
-//      }
+      "POST /mandate/client/change-agent/agentName" in {
+        val result = route(FakeRequest(POST, s"/mandate/client/change-agent/ACME")).get
+        status(result) mustNot be(NOT_FOUND)
+      }
     }
 
     "redirect to login page for UNAUTHENTICATED client" when {
@@ -136,6 +136,37 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
           document.getElementById("yesNo_legend").text() must be("Do you want to appoint another agent to act on your behalf?")
           document.getElementById("submit").text() must be("Confirm")
         })
+      }
+    }
+
+    "submitting form" when {
+      "invalid form is submitted" in {
+        val hc = new HeaderCarrier()
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "")
+        submitWithAuthorisedClient(fakeRequest) { result =>
+          status(result) must be(BAD_REQUEST)
+          val document = Jsoup.parse(contentAsString(result))
+          document.getElementsByClass("error-list").text() must include("There is a problem with the question")
+          document.getElementsByClass("error-notification").text() must include("You must answer question")
+        }
+      }
+
+      "submitted with true will redirect to collect agent email" in {
+        val hc = new HeaderCarrier()
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
+        submitWithAuthorisedClient(fakeRequest) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must include("/client/collect-email")
+        }
+      }
+
+      "submitted with false will redirect to remove agent confirmation" in {
+        val hc = new HeaderCarrier()
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "false")
+        submitWithAuthorisedClient(fakeRequest) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must include("/client/remove-agent/showConfirmation")
+        }
       }
     }
   }
