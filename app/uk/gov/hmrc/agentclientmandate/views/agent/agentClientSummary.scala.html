@@ -11,35 +11,11 @@
 
 @main_template(title = Messages("client.summary.title"), sidebarLinks = Some(_agentSummary_sidebar(agentDetails))){
 
-  <h1 id ="header" class="heading-xlarge">@Messages("client.summary.title")</h1>
-
-  <div class="form-group">
-    <details>
-      <summary><span id="add-client-reveal" class="summary">
-      @Messages("client.summary.add-client-reveal")
-      </span></summary>
-
-      <div class="panel-indent">
-
-        <h2 class="heading-small" id ="what-happens-next-instruction">@Messages("client.summary.reveal-heading")</h2>
-
-        <p id="happens-next-text">@Messages("client.summary.reveal-text")</p>
-
-        <ul class="list-number" type="1">
-          <li id="happens-next-point1">@Html(Messages("client.summary.reveal-point1"))</li>
-          <li id="happens-next-point2">@Messages("client.summary.reveal-point2")</li>
-          <li id="happens-next-point3">@Messages("client.summary.reveal-point3")</li>
-        </ul>
-
-        <p id="happens-next-notification">@Messages("client.summary.reveal-notification")</p>
-
-      </div>
-    </details>
-  </div>
-
-
+  <h1 id="header" class="heading-xlarge">@Messages("client.summary.title")</h1>
 
   @mandatesList.map { mandate =>
+
+    <a href="@routes.CollectAgentEmailController.view("ATED")" id="add-client-link" class="link">@Messages("client.summary.add-client")</a>
 
     <div data-tabs>
       <ul class="tabs-nav" role="tablist">
@@ -128,5 +104,9 @@
         </table>
       </div>
     </div>
+  }.getOrElse {
+    <h3 class="heading-medium">@Messages("client.summary.no-clients")</h3>
+
+    <a href="@routes.CollectAgentEmailController.view("ATED")" id="add-client-btn" class="button">@Messages("client.summary.add-client")</a>
   }
 }

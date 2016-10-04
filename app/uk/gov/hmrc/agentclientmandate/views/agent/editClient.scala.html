@@ -28,16 +28,6 @@
     </div>
 
     <div class="form-field">
-    @mandateInput(editMandateDetailsForm("utr"),
-    '_label -> Messages("agent.edit-mandate-details.utr"),
-    '_hintText -> Messages("agent.edit-mandate-details.utr-hint"),
-    '_fieldsetAttributesHelpQuestion -> "utr-help-question",
-    '_fieldsetQuestion -> "Where to find their UTR",
-    '_HelpQuestionAnswer -> Html(Messages("agent.edit-mandate-details.answer")),
-    '_showConstraints -> false)
-    </div>
-
-    <div class="form-field">
     @mandateInput(editMandateDetailsForm("email"),
     '_label -> Messages("agent.edit-mandate-details.email"),
     '_showConstraints -> false)

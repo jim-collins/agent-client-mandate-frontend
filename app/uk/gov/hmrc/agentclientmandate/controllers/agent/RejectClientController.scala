@@ -16,18 +16,22 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
-import play.api.Logger
-import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
-import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
+import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.agentclientmandate.views
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.RejectClientQuestionForm._
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm.yesNoQuestionForm
 
 import scala.concurrent.Future
+
+object RejectClientController extends RejectClientController {
+  // $COVERAGE-OFF$
+  val authConnector = FrontendAuthConnector
+  val acmService = AgentClientMandateService
+  // $COVERAGE-ON$
+}
 
 trait RejectClientController extends FrontendController with Actions {
 
@@ -38,7 +42,7 @@ trait RejectClientController extends FrontendController with Actions {
 
       acmService.fetchClientMandate(mandateId).map { response =>
          response match {
-          case Some(mandate) => Ok(views.html.agent.rejectClient(rejectClientQuestionForm, mandate.clientParty.get.name, mandateId))
+          case Some(mandate) => Ok(views.html.agent.rejectClient(yesNoQuestionForm, mandate.clientParty.get.name, mandateId))
           case _ => throw new RuntimeException("No Mandate returned")
         }
       }
@@ -46,10 +50,10 @@ trait RejectClientController extends FrontendController with Actions {
 
   def confirm(mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-        rejectClientQuestionForm.bindFromRequest.fold(
+        yesNoQuestionForm.bindFromRequest.fold(
             formWithError => Future.successful(BadRequest(views.html.agent.rejectClient(formWithError, clientName, mandateId))),
             data => {
-              val rejectClient = data.rejectClient.getOrElse(false)
+              val rejectClient = data.yesNo.getOrElse(false)
               if (rejectClient) {
                 acmService.rejectClient(mandateId).map { rejectedClient =>
                   if (rejectedClient) {
@@ -71,11 +75,4 @@ trait RejectClientController extends FrontendController with Actions {
     implicit authContext => implicit request =>
       Ok(views.html.agent.rejectClientConfirmation(clientName))
   }
-}
-
-object RejectClientController extends RejectClientController {
-  // $COVERAGE-OFF$
-  val authConnector = FrontendAuthConnector
-  val acmService = AgentClientMandateService
-  // $COVERAGE-ON$
 }
