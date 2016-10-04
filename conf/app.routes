@@ -16,6 +16,12 @@ POST    /client/mandate-declaration        uk.gov.hmrc.agentclientmandate.contro
 
 GET     /client/mandate-confirmation       uk.gov.hmrc.agentclientmandate.controllers.client.MandateConfirmationController.view
 
+GET     /client/remove-agent/:mandateId                    uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(mandateId: String)
+POST    /client/remove-agent/:mandateId/:clientName        uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.confirm(mandateId: String, clientName: String)
+#GET     /client/remove-agent/showConfirmation/:clientName  uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.showConfirmation(clientName: String)
+
+GET     /client/change-agent               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.view
+POST    /client/change-agent               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.confirm
 
 GET     /agent/details/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.view(service: String)
 POST    /agent/details/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.submit(service: String)
