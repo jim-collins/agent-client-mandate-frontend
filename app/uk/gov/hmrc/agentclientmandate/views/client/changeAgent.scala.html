@@ -1,34 +1,30 @@
-@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(rejectClientForm: Form[YesNoQuestion], clientName: String, mandateId: String)(implicit request: Request[_])
+@(changeAgentForm: Form[YesNoQuestion])(implicit request: Request[_])
 
-@main_template(title = Messages("agent.reject-client.title")) {
+@main_template(title = Messages("client.change-agent.title")) {
 
     <h1 id="header" class="heading-xlarge">
         <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header")</span>
-        @Messages("agent.reject-client.header", clientName)
+        @Messages("client.change-agent.header")
     </h1>
 
-    <p>
-    @Messages("agent.reject-client.text")
-    </p>
+    @mandateErrorSummary(changeAgentForm, "yes-no.error.general")
 
-    @mandateErrorSummary(rejectClientForm, "yes-no.error.general")
+    @form(action = routes.ChangeAgentController.confirm()) {
 
-    @form(action = routes.RejectClientController.confirm(mandateId, clientName)) {
-
-        <div class="form-group" id="rejectClient">
+        <div class="form-group" id="removeAgent">
         @mandateInputRadioGroup(
-            rejectClientForm("yesNo"),
+            changeAgentForm("yesNo"),
             Seq("true" -> Messages("radio-yes"),
                 "false" -> Messages("radio-no")),
             '_groupClass -> "inline",
             '_legendClass -> "screen-reader-text",
-            '_legend -> Messages("agent.reject-client.header", clientName),
+            '_legend -> Messages("client.change-agent.header"),
             '_labelClass -> "block-label",
             '_labelAfter -> true
         )

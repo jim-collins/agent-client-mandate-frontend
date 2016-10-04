@@ -80,6 +80,12 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     http.GET[AgentDetails](getUrl)
   }
 
+  def removeAgent(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+    val authLink = AuthUtils.getAuthLink
+    val postUrl = s"$serviceUrl$authLink/$mandateUri/removeAgent/$mandateId"
+    Logger.info(s"[AgentClientMandateConnector][removeAgent] - POST - $postUrl")
+    http.POST[JsValue, HttpResponse](postUrl, Json.parse("{}"))
+  }
 }
 
 object AgentClientMandateConnector extends AgentClientMandateConnector {
