@@ -34,4 +34,7 @@ object AuthUtils {
     else throw new RuntimeException("invalid user type")
   }
 
+  def getArn(implicit ac: AuthContext): String = ac.principal.accounts.agent.flatMap(_.agentBusinessUtr).
+    map(_.utr).getOrElse(throw new RuntimeException("invalid authority"))
+
 }
