@@ -113,7 +113,7 @@ object CollectClientBusinessDetailsForm {
   )(CollectClientBusinessDetails.apply)(CollectClientBusinessDetails.unapply))
 }
 
-case class EditMandateDetails(utr: String, displayname: String, email: String)
+case class EditMandateDetails( displayname: String, email: String)
 
 object EditMandateDetailsForm {
 
@@ -125,10 +125,6 @@ object EditMandateDetailsForm {
   "displayName" -> text
     .verifying(Messages("agent.enter-business-details-error.businessName"), x => x.length > length0)
     .verifying(Messages("agent.enter-business-details-error.businessName.length"), x => x.isEmpty || (x.nonEmpty && x.length <= length105)),
-  "utr" -> text
-    .verifying(Messages("agent.enter-business-details-error.utr"), x => x.length > length0)
-    .verifying(Messages("agent.enter-business-details-error.utr.length"), x => x.isEmpty || (x.nonEmpty && x.matches("""^[0-9]{10}$""")))
-    .verifying(Messages("agent.enter-business-details-error.invalidUTR"), x => x.isEmpty || (validateUTR(Option(x)) || !x.matches("""^[0-9]{10}$"""))),
 
    "email" -> text.verifying(Messages("agent.enter-email.error.email"), email => email.nonEmpty)
   )(EditMandateDetails.apply)(EditMandateDetails.unapply))
