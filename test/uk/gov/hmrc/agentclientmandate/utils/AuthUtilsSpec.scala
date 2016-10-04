@@ -66,30 +66,28 @@ class AuthUtilsSpec extends PlaySpec with OneServerPerSuite {
     }
 
     "return Arn" when {
-
       "getArn is called on registered agent user" in {
         implicit val ac = createRegisteredAgentAuthContext("userId", "userName")
         val arn = ac.principal.accounts.agent.flatMap(_.agentBusinessUtr).
           map(_.utr).getOrElse(throw new RuntimeException("invalid authority"))
         AuthUtils.getArn must be(arn)
-
       }
     }
 
     "throws runtime exception" when {
       "getAgentLink is called on non-agent user" in {
         implicit val ac = createOrgAuthContext("userId", "userName")
-        val thrown  = the[RuntimeException] thrownBy AuthUtils.getAgentLink
+        val thrown = the[RuntimeException] thrownBy AuthUtils.getAgentLink
         thrown.getMessage must be("Not an agent")
       }
       "getOrgLink is called on non-Org user" in {
         implicit val ac = createNonRegisteredAgentAuthContext("userId", "userName")
-        val thrown  = the[RuntimeException] thrownBy AuthUtils.getOrgLink
+        val thrown = the[RuntimeException] thrownBy AuthUtils.getOrgLink
         thrown.getMessage must be("Not an Org user")
       }
       "getAuthLink is called on non-registered agent" in {
         implicit val ac = createNonRegisteredAgentAuthContext("userId", "userName")
-        val thrown  = the[RuntimeException] thrownBy AuthUtils.getAuthLink
+        val thrown = the[RuntimeException] thrownBy AuthUtils.getAuthLink
         thrown.getMessage must be("invalid user type")
       }
       "getArn is called on non-agent user" in {
