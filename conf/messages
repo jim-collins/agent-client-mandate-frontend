@@ -117,8 +117,8 @@ agent.enter-email.error.general.agent-enter-email-form = This email is invalid
 agent.enter-email.error.confirm-email.not-equal = You must enter same email address in confirm email address
 
 # agent - is client overseas question
-agent.overseas-client-question.title = Does your client have an overseas company without a UK Unique Tax Reference?
-agent.overseas-client-question.header = Does your client have an overseas company without a UK Unique Tax Reference?
+agent.overseas-client-question.title = Does your client have an overseas company or trust without a UK Unique Tax Reference?
+agent.overseas-client-question.header = Does your client have an overseas company or trust without a UK Unique Tax Reference?
 agent.overseas-client-question.error.general.isOverseas = There is a problem with the overseas client question
 agent.overseas-client-question.error.isOverseas = You must answer overseas client question
 
