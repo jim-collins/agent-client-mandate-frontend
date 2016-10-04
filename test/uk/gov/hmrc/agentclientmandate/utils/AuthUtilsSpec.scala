@@ -17,6 +17,7 @@
 package uk.gov.hmrc.agentclientmandate.utils
 
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
+import uk.gov.hmrc.agentclientmandate.builders.AgentBusinessUtrGenerator
 import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder._
 
 class AuthUtilsSpec extends PlaySpec with OneServerPerSuite {
@@ -82,6 +83,25 @@ class AuthUtilsSpec extends PlaySpec with OneServerPerSuite {
       }
     }
 
+    "return Arn" when {
+
+      "getArn is called on registered agent user" in {
+        implicit val ac = createRegisteredAgentAuthContext("userId", "userName")
+        val arn = ac.principal.accounts.agent.flatMap(_.agentBusinessUtr).
+          map(_.utr).getOrElse(throw new RuntimeException("invalid authority"))
+        AuthUtils.getArn must be(arn)
+
+      }
+    }
+
+    "throws runtime exception" when {
+
+      "getArn is called on non-agent user" in {
+        implicit val ac = createOrgAuthContext("userId", "userName")
+        val thrown = the[RuntimeException] thrownBy AuthUtils.getArn
+        thrown.getMessage must be("invalid authority")
+      }
+    }
   }
 
 }

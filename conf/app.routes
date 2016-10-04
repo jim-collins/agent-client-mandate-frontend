@@ -43,3 +43,4 @@ GET     /agent/reject-client/:mandateId                     uk.gov.hmrc.agentcli
 POST    /agent/reject-client/:mandateId/:clientName         uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.confirm(mandateId: String, clientName: String)
 GET     /agent/reject-client/showConfirmation/:clientName   uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.showConfirmation(clientName: String)
 
+GET     /agent/accept-client/:mandateId                     uk.gov.hmrc.agentclientmandate.controllers.agent.AcceptClientController.view(mandateId: String)

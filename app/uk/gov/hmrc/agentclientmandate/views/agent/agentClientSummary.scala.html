@@ -46,7 +46,7 @@
 
         @if(mandate.pendingMandates.isEmpty){
           <li id="clients" data-tab-link="1" role="tab" aria-selected="true" aria-controls="tabContent1" tabindex="0">
-            <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandate.activeMandates.size">tab1</span>
+            <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandate.activeMandates.size">@Messages("client.summary.client-active.title", mandate.activeMandates.size)</span>
         } else {
           <li id="clients" data-tab-link="1" role="tab" aria-selected="false" aria-controls="tabContent1" tabindex="1">
             <span class="tabs-nav__tab" data-clients="@mandate.activeMandates.size">@Messages("client.summary.client-active.title", mandate.activeMandates.size)</span>
@@ -116,8 +116,8 @@
               @if(statusCantBeActioned(pending.currentStatus.status)){
                 <td>@Messages("client.summary.client.pending-status")</td>
               }else{
-                <td>
-                  <a href="#" title="Accept @pending.clientParty.map(_.name)" id="accept-@(index+1)" onclick="ga('send', 'event', 'Agent - accept pending client - end', 'button clicked')">
+                <td id ="accept-client">
+                  <a href="@routes.AcceptClientController.view(pending.id)" id="accept-@(index+1)" onclick="ga('send', 'event', 'Agent - accept pending client - end', 'button clicked')">
                     <button type="submit" class="button" value="Accept">@Messages("client.summary.client-accept")</button>
                   </a>
                 </td>
