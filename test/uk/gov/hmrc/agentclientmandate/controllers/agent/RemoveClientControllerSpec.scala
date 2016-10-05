@@ -144,8 +144,8 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val document = Jsoup.parse(contentAsString(result))
         document.title() must be("Confirm Client Removal")
         document.getElementById("pre-heading").text() must be("Manage your ATED service")
-        document.getElementById("header").text() must include("Are you sure you want to remove the request from ACME Limited?")
-        document.getElementById("removeClient_legend").text() must be("Are you sure you want to remove the request from ACME Limited?")
+        document.getElementById("header").text() must include("Are you sure you want to remove ACME Limited?")
+        document.getElementById("removeClient_legend").text() must be("Are you sure you want to remove ACME Limited?")
         document.getElementById("submit").text() must be("Confirm")
       }
     }
@@ -177,7 +177,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         status(result) must be(BAD_REQUEST)
         val document = Jsoup.parse(contentAsString(result))
         document.getElementsByClass("error-list").text() must include("There is a problem with the question")
-        document.getElementsByClass("error-notification").text() must include("You must answer question")
+        document.getElementsByClass("error-notification").text() must include("You must answer the question")
       }
     }
   }

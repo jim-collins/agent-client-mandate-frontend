@@ -105,7 +105,6 @@ trait AgentClientMandateService extends MandateConstants {
     }
   }
 
-<<<<<<< cb955a2c894e406f96c75b65cf3bdbdf8cf85e5c
   def acceptClient(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Boolean] = {
     agentClientMandateConnector.activateMandate(mandateId).map { response =>
       response.status match {
