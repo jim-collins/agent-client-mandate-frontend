@@ -93,7 +93,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("service" -> "ated")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/agent/email/ated"))
+          redirectLocation(result) must be(Some("/mandate/agent/summary/ated"))
         }
       }
     }
