@@ -94,9 +94,11 @@ client.remove-agent.title = Confirm Agent Removal
 client.remove-agent.header = Are you sure you want to cancel the authority for {0} to act on your behalf for ATED?
 
 #client remove agent confirmation
+client.remove-agent-confirmation.title = What happens next?
 client.remove-agent-confirmation.banner-text = You have removed {0} as your agent
 client.remove-agent-confirmation.create-return = you can create a return
 client.remove-agent-confirmation.appoint-agent = you can appoint another agent to act on your behalf
+client.remove-agent-confirmation.service_button = Your {0} online service
 
 #client change agent
 client.change-agent.title = Do you want to appoint another agent to act on your behalf?

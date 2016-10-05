@@ -20,10 +20,11 @@ GET     /client/confirmation       uk.gov.hmrc.agentclientmandate.controllers.cl
 
 GET     /client/remove/:id                   uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(id: String)
 POST    /client/remove/:id/:clientName       uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.submit(id: String, clientName: String)
-#GET    /client/remove/confirmation/:clientName     uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(clientName: String)
+GET    /client/remove/confirmation/:clientName     uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(clientName: String)
+GET     /client/remove-agent/return-to-service             uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.returnToService
 
-GET     /client/change               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.view
-POST    /client/change               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.submit
+GET     /client/change/:agentName               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.view(agentName: String)
+POST    /client/change/:agentName               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.submit(agentName: String)
 
 ## Agent URIs ##
 
