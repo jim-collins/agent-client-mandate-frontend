@@ -23,10 +23,10 @@ object ExternalUrls {
   val loginPath = s"${configuration.getString(s"microservice.services.auth.login-path").getOrElse("gg/sign-in")}"
   val loginCallbackAgent = s"${
     configuration.getString(s"microservice.services.auth.login-callback-agent.url").
-      getOrElse("/mandate/agent/select-service")
+      getOrElse("/mandate/agent/service")
   }"
   val loginCallbackClient = s"${
     configuration.getString(s"microservice.services.auth.login-callback-client.url").
-      getOrElse("/mandate/client/collect-email")
+      getOrElse("/mandate/client/email")
   }"
 }

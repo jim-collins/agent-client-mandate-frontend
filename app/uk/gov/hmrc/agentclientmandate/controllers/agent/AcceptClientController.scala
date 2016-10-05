@@ -18,25 +18,25 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
-import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, Mandates}
+import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
+object AcceptClientController extends AcceptClientController {
+  val agentClientMandateService = AgentClientMandateService
+  val authConnector = FrontendAuthConnector
+}
 
 trait AcceptClientController extends FrontendController with Actions {
 
   def agentClientMandateService: AgentClientMandateService
 
-  def view(mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       agentClientMandateService.acceptClient(mandateId).map { clientAccepted =>
-        if (clientAccepted) Redirect(routes.AgentClientSummaryController.view())
+        if (clientAccepted) Redirect(routes.AgentSummaryController.view(service))
         else throw new RuntimeException("Failed to accept client")
       }
   }
-}
 
-object AcceptClientController extends AcceptClientController {
-  val agentClientMandateService = AgentClientMandateService
-  val authConnector = FrontendAuthConnector
 }

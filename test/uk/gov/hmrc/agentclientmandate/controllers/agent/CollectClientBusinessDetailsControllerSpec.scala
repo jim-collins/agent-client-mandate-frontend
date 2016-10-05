@@ -28,7 +28,6 @@ import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
-import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -41,19 +40,14 @@ class CollectClientBusinessDetailsControllerSpec extends PlaySpec with OneServer
 
     "not return NOT_FOUND at route " when {
 
-      "GET /mandate/agent/collect-client-business-details/:service" in {
-
-        val result = route(FakeRequest(GET, s"/mandate/agent/collect-client-business-details/$service")).get
+      "GET /mandate/agent/client-details/:service" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/client-details/$service")).get
         status(result) mustNot be(NOT_FOUND)
-
-
       }
 
-      "POST /mandate/agent/collect-client-business-details/:service" in {
-
-        val result = route(FakeRequest(POST, s"/mandate/agent/collect-client-business-details/$service")).get
+      "POST /mandate/agent/collect-client-details/:service" in {
+        val result = route(FakeRequest(POST, s"/mandate/agent/client-details/$service")).get
         status(result) mustNot be(NOT_FOUND)
-
       }
 
     }
@@ -66,7 +60,6 @@ class CollectClientBusinessDetailsControllerSpec extends PlaySpec with OneServer
           document.title() must be("What are your clients company details?")
           document.getElementById("header").text() must include("Add a client")
           document.getElementById("continue").text() must include("Continue")
-
         }
 
       }
@@ -77,8 +70,6 @@ class CollectClientBusinessDetailsControllerSpec extends PlaySpec with OneServer
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("businessName" -> "", "utr" -> "")
         submitCollectAgentDetailsAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
-
-
         }
 
       }
@@ -89,7 +80,6 @@ class CollectClientBusinessDetailsControllerSpec extends PlaySpec with OneServer
         submitCollectAgentDetailsAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(OK)
         }
-
       }
     }
 
@@ -97,18 +87,14 @@ class CollectClientBusinessDetailsControllerSpec extends PlaySpec with OneServer
 
 
   val mockAuthConnector = mock[AuthConnector]
-  val mockDataCacheService: DataCacheService = mock[DataCacheService]
   val service = "ated".toUpperCase
   val formId1 = "businessName"
 
   object TestCollectClientBusinessDetailsControllerSpec extends CollectClientBusinessDetailsController {
-    val authConnector = mockAuthConnector
-    val dataCacheService = mockDataCacheService
-    val formId = formId1
+    override val authConnector = mockAuthConnector
   }
 
   override def beforeEach(): Unit = {
-    reset(mockDataCacheService)
     reset(mockAuthConnector)
   }
 

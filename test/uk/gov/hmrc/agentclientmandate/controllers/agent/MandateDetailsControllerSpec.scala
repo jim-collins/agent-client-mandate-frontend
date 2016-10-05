@@ -41,7 +41,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
   "MandateDetailsController" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /mandate/agent/agent-client-details" in {
+      "GET /mandate/agent/details/:service" in {
         val result = route(FakeRequest(GET, s"/mandate/agent/details/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
@@ -68,7 +68,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
       "agent requests(GET) for check client details view and email has NOT been cached previously" in {
         viewWithAuthorisedAgent(None) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/collect-email/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/email/$service"))
         }
       }
 
@@ -89,7 +89,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
       "form is submitted" in {
         submitWithAuthorisedAgent { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/unique-agent-reference/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/unique-reference/$service"))
         }
       }
     }

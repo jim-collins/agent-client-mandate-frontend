@@ -41,8 +41,8 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
   "MandateDeclarationController" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /mandate/client/mandate-declaration" in {
-        val result = route(FakeRequest(GET, "/mandate/client/mandate-declaration")).get
+      "GET /mandate/client/declaration" in {
+        val result = route(FakeRequest(GET, "/mandate/client/declaration")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -93,7 +93,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
         val mandateReturned = Some(mandate)
         submitWithAuthorisedClient(fakeRequest, cacheReturn, mandateReturned) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/mandate-confirmation"))
+          redirectLocation(result) must be(Some("/mandate/client/confirmation"))
         }
       }
     }
@@ -105,7 +105,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
         val cacheReturn = Some(ClientCache(mandate = Some(mandate)))
         submitWithAuthorisedClient(fakeRequest, cacheReturn) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+          redirectLocation(result) must be(Some("/mandate/client/review"))
         }
       }
     }
@@ -115,7 +115,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
         val fakeRequest = FakeRequest().withFormUrlEncodedBody()
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+          redirectLocation(result) must be(Some("/mandate/client/review"))
         }
       }
     }
@@ -136,6 +136,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
   }
 
   val mandateId = "ABC123"
+
   val mandate = Mandate(id = mandateId, createdBy = User("cerdId", "Joe Bloggs"),
     agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation,
       contactDetails = ContactDetails("aa@aa.com", None)),
@@ -143,6 +144,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
     currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
     statusHistory = Nil, subscription = Subscription(referenceNumber = None,
       service = Service(id = "ated-ref-no", name = "")))
+
   val mockAuthConnector = mock[AuthConnector]
   val mockDataCacheService = mock[DataCacheService]
   val mockMandateService = mock[AgentClientMandateService]
@@ -171,9 +173,11 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
     test(result)
   }
 
-  def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded],
-                                 clientCache: Option[ClientCache] = None,
-                                 mandate: Option[Mandate] = None)(test: Future[Result] => Any) {
+  def submitWithAuthorisedClient(
+                                  request: FakeRequest[AnyContentAsFormUrlEncoded],
+                                  clientCache: Option[ClientCache] = None,
+                                  mandate: Option[Mandate] = None)(test: Future[Result] => Any
+                                ) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")

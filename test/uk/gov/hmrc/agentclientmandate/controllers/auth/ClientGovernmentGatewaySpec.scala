@@ -29,7 +29,7 @@ class ClientGovernmentGatewaySpec extends PlaySpec with OneServerPerSuite {
       }
 
       "overriding continueURL" in {
-        ClientGovernmentGateway.continueURL must be("http://localhost:9959/mandate/client/collect-email")
+        ClientGovernmentGateway.continueURL must be("http://localhost:9959/mandate/client/email")
       }
 
     }

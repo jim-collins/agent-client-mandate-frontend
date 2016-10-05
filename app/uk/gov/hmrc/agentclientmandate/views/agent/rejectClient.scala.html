@@ -4,7 +4,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(rejectClientForm: Form[YesNoQuestion], clientName: String, mandateId: String)(implicit request: Request[_])
+@(service: String, rejectClientForm: Form[YesNoQuestion], clientName: String, mandateId: String)(implicit request: Request[_])
 
 @main_template(title = Messages("agent.reject-client.title")) {
 
@@ -19,7 +19,7 @@
 
     @mandateErrorSummary(rejectClientForm, "yes-no.error.general")
 
-    @form(action = routes.RejectClientController.confirm(mandateId, clientName)) {
+    @form(action = routes.RejectClientController.submit(service, mandateId, clientName)) {
 
         <div class="form-group" id="rejectClient">
         @mandateInputRadioGroup(

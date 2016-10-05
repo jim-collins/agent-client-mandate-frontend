@@ -7,7 +7,7 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@(mandatesList: Option[Mandates], agentDetails: AgentDetails)(implicit request: Request[_])
+@(service: String, mandatesList: Option[Mandates], agentDetails: AgentDetails)(implicit request: Request[_])
 
 @main_template(title = Messages("client.summary.title"), sidebarLinks = Some(_agentSummary_sidebar(agentDetails))){
 
@@ -15,7 +15,7 @@
 
   @mandatesList.map { mandate =>
 
-    <a href="@routes.CollectAgentEmailController.view("ATED")" id="add-client-link" class="link">@Messages("client.summary.add-client")</a>
+    <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link">@Messages("client.summary.add-client")</a>
 
     <div data-tabs>
       <ul class="tabs-nav" role="tablist">
@@ -84,7 +84,7 @@
                 <td></td>
               }else{
                 <td id="reject-client">
-                  <a id="reject-client-link-@index" href="@routes.RejectClientController.view(pending.id)">
+                  <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)">
                   @Messages("client.summary.client-reject")
                   </a>
                 </td>
@@ -93,7 +93,7 @@
                 <td>@Messages("client.summary.client.pending-status")</td>
               }else{
                 <td id ="accept-client">
-                  <a href="@routes.AcceptClientController.view(pending.id)" id="accept-@(index+1)" onclick="ga('send', 'event', 'Agent - accept pending client - end', 'button clicked')">
+                  <a href="@routes.AcceptClientController.view(service, pending.id)" id="accept-@(index+1)" onclick="ga('send', 'event', 'Agent - accept pending client - end', 'button clicked')">
                     <button type="submit" class="button" value="Accept">@Messages("client.summary.client-accept")</button>
                   </a>
                 </td>
@@ -107,6 +107,6 @@
   }.getOrElse {
     <h3 class="heading-medium">@Messages("client.summary.no-clients")</h3>
 
-    <a href="@routes.CollectAgentEmailController.view("ATED")" id="add-client-btn" class="button">@Messages("client.summary.add-client")</a>
+    <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-btn" class="button">@Messages("client.summary.add-client")</a>
   }
 }

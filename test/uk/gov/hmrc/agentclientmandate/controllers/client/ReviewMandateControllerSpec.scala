@@ -31,7 +31,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, MandateReference}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientCache
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -42,69 +42,68 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
   "ClientReviewAgentControllerSpec" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /mandate/client/review-mandate" in {
-        val result = route(FakeRequest(GET, "/mandate/client/review-mandate")).get
+      "GET /mandate/client/review" in {
+        val result = route(FakeRequest(GET, "/mandate/client/review")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
 
-  }
+    "redirect to login page for UNAUTHENTICATED client" when {
 
-  "redirect to login page for UNAUTHENTICATED client" when {
-
-    "client requests(GET) for search mandate view" in {
-      viewWithUnAuthenticatedClient { result =>
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result).get must include("/gg/sign-in")
+      "client requests(GET) for search mandate view" in {
+        viewWithUnAuthenticatedClient { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must include("/gg/sign-in")
+        }
       }
     }
 
-  }
+    "return review mandate view for AUTHORISED client" when {
 
-  "return review mandate view for AUTHORISED client" when {
+      "client requests(GET) for review mandate view, and mandate has been cached on search mandate submit" in {
+        val mandate = Mandate(id = "ABC123", createdBy = User("cerdId", "Joe Bloggs"),
+          agentParty = Party("ated-ref-no", "name",
+            `type` = PartyType.Organisation,
+            contactDetails = ContactDetails("aa@aa.com", None)),
+          clientParty = Some(Party("client-id", "client name",
+            `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None))),
+          currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
+          statusHistory = Nil, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
+        val returnData = ClientCache(mandate = Some(mandate))
+        viewWithAuthorisedClient(Some(returnData)) { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Check that this is the agent that you want to appoint")
+          document.getElementById("header").text() must include("Check that this is the agent that you want to appoint")
+          document.getElementById("pre-heading").text() must include("Appoint an agent")
+          document.getElementById("agent-reference-label").text() must be("Agent reference")
+          document.getElementById("email-address-label").text() must be("Your email address")
+          document.getElementById("submit").text() must be("Confirm and appoint agent")
+        }
+      }
 
-    "client requests(GET) for review mandate view, and mandate has been cached on search mandate submit" in {
-      val mandate = Mandate(id = "ABC123", createdBy = User("cerdId", "Joe Bloggs"),
-        agentParty = Party("ated-ref-no", "name",
-          `type` = PartyType.Organisation,
-          contactDetails = ContactDetails("aa@aa.com", None)),
-        clientParty = Some(Party("client-id", "client name",
-          `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None))),
-        currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
-        statusHistory = Nil, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
-      val returnData = ClientCache(mandate = Some(mandate))
-      viewWithAuthorisedClient(Some(returnData)) { result =>
-        status(result) must be(OK)
-        val document = Jsoup.parse(contentAsString(result))
-        document.title() must be("Check that this is the agent that you want to appoint")
-        document.getElementById("header").text() must include("Check that this is the agent that you want to appoint")
-        document.getElementById("pre-heading").text() must include("Appoint an agent")
-        document.getElementById("agent-reference-label").text() must be("Agent reference")
-        document.getElementById("email-address-label").text() must be("Your email address")
-        document.getElementById("submit").text() must be("Confirm and appoint agent")
+    }
+
+    "redirect to search mandate view for AUTHORISED client" when {
+
+      "client requests(GET) for review mandate view, but mandate has not been cached on search mandate submit" in {
+        viewWithAuthorisedClient() { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/search"))
+        }
+      }
+
+    }
+
+    "redirect Authorised Client to 'Mandate declaration' page" when {
+      "client submits form" in {
+        submitWithAuthorisedClient { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/declaration"))
+        }
       }
     }
 
-  }
-
-  "redirect to search mandate view for AUTHORISED client" when {
-
-    "client requests(GET) for review mandate view, but mandate has not been cached on search mandate submit" in {
-      viewWithAuthorisedClient() { result =>
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result) must be(Some("/mandate/client/search-mandate"))
-      }
-    }
-
-  }
-
-  "redirect Authorised Client to 'Mandate declaration' page" when {
-    "client submits form" in {
-      submitWithAuthorisedClient { result =>
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result) must be(Some("/mandate/client/mandate-declaration"))
-      }
-    }
   }
 
   val mockAuthConnector = mock[AuthConnector]

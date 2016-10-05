@@ -25,30 +25,24 @@ import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 
-object AgentClientSummaryController extends AgentClientSummaryController {
+object AgentSummaryController extends AgentSummaryController {
   val authConnector = FrontendAuthConnector
   val agentClientMandateService = AgentClientMandateService
 }
 
-trait AgentClientSummaryController extends FrontendController with Actions {
+trait AgentSummaryController extends FrontendController with Actions {
 
   def agentClientMandateService: AgentClientMandateService
 
-  def view = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-     val arn = AuthUtils.getArn
+      val arn = AuthUtils.getArn
       for {
         mandates <- agentClientMandateService.fetchAllClientMandates(arn, "ATED")
         agentDetails <- agentClientMandateService.fetchAgentDetails()
       } yield {
-        Ok(views.html.agent.agentClientSummary(mandates, agentDetails))
+        Ok(views.html.agent.agentSummary(service, mandates, agentDetails))
       }
-
-
   }
-
-
-
-
 
 }

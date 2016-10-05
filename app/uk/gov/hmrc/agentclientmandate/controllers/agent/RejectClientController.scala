@@ -37,42 +37,39 @@ trait RejectClientController extends FrontendController with Actions {
 
   def acmService: AgentClientMandateService
 
-  def view(mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-
-      acmService.fetchClientMandate(mandateId).map { response =>
-         response match {
-          case Some(mandate) => Ok(views.html.agent.rejectClient(yesNoQuestionForm, mandate.clientParty.get.name, mandateId))
-          case _ => throw new RuntimeException("No Mandate returned")
-        }
+      acmService.fetchClientMandate(mandateId).map {
+        case Some(mandate) => Ok(views.html.agent.rejectClient(service, yesNoQuestionForm, mandate.clientParty.get.name, mandateId))
+        case _ => throw new RuntimeException("No Mandate returned")
       }
   }
 
-  def confirm(mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def submit(service: String, mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-        yesNoQuestionForm.bindFromRequest.fold(
-            formWithError => Future.successful(BadRequest(views.html.agent.rejectClient(formWithError, clientName, mandateId))),
-            data => {
-              val rejectClient = data.yesNo.getOrElse(false)
-              if (rejectClient) {
-                acmService.rejectClient(mandateId).map { rejectedClient =>
-                  if (rejectedClient) {
-                    Redirect(routes.RejectClientController.showConfirmation(clientName))
-                  }
-                  else {
-                    throw new RuntimeException("Client Rejection Failed")
-                  }
-                }
+      yesNoQuestionForm.bindFromRequest.fold(
+        formWithError => Future.successful(BadRequest(views.html.agent.rejectClient(service, formWithError, clientName, mandateId))),
+        data => {
+          val rejectClient = data.yesNo.getOrElse(false)
+          if (rejectClient) {
+            acmService.rejectClient(mandateId).map { rejectedClient =>
+              if (rejectedClient) {
+                Redirect(routes.RejectClientController.confirmation(service, clientName))
               }
               else {
-                Future.successful(Redirect(routes.AgentClientSummaryController.view))
+                throw new RuntimeException("Client Rejection Failed")
               }
             }
-        )
+          }
+          else {
+            Future.successful(Redirect(routes.AgentSummaryController.view(service)))
+          }
+        }
+      )
   }
 
-  def showConfirmation(clientName: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def confirmation(service: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.agent.rejectClientConfirmation(clientName))
+      Ok(views.html.agent.rejectClientConfirmation(service, clientName))
   }
 }
