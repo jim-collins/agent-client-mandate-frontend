@@ -83,8 +83,7 @@ client.agent-confirmation.title = What happens next?
 client.agent-confirmation.banner-text = Your request to appoint Agent Limited has been successfully submitted
 client.agent-confirmation.notification = Your agent will receive an email notification.
 client.agent-confirmation.header = What happens next?
-client.agent-confirmation.your-agent = Your agent has 28 days to accept the request your request by accessing the ATED service.
-client.agent-confirmation.your-request = Your request is shown in your agents ATED online service with the client name Gilbert.
+client.agent-confirmation.your-agent = Your agent has 28 days to accept your request by accessing the ATED service.
 client.agent-confirmation.this-authority = This authority will remain in place until you <a href="#">change or cancel your agent.</a>
 client.agent-confirmation.sign-in = You can sign in at any point to view your <a href="#">ATED online service</a>
 client.agent-confirmation.finish-signout = Finish and sign out
