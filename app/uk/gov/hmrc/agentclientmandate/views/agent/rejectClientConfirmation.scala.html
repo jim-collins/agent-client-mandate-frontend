@@ -1,3 +1,5 @@
+@import uk.gov.hmrc.agentclientmandate.utils.DateUtils
+@import org.joda.time.DateTime
 @(clientName: String)(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
@@ -7,7 +9,7 @@
 
     <div class="transaction-banner--complete" id="banner">
         <h1 id="banner-text"> @Messages("agent.reject-client-confirmation.banner-text", clientName) </h1>
-        <h2 id="banner-text-date"> @Messages("agent.reject-client-confirmation.banner-text-date") </h2>
+        <h2 id="banner-text-date"> @Messages("agent.reject-client-confirmation.banner-text-date", DateUtils.getDateAsText(DateTime.now)) </h2>
     </div>
 
     <p id="notification" class="heading-small">@Messages("agent.reject-client-confirmation.notification")</p>
