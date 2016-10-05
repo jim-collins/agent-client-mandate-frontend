@@ -1,12 +1,12 @@
-@(agentName: String)(implicit request: Request[_])
+@(agentName: String, serviceName: String)(implicit request: Request[_])
 
-@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 
-@main_template(title = Messages("agent.reject-client-confirmation.title")) {
+@main_template(title = Messages("client.remove-agent-confirmation.title")) {
 
     <div class="transaction-banner--complete" id="banner">
-        <h1 id="banner-text"> @Messages("client.remove-agent-confirmation.banner-text") </h1>
+        <h1 id="banner-text"> @Messages("client.remove-agent-confirmation.banner-text", agentName) </h1>
         <h2 id="banner-text-date"> @Messages("agent.reject-client-confirmation.banner-text-date") </h2>
     </div>
 
@@ -25,8 +25,8 @@
 
         <button class="button" id="finish_btn" type="submit">@Messages("client.agent-confirmation.finish-signout")</button>
 
-        <form action="@routes.AgentClientSummaryController.view">
-            <button class="button" id="finish_btn" type="submit">@Messages("agent.reject-client-confirmation.view-all-clients")</button>
+        <form action="@routes.RemoveAgentController.returnToService">
+            <button class="button" id="return_to_service_button" type="submit">@Messages("client.remove-agent-confirmation.service_button", serviceName)</button>
         </form>
     </div>
 

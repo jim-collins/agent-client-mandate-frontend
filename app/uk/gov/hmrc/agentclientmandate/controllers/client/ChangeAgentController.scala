@@ -24,6 +24,8 @@ import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
+import scala.concurrent.Future
+
 
 object ChangeAgentController extends ChangeAgentController {
   // $COVERAGE-OFF$
@@ -39,14 +41,24 @@ trait ChangeAgentController extends FrontendController with Actions{
   def acmService: AgentClientMandateService
   def dataCacheService: DataCacheService
 
-  def view() = AuthorisedFor(ClientRegime, GGConfidence) {
+  def view(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.changeAgent(yesNoQuestionForm))
+      Ok(views.html.client.changeAgent(yesNoQuestionForm, agentName))
   }
 
-  // $COVERAGE-OFF$
-  def confirm() = AuthorisedFor(ClientRegime, GGConfidence).async {
-    ???
+  def confirm(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+    implicit authContext => implicit request =>
+      yesNoQuestionForm.bindFromRequest.fold(
+        formWithError => Future.successful(BadRequest(views.html.client.changeAgent(formWithError, agentName))),
+        data => {
+          val changeAgent = data.yesNo.getOrElse(false)
+          if (changeAgent) {
+            Future.successful(Redirect(routes.CollectEmailController.view()))
+          }
+          else {
+            Future.successful(Redirect(routes.RemoveAgentController.showConfirmation(agentName)))
+          }
+        }
+      )
   }
-  // $COVERAGE-ON$
 }
