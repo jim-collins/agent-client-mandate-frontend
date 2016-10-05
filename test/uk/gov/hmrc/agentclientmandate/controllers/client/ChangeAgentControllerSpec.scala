@@ -20,7 +20,6 @@ import java.util.UUID
 
 import org.joda.time.DateTime
 import org.jsoup.Jsoup
-import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
@@ -39,66 +38,15 @@ import scala.concurrent.Future
 
 class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
-  val mockAgentClientMandateService = mock[AgentClientMandateService]
-  val mockAuthConnector = mock[AuthConnector]
-  val mockDataCacheService = mock[DataCacheService]
-
-  object TestChangeAgentController extends ChangeAgentController {
-    override val authConnector = mockAuthConnector
-    override val acmService = mockAgentClientMandateService
-    override val dataCacheService = mockDataCacheService
-  }
-
-  override def beforeEach = {
-    reset(mockAgentClientMandateService)
-  }
-
-  def viewUnAuthenticatedClient(test: Future[Result] => Any) {
-    val userId = s"user-${UUID.randomUUID}"
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view("ACME Ltd").apply(SessionBuilder.buildRequestWithSessionNoUser)
-    test(result)
-  }
-
-
-  def viewUnAuthorisedClient(test: Future[Result] => Any) {
-    val userId = s"user-${UUID.randomUUID}"
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
-    AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view("ACME Ltd").apply(SessionBuilder.buildRequestWithSession(userId))
-    test(result)
-  }
-
-  def viewAuthorisedClient(request: FakeRequest[AnyContentAsJson], test: Future[Result] => Any) {
-    val userId = s"user-${UUID.randomUUID}"
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
-    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view("ACME Ltd").apply(SessionBuilder.updateRequestWithSession(request, userId))
-    test(result)
-  }
-
-  def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded])(test: Future[Result] => Any) {
-    val userId = s"user-${UUID.randomUUID}"
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
-    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-
-    val result = TestChangeAgentController.confirm("ACME Ltd").apply(SessionBuilder.updateRequestFormWithSession(request, userId))
-    test(result)
-  }
-
   "ChangeAgentController" must {
     "not return NOT_FOUND at route " when {
-      "GET /mandate/client/change-agent/agentName" in {
-        val result = route(FakeRequest(GET, "/mandate/client/change-agent/ACME")).get
+      "GET /mandate/client/change/agentName" in {
+        val result = route(FakeRequest(GET, "/mandate/client/change/ACME")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
-      "POST /mandate/client/change-agent/agentName" in {
-        val result = route(FakeRequest(POST, s"/mandate/client/change-agent/ACME")).get
+      "POST /mandate/client/change/agentName" in {
+        val result = route(FakeRequest(POST, s"/mandate/client/change/ACME")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -126,7 +74,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
 
         val hc = new HeaderCarrier()
         val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
-        val request = FakeRequest(GET, "/client/change-agent").withJsonBody(Json.toJson("""{}"""))
+        val request = FakeRequest().withJsonBody(Json.toJson("""{}"""))
         viewAuthorisedClient(request, { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -156,7 +104,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/client/collect-email")
+          redirectLocation(result).get must include("/client/email")
         }
       }
 
@@ -165,9 +113,65 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "false")
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/client/remove-agent/showConfirmation")
+          redirectLocation(result).get must include("/client/remove/confirmation")
         }
       }
     }
   }
+
+  val mockAgentClientMandateService = mock[AgentClientMandateService]
+  val mockAuthConnector = mock[AuthConnector]
+  val mockDataCacheService = mock[DataCacheService]
+
+  object TestChangeAgentController extends ChangeAgentController {
+    override val authConnector = mockAuthConnector
+    override val acmService = mockAgentClientMandateService
+    override val dataCacheService = mockDataCacheService
+  }
+
+  override def beforeEach = {
+    reset(mockAgentClientMandateService)
+    reset(mockAuthConnector)
+    reset(mockDataCacheService)
+  }
+
+  val agentName = "ACME Ltd"
+
+  def viewUnAuthenticatedClient(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
+    val result = TestChangeAgentController.view(agentName).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    test(result)
+  }
+
+
+  def viewUnAuthorisedClient(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
+    AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
+    val result = TestChangeAgentController.view(agentName).apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def viewAuthorisedClient(request: FakeRequest[AnyContentAsJson], test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    val result = TestChangeAgentController.view(agentName).apply(SessionBuilder.updateRequestWithSession(request, userId))
+    test(result)
+  }
+
+  def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded])(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+
+    val result = TestChangeAgentController.submit(agentName).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    test(result)
+  }
+
 }

@@ -15,7 +15,7 @@
 
     @mandateErrorSummary(changeAgentForm, "yes-no.error.general")
 
-    @form(action = routes.ChangeAgentController.confirm(agentName)) {
+    @form(action = routes.ChangeAgentController.submit(agentName)) {
 
         <div class="form-group" id="removeAgent">
         @mandateInputRadioGroup(

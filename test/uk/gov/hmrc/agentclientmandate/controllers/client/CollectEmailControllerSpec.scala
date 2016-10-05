@@ -40,8 +40,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   "CollectEmailController" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /mandate/client/collect-email" in {
-        val result = route(FakeRequest(GET, "/mandate/client/collect-email")).get
+      "GET /mandate/client/email" in {
+        val result = route(FakeRequest(GET, "/mandate/client/email")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -96,7 +96,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")))
         submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = Some(cachedData), returnCache = returnData) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/search-mandate"))
+          redirectLocation(result) must be(Some("/mandate/client/search"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -108,7 +108,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")))
         submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = None, returnCache = returnData) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/search-mandate"))
+          redirectLocation(result) must be(Some("/mandate/client/search"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())

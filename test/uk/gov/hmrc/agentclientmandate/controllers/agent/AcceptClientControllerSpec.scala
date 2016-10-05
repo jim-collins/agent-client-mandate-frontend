@@ -18,31 +18,29 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import java.util.UUID
 
-import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
-import play.api.test.FakeRequest
-import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, Mandates}
-import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import org.mockito.Matchers
-import org.mockito.Mockito._
-import play.api.test.FakeRequest
 import play.api.mvc.Result
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
+import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class AcceptClientControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach{
+class AcceptClientControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
 
   "AcceptClientController" must {
 
     "not return NOT_FOUND at route " when {
-      "Get /mandate/agent/accept-client" in{
-        val result = route(FakeRequest(GET, s"/mandate/agent/accept-client/$mandateId")).get
+      "Get /mandate/agent/accept/:service/:id" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/accept/$service/$mandateId")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -50,7 +48,7 @@ class AcceptClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "return agen-client-summary page view for agent" when {
 
       "client requests(GET) for check client details view" in {
-        viewAuthorisedAgent(true) { result =>
+        viewAuthorisedAgent(clientAccepted = true) { result =>
           status(result) must be(SEE_OTHER)
         }
       }
@@ -68,6 +66,7 @@ class AcceptClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
   }
   val mandateId = "AS123456"
+  val service = "ated"
 
   val mockAuthConnector = mock[AuthConnector]
   val mockAgentClientMandateService = mock[AgentClientMandateService]
@@ -88,8 +87,8 @@ class AcceptClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
     when(mockAgentClientMandateService.acceptClient(Matchers.eq(mandateId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(clientAccepted)
-    val result = TestAcceptClientController.view(mandateId).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestAcceptClientController.view(service, mandateId).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
- }
+}

@@ -31,7 +31,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientCache, ClientEmail, MandateReference}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, ClientEmail}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -43,8 +43,8 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     "not return NOT_FOUND at route " when {
 
-      "GET /mandate/client/search-mandate" in {
-        val result = route(FakeRequest(GET, "/mandate/client/search-mandate")).get
+      "GET /mandate/client/search" in {
+        val result = route(FakeRequest(GET, "/mandate/client/search")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -98,7 +98,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val returnCache = cachedData.copy(mandate = Some(mandate1))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+          redirectLocation(result) must be(Some("/mandate/client/review"))
         }
       }
 
@@ -110,7 +110,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val mandate1 = mandate.copy(clientParty = clientParty)
         val returnCache = cachedData.copy(mandate = Some(mandate1))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
-          val thrown = the[RuntimeException] thrownBy (await(result))
+          val thrown = the[RuntimeException] thrownBy await(result)
           thrown.getMessage must include("email not cached")
         }
       }
@@ -122,7 +122,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val returnCache = ClientCache(mandate = Some(mandate))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = None, mandate = Some(mandate), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/collect-email"))
+          redirectLocation(result) must be(Some("/mandate/client/email"))
         }
       }
     }

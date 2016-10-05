@@ -22,28 +22,28 @@ import org.joda.time.DateTime
 import org.jsoup.Jsoup
 import org.mockito.Matchers
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
-import uk.gov.hmrc.agentclientmandate.models.{MandateStatus, Service, Status, Subscription, _}
+import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientCache
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
+class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
   "MandateConfirmationController" must {
 
     "not return NOT_FOUND at route " when {
 
-      "GET /mandate/client/mandate-confirmation" in {
-        val result = route(FakeRequest(GET, "/mandate/client/mandate-confirmation")).get
+      "GET /mandate/client/confirmation" in {
+        val result = route(FakeRequest(GET, "/mandate/client/confirmation")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -99,7 +99,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
       "approved mandate is not returned in response" in {
         viewAuthorisedClient(None) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review-mandate"))
+          redirectLocation(result) must be(Some("/mandate/client/review"))
         }
       }
     }
@@ -110,8 +110,13 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
   val mockDataCacheService = mock[DataCacheService]
 
   object TestMandateConfirmationController extends MandateConfirmationController {
-    val authConnector = mockAuthConnector
-    val dataCacheService = mockDataCacheService
+    override val authConnector = mockAuthConnector
+    override val dataCacheService = mockDataCacheService
+  }
+
+  override def beforeEach(): Unit = {
+    reset(mockAuthConnector)
+    reset(mockDataCacheService)
   }
 
   def viewUnAuthenticatedClient(test: Future[Result] => Any) {

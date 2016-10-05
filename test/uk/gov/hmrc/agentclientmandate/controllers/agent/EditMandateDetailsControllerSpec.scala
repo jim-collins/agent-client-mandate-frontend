@@ -25,7 +25,7 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.builders.{SessionBuilder, AuthBuilder}
+import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -36,8 +36,8 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
   "EditMandateControllerSpec" must {
 
     "not return NOT_FOUND at route " when {
-      "GET /mandate/agent/agent-edit-client" in {
-        val result = route(FakeRequest(GET, "/mandate/agent/agent-edit-client")).get
+      "GET /mandate/agent/edit" in {
+        val result = route(FakeRequest(GET, "/mandate/agent/edit")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -62,7 +62,6 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
   }
 
   val mockAuthConnector = mock[AuthConnector]
-  val service = "ATED"
 
   object TestEditMandateController extends EditMandateController {
     override val authConnector = mockAuthConnector
@@ -76,7 +75,5 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     val result = TestEditMandateController.view.apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
-
-
 
 }

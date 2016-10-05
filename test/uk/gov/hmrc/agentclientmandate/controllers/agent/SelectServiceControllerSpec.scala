@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 import java.util.UUID
 
 import org.jsoup.Jsoup
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
@@ -37,13 +38,13 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     "not return NOT_FOUND at route " when {
 
-      "GET /mandate/agent/select-service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/select-service")).get
+      "GET /mandate/agent/service" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
-      "POST /mandate/agent/select-service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/select-service")).get
+      "POST /mandate/agent/service" in {
+        val result = route(FakeRequest(POST, s"/mandate/agent/service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -52,7 +53,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
     "redirect to login page for UNAUTHENTICATED agent" when {
 
       "agent requests(GET) for 'select service question' view" in {
-        selectWithUnAuthenticatedAgent { result =>
+        viewWithUnAuthenticatedAgent { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -63,7 +64,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
     "redirect to unauthorised page for UNAUTHORISED agent" when {
 
       "agent requests(GET) for 'select service question' view" in {
-        selectWithUnAuthorisedAgent { result =>
+        viewWithUnAuthorisedAgent { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -74,7 +75,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
     "return 'select service question' view for AUTHORISED agent" when {
 
       "agent requests(GET) for 'select service question' view" in {
-        selectWithAuthorisedAgent { result =>
+        viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Select a service")
@@ -92,7 +93,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("service" -> "ated")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/agent/collect-email/ated"))
+          redirectLocation(result) must be(Some("/mandate/agent/summary/ated"))
         }
       }
     }
@@ -117,29 +118,33 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
     override val authConnector = mockAuthConnector
   }
 
-  def selectWithUnAuthenticatedAgent(test: Future[Result] => Any) {
+  override def beforeEach(): Unit = {
+    reset(mockAuthConnector)
+  }
+
+  def viewWithUnAuthenticatedAgent(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestSelectServiceController.select().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestSelectServiceController.view().apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def selectWithUnAuthorisedAgent(test: Future[Result] => Any) {
+  def viewWithUnAuthorisedAgent(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestSelectServiceController.select().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestSelectServiceController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def selectWithAuthorisedAgent(test: Future[Result] => Any) {
+  def viewWithAuthorisedAgent(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestSelectServiceController.select().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestSelectServiceController.view().apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

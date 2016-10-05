@@ -46,7 +46,7 @@ trait ChangeAgentController extends FrontendController with Actions{
       Ok(views.html.client.changeAgent(yesNoQuestionForm, agentName))
   }
 
-  def confirm(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       yesNoQuestionForm.bindFromRequest.fold(
         formWithError => Future.successful(BadRequest(views.html.client.changeAgent(formWithError, agentName))),
@@ -56,7 +56,7 @@ trait ChangeAgentController extends FrontendController with Actions{
             Future.successful(Redirect(routes.CollectEmailController.view()))
           }
           else {
-            Future.successful(Redirect(routes.RemoveAgentController.showConfirmation(agentName)))
+            Future.successful(Redirect(routes.RemoveAgentController.confirmation(agentName)))
           }
         }
       )

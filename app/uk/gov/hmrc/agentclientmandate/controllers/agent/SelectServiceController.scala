@@ -32,14 +32,14 @@ object SelectServiceController extends SelectServiceController {
 
 trait SelectServiceController extends FrontendController with Actions {
 
-  def select = AuthorisedFor(AgentRegime, GGConfidence) {
+  def view = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit authContext => implicit request => Ok(views.html.agent.selectService(selectServiceForm))
   }
 
   def submit = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit authContext => implicit request => selectServiceForm.bindFromRequest.fold(
       formWithError => BadRequest(views.html.agent.selectService(formWithError)),
-      selectedService => Redirect(routes.CollectAgentEmailController.view(selectedService.service.getOrElse("")))
+      selectedService => Redirect(routes.AgentSummaryController.view(selectedService.service))
     )
   }
 

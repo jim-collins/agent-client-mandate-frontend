@@ -42,13 +42,13 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
     "not return NOT_FOUND at route " when {
 
-      "GET /mandate/collect-agent-email/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/collect-email/$service")).get
+      "GET /mandate/agent/email/:service" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/email/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
-      "POST /mandate/collect-agent-email/:service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/collect-email/$service")).get
+      "POST /mandate/agent/email/:service" in {
+        val result = route(FakeRequest(POST, s"/mandate/agent/email/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -168,15 +168,10 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
   val mockAuthConnector = mock[AuthConnector]
   val mockDataCacheService: DataCacheService = mock[DataCacheService]
   val mockEmailService: EmailService = mock[EmailService]
+
   val service = "ated".toUpperCase
   val formId1 = "agent-email"
   val agentEmail = AgentEmail("aa@aa.com", "aa@aa.com")
-
-  object TestCollectAgentEmailController extends CollectAgentEmailController {
-    override val authConnector = mockAuthConnector
-    override val dataCacheService = mockDataCacheService
-    override val emailService = mockEmailService
-  }
 
   override def beforeEach(): Unit = {
     reset(mockDataCacheService)
@@ -220,6 +215,12 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     when(mockDataCacheService.cacheFormData[AgentEmail](Matchers.eq(formId1), Matchers.eq(agentEmail))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(agentEmail))
     val result = TestCollectAgentEmailController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
+  }
+
+  object TestCollectAgentEmailController extends CollectAgentEmailController {
+    override val authConnector = mockAuthConnector
+    override val dataCacheService = mockDataCacheService
+    override val emailService = mockEmailService
   }
 
 }

@@ -19,6 +19,8 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 import java.util.UUID
 
 import org.jsoup.Jsoup
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
@@ -31,7 +33,7 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 import scala.concurrent.Future
 
 
-class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
+class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
   "OverseasClientQuestionController" must {
 
@@ -126,6 +128,10 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
 
   object TestOverseasClientQuestionController extends OverseasClientQuestionController {
     override val authConnector = mockAuthConnector
+  }
+
+  override def beforeEach(): Unit = {
+    reset(mockAuthConnector)
   }
 
   def viewWithUnAuthenticatedAgent(test: Future[Result] => Any) {
