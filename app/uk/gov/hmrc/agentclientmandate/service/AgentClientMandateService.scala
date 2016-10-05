@@ -105,6 +105,7 @@ trait AgentClientMandateService extends MandateConstants {
     }
   }
 
+<<<<<<< cb955a2c894e406f96c75b65cf3bdbdf8cf85e5c
   def acceptClient(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Boolean] = {
     agentClientMandateConnector.activateMandate(mandateId).map { response =>
       response.status match {
@@ -121,6 +122,15 @@ trait AgentClientMandateService extends MandateConstants {
 
   def removeAgent(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Boolean] = {
     agentClientMandateConnector.removeAgent(mandateId).map { response =>
+      response.status match {
+        case OK => true
+        case _ => false
+      }
+    }
+  }
+
+  def removeClient(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Boolean] = {
+    agentClientMandateConnector.removeClient(mandateId).map { response =>
       response.status match {
         case OK => true
         case _ => false
