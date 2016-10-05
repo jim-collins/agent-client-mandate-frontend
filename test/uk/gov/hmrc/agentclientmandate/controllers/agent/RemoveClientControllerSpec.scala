@@ -111,124 +111,126 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   }
 
 
-        "redirect to login page for UNAUTHENTICATED agent" when {
+  "redirect to login page for UNAUTHENTICATED agent" when {
 
-          "agent requests(GET) for 'overseas client question' view" in {
-            viewWithUnAuthenticatedAgent { result =>
-              status(result) must be(SEE_OTHER)
-              redirectLocation(result).get must include("/gg/sign-in")
-            }
-          }
-        }
+    "agent requests(GET) for 'overseas client question' view" in {
+      viewWithUnAuthenticatedAgent { result =>
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result).get must include("/gg/sign-in")
+      }
+    }
+  }
 
-        "redirect to unauthorised page for UNAUTHORISED agent" when {
+  "redirect to unauthorised page for UNAUTHORISED agent" when {
 
-          "agent requests(GET) for 'overseas client question' view" in {
-            viewWithUnAuthorisedAgent { result =>
-              status(result) must be(SEE_OTHER)
-              redirectLocation(result).get must include("/gg/sign-in")
-            }
-          }
-        }
+    "agent requests(GET) for 'overseas client question' view" in {
+      viewWithUnAuthorisedAgent { result =>
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result).get must include("/gg/sign-in")
+      }
+    }
+  }
 
-        "return 'reject client question' view for AUTHORISED agent" when {
+  "return 'remove client question' view for AUTHORISED agent" when {
 
-          "agent requests(GET) for 'reject client question' view" in {
+    "agent requests(GET) for 'remove client question' view" in {
+
+      val hc = new HeaderCarrier()
+      val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
+      when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
+
+      viewWithAuthorisedAgent { result =>
+        status(result) must be(OK)
+        val document = Jsoup.parse(contentAsString(result))
+        document.title() must be("Confirm Client Removal")
+        document.getElementById("pre-heading").text() must be("Manage your ATED service")
+        document.getElementById("header").text() must include("Are you sure you want to remove the request from ACME Limited?")
+        document.getElementById("removeClient_legend").text() must be("Are you sure you want to remove the request from ACME Limited?")
+        document.getElementById("submit").text() must be("Confirm")
+      }
+    }
+
+
+    "service can't find mandate throw exception" in {
+
+      val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
+      when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
+
+      val userId = s"user-${UUID.randomUUID}"
+      implicit val hc: HeaderCarrier = HeaderCarrier()
+      implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+      AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+      val thrown = the[RuntimeException] thrownBy await(TestRemoveClientController.view("1").apply(SessionBuilder.buildRequestWithSession(userId)))
+
+      thrown.getMessage must include("No Mandate returned")
+    }
+  }
+
+  "returns BAD_REQUEST" when {
+    "invalid form is submitted" in {
+      val hc = new HeaderCarrier()
+      val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
+      when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
+
+      val fakeRequest = FakeRequest().withFormUrlEncodedBody("removeClient" -> "")
+      submitWithAuthorisedAgent(fakeRequest) { result =>
+        status(result) must be(BAD_REQUEST)
+        val document = Jsoup.parse(contentAsString(result))
+        document.getElementsByClass("error-list").text() must include("There is a problem with the question")
+        document.getElementsByClass("error-notification").text() must include("You must answer question")
+      }
+    }
+  }
+
+  "submitting form " when {
+    "submitted with false will redirect to agent summary" in {
+      val hc = new HeaderCarrier()
+      val fakeRequest = FakeRequest().withFormUrlEncodedBody("removeClient" -> "false")
+      submitWithAuthorisedAgent(fakeRequest) { result =>
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result).get must include("/agent/agent-client-summary")
+      }
+    }
+
+    "submitted with true will redirect to confirmation" in {
+      when(mockAgentClientMandateService.removeClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(true)
+      val hc = new HeaderCarrier()
+      val fakeRequest = FakeRequest().withFormUrlEncodedBody("removeClient" -> "true")
+      submitWithAuthorisedAgent(fakeRequest) { result =>
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result).get must include("/agent/remove-client/showConfirmation")
+      }
+    }
+
+    "submitted with true throws exception" in {
+      when(mockAgentClientMandateService.removeClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(false)
+      val userId = s"user-${UUID.randomUUID}"
+      implicit val hc: HeaderCarrier = HeaderCarrier()
+      implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+      val fakeRequest = FakeRequest().withFormUrlEncodedBody("removeClient" -> "true")
+      AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+      val thrown = the[RuntimeException] thrownBy await(TestRemoveClientController.confirm("ABC123", "Acme Ltd").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
+
+      thrown.getMessage must include("Client removal Failed")
+    }
+  }
+
+
+
+        "return 'client remove confirmation' view for AUTHORISED agent" when {
+
+          "agent requests(GET) for 'client remove confirmation' view" in {
 
             val hc = new HeaderCarrier()
-            val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
-            when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
 
-            viewWithAuthorisedAgent { result =>
+            showConfirmationWithAuthorisedAgent { result =>
               status(result) must be(OK)
               val document = Jsoup.parse(contentAsString(result))
-              document.title() must be("Confirm Client Removal")
-              document.getElementById("pre-heading").text() must be("Manage your ATED service")
-              document.getElementById("header").text() must include("Are you sure you want to remove the request from ACME Limited?")
-              document.getElementById("rejectClient_legend").text() must be("Are you sure you want to reject the request from ACME Limited?")
-              document.getElementById("submit").text() must be("Confirm")
+              document.title() must be("Client remove Confirmed")
             }
           }
         }
-    //
-    //      "service can't find mandate throw exception" in {
-    //
-    //        val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
-    //        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
-    //
-    //        val userId = s"user-${UUID.randomUUID}"
-    //        implicit val hc: HeaderCarrier = HeaderCarrier()
-    //        implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
-    //        AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    //        val thrown = the[RuntimeException] thrownBy await(TestRejectClientController.view("1").apply(SessionBuilder.buildRequestWithSession(userId)))
-    //
-    //        thrown.getMessage must include("No Mandate returned")
-    //      }
-    //    }
-    //
-    //    "returns BAD_REQUEST" when {
-    //      "invalid form is submitted" in {
-    //        val hc = new HeaderCarrier()
-    //        val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
-    //        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
-    //
-    //        val fakeRequest = FakeRequest().withFormUrlEncodedBody("rejectClient" -> "")
-    //        submitWithAuthorisedAgent(fakeRequest) { result =>
-    //          status(result) must be(BAD_REQUEST)
-    //          val document = Jsoup.parse(contentAsString(result))
-    //          document.getElementsByClass("error-list").text() must include("There is a problem with the question")
-    //          document.getElementsByClass("error-notification").text() must include("You must answer question")
-    //        }
-    //      }
-    //    }
-    //
-    //    "submitting form " when {
-    //      "submitted with false will redirect to agent summary" in {
-    //        val hc = new HeaderCarrier()
-    //        val fakeRequest = FakeRequest().withFormUrlEncodedBody("rejectClient" -> "false")
-    //        submitWithAuthorisedAgent(fakeRequest) { result =>
-    //          status(result) must be(SEE_OTHER)
-    //          redirectLocation(result).get must include("/agent/agent-client-summary")
-    //        }
-    //      }
-    //
-    //      "submitted with true will redirect to confirmation" in {
-    //        when(mockAgentClientMandateService.rejectClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(true)
-    //        val hc = new HeaderCarrier()
-    //        val fakeRequest = FakeRequest().withFormUrlEncodedBody("rejectClient" -> "true")
-    //        submitWithAuthorisedAgent(fakeRequest) { result =>
-    //          status(result) must be(SEE_OTHER)
-    //          redirectLocation(result).get must include("/agent/reject-client/showConfirmation")
-    //        }
-    //      }
-    //
-    //      "submitted with true throws exception" in {
-    //        when(mockAgentClientMandateService.rejectClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(false)
-    //        val userId = s"user-${UUID.randomUUID}"
-    //        implicit val hc: HeaderCarrier = HeaderCarrier()
-    //        implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
-    //        val fakeRequest = FakeRequest().withFormUrlEncodedBody("rejectClient" -> "true")
-    //        AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    //        val thrown = the[RuntimeException] thrownBy await(TestRejectClientController.confirm("ABC123", "Acme Ltd").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
-    //
-    //        thrown.getMessage must include("Client Rejection Failed")
-    //      }
-    //    }
-    //
-    //    "return 'client rejection confirmation' view for AUTHORISED agent" when {
-    //
-    //      "agent requests(GET) for 'client rejection confirmation' view" in {
-    //
-    //        val hc = new HeaderCarrier()
-    //
-    //        showConfirmationWithAuthorisedAgent { result =>
-    //          status(result) must be(OK)
-    //          val document = Jsoup.parse(contentAsString(result))
-    //          document.title() must be("Client Rejection Confirmed")
-    //        }
-    //      }
-    //    }
-    //  }
+
 
 
 
