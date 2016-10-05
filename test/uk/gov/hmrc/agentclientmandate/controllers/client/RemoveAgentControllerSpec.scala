@@ -90,6 +90,24 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     test(result)
   }
 
+  def returnToServiceWithAuthorisedClient(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    val result = TestRemoveAgentController.returnToService().apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def showConfirmationWithAuthorisedClient(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    val result = TestRemoveAgentController.showConfirmation("ACME Ltd").apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
 //  def showConfirmationWithAuthorisedAgent(test: Future[Result] => Any) {
 //    val userId = s"user-${UUID.randomUUID}"
 //    implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -247,6 +265,44 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         val thrown = the[RuntimeException] thrownBy await(TestRemoveAgentController.confirm("1", "ACME").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
 
         thrown.getMessage must be("Cache Retrieval Failed")
+      }
+    }
+
+    "returnToService" when {
+      "redirects to cached service" in {
+        when(mockDataCacheService.fetchAndGetFormData[String](Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some("/api/anywhere")))
+        val hc = new HeaderCarrier()
+        returnToServiceWithAuthorisedClient { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must be("/api/anywhere")
+        }
+      }
+
+      "fails when cache fails" in {
+        when(mockDataCacheService.fetchAndGetFormData[String](Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+        val userId = s"user-${UUID.randomUUID}"
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+        AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+        val thrown = the[RuntimeException] thrownBy await(TestRemoveAgentController.returnToService().apply(SessionBuilder.buildRequestWithSession(userId)))
+
+        thrown.getMessage must be("Cache Retrieval Failed")
+      }
+    }
+
+    "showConfirmation" when {
+      "agent has been removed show confirmation page" in {
+        val hc = new HeaderCarrier()
+        showConfirmationWithAuthorisedClient { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What happens next?")
+          document.getElementById("banner-text").text() must include("You have removed ACME Ltd as your agent")
+          document.getElementById("notification").text() must be("Your agent will receive an email notification.")
+          document.getElementById("heading").text() must be("What happens next?")
+          document.getElementById("finish_btn").text() must be("Finish and sign out")
+          document.getElementById("return_to_service_button").text() must be("Your ATED online service")
+        }
       }
     }
 

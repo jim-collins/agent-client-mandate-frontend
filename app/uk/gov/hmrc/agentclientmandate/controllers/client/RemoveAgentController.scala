@@ -82,11 +82,16 @@ trait RemoveAgentController extends FrontendController with Actions {
 
   def showConfirmation(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.removeAgentConfirmation(agentName))
+      Ok(views.html.client.removeAgentConfirmation(agentName, "ATED"))
   }
 
-  def returnToService() = AuthorisedFor(ClientRegime, GGConfidence) {
+  def returnToService() = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      ???
+      dataCacheService.fetchAndGetFormData[String]("RETURN_URL").map { returnUrl =>
+        returnUrl match {
+          case Some(x) => Redirect(x)
+          case _ => throw new RuntimeException("Cache Retrieval Failed")
+        }
+      }
   }
 }
