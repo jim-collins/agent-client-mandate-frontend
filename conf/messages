@@ -202,3 +202,7 @@ agent.reject-client-confirmation.view-all-clients = View all your clients
 
 yes-no.error.mandatory = You must answer question
 yes-no.error.general.yesNo = There is a problem with the question
+
+# agent remove client
+agent.remove-client.title = Confirm Client Removal
+agent.remove-client.header = Are you sure you want to remove the request from {0}?
