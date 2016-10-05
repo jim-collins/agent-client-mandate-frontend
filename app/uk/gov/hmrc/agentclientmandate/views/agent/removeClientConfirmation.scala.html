@@ -3,27 +3,27 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 
-@main_template(title = Messages("agent.reject-client-confirmation.title")) {
+@main_template(title = Messages("agent.remove-client-confirmation.title")) {
 
     <div class="transaction-banner--complete" id="banner">
-        <h1 id="banner-text"> @Messages("agent.reject-client-confirmation.banner-text") </h1>
-        <h2 id="banner-text-date"> @Messages("agent.reject-client-confirmation.banner-text-date") </h2>
+        <h1 id="banner-text"> @Messages("agent.remove-client-confirmation.banner-text", clientName) </h1>
+        <h2 id="banner-text-date"> @Messages("agent.remove-client-confirmation.banner-text-date") </h2>
     </div>
 
-    <p id="notification" class="heading-small">@Messages("agent.reject-client-confirmation.notification")</p>
+    <p id="notification" class="heading-small">@Messages("agent.remove-client-confirmation.notification")</p>
 
     <hr>
 
-    <h2 id="heading" class="heading-large">@Messages("agent.reject-client-confirmation.what-next")</h2>
+    <h2 id="heading" class="heading-large">@Messages("agent.remove-client-confirmation.what-next")</h2>
 
     <ul id="list" class="bullets">
-        <li>@Messages("agent.reject-client-confirmation.request-new-client")</li>
-        <li>@Messages("agent.reject-client-confirmation.submit-returns")</li>
+        <li>@Messages("agent.remove-client-confirmation.request-new-client")</li>
+        <li>@Messages("agent.remove-client-confirmation.submit-returns")</li>
     </ul>
 
     <div class="form-group">
         <form action="@routes.AgentClientSummaryController.view">
-            <button class="button" id="finish_btn" type="submit">@Messages("agent.reject-client-confirmation.view-all-clients")</button>
+            <button class="button" id="finish_btn" type="submit">@Messages("agent.remove-client-confirmation.view-all-clients")</button>
         </form>
     </div>
 

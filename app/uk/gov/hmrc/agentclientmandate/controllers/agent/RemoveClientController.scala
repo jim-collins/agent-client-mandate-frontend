@@ -45,41 +45,39 @@ trait RemoveClientController extends FrontendController with Actions {
       }
   }
 
-      def confirm(mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
-       implicit authContext => implicit request =>
-            removeClientQuestionForm.bindFromRequest.fold(
-                formWithError => Future.successful(BadRequest(views.html.agent.removeClient(formWithError, clientName, mandateId))),
-                data => {
-                  val removeClient = data.removeClient.getOrElse(false)
-                  if (removeClient) {
-                    acmService.removeClient(mandateId).map { removedClient =>
-                      if (removedClient) {
-                        Redirect(routes.RemoveClientController.showConfirmation(clientName))
-                      }
-                      else {
-                        throw new RuntimeException("Client Rejection Failed")
-                      }
-                    }
-                  }
-                  else {
-                    Future.successful(Redirect(routes.AgentClientSummaryController.view))
-                  }
-                }
-            )
-      }
-
-      def showConfirmation(clientName: String) = AuthorisedFor(AgentRegime, GGConfidence) {
-        implicit authContext => implicit request =>
-          Ok(views.html.agent.rejectClientConfirmation(clientName))
-      }
+  def confirm(mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+    implicit authContext => implicit request =>
+      removeClientQuestionForm.bindFromRequest.fold(
+        formWithError => Future.successful(BadRequest(views.html.agent.removeClient(formWithError, clientName, mandateId))),
+        data => {
+          val removeClient = data.removeClient.getOrElse(false)
+          if (removeClient) {
+            acmService.removeClient(mandateId).map { removedClient =>
+              if (removedClient) {
+                Redirect(routes.RemoveClientController.showConfirmation(clientName))
+              }
+              else {
+                throw new RuntimeException("Client removal Failed")
+              }
+            }
+          }
+          else {
+            Future.successful(Redirect(routes.AgentClientSummaryController.view))
+          }
+        }
+      )
   }
 
-
-  object RemoveClientController extends RemoveClientController {
-    // $COVERAGE-OFF$
-    val authConnector = FrontendAuthConnector
-    val acmService = AgentClientMandateService
-    // $COVERAGE-ON$
-  }
+  def showConfirmation(clientName: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+    implicit authContext => implicit request =>
+      Ok(views.html.agent.removeClientConfirmation(clientName))
+    }
+}
 
 
+object RemoveClientController extends RemoveClientController {
+  // $COVERAGE-OFF$
+  val authConnector = FrontendAuthConnector
+  val acmService = AgentClientMandateService
+  // $COVERAGE-ON$
+}

@@ -14,21 +14,21 @@
     </h1>
 
     <p>
-    @Messages("agent.reject-client.text")
+    @Messages("agent.remove-client.text")
     </p>
 
-    @mandateErrorSummary(removeClientForm, "agent.reject-client.error.general")
+    @mandateErrorSummary(removeClientForm, "agent.remove-client.error.general")
 
     @form(action = routes.RemoveClientController.confirm(mandateId, clientName)) {
 
         <div class="form-group" id="rejectClient">
         @mandateInputRadioGroup(
-            removeClientForm("rejectClient"),
+            removeClientForm("removeClient"),
             Seq("true" -> Messages("radio-yes"),
                 "false" -> Messages("radio-no")),
             '_groupClass -> "inline",
             '_legendClass -> "screen-reader-text",
-            '_legend -> Messages("agent.reject-client.header", clientName),
+            '_legend -> Messages("agent.remove-client.header", clientName),
             '_labelClass -> "block-label",
             '_labelAfter -> true
         )
