@@ -147,7 +147,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         document.title() must be("Confirm Client Removal")
         document.getElementById("pre-heading").text() must include("Manage your ATED service")
         document.getElementById("header").text() must include("Are you sure you want to remove ATED?")
-        document.getElementById("removeClient_legend").text() must be("Are you sure you want to remove ATED?")
+        document.getElementById("yesNo_legend").text() must be("Are you sure you want to remove ATED?")
         document.getElementById("submit").text() must be("Confirm")
       }
     }
@@ -174,12 +174,12 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
       when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
 
-      val fakeRequest = FakeRequest().withFormUrlEncodedBody("removeClient" -> "")
+      val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "")
       submitWithAuthorisedAgent(fakeRequest) { result =>
         status(result) must be(BAD_REQUEST)
         val document = Jsoup.parse(contentAsString(result))
         document.getElementsByClass("error-list").text() must include("There is a problem with the question")
-        document.getElementsByClass("error-notification").text() must include("You must answer the question")
+        document.getElementsByClass("error-notification").text() must include("You must answer question")
       }
     }
   }
@@ -187,7 +187,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   "submitting form " when {
     "submitted with false will redirect to agent summary" in {
       val hc = new HeaderCarrier()
-      val fakeRequest = FakeRequest().withFormUrlEncodedBody("removeClient" -> "false")
+      val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "false")
       submitWithAuthorisedAgent(fakeRequest) { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result).get must include(s"/mandate/agent/summary/$service")
@@ -197,7 +197,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "submitted with true will redirect to confirmation" in {
       when(mockAgentClientMandateService.removeClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(true)
       val hc = new HeaderCarrier()
-      val fakeRequest = FakeRequest().withFormUrlEncodedBody("removeClient" -> "true")
+      val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
       submitWithAuthorisedAgent(fakeRequest) { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result).get must include("/agent/remove-client/showConfirmation")
@@ -209,7 +209,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       val userId = s"user-${UUID.randomUUID}"
       implicit val hc: HeaderCarrier = HeaderCarrier()
       implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
-      val fakeRequest = FakeRequest().withFormUrlEncodedBody("removeClient" -> "true")
+      val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
       AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
       val thrown = the[RuntimeException] thrownBy await(TestRemoveClientController.confirm(service, "ABC123", "Acme Ltd").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
 

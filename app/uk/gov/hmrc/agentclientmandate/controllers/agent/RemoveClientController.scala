@@ -26,7 +26,7 @@ import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.agentclientmandate.views
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.RemoveClientQuestionForm._
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm._
 
 import scala.concurrent.Future
 
@@ -39,7 +39,7 @@ trait RemoveClientController extends FrontendController with Actions {
 
       acmService.fetchClientMandate(mandateId).map { response =>
         response match {
-          case Some(mandate) => Ok(views.html.agent.removeClient(removeClientQuestionForm, mandate.clientParty.get.name, service, mandateId))
+          case Some(mandate) => Ok(views.html.agent.removeClient(yesNoQuestionForm, mandate.clientParty.get.name, service, mandateId))
           case _ => throw new RuntimeException("No Mandate returned")
         }
       }
@@ -47,10 +47,10 @@ trait RemoveClientController extends FrontendController with Actions {
 
   def confirm(service: String, mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      removeClientQuestionForm.bindFromRequest.fold(
+      yesNoQuestionForm.bindFromRequest.fold(
         formWithError => Future.successful(BadRequest(views.html.agent.removeClient(formWithError, service, clientName, mandateId))),
         data => {
-          val removeClient = data.removeClient.getOrElse(false)
+          val removeClient = data.yesNo.getOrElse(false)
           if (removeClient) {
             acmService.removeClient(mandateId).map { removedClient =>
               if (removedClient) {

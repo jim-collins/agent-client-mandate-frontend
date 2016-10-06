@@ -209,7 +209,6 @@ yes-no.error.general.yesNo = There is a problem with the question
 agent.remove-client.title = Confirm Client Removal
 agent.remove-client.header = Are you sure you want to remove {0}?
 agent.remove-client.error.mandatory = You must answer the question
-agent.remove-client.error.general.removeClient = There is a problem with the question
 agent.remove-client.text = Once you have removed a client you will no longer be able to act on their behalf.
 
 
