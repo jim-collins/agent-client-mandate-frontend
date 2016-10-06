@@ -10,10 +10,10 @@
 @main_template(title = Messages("client.agent-confirmation.title")) {
 
   <div class="transaction-banner--complete" id="banner">
-    <h1 id="banner-text"> @Messages("client.agent-confirmation.banner-text") </h1>
+    <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'>@Messages("client.agent-confirmation.banner-text")</h1>
   </div>
 
-  <p id="notification" class="heading-small">@Messages("client.agent-confirmation.notification")</p>
+  <span id="notification" class="heading-small">@Messages("client.agent-confirmation.notification")</span>
 
   <hr>
 
@@ -21,7 +21,6 @@
 
   <ul id="list" class="bullets">
     <li>@Messages("client.agent-confirmation.your-agent")</li>
-    <li>@Messages("client.agent-confirmation.your-request")</li>
     <li>@Html(Messages("client.agent-confirmation.this-authority"))</li>
     <li>@Html(Messages("client.agent-confirmation.sign-in"))</li>
   </ul>
