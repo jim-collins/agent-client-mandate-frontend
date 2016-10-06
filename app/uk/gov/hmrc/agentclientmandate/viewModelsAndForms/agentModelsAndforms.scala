@@ -129,3 +129,4 @@ object EditMandateDetailsForm {
    "email" -> text.verifying(Messages("agent.enter-email.error.email"), email => email.nonEmpty)
   )(EditMandateDetails.apply)(EditMandateDetails.unapply))
 }
+

@@ -55,3 +55,7 @@ POST    /agent/reject/:service/:id/:clientName  uk.gov.hmrc.agentclientmandate.c
 GET     /agent/reject/confirmation/:service/:clientName  uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.confirmation(service: String, clientName: String)
 
 GET     /agent/accept/:service/:id              uk.gov.hmrc.agentclientmandate.controllers.agent.AcceptClientController.view(service: String, id: String)
+
+GET     /agent/remove-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.view(service, mandateId: String)
+POST    /agent/remove-client/:service/:mandateId/:clientName          uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.confirm(service: String, mandateId: String, clientName: String)
+GET     /agent/remove-client/showConfirmation/:service/:clientName   uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.showConfirmation(service: String, clientName: String)
