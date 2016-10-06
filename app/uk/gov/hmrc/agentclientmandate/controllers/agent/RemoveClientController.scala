@@ -34,27 +34,27 @@ trait RemoveClientController extends FrontendController with Actions {
 
   def acmService: AgentClientMandateService
 
-  def view(mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
 
       acmService.fetchClientMandate(mandateId).map { response =>
         response match {
-          case Some(mandate) => Ok(views.html.agent.removeClient(removeClientQuestionForm, mandate.clientParty.get.name, mandateId))
+          case Some(mandate) => Ok(views.html.agent.removeClient(removeClientQuestionForm, mandate.clientParty.get.name, service, mandateId))
           case _ => throw new RuntimeException("No Mandate returned")
         }
       }
   }
 
-  def confirm(mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def confirm(service: String, mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       removeClientQuestionForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.agent.removeClient(formWithError, clientName, mandateId))),
+        formWithError => Future.successful(BadRequest(views.html.agent.removeClient(formWithError, service, clientName, mandateId))),
         data => {
           val removeClient = data.removeClient.getOrElse(false)
           if (removeClient) {
             acmService.removeClient(mandateId).map { removedClient =>
               if (removedClient) {
-                Redirect(routes.RemoveClientController.showConfirmation(clientName))
+                Redirect(routes.RemoveClientController.showConfirmation(service, clientName))
               }
               else {
                 throw new RuntimeException("Client removal Failed")
@@ -62,15 +62,15 @@ trait RemoveClientController extends FrontendController with Actions {
             }
           }
           else {
-            Future.successful(Redirect(routes.AgentClientSummaryController.view))
+            Future.successful(Redirect(routes.AgentSummaryController.view(service)))
           }
         }
       )
   }
 
-  def showConfirmation(clientName: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def showConfirmation(service: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.agent.removeClientConfirmation(clientName))
+      Ok(views.html.agent.removeClientConfirmation(service, clientName))
     }
 }
 

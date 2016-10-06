@@ -4,7 +4,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(removeClientForm: Form[RemoveClientQuestion], clientName: String, mandateId: String)(implicit request: Request[_])
+@(removeClientForm: Form[RemoveClientQuestion], service: String, clientName: String, mandateId: String)(implicit request: Request[_])
 
 @main_template(title = Messages("agent.remove-client.title")) {
 
@@ -19,7 +19,7 @@
 
     @mandateErrorSummary(removeClientForm, "agent.remove-client.error.general")
 
-    @form(action = routes.RemoveClientController.confirm(mandateId, clientName)) {
+    @form(action = routes.RemoveClientController.confirm(service, mandateId, clientName)) {
 
         <div class="form-group" id="rejectClient">
         @mandateInputRadioGroup(

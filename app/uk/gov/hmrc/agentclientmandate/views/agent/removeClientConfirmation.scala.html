@@ -1,4 +1,4 @@
-@(clientName: String)(implicit request: Request[_])
+@(service: String, clientName: String)(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
@@ -22,7 +22,7 @@
     </ul>
 
     <div class="form-group">
-        <form action="@routes.AgentClientSummaryController.view">
+        <form action="@routes.AgentSummaryController.view(service)">
             <button class="button" id="finish_btn" type="submit">@Messages("agent.remove-client-confirmation.view-all-clients")</button>
         </form>
     </div>

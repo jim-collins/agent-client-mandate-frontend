@@ -42,6 +42,8 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   val mockAgentClientMandateService = mock[AgentClientMandateService]
   val mockAuthConnector = mock[AuthConnector]
   val service = "ATED"
+  val mandateId = "1"
+  val agentName = "Acme"
 
   object TestRemoveClientController extends RemoveClientController {
     override val authConnector = mockAuthConnector
@@ -57,7 +59,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestRemoveClientController.view("1").apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestRemoveClientController.view(service, "1").apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -65,7 +67,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestRemoveClientController.view("1").apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestRemoveClientController.view(service, "1").apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -74,7 +76,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestRemoveClientController.view("1").apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestRemoveClientController.view(service, "1").apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -83,7 +85,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestRemoveClientController.showConfirmation("Acme Ltd").apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestRemoveClientController.showConfirmation(service, "Acme Ltd").apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -92,20 +94,20 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestRemoveClientController.confirm("1", "Acme Ltd").apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestRemoveClientController.confirm(service, "1", "Acme Ltd").apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 
   "RemoveClientController" must {
     "not return NOT_FOUND at route " when {
-      "GET /mandate/agent/remove-client/1" in {
-        val result = route(FakeRequest(GET, "/mandate/agent/remove-client/1")).get
+      "GET /mandate/agent/remove-client/:service/:id" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/remove-client/$service/$mandateId")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
 
     "POST /mandate/agent/reject-client/1" in {
-      val result = route(FakeRequest(POST, s"/mandate/agent/remove-client/1/Acme")).get
+      val result = route(FakeRequest(POST, s"/mandate/agent/remove-client/$service/$mandateId/$agentName")).get
       status(result) mustNot be(NOT_FOUND)
     }
   }
@@ -143,9 +145,9 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
         document.title() must be("Confirm Client Removal")
-        document.getElementById("pre-heading").text() must be("Manage your ATED service")
-        document.getElementById("header").text() must include("Are you sure you want to remove ACME Limited?")
-        document.getElementById("removeClient_legend").text() must be("Are you sure you want to remove ACME Limited?")
+        document.getElementById("pre-heading").text() must include("Manage your ATED service")
+        document.getElementById("header").text() must include("Are you sure you want to remove ATED?")
+        document.getElementById("removeClient_legend").text() must be("Are you sure you want to remove ATED?")
         document.getElementById("submit").text() must be("Confirm")
       }
     }
@@ -160,7 +162,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       implicit val hc: HeaderCarrier = HeaderCarrier()
       implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
       AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-      val thrown = the[RuntimeException] thrownBy await(TestRemoveClientController.view("1").apply(SessionBuilder.buildRequestWithSession(userId)))
+      val thrown = the[RuntimeException] thrownBy await(TestRemoveClientController.view(service, "1").apply(SessionBuilder.buildRequestWithSession(userId)))
 
       thrown.getMessage must include("No Mandate returned")
     }
@@ -188,7 +190,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("removeClient" -> "false")
       submitWithAuthorisedAgent(fakeRequest) { result =>
         status(result) must be(SEE_OTHER)
-        redirectLocation(result).get must include("/agent/agent-client-summary")
+        redirectLocation(result).get must include(s"/mandate/agent/summary/$service")
       }
     }
 
@@ -209,7 +211,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("removeClient" -> "true")
       AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-      val thrown = the[RuntimeException] thrownBy await(TestRemoveClientController.confirm("ABC123", "Acme Ltd").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
+      val thrown = the[RuntimeException] thrownBy await(TestRemoveClientController.confirm(service, "ABC123", "Acme Ltd").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
 
       thrown.getMessage must include("Client removal Failed")
     }
