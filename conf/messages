@@ -185,7 +185,7 @@ agent.edit-mandate-details.email = Your email address
 agent.edit-mandate-details.submit = Save changes
 
 # agent reject client
-agent.reject-client.title = Confirm Client Rejection
+agent.reject-client.title = Are you sure you want to reject the request from {0}?
 agent.reject-client.header = Are you sure you want to reject the request from {0}?
 agent.reject-client.text = Rejecting a client request means you will not be able to act on their behalf unless they submit another request.
 
