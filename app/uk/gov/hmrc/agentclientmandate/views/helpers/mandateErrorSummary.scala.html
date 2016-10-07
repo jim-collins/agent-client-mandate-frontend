@@ -1,4 +1,4 @@
-@(form: Form[_], errorMessageFieldPrefix: String, formErrorMessage: Option[String] = None, maxErrorsToShow: Int = 999)(implicit lang: Lang)
+@(form: Form[_], errorMessageFieldPrefix: String, formErrorMessageParam: Option[String] = None, maxErrorsToShow: Int = 999)(implicit lang: Lang)
 
 @if(form.hasGlobalErrors || form.hasErrors) {
   <div id="errors" tabindex="-1" role="group" aria-labelledby="form-error-heading" class="validation-summary">
@@ -22,7 +22,12 @@
                   data-journey="search-page:error:@error.key" id='@anchor.replaceAll("""[\.\[\]]""", "-")-error'
               >
                 <a href="#@anchor" class="error-list" data-focuses="@error.key">
-                  @Messages(s"$errorMessageFieldPrefix.$anchor")
+                  @{
+                     formErrorMessageParam match {
+                      case Some(x) => Messages(s"$errorMessageFieldPrefix.$anchor", Messages(formErrorMessageParam.get))
+                      case None => Messages(s"$errorMessageFieldPrefix.$anchor")
+                    }
+                  }
                 </a>
               </li>
             }

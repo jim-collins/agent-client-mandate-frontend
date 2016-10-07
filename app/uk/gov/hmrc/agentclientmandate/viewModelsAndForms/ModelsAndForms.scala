@@ -27,11 +27,14 @@ object YesNoQuestion {
   implicit val formats = Json.format[YesNoQuestion]
 }
 
-object YesNoQuestionForm {
+class YesNoQuestionForm(_param: String) {
+
+  private val param = _param
+
   val yesNoQuestionForm =
     Form(
       mapping(
-        "yesNo" -> optional(boolean).verifying(Messages("yes-no.error.mandatory"), x => x.isDefined)
+        "yesNo" -> optional(boolean).verifying(Messages("yes-no.error.mandatory", s"$param"), x => x.isDefined)
       )(YesNoQuestion.apply)(YesNoQuestion.unapply)
     )
 }

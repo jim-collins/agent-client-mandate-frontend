@@ -19,10 +19,10 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm.yesNoQuestionForm
 
 import scala.concurrent.Future
 
@@ -40,14 +40,15 @@ trait RejectClientController extends FrontendController with Actions {
   def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       acmService.fetchClientMandate(mandateId).map {
-        case Some(mandate) => Ok(views.html.agent.rejectClient(service, yesNoQuestionForm, mandate.clientParty.get.name, mandateId))
+        case Some(mandate) => Ok(views.html.agent.rejectClient(service, new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm, mandate.clientParty.get.name, mandateId))
         case _ => throw new RuntimeException("No Mandate returned")
       }
   }
 
   def submit(service: String, mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      yesNoQuestionForm.bindFromRequest.fold(
+      val form = new YesNoQuestionForm("agent.reject-client.error")
+      form.yesNoQuestionForm.bindFromRequest.fold(
         formWithError => Future.successful(BadRequest(views.html.agent.rejectClient(service, formWithError, clientName, mandateId))),
         data => {
           val rejectClient = data.yesNo.getOrElse(false)
