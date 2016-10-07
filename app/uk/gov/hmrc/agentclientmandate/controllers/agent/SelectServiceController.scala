@@ -39,7 +39,7 @@ trait SelectServiceController extends FrontendController with Actions {
   def submit = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit authContext => implicit request => selectServiceForm.bindFromRequest.fold(
       formWithError => BadRequest(views.html.agent.selectService(formWithError)),
-      selectedService => Redirect(routes.AgentSummaryController.view(selectedService.service))
+      selectedService => Redirect(routes.AgentSummaryController.view(selectedService.service.getOrElse("")))
     )
   }
 
