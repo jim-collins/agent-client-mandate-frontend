@@ -37,7 +37,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/agent/edit" in {
-        val result = route(FakeRequest(GET, "/mandate/agent/edit")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/edit/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -62,6 +62,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
   }
 
   val mockAuthConnector = mock[AuthConnector]
+  val service = "ATED"
 
   object TestEditMandateController extends EditMandateController {
     override val authConnector = mockAuthConnector
@@ -72,7 +73,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestEditMandateController.view.apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestEditMandateController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

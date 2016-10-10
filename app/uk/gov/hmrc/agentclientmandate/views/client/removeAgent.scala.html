@@ -4,18 +4,18 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(removeAgentForm: Form[YesNoQuestion], agentName: String, mandateId: String)(implicit request: Request[_])
+@(removeAgentForm: Form[YesNoQuestion], agentName: String, mandateId: String, service: String)(implicit request: Request[_])
 
 @main_template(title = Messages("client.remove-agent.title")) {
 
     <h1 id="header" class="heading-xlarge">
-        <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header")</span>
-        @Messages("client.remove-agent.header", agentName)
+        <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header", service)</span>
+        @Messages("client.remove-agent.header", agentName, service)
     </h1>
 
     @mandateErrorSummary(removeAgentForm, "yes-no.error.general")
 
-    @form(action = routes.RemoveAgentController.submit(mandateId, agentName)) {
+    @form(action = routes.RemoveAgentController.submit(mandateId, agentName, service)) {
 
         <div class="form-group" id="removeAgent">
         @mandateInputRadioGroup(
@@ -24,7 +24,7 @@
                 "false" -> Messages("radio-no")),
             '_groupClass -> "inline",
             '_legendClass -> "screen-reader-text",
-            '_legend -> Messages("client.remove-agent.header", agentName),
+            '_legend -> Messages("client.remove-agent.header", agentName, service),
             '_labelClass -> "block-label",
             '_labelAfter -> true
         )

@@ -14,8 +14,8 @@ agent-client-mandate.error.summaryHeader = There is a problem with the form
 agent.add-a-client.sub-header = Add a client
 
 #agent client summary
-client.summary.title = Your ATED clients
-client.summary.header = Your ATED clients
+client.summary.title = Your {0} clients
+client.summary.header = Your {0} clients
 client.summary.add-client = Add a new client
 client.summary.client-name.title = Name
 client.summary.client-action.title = Action
@@ -34,7 +34,7 @@ client.summary.no-clients = You have no clients
 client.collect-email.title = What is your email address?
 client.collect-email.preheader = Appoint an agent
 client.collect-email.header = What is your email address?
-client.collect-email.lede = We need this to send you notifications relating to the ATED online service. This should be your address not your agents.
+client.collect-email.lede = We need this to send you notifications relating to the {0} online service. This should be your address not your agents.
 client.collect-email.email = Email address
 client.collect-email.confirm-email = Confirm email address
 client.collect-email.error.general.email = There is a problem with the email address question
@@ -52,7 +52,7 @@ client.search-mandate.title = What is the agent''s reference?
 client.search-mandate.header = What is the agent''s reference?
 client.search-mandate.label = Agent reference
 client.search-mandate.help.question = What is an agent reference?
-client.search-mandate.help.answer = Your agent must set up their agency for ATED and send you their agent reference.
+client.search-mandate.help.answer = Your agent must set up their agency for {0} and send you their agent reference.
 client.search-mandate.error.general.mandateRef = There is a problem with the agent reference question
 client.search-mandate.error.mandateRef = You must answer agent reference question
 client.search-mandate.error.mandateRef.length = Agent reference cannot be more than 10 characters.
@@ -72,9 +72,9 @@ client.review-agent.submit = Confirm and appoint agent
 client.agent-declaration.title = Declaration and consent
 client.agent-declaration.header = Declaration and consent
 client.agent-declaration.pre-heading = Appoint an agent
-client.agent-declaration.declaration-info = <p>This authority allows HMRC to exchange and disclose information about you with your agent and to deal with them on matters relating to ATED.</p><p>You as the property owner will remain responsible for all aspects of you dealings with HMRC, even if your agent submits returns and makes payments on your behalf.</p>
+client.agent-declaration.declaration-info = <p>This authority allows HMRC to exchange and disclose information about you with your agent and to deal with them on matters relating to {0}.</p><p>You as the property owner will remain responsible for all aspects of you dealings with HMRC, even if your agent submits returns and makes payments on your behalf.</p>
 client.agent-declaration.declare-header = I declare that:
-client.agent-declaration.agent-name = the nominated agent {0} has agreed to act on my behalf in respect of ATED
+client.agent-declaration.agent-name = the nominated agent {0} has agreed to act on my behalf in respect of {1}
 client.agent-declaration.information = that the information I have provided is correct and complete
 
 #client agent confirmation
@@ -82,15 +82,15 @@ client.agent-confirmation.title = What happens next?
 client.agent-confirmation.banner-text = Your request to appoint Agent Limited has been successfully submitted
 client.agent-confirmation.notification = Your agent will receive an email notification.
 client.agent-confirmation.header = What happens next?
-client.agent-confirmation.your-agent = Your agent has 28 days to accept your request by accessing the ATED service.
+client.agent-confirmation.your-agent = Your agent has 28 days to accept your request by accessing the {0} service.
 client.agent-confirmation.this-authority = This authority will remain in place until you <a href="#">change or cancel your agent.</a>
-client.agent-confirmation.sign-in = You can sign in at any point to view your <a href="#">ATED online service</a>
+client.agent-confirmation.sign-in = You can sign in at any point to view your <a href="#">{0} online service</a>
 client.agent-confirmation.finish-signout = Finish and sign out
 client.declaration.error.general.agree = There is a problem with the checkbox.
 
 #client remove agent
 client.remove-agent.title = Confirm Agent Removal
-client.remove-agent.header = Are you sure you want to cancel the authority for {0} to act on your behalf for ATED?
+client.remove-agent.header = Are you sure you want to cancel the authority for {0} to act on your behalf for {1}?
 
 #client remove agent confirmation
 client.remove-agent-confirmation.title = What happens next?
@@ -111,7 +111,7 @@ agent.select-service.error.general.service = There is a problem with the select 
 agent.select-service.error.service = You must select one service
 
 #services
-agent.select-service.services.ated = ATED
+agent.select-service.services.ated = {0}
 
 #agent enter email
 agent.enter-email.title = What is your email address?
@@ -156,11 +156,11 @@ agent.unique-reference.header = Your unique agent reference for {0} is<br>{1}
 agent.unique-reference.next.heading.text = What happens next?
 agent.unique-reference.text1 = You need to give this agent reference to your client so they can authorise you.
 agent.unique-reference.text2 = Your client will then need to:
-agent.unique-reference.ated.list.text1 = Register their company to use the new <a href="#" id="ated-service" rel="ated">ATED service</a>, they may need to create a new organisational Government Gateway account.
+agent.unique-reference.ated.list.text1 = Register their company to use the new <a href="#" id="ated-service" rel="ated">{0} service</a>, they may need to create a new organisational Government Gateway account.
 agent.unique-reference.ated.list.text2 = Enter the agent reference you gave them.
 agent.unique-reference.text3 = Once they have done this you will receive an email notification.
 agent.unique-reference.text4 = You have 28 days to sign in and accept their request.
-agent.unique-reference.text5 = If you have a number of agents working on ATED within your organisation you may want to filter your clients. To do this you need to <a href="#" id="admin" rel="admin">add administrators</a> to your account in Government Gateway.
+agent.unique-reference.text5 = If you have a number of agents working on {0} within your organisation you may want to filter your clients. To do this you need to <a href="#" id="admin" rel="admin">add administrators</a> to your account in Government Gateway.
 agent.unique-reference.button = View all my clients
 
 # agent client details
@@ -174,7 +174,7 @@ agent.check-client-details.confirm = Confirm and add client
 # edit mandate details
 agent.edit-mandate-details.title = Edit ACME Limited
 agent.edit-mandate-details.header = Edit ACME Limited
-agent.edit-mandate-details.pre-header = Manage your ATED service
+agent.edit-mandate-details.pre-header = Manage your {0} service
 agent.edit-mandate-details.sub-heading = Unique agent reference GG123456
 agent.edit-mandate-details.displayName = Display name
 agent.edit-mandate-details.hint = This does not change the official company name.

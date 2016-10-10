@@ -39,7 +39,7 @@ trait UniqueAgentReferenceController extends FrontendController with Actions wit
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[String](agentRefCacheId) map {
-        case Some(x) => Ok(views.html.agent.uniqueAgentReference(x))
+        case Some(x) => Ok(views.html.agent.uniqueAgentReference(x, service))
         case None => Redirect(routes.SelectServiceController.view())
       }
   }

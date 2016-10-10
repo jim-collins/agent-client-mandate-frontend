@@ -41,19 +41,19 @@ trait ChangeAgentController extends FrontendController with Actions{
   def acmService: AgentClientMandateService
   def dataCacheService: DataCacheService
 
-  def view(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
+  def view(agentName: String, service: String) = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.changeAgent(yesNoQuestionForm, agentName))
+      Ok(views.html.client.changeAgent(yesNoQuestionForm, agentName, service))
   }
 
-  def submit(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(agentName: String, service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       yesNoQuestionForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.client.changeAgent(formWithError, agentName))),
+        formWithError => Future.successful(BadRequest(views.html.client.changeAgent(formWithError, agentName, service))),
         data => {
           val changeAgent = data.yesNo.getOrElse(false)
           if (changeAgent) {
-            Future.successful(Redirect(routes.CollectEmailController.view()))
+            Future.successful(Redirect(routes.CollectEmailController.view(service)))
           }
           else {
             Future.successful(Redirect(routes.RemoveAgentController.confirmation(agentName)))

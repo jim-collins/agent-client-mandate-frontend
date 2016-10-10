@@ -4,18 +4,18 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(changeAgentForm: Form[YesNoQuestion], agentName: String)(implicit request: Request[_])
+@(changeAgentForm: Form[YesNoQuestion], agentName: String, service: String)(implicit request: Request[_])
 
 @main_template(title = Messages("client.change-agent.title")) {
 
     <h1 id="header" class="heading-xlarge">
-        <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header")</span>
+        <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header", service)</span>
         @Messages("client.change-agent.header")
     </h1>
 
     @mandateErrorSummary(changeAgentForm, "yes-no.error.general")
 
-    @form(action = routes.ChangeAgentController.submit(agentName)) {
+    @form(action = routes.ChangeAgentController.submit(agentName, service)) {
 
         <div class="form-group" id="removeAgent">
         @mandateInputRadioGroup(
