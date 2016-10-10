@@ -158,7 +158,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
         (Matchers.any(), Matchers.any(), Matchers.any())
         (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
-      val response = await(TestAgentClientMandateConnector.removeAgent(mandateId))
+      val response = await(TestAgentClientMandateConnector.remove(mandateId))
       response.status must be(OK)
     }
 
@@ -167,7 +167,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
         (Matchers.any(), Matchers.any(), Matchers.any())
         (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
-      val response = await(TestAgentClientMandateConnector.removeClient(mandateId))
+      val response = await(TestAgentClientMandateConnector.remove(mandateId))
       response.status must be(OK)
     }
 
