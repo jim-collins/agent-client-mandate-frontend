@@ -42,35 +42,35 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
 
   def emailService: EmailService
 
-  def view = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map { a =>
         a.flatMap(_.email) match {
-          case Some(x) => Ok(views.html.client.collectEmail(clientEmailForm.fill(x)))
-          case None => Ok(views.html.client.collectEmail(clientEmailForm))
+          case Some(x) => Ok(views.html.client.collectEmail(clientEmailForm.fill(x), service))
+          case None => Ok(views.html.client.collectEmail(clientEmailForm, service))
         }
       }
   }
 
-  def submit = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       validateConfirmEmail(clientEmailForm.bindFromRequest).fold(
-        formWithError => Future.successful(BadRequest(views.html.client.collectEmail(formWithError))),
+        formWithError => Future.successful(BadRequest(views.html.client.collectEmail(formWithError, service))),
         data => {
           emailService.validate(data.email) flatMap { isValidEmail =>
             if (isValidEmail) {
               dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
                 case Some(x) => dataCacheService.cacheFormData[ClientCache](clientFormId, x.copy(email = Some(data))) flatMap { cachedData =>
-                  Future.successful(Redirect(routes.SearchMandateController.view()))
+                  Future.successful(Redirect(routes.SearchMandateController.view(service)))
                 }
                 case None => dataCacheService.cacheFormData[ClientCache](clientFormId, ClientCache(email = Some(data))) flatMap { cachedData =>
-                  Future.successful(Redirect(routes.SearchMandateController.view()))
+                  Future.successful(Redirect(routes.SearchMandateController.view(service)))
                 }
               }
             } else {
               val errorMsg = Messages("client.collect-email.error.email.invalid-by-email-service")
               val errorForm = clientEmailForm.withError(key = "client-collect-email-form", message = errorMsg).fill(data)
-              Future.successful(BadRequest(views.html.client.collectEmail(errorForm)))
+              Future.successful(BadRequest(views.html.client.collectEmail(errorForm, service)))
             }
           }
         }

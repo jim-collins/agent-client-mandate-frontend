@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.agentclientmandate.models._
 
-@(mandate: Mandate, declarationForm: Form[Declaration])(implicit request: Request[_])
+@(mandate: Mandate, service: String, declarationForm: Form[Declaration])(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
@@ -30,11 +30,11 @@
   </h2>
 
   <ul class="bullets">
-    <li id="agent-name">@Messages("client.agent-declaration.agent-name", mandate.agentParty.name)</li>
+    <li id="agent-name">@Messages("client.agent-declaration.agent-name", mandate.agentParty.name, service)</li>
     <li id="dec-info">@Messages("client.agent-declaration.information")</li>
   </ul>
 
-  @form(action = routes.MandateDeclarationController.submit()) {
+  @form(action = routes.MandateDeclarationController.submit(service)) {
     <div class="form-group">
       @mandateSingleCheckBox(declarationForm("agree"),
       '_label -> Messages("i-agree"),
@@ -47,7 +47,7 @@
   }
 
   <div class="form-group">
-    <a href="@routes.ReviewMandateController.view" id="back" class="back-link">@Messages("mandate.back")</a>
+    <a href="@routes.ReviewMandateController.view(service)" id="back" class="back-link">@Messages("mandate.back")</a>
   </div>
 
 }

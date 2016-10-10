@@ -5,18 +5,18 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 
 
-@(editMandateDetailsForm: Form[EditMandateDetails])(implicit request: Request[_])
+@(editMandateDetailsForm: Form[EditMandateDetails], service: String)(implicit request: Request[_])
 
 @main_template(title = Messages("agent.edit-mandate-details.title")) {
 
 <h1 id="header" class="heading-xlarge">
-    <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header")</span>
-    @Messages("agent.edit-mandate-details.header")
+    <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header", service)</span>
+    @Messages("agent.edit-mandate-details.header", service)
 </h1>
 
 <h2 id="sub-heading">@Messages("Unique agent reference GG123456")</h2>
 
-@form(action = routes.EditMandateController.view()) {
+@form(action = routes.EditMandateController.view(service)) {
 
 <div class="form-group">
 

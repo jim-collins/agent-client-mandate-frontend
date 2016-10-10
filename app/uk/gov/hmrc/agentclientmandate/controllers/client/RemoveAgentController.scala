@@ -40,13 +40,13 @@ trait RemoveAgentController extends FrontendController with Actions {
 
   def dataCacheService: DataCacheService
 
-  def view(mandateId: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(mandateId: String, service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       request.getQueryString("returnUrl") match {
         case Some(returnUrl) =>
           dataCacheService.cacheFormData[String]("RETURN_URL", returnUrl).flatMap { cache =>
             acmService.fetchClientMandate(mandateId).map {
-              case Some(mandate) => Ok(views.html.client.removeAgent(new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm, mandate.agentParty.name, mandateId))
+              case Some(mandate) => Ok(views.html.client.removeAgent(new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm, mandate.agentParty.name, mandateId, service))
               case _ => throw new RuntimeException("No Mandate returned")
             }
           }
@@ -54,16 +54,16 @@ trait RemoveAgentController extends FrontendController with Actions {
       }
   }
 
-  def submit(mandateId: String, agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(mandateId: String, agentName: String, service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       val form = new YesNoQuestionForm("client.remove-agent.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.client.removeAgent(formWithError, agentName, mandateId))),
+        formWithError => Future.successful(BadRequest(views.html.client.removeAgent(formWithError, agentName, mandateId, service))),
         data => {
           val removeAgent = data.yesNo.getOrElse(false)
           if (removeAgent) {
             acmService.removeAgent(mandateId).map { removedAgent =>
-              if (removedAgent) Redirect(routes.ChangeAgentController.view(agentName))
+              if (removedAgent) Redirect(routes.ChangeAgentController.view(agentName, service))
               else throw new RuntimeException("Agent Removal Failed")
             }
           }

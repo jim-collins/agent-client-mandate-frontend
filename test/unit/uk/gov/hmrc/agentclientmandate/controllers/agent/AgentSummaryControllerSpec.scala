@@ -93,7 +93,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
   val mandateId = "12345678"
   val time1 = DateTime.now()
-  val service = "ated"
+  val service = "ATED"
 
   val clientParty = Party("12345678", "test client", PartyType.Individual, ContactDetails("a.a@a.com", None))
   val clientParty1 = Party("12345679", "test client1", PartyType.Individual, ContactDetails("aa.aa@a.com", None))

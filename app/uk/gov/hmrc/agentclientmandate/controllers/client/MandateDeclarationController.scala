@@ -41,31 +41,31 @@ trait MandateDeclarationController extends FrontendController with Actions with 
 
   def mandateService: AgentClientMandateService
 
-  def view = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view (service: String)= AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map {
         _.flatMap(_.mandate) match {
-          case Some(x) => Ok(views.html.client.mandateDeclaration(x, declarationForm))
-          case None => Redirect(routes.ReviewMandateController.view())
+          case Some(x) => Ok(views.html.client.mandateDeclaration(x,service, declarationForm))
+          case None => Redirect(routes.ReviewMandateController.view(service))
         }
       }
   }
 
-  def submit = AuthorisedFor(ClientRegime, GGConfidence) async {
+  def submit(service: String) = AuthorisedFor(ClientRegime, GGConfidence) async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
         _.flatMap(_.mandate) match {
           case Some(m) =>
             declarationForm.bindFromRequest.fold(
-              formWithErrors => Future.successful(BadRequest(views.html.client.mandateDeclaration(m, formWithErrors))),
+              formWithErrors => Future.successful(BadRequest(views.html.client.mandateDeclaration(m, service, formWithErrors))),
               declaration => {
                 mandateService.approveMandate(m) flatMap {
-                  case Some(n) => Future.successful(Redirect(routes.MandateConfirmationController.view()))
-                  case None => Future.successful(Redirect(routes.ReviewMandateController.view()))
+                  case Some(n) => Future.successful(Redirect(routes.MandateConfirmationController.view(service)))
+                  case None => Future.successful(Redirect(routes.ReviewMandateController.view(service)))
                 }
               }
             )
-          case None => Future.successful(Redirect(routes.ReviewMandateController.view()))
+          case None => Future.successful(Redirect(routes.ReviewMandateController.view(service)))
         }
       }
   }
