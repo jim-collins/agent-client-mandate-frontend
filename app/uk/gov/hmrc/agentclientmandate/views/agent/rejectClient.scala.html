@@ -17,7 +17,7 @@
     @Messages("agent.reject-client.text")
     </p>
 
-    @mandateErrorSummary(rejectClientForm, "yes-no.error.general")
+    @mandateErrorSummary(rejectClientForm, "yes-no.error.general", Some("agent.reject-client.error"))
 
     @form(action = routes.RejectClientController.submit(service, mandateId, clientName)) {
 

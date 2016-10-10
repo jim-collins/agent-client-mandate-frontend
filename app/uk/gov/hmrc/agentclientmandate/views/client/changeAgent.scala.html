@@ -13,7 +13,7 @@
         @Messages("client.change-agent.header")
     </h1>
 
-    @mandateErrorSummary(changeAgentForm, "yes-no.error.general")
+    @mandateErrorSummary(changeAgentForm, "yes-no.error.general", Some("client.agent-change.error"))
 
     @form(action = routes.ChangeAgentController.submit(agentName, service)) {
 

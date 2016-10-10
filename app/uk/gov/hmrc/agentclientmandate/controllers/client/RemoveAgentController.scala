@@ -19,7 +19,7 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm._
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -46,7 +46,7 @@ trait RemoveAgentController extends FrontendController with Actions {
         case Some(returnUrl) =>
           dataCacheService.cacheFormData[String]("RETURN_URL", returnUrl).flatMap { cache =>
             acmService.fetchClientMandate(mandateId).map {
-              case Some(mandate) => Ok(views.html.client.removeAgent(yesNoQuestionForm, mandate.agentParty.name, mandateId, service))
+              case Some(mandate) => Ok(views.html.client.removeAgent(new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm, mandate.agentParty.name, mandateId, service))
               case _ => throw new RuntimeException("No Mandate returned")
             }
           }
@@ -56,7 +56,8 @@ trait RemoveAgentController extends FrontendController with Actions {
 
   def submit(mandateId: String, agentName: String, service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      yesNoQuestionForm.bindFromRequest.fold(
+      val form = new YesNoQuestionForm("client.remove-agent.error")
+      form.yesNoQuestionForm.bindFromRequest.fold(
         formWithError => Future.successful(BadRequest(views.html.client.removeAgent(formWithError, agentName, mandateId, service))),
         data => {
           val removeAgent = data.yesNo.getOrElse(false)

@@ -17,7 +17,7 @@
     @Messages("agent.remove-client.text")
     </p>
 
-    @mandateErrorSummary(removeClientForm, "yes-no.error.general")
+    @mandateErrorSummary(removeClientForm, "yes-no.error.general", Some("agent.remove-client.error"))
 
     @form(action = routes.RemoveClientController.confirm(service, mandateId, clientName)) {
 

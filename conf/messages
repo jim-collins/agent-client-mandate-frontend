@@ -91,6 +91,8 @@ client.declaration.error.general.agree = There is a problem with the checkbox.
 #client remove agent
 client.remove-agent.title = Confirm Agent Removal
 client.remove-agent.header = Are you sure you want to cancel the authority for {0} to act on your behalf for {1}?
+client.remove-agent.error = remove agent
+
 
 #client remove agent confirmation
 client.remove-agent-confirmation.title = What happens next?
@@ -102,7 +104,7 @@ client.remove-agent-confirmation.service_button = Your {0} online service
 #client change agent
 client.change-agent.title = Do you want to appoint another agent to act on your behalf?
 client.change-agent.header = Do you want to appoint another agent to act on your behalf?
-
+client.agent-change.error = change agent
 
 #agent select service
 agent.select-service.title = Select a service
@@ -188,6 +190,7 @@ agent.edit-mandate-details.submit = Save changes
 agent.reject-client.title = Are you sure you want to reject the request from {0}?
 agent.reject-client.header = Are you sure you want to reject the request from {0}?
 agent.reject-client.text = Rejecting a client request means you will not be able to act on their behalf unless they submit another request.
+agent.reject-client.error = client reject
 
 # agent reject client confirmation
 agent.reject-client-confirmation.title = Client Rejection Confirmed
@@ -201,14 +204,15 @@ agent.reject-client-confirmation.view-all-clients = View all your clients
 
 agent.reject-client.error.mandatory = You must answer the question
 
-yes-no.error.mandatory = You must answer question
-yes-no.error.general.yesNo = There is a problem with the question
+yes-no.error.mandatory = The {0} question must be answered
+yes-no.error.general.yesNo = There is a problem with {0} question
 
 # agent remove client
 agent.remove-client.title = Confirm Client Removal
 agent.remove-client.header = Are you sure you want to remove {0}?
 agent.remove-client.error.mandatory = You must answer the question
 agent.remove-client.text = Once you have removed a client you will no longer be able to act on their behalf.
+agent.remove-client.error = remove client
 
 
 # agent remove client confirmation

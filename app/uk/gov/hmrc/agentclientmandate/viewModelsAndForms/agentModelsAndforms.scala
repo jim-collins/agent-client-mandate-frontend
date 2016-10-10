@@ -24,13 +24,13 @@ import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils._
 
 import scala.annotation.tailrec
 
-case class AgentSelectService(service: String)
+case class AgentSelectService(service: Option[String] = None)
 
 object AgentSelectServiceForm {
   val selectServiceForm =
     Form(
       mapping(
-        "service" -> text.verifying(Messages("agent.select-service.error.service"), serviceOpt => serviceOpt.nonEmpty)
+        "service" -> optional(text).verifying(Messages("agent.select-service.error.service"), serviceOpt => serviceOpt.isDefined)
       )(AgentSelectService.apply)(AgentSelectService.unapply)
     )
 }

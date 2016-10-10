@@ -13,7 +13,7 @@
         @Messages("client.remove-agent.header", agentName, service)
     </h1>
 
-    @mandateErrorSummary(removeAgentForm, "yes-no.error.general")
+    @mandateErrorSummary(removeAgentForm, "yes-no.error.general", Some("client.remove-agent.error"))
 
     @form(action = routes.RemoveAgentController.submit(mandateId, agentName, service)) {
 

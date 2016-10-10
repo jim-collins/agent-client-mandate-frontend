@@ -21,7 +21,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, FeatureSpec, GivenWhenThen}
 import org.scalatestplus.play.OneServerPerSuite
 import play.api.test.FakeRequest
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm._
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm
 import uk.gov.hmrc.agentclientmandate.views
 
 class RejectClientFeatureSpec extends FeatureSpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach with GivenWhenThen{
@@ -35,7 +35,9 @@ class RejectClientFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       Given("A user visits the page")
       When("The user views the page")
       implicit val request = FakeRequest()
-      val html = views.html.agent.rejectClient("ATED", yesNoQuestionForm, "ACME Limited", "")
+
+      val html = views.html.agent.rejectClient("ATED", new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm, "ACME Limited", "")
+
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Are you sure you want to reject the request from ACME Limited?")
       assert(document.title() === "Are you sure you want to reject the request from ACME Limited?")
