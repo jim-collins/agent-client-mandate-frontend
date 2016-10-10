@@ -19,7 +19,7 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm._
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{YesNoQuestion, YesNoQuestionForm}
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
@@ -43,12 +43,13 @@ trait ChangeAgentController extends FrontendController with Actions{
 
   def view(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.changeAgent(yesNoQuestionForm, agentName))
+      Ok(views.html.client.changeAgent(new YesNoQuestionForm("client.agent-change.error").yesNoQuestionForm, agentName))
   }
 
   def submit(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      yesNoQuestionForm.bindFromRequest.fold(
+      val form = new YesNoQuestionForm("client.agent-change.error")
+      form.yesNoQuestionForm.bindFromRequest.fold(
         formWithError => Future.successful(BadRequest(views.html.client.changeAgent(formWithError, agentName))),
         data => {
           val changeAgent = data.yesNo.getOrElse(false)

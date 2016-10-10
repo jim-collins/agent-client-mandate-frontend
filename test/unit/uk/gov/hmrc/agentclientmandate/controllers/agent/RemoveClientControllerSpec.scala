@@ -178,8 +178,8 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       submitWithAuthorisedAgent(fakeRequest) { result =>
         status(result) must be(BAD_REQUEST)
         val document = Jsoup.parse(contentAsString(result))
-        document.getElementsByClass("error-list").text() must include("There is a problem with the question")
-        document.getElementsByClass("error-notification").text() must include("You must answer question")
+        document.getElementsByClass("error-list").text() must include("There is a problem with remove client question")
+        document.getElementsByClass("error-notification").text() must include("The remove client question must be answered")
       }
     }
   }
