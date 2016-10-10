@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.agentclientmandate.models._
 
-@(mandate: Mandate, service: String)(implicit request: Request[_])
+@(agentName: String, service: String)(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
@@ -10,7 +10,7 @@
 @main_template(title = Messages("client.agent-confirmation.title")) {
 
   <div class="transaction-banner--complete" id="banner">
-    <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'>@Messages("client.agent-confirmation.banner-text", mandate.agentParty.name)</h1>
+    <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'>@Messages("client.agent-confirmation.banner-text", agentName)</h1>
   </div>
 
   <span id="notification" class="heading-small">@Messages("client.agent-confirmation.notification")</span>
