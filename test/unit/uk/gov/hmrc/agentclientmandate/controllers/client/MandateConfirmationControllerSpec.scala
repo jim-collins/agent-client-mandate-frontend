@@ -43,7 +43,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/client/confirmation" in {
-        val result = route(FakeRequest(GET, "/mandate/client/confirmation")).get
+        val result = route(FakeRequest(GET, s"/mandate/client/confirmation/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -86,9 +86,10 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What happens next?")
+          document.getElementById("banner-text").text() must include("Your request to appoint name has been successfully submitted")
           document.getElementById("notification").text() must be("Your agent will receive an email notification.")
           document.getElementById("heading").text() must be("What happens next?")
-          document.getElementById("list").text() must include("Your agent has 28 days to accept your request by accessing the ATED service.")
+          document.getElementById("list").child(0).text() must include("Your agent has 28 days to accept your request by accessing the ATED service.")
           document.getElementById("finish_btn").text() must be("Finish and sign out")
         }
       }
@@ -99,7 +100,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
       "approved mandate is not returned in response" in {
         viewAuthorisedClient(None) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review"))
+          redirectLocation(result) must be(Some(s"/mandate/client/review/$service"))
         }
       }
     }
@@ -108,6 +109,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
 
   val mockAuthConnector = mock[AuthConnector]
   val mockDataCacheService = mock[DataCacheService]
+  val service = "ATED"
 
   object TestMandateConfirmationController extends MandateConfirmationController {
     override val authConnector = mockAuthConnector
@@ -123,7 +125,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestMandateConfirmationController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -133,7 +135,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestMandateConfirmationController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -143,7 +145,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[Mandate](Matchers.eq(TestMandateConfirmationController.clientApprovedMandateId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
-    val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestMandateConfirmationController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

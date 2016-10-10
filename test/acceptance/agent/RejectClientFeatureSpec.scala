@@ -35,7 +35,9 @@ class RejectClientFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       Given("A user visits the page")
       When("The user views the page")
       implicit val request = FakeRequest()
-      val html = views.html.agent.rejectClient("", new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm, "ACME Limited", "")
+
+      val html = views.html.agent.rejectClient("ATED", new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm, "ACME Limited", "")
+
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Are you sure you want to reject the request from ACME Limited?")
       assert(document.title() === "Are you sure you want to reject the request from ACME Limited?")

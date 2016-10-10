@@ -30,9 +30,9 @@ object EditMandateController extends EditMandateController {
 
 trait EditMandateController extends FrontendController with Actions {
 
-  def view = AuthorisedFor(AgentRegime, GGConfidence) {
+  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.agent.editClient(EditMandateDetailsForm.editMandateDetailsForm))
+      Ok(views.html.agent.editClient(EditMandateDetailsForm.editMandateDetailsForm, service))
   }
 
 }

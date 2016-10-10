@@ -44,15 +44,15 @@ trait SearchMandateController extends FrontendController with Actions with Manda
 
   def mandateService: AgentClientMandateService
 
-  def view = AuthorisedFor(ClientRegime, GGConfidence) {
+  def view(service: String) = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.searchMandate(mandateRefForm))
+      Ok(views.html.client.searchMandate(mandateRefForm, service))
   }
 
-  def submit = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       mandateRefForm.bindFromRequest.fold(
-        formWithErrors => Future.successful(BadRequest(views.html.client.searchMandate(formWithErrors))),
+        formWithErrors => Future.successful(BadRequest(views.html.client.searchMandate(formWithErrors, service))),
         data => mandateService.fetchClientMandate(data.mandateRef) flatMap {
           case Some(x) => dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
             case Some(y) =>
@@ -69,14 +69,14 @@ trait SearchMandateController extends FrontendController with Actions with Manda
               clientFormId,
               y.copy(mandate = Some(updatedMandate))
             ) flatMap { cachedData =>
-              Future.successful(Redirect(routes.ReviewMandateController.view()))
+              Future.successful(Redirect(routes.ReviewMandateController.view(service)))
             }
-            case None => Future.successful(Redirect(routes.CollectEmailController.view()))
+            case None => Future.successful(Redirect(routes.CollectEmailController.view(service)))
           }
           case None =>
             val errorMsg = Messages("client.search-mandate.error.mandateRef.not-found-by-mandate-service")
             val errorForm = mandateRefForm.withError(key = "mandate-ref-form", message = errorMsg).fill(data)
-            Future.successful(BadRequest(views.html.client.searchMandate(errorForm)))
+            Future.successful(BadRequest(views.html.client.searchMandate(errorForm, service)))
         }
       )
   }

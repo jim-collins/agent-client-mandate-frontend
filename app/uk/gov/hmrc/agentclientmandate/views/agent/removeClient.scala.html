@@ -9,8 +9,8 @@
 @main_template(title = Messages("agent.remove-client.title")) {
 
     <h1 id="header" class="heading-xlarge">
-        <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header")</span>
-        @Messages("agent.remove-client.header", clientName)
+        <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header", service)</span>
+        @Messages("agent.remove-client.header", service, clientName)
     </h1>
 
     <p>

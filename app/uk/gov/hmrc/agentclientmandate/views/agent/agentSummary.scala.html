@@ -9,9 +9,9 @@
 
 @(service: String, mandatesList: Option[Mandates], agentDetails: AgentDetails)(implicit request: Request[_])
 
-@main_template(title = Messages("client.summary.title"), sidebarLinks = Some(_agentSummary_sidebar(agentDetails))){
+@main_template(title = Messages("client.summary.title", service), sidebarLinks = Some(_agentSummary_sidebar(agentDetails))){
 
-  <h1 id="header" class="heading-xlarge">@Messages("client.summary.title")</h1>
+  <h1 id="header" class="heading-xlarge">@Messages("client.summary.title", service)</h1>
 
   @mandatesList.map { mandate =>
 
