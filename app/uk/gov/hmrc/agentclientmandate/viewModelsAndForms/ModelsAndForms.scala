@@ -29,12 +29,12 @@ object YesNoQuestion {
 
 class YesNoQuestionForm(_param: String) {
 
-  private val param = _param
+  private val param:String = Messages(_param)
 
   val yesNoQuestionForm =
     Form(
       mapping(
-        "yesNo" -> optional(boolean).verifying(Messages("yes-no.error.mandatory", s"$param"), x => x.isDefined)
+        "yesNo" -> optional(boolean).verifying(Messages("yes-no.error.mandatory", param), x => x.isDefined)
       )(YesNoQuestion.apply)(YesNoQuestion.unapply)
     )
 }
