@@ -194,7 +194,7 @@ agent.reject-client.error = client reject
 # agent reject client confirmation
 agent.reject-client-confirmation.title = Client Rejection Confirmed
 agent.reject-client-confirmation.banner-text = You have rejected {0}
-agent.reject-client-confirmation.banner-text-date = on the {0}
+agent.reject-client-confirmation.banner-text-date = on {0}
 agent.reject-client-confirmation.notification = Your client will receive an email notification.
 agent.reject-client-confirmation.what-next = What happens next?
 agent.reject-client-confirmation.request-new-client = you can request a new client
@@ -217,7 +217,7 @@ agent.remove-client.error = remove client
 # agent remove client confirmation
 agent.remove-client-confirmation.title = Client remove Confirmed
 agent.remove-client-confirmation.banner-text = You have removed {0}
-agent.remove-client-confirmation.banner-text-date = on the {0}
+agent.remove-client-confirmation.banner-text-date = on {0}
 agent.remove-client-confirmation.notification = Your client will receive an email notification.
 agent.remove-client-confirmation.what-next = What happens next?
 agent.remove-client-confirmation.request-new-client = you can request a new client

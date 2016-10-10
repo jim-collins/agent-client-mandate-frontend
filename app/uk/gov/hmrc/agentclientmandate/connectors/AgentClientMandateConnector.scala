@@ -35,6 +35,7 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
   val mandateUri = "mandate"
   val activateUri = "activate"
   val rejectClientUri = "rejectClient"
+  val removeUri = "remove"
 
   def http: HttpGet with HttpPost with HttpDelete
 
@@ -89,17 +90,10 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     http.POST[JsValue, HttpResponse](postUrl, Json.parse("{}"))
   }
 
-  def removeAgent(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+  def remove(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
-    val postUrl = s"$serviceUrl$authLink/$mandateUri/removeAgent/$mandateId"
+    val postUrl = s"$serviceUrl$authLink/$mandateUri/$removeUri/$mandateId"
     Logger.info(s"[AgentClientMandateConnector][removeAgent] - POST - $postUrl")
-    http.POST[JsValue, HttpResponse](postUrl, Json.parse("{}"))
-  }
-
-  def removeClient(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
-    val authLink = AuthUtils.getAuthLink
-    val postUrl = s"$serviceUrl$authLink/$mandateUri/removeClient/$mandateId"
-    Logger.info(s"[AgentClientMandateConnector][removeClient] - POST - $postUrl")
     http.POST[JsValue, HttpResponse](postUrl, Json.parse("{}"))
   }
 

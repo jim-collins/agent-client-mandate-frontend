@@ -220,7 +220,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
     "remove client" when {
       "agent removes client status returned ok" in {
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "agent")
-        when(mockAgentClientMandateConnector.removeClient(Matchers.any())(Matchers.any(), Matchers.any()))
+        when(mockAgentClientMandateConnector.remove(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful(HttpResponse(OK)))
         val response = TestAgentClientMandateService.removeClient(mandateId)
         await(response) must be(true)
@@ -228,7 +228,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
       "agent removes client status returned not ok" in {
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "agent")
-        when(mockAgentClientMandateConnector.removeClient(Matchers.any())(Matchers.any(), Matchers.any()))
+        when(mockAgentClientMandateConnector.remove(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful(HttpResponse(INTERNAL_SERVER_ERROR)))
         val response = TestAgentClientMandateService.removeClient(mandateId)
         await(response) must be(false)
@@ -238,7 +238,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
     "remove agent" when {
       "client removes agent status returned ok" in {
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "agent")
-        when(mockAgentClientMandateConnector.removeAgent(Matchers.any())(Matchers.any(), Matchers.any()))
+        when(mockAgentClientMandateConnector.remove(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful(HttpResponse(OK)))
         val response = TestAgentClientMandateService.removeAgent(mandateId)
         await(response) must be(true)
@@ -246,7 +246,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
       "client removes agent status returned not ok" in {
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "agent")
-        when(mockAgentClientMandateConnector.removeAgent(Matchers.any())(Matchers.any(), Matchers.any()))
+        when(mockAgentClientMandateConnector.remove(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful(HttpResponse(INTERNAL_SERVER_ERROR)))
         val response = TestAgentClientMandateService.removeAgent(mandateId)
         await(response) must be(false)

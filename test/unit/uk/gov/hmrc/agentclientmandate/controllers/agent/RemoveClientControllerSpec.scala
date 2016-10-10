@@ -146,8 +146,8 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val document = Jsoup.parse(contentAsString(result))
         document.title() must be("Confirm Client Removal")
         document.getElementById("pre-heading").text() must include("Manage your ATED service")
-        document.getElementById("header").text() must include("Are you sure you want to remove ATED?")
-        document.getElementById("yesNo_legend").text() must be("Are you sure you want to remove ATED?")
+        document.getElementById("header").text() must include("Manage your ATED service Are you sure you want to remove ACME Limited?")
+        document.getElementById("yesNo_legend").text() must be("Are you sure you want to remove ACME Limited?")
         document.getElementById("submit").text() must be("Confirm")
       }
     }
