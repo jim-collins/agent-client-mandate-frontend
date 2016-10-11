@@ -112,7 +112,7 @@ agent.select-service.error.general.service = There is a problem with the select 
 agent.select-service.error.service = You must select one service
 
 #services
-agent.select-service.services.ated = {0}
+agent.select-service.services.ated = ATED
 
 #agent enter email
 agent.enter-email.title = What is your email address?
