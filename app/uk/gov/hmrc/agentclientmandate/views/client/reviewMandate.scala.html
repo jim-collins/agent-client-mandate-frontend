@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.agentclientmandate.models._
 
-@(mandate: Mandate, service: String)(implicit request: Request[_])
+@(mandate: Mandate)(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
@@ -15,7 +15,7 @@
     @Messages("client.review-agent.header")
   </h1>
 
-   @form(action = routes.ReviewMandateController.submit(service)) {
+   @form(action = routes.ReviewMandateController.submit()) {
      <table>
        <tr>
          <th class="heading-small td-height" id ="table-head">@mandate.agentParty.name</th>
@@ -45,7 +45,7 @@
    }
 
   <div class="form-group">
-    <a href="@routes.SearchMandateController.view(service)" id="back" class="back-link">@Messages("mandate.back")</a>
+    <a href="@routes.SearchMandateController.view()" id="back" class="back-link">@Messages("mandate.back")</a>
   </div>
 
 }

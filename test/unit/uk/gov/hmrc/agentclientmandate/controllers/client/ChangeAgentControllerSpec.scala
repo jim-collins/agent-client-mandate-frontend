@@ -143,7 +143,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view(agentName, service).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestChangeAgentController.view(agentName).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -153,7 +153,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view(agentName, service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestChangeAgentController.view(agentName).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -162,7 +162,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view(agentName, service).apply(SessionBuilder.updateRequestWithSession(request, userId))
+    val result = TestChangeAgentController.view(agentName).apply(SessionBuilder.updateRequestWithSession(request, userId))
     test(result)
   }
 
@@ -172,7 +172,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
 
-    val result = TestChangeAgentController.submit(agentName, service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestChangeAgentController.submit(agentName).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

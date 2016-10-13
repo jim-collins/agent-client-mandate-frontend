@@ -1,6 +1,6 @@
 @import uk.gov.hmrc.agentclientmandate.utils.DateUtils
 @import org.joda.time.DateTime
-@(agentName: String, serviceName: String)(implicit request: Request[_])
+@(agentName: String)(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
@@ -28,7 +28,7 @@
         <button class="button" id="finish_btn" type="submit">@Messages("client.agent-confirmation.finish-signout")</button>
 
         <form action="@routes.RemoveAgentController.returnToService">
-            <button class="button" id="return_to_service_button" type="submit">@Messages("client.remove-agent-confirmation.service_button", serviceName)</button>
+            <button class="button" id="return_to_service_button" type="submit">@Messages("client.remove-agent-confirmation.service_button")</button>
         </form>
     </div>
 
