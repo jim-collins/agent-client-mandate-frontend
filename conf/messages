@@ -73,7 +73,7 @@ client.agent-declaration.header = Declaration and consent
 client.agent-declaration.pre-heading = Appoint an agent
 client.agent-declaration.declaration-info = <p>This authority allows HMRC to exchange and disclose information about you with your agent and to deal with them on matters relating to {0}.</p><p>You as the property owner will remain responsible for all aspects of you dealings with HMRC, even if your agent submits returns and makes payments on your behalf.</p>
 client.agent-declaration.declare-header = I declare that:
-client.agent-declaration.agent-name = the nominated agent {0} has agreed to act on my behalf in respect of {1}
+client.agent-declaration.agent-name = the nominated agent {0} has agreed to act on my behalf in respect of ATED
 client.agent-declaration.information = that the information I have provided is correct and complete
 
 #client agent confirmation
@@ -81,7 +81,7 @@ client.agent-confirmation.title = What happens next?
 client.agent-confirmation.banner-text = Your request to appoint {0} has been successfully submitted
 client.agent-confirmation.notification = Your agent will receive an email notification.
 client.agent-confirmation.header = What happens next?
-client.agent-confirmation.your-agent = Your agent has 28 days to accept your request by accessing the {0} service.
+client.agent-confirmation.your-agent = Your agent has 28 days to accept your request by accessing the ATED service.
 client.agent-confirmation.this-authority = This authority will remain in place until you <a href="#">change or cancel your agent.</a>
 client.agent-confirmation.sign-in = You can sign in at any point to view your <a href="#">{0} online service</a>
 client.agent-confirmation.finish-signout = Finish and sign out
@@ -89,7 +89,7 @@ client.declaration.error.general.agree = There is a problem with the checkbox.
 
 #client remove agent
 client.remove-agent.title = Confirm Agent Removal
-client.remove-agent.header = Are you sure you want to cancel the authority for {0} to act on your behalf for {1}?
+client.remove-agent.header = Are you sure you want to cancel the authority for {0} to act on your behalf for ATED?
 client.remove-agent.error = remove agent
 
 
@@ -98,7 +98,7 @@ client.remove-agent-confirmation.title = What happens next?
 client.remove-agent-confirmation.banner-text = You have removed {0} as your agent
 client.remove-agent-confirmation.create-return = you can create a return
 client.remove-agent-confirmation.appoint-agent = you can appoint another agent to act on your behalf
-client.remove-agent-confirmation.service_button = Your {0} online service
+client.remove-agent-confirmation.service_button = Your ATED online service
 
 #client change agent
 client.change-agent.title = Do you want to appoint another agent to act on your behalf?
@@ -175,7 +175,7 @@ agent.check-client-details.confirm = Confirm and add client
 # edit mandate details
 agent.edit-mandate-details.title = Edit ACME Limited
 agent.edit-mandate-details.header = Edit ACME Limited
-agent.edit-mandate-details.pre-header = Manage your {0} service
+agent.edit-mandate-details.pre-header = Manage your ATED service
 agent.edit-mandate-details.sub-heading = Unique agent reference GG123456
 agent.edit-mandate-details.displayName = Display name
 agent.edit-mandate-details.hint = This does not change the official company name.
