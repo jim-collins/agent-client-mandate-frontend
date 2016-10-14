@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.agent
+package unit.uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import java.util.UUID
 
@@ -29,9 +29,11 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController
 import uk.gov.hmrc.agentclientmandate.models.{MandateStatus, Service, Status, Subscription, _}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, Mandates}
-import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.play.frontend.auth.connectors.{AuthConnector, DelegationConnector}
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -73,19 +75,35 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       }
     }
 
+    "redirect to delegated service specific page" when {
+      "agent selects and begins delegation on a particular client" in {
+        val userId = s"user-${UUID.randomUUID}"
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
+        AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+        when(mockDelegationConnector.startDelegation(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(()))
+        val result = TestAgentSummaryController.doDelegation(service, atedUtr.utr, "Client-Name").apply(SessionBuilder.buildRequestWithSession(userId))
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result) must be(Some("http://localhost:9916/ated/account-summary"))
+      }
+    }
+
   }
 
   val mockAuthConnector = mock[AuthConnector]
   val mockAgentClientMandateService = mock[AgentClientMandateService]
+  val mockDelegationConnector = mock[DelegationConnector]
 
   object TestAgentSummaryController extends AgentSummaryController {
     override val authConnector = mockAuthConnector
     override val agentClientMandateService = mockAgentClientMandateService
+    override val delegationConnector = mockDelegationConnector
   }
 
   override def beforeEach() = {
     reset(mockAuthConnector)
     reset(mockAgentClientMandateService)
+    reset(mockDelegationConnector)
   }
 
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
@@ -94,6 +112,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   val mandateId = "12345678"
   val time1 = DateTime.now()
   val service = "ATED"
+  val atedUtr = new Generator().nextAtedUtr
 
   val clientParty = Party("12345678", "test client", PartyType.Individual, ContactDetails("a.a@a.com", None))
   val clientParty1 = Party("12345679", "test client1", PartyType.Individual, ContactDetails("aa.aa@a.com", None))

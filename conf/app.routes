@@ -47,6 +47,7 @@ GET     /agent/unique-reference/:service    uk.gov.hmrc.agentclientmandate.contr
 
 
 GET     /agent/summary/:service             uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.view(service: String)
+GET     /agent/doDelegation/:service/:serviceId/:clientName  uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.doDelegation(service: String, serviceId: String, clientName: String)
 
 GET     /agent/edit/:service                         uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateController.view(service: String)
 

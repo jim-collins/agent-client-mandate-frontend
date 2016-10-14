@@ -22,10 +22,14 @@
 
         @if(mandate.pendingMandates.isEmpty){
           <li id="clients" data-tab-link="1" role="tab" aria-selected="true" aria-controls="tabContent1" tabindex="0">
-            <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandate.activeMandates.size">@Messages("client.summary.client-active.title", mandate.activeMandates.size)</span>
+            <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandate.activeMandates.size">
+              @Messages("client.summary.client-active.title", mandate.activeMandates.size)
+            </span>
         } else {
           <li id="clients" data-tab-link="1" role="tab" aria-selected="false" aria-controls="tabContent1" tabindex="1">
-            <span class="tabs-nav__tab" data-clients="@mandate.activeMandates.size">@Messages("client.summary.client-active.title", mandate.activeMandates.size)</span>
+            <span class="tabs-nav__tab" data-clients="@mandate.activeMandates.size">
+              @Messages("client.summary.client-active.title", mandate.activeMandates.size)
+            </span>
           </li>
         }
 
@@ -33,7 +37,9 @@
 
         } else {
           <li id="pending-clients" data-tab-link="2" role="tab" aria-selected="true" aria-controls="tabContent2" tabindex="0">
-            <span class="tabs-nav__tab tabs-nav__tab--active" data-pending-clients="@mandate.pendingMandates.size">@Messages("client.summary.client-pending.title", mandate.pendingMandates.size)</span>
+            <span class="tabs-nav__tab tabs-nav__tab--active" data-pending-clients="@mandate.pendingMandates.size">
+              @Messages("client.summary.client-pending.title", mandate.pendingMandates.size)
+            </span>
           </li>
         }
       </ul>
@@ -58,8 +64,12 @@
               </td>
 
               <td class="tdRight">
-                <a  id="client-link-@index">
-                  <button type="submit">@Messages("client.summary.client-view") <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientParty.map(_.name)</span></button>
+                <a id="client-link-@index"
+                   href='@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))'
+                >
+                  <button type="submit">@Messages("client.summary.client-view")
+                    <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientParty.map(_.name)</span>
+                  </button>
                 </a>
               </td>
             </tr>
@@ -82,18 +92,18 @@
               <td>@pending.clientParty.map(_.name)</td>
               @if(statusCantBeActioned(pending.currentStatus.status)){
                 <td></td>
-              }else{
+              } else {
                 <td id="reject-client">
                   <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)">
-                  @Messages("client.summary.client-reject")
+                    @Messages("client.summary.client-reject")
                   </a>
                 </td>
               }
-              @if(statusCantBeActioned(pending.currentStatus.status)){
+              @if(statusCantBeActioned(pending.currentStatus.status)) {
                 <td>@Messages("client.summary.client.pending-status")</td>
-              }else{
+              } else {
                 <td id ="accept-client">
-                  <a href="@routes.AcceptClientController.view(service, pending.id)" id="accept-@(index+1)" onclick="ga('send', 'event', 'Agent - accept pending client - end', 'button clicked')">
+                  <a href="@routes.AcceptClientController.view(service, pending.id)" id="accept-@(index+1)">
                     <button type="submit" class="button" value="Accept">@Messages("client.summary.client-accept")</button>
                   </a>
                 </td>
@@ -109,4 +119,5 @@
 
     <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-btn" class="button">@Messages("client.summary.add-client")</a>
   }
+
 }
