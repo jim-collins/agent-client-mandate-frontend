@@ -16,21 +16,24 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
-import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
+import uk.gov.hmrc.agentclientmandate.config.{FrontendAuthConnector, FrontendDelegationConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
+import uk.gov.hmrc.agentclientmandate.utils.DelegationUtils._
 import uk.gov.hmrc.agentclientmandate.views
-import uk.gov.hmrc.play.frontend.auth.Actions
+import uk.gov.hmrc.play.frontend.auth.connectors.DelegationConnector
+import uk.gov.hmrc.play.frontend.auth.{Actions, Delegator}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 
 object AgentSummaryController extends AgentSummaryController {
   val authConnector = FrontendAuthConnector
   val agentClientMandateService = AgentClientMandateService
+  val delegationConnector: DelegationConnector = FrontendDelegationConnector
 }
 
-trait AgentSummaryController extends FrontendController with Actions {
+trait AgentSummaryController extends FrontendController with Actions with Delegator {
 
   def agentClientMandateService: AgentClientMandateService
 
@@ -38,11 +41,16 @@ trait AgentSummaryController extends FrontendController with Actions {
     implicit authContext => implicit request =>
       val arn = AuthUtils.getArn
       for {
-        mandates <- agentClientMandateService.fetchAllClientMandates(arn, "ATED")
+        mandates <- agentClientMandateService.fetchAllClientMandates(arn, service)
         agentDetails <- agentClientMandateService.fetchAgentDetails()
       } yield {
         Ok(views.html.agent.agentSummary(service, mandates, agentDetails))
       }
+  }
+
+  def doDelegation(service: String, serviceId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+    implicit authContext => implicit request =>
+      startDelegationAndRedirect(createDelegationContext(service, serviceId, clientName), getDelegatedServiceRedirectUrl(service))
   }
 
 }
