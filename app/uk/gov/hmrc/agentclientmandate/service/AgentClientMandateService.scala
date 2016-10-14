@@ -91,7 +91,7 @@ trait AgentClientMandateService extends MandateConstants {
               Some(Mandates(activeMandates, pendingMandates))
             case None => None
           }
-        case status => None
+        case _ => None
       }
     }
   }

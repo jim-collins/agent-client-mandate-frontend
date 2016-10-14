@@ -18,11 +18,13 @@ package uk.gov.hmrc.agentclientmandate.connectors
 
 import play.api.Logger
 import play.api.http.Status._
+import uk.gov.hmrc.agentclientmandate.config.WSHttp
 import uk.gov.hmrc.agentclientmandate.models.RetrieveClientAllocation
 import uk.gov.hmrc.agentclientmandate.utils.GovernmentGatewayConstants
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -58,4 +60,11 @@ trait GovernmentGatewayConnector extends ServicesConfig with RawResponseReads {
     }
   }
 
+}
+
+object GovernmentGatewayConnector extends GovernmentGatewayConnector {
+  // $COVERAGE-OFF$
+  val serviceUrl = baseUrl("government-gateway")
+  val http = WSHttp
+  // $COVERAGE-ON$
 }
