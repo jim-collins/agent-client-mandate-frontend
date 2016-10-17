@@ -18,9 +18,7 @@
    @form(action = routes.ReviewMandateController.submit()) {
      <table>
        <tr>
-         <th class="heading-small td-height" id ="table-head">@mandate.agentParty.name</th>
-         <th></th>
-         <th></th>
+         <th class="heading-small td-height" id ="table-head" colspan="3">@mandate.agentParty.name</th>
        </tr>
        <tr>
          <td class="heading-small td-height" id="agent-reference-label">@Messages("client.review-agent.agent-reference")</td>
@@ -34,7 +32,6 @@
          }
          <td><a href="#">@Messages("edit-link")</a></td>
        </tr>
-
      </table>
 
      <div class="form-group">
