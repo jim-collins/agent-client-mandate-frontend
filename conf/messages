@@ -135,6 +135,18 @@ agent.overseas-client-question.header = Does your client have an overseas compan
 agent.overseas-client-question.error.general.isOverseas = There is a problem with the overseas client question
 agent.overseas-client-question.error.isOverseas = You must answer overseas client question
 
+# agent - nrl question page
+agent.nrl-question.title = Is your client a non-resident landlord?
+agent.nrl-question.header = Is your client a non-resident landlord?
+agent.nrl-question.text = This is a non-resident landlord operating through an offshore company who pays tax through Self Assessment
+agent.nrl-question.error.general.paysSA = There is a problem with the non-resident landlord question.
+agent.nrl-question.paysSA.not-selected.error = You must answer non-resident landlord question.
+
+# agent - client permission page
+agent.client-permission.title = ???
+agent.client-permission.header = ???
+agent.client-permission.error.general.hasPermission = ???
+
 # agent enter business details
 agent.enter-business-details-error.businessName = You must enter a company name.
 agent.enter-business-details-error.businessName.length = A business name cannot be more than 105 characters.
