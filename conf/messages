@@ -143,9 +143,11 @@ agent.nrl-question.error.general.paysSA = There is a problem with the non-reside
 agent.nrl-question.paysSA.not-selected.error = You must answer non-resident landlord question.
 
 # agent - client permission page
-agent.client-permission.title = ???
-agent.client-permission.header = ???
-agent.client-permission.error.general.hasPermission = ???
+agent.client-permission.title = Do you have permission to register on behalf of your client?
+agent.client-permission.header = Do you have permission to register on behalf of your client?
+agent.client-permission.error.general.hasPermission = There is a problem with the client permission question.
+agent.client-permission.hasPermission.not-selected.error = You must answer client permission question
+
 
 # agent enter business details
 agent.enter-business-details-error.businessName = You must enter a company name.

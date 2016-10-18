@@ -30,6 +30,7 @@ object ClientPermissionController extends ClientPermissionController {
   val authConnector: AuthConnector = FrontendAuthConnector
   // $COVERAGE-ON$
 }
+
 trait ClientPermissionController extends FrontendController with Actions {
 
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
@@ -43,7 +44,7 @@ trait ClientPermissionController extends FrontendController with Actions {
       clientPermissionForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.agent.clientPermission(formWithErrors, service)),
         data => {
-          if(data.hasPermission.getOrElse(false)) Redirect(routes.MandateDetailsController.view(service))
+          if (data.hasPermission.getOrElse(false)) Redirect(routes.MandateDetailsController.view(service))
           else Redirect(nonUkUri(service))
         }
       )

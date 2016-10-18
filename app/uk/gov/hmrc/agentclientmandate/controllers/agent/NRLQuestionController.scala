@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
-import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.NRLQuestionForm._
@@ -44,8 +43,8 @@ trait NRLQuestionController extends FrontendController with Actions {
       nrlQuestionForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.agent.nrl_question(formWithErrors, service)),
         data => {
-          if(data.paysSA.getOrElse(false)) Redirect(routes.MandateDetailsController.view(service))
-          else Redirect(nonUkUri(service))
+          if (data.paysSA.getOrElse(false)) Redirect(routes.MandateDetailsController.view(service))
+          else Redirect(routes.ClientPermissionController.view(service))
         }
       )
   }
