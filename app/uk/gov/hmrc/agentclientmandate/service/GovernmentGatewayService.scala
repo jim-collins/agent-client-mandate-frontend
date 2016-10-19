@@ -20,7 +20,7 @@ import uk.gov.hmrc.agentclientmandate.connectors.GovernmentGatewayConnector
 import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait GovernmentGatewayService {
@@ -36,7 +36,7 @@ trait GovernmentGatewayService {
           ggConnector.retrieveClientList.map { clientList =>
             if (clientList.size != mandates.activeMandates.size)
             {
-              
+
               // if clientList > 0
               //    create list of mandateDto's comparing both lists
               //    send to backend
