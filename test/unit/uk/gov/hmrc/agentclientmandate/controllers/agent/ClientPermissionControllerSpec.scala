@@ -83,22 +83,22 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
       }
     }
 
-    "redirect agent to 'mandate details' page" when {
-      "valid form is submitted and YES is selected as client pays self-assessment" in {
+    "redirect agent to 'enter client non-uk details' page in business-customer-frontend application" when {
+      "valid form is submitted and YES is selected" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "true")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/details/$service"))
+          redirectLocation(result) must be(Some(s"http://localhost:9923/business-customer/registration/non-uk/nrl/ated"))
         }
       }
     }
 
-    "redirect agent to 'enter client non-uk details' page in business-customer-frontend application" when {
-      "valid form is submitted and NO is selected as client pays self-assessment" in {
+    "redirect agent to 'mandate summary' page" when {
+      "valid form is submitted and NO" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("http://localhost:9923/business-customer/registration/non-uk/nrl/ated"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/summary/$service"))
         }
       }
     }

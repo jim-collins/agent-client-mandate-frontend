@@ -44,8 +44,8 @@ trait ClientPermissionController extends FrontendController with Actions {
       clientPermissionForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.agent.clientPermission(formWithErrors, service)),
         data => {
-          if (data.hasPermission.getOrElse(false)) Redirect(routes.MandateDetailsController.view(service))
-          else Redirect(nonUkUri(service))
+          if (data.hasPermission.getOrElse(false)) Redirect(nonUkUri(service))
+          else Redirect(routes.AgentSummaryController.view(service))
         }
       )
   }
