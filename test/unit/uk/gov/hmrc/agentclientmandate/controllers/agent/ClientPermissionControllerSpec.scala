@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.agent
+package unit.uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import java.util.UUID
 
@@ -27,106 +27,100 @@ import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
+class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite with BeforeAndAfterEach with MockitoSugar {
 
-class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
-
-  "OverseasClientQuestionController" must {
+  "ClientPermissionController" must {
 
     "not return NOT_FOUND at route " when {
 
-      "GET /mandate/agent/overseas-client-question/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/overseas-client-question/$service")).get
+      "GET /mandate/agent/client-permission/:service" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/client-permission/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
-      "POST /mandate/agent/overseas-client-question/:service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/overseas-client-question/$service")).get
+      "POST /mandate/agent/client-permission/:service" in {
+        val result = route(FakeRequest(POST, s"/mandate/agent/client-permission/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
     }
 
     "redirect to login page for UNAUTHENTICATED agent" when {
-
-      "agent requests(GET) for 'overseas client question' view" in {
+      "agent requests(GET) for 'client permission' view" in {
         viewWithUnAuthenticatedAgent { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
       }
-
     }
 
     "redirect to unauthorised page for UNAUTHORISED agent" when {
-
-      "agent requests(GET) for 'overseas client question' view" in {
+      "agent requests(GET) for 'client permission' view" in {
         viewWithUnAuthorisedAgent { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
       }
-
     }
 
-    "return 'overseas client question' view for AUTHORISED agent" when {
-
-      "agent requests(GET) for 'overseas client question' view" in {
+    "return 'nrl question' view for AUTHORISED agent" when {
+      "agent requests(GET) for 'client permission' view" in {
         viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Does your client have an overseas company or trust without a UK Unique Tax Reference?")
-          document.getElementById("header").text() must include("Does your client have an overseas company or trust without a UK Unique Tax Reference?")
+          document.title() must be("Do you have permission to register on behalf of your client?")
+          document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
           document.getElementById("pre-header").text() must be("Add a client")
-          document.getElementById("isOverseas_legend").text() must be("Does your client have an overseas company or trust without a UK Unique Tax Reference?")
+          document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
           document.getElementById("submit").text() must be("Submit")
         }
       }
-
     }
 
-    "redirect agent to 'nrl page' on business-customer-frontend" when {
-      "valid form is submitted and overseas is answered as yes" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "true")
+    "redirect agent to 'enter client non-uk details' page in business-customer-frontend application" when {
+      "valid form is submitted and YES is selected" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "true")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/agent/nrl-question/ATED"))
+          redirectLocation(result) must be(Some(s"http://localhost:9923/business-customer/registration/non-uk/nrl/ated"))
         }
       }
     }
-    "redirect agent to 'mandate confirmation page'" when {
-      "valid form is submitted and overseas is answered as no" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "false")
+
+    "redirect agent to 'mandate summary' page" when {
+      "valid form is submitted and NO" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/details/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/summary/$service"))
         }
       }
     }
 
     "returns BAD_REQUEST" when {
       "invalid form is submitted" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the overseas client question")
-          document.getElementsByClass("error-notification").text() must include("You must answer overseas client question")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the client permission question.")
+          document.getElementsByClass("error-notification").text() must include("You must answer client permission question")
         }
       }
     }
-
 
   }
 
   val mockAuthConnector = mock[AuthConnector]
   val service = "ATED"
 
-  object TestOverseasClientQuestionController extends OverseasClientQuestionController {
+  object TestClientPermissionController extends ClientPermissionController {
     override val authConnector = mockAuthConnector
   }
 
@@ -138,7 +132,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestOverseasClientQuestionController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestClientPermissionController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -147,7 +141,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestOverseasClientQuestionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientPermissionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -156,7 +150,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestOverseasClientQuestionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientPermissionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -165,7 +159,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestOverseasClientQuestionController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestClientPermissionController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

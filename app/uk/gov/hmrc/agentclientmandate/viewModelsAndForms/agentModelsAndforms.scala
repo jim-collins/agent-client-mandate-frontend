@@ -130,3 +130,26 @@ object EditMandateDetailsForm {
   )(EditMandateDetails.apply)(EditMandateDetails.unapply))
 }
 
+case class NRLQuestion(paysSA: Option[Boolean] = None)
+
+object NRLQuestionForm {
+
+  val nrlQuestionForm = Form(
+    mapping(
+      "paysSA" -> optional(boolean).verifying(Messages("agent.nrl-question.paysSA.not-selected.error"), a => a.isDefined)
+    )(NRLQuestion.apply)(NRLQuestion.unapply)
+  )
+
+}
+
+case class ClientPermission(hasPermission: Option[Boolean] = None)
+
+object ClientPermissionForm {
+
+  val clientPermissionForm = Form(
+    mapping(
+      "hasPermission" -> optional(boolean).verifying(Messages("agent.client-permission.hasPermission.not-selected.error"), a => a.isDefined)
+    )(ClientPermission.apply)(ClientPermission.unapply)
+  )
+
+}

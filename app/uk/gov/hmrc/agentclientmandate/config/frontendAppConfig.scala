@@ -28,7 +28,7 @@ trait AppConfig {
   val betaFeedbackUrl: String
   val betaFeedbackUnauthenticatedUrl: String
 
-  def nrlUri(service: String): String
+  def nonUkUri(service: String): String
 }
 
 object FrontendAppConfig extends AppConfig with ServicesConfig {
@@ -46,7 +46,7 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   override lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback"
   override lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
 
-  def nrlUri(service: String): String = s"""${configuration.getString("microservice.services.business-customer-frontend.nrl-uri").
+  def nonUkUri(service: String): String = s"""${configuration.getString("microservice.services.business-customer-frontend.nonUK-uri").
     getOrElse("")}/${service.toLowerCase}"""
 
 }

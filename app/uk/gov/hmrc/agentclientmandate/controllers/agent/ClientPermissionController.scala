@@ -19,33 +19,33 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.OverseasClientQuestionForm._
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientPermissionForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-object OverseasClientQuestionController extends OverseasClientQuestionController {
+object ClientPermissionController extends ClientPermissionController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
   // $COVERAGE-ON$
 }
 
-trait OverseasClientQuestionController extends FrontendController with Actions {
+trait ClientPermissionController extends FrontendController with Actions {
 
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit user => implicit request =>
-      Ok(views.html.agent.overseasClientQuestion(overseasClientQuestionForm, service))
+      Ok(views.html.agent.clientPermission(clientPermissionForm, service))
   }
 
+
   def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
-    implicit authContext => implicit request =>
-      overseasClientQuestionForm.bindFromRequest.fold(
-        formWithError => BadRequest(views.html.agent.overseasClientQuestion(formWithError, service)),
+    implicit user => implicit request =>
+      clientPermissionForm.bindFromRequest.fold(
+        formWithErrors => BadRequest(views.html.agent.clientPermission(formWithErrors, service)),
         data => {
-          val isOverSeas = data.isOverseas.getOrElse(false)
-          if (isOverSeas) Redirect(routes.NRLQuestionController.view(service))
-          else Redirect(routes.MandateDetailsController.view(service))
+          if (data.hasPermission.getOrElse(false)) Redirect(nonUkUri(service))
+          else Redirect(routes.AgentSummaryController.view(service))
         }
       )
   }

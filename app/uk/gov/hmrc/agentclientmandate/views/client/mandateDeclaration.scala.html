@@ -12,6 +12,8 @@
 <script type="text/javascript" src='@controllers.routes.Assets.at("javascript/declaration.js")'></script>
 }
 
+@implicitFormInstance = @{ Some(declarationForm) }
+
 @main_template(title = Messages("Declaration and consent"), scriptElem = Some(pageScripts)) {
 
   @mandateErrorSummary(declarationForm, "client.declaration.error.general")

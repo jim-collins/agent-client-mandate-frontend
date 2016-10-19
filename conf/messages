@@ -6,6 +6,7 @@ i-agree = I agree
 edit-link = Edit
 confirm-button = Confirm
 mandate.back = Back
+agent.all-my-clients.button = View all my clients
 
 mandate.checkbox-i-agree.confirm.error = Please confirm that you want to submit this
 mandate.agent.delegation.url.text = Change client
@@ -134,6 +135,22 @@ agent.overseas-client-question.title = Does your client have an overseas company
 agent.overseas-client-question.header = Does your client have an overseas company or trust without a UK Unique Tax Reference?
 agent.overseas-client-question.error.general.isOverseas = There is a problem with the overseas client question
 agent.overseas-client-question.error.isOverseas = You must answer overseas client question
+
+# agent - nrl question page
+agent.nrl-question.title = Is your client a non-resident landlord?
+agent.nrl-question.header = Is your client a non-resident landlord?
+agent.nrl-question.text = This is a non-resident landlord operating through an offshore company who pays tax through Self Assessment
+agent.nrl-question.error.general.paysSA = There is a problem with the non-resident landlord question.
+agent.nrl-question.paysSA.not-selected.error = You must answer non-resident landlord question.
+
+# agent - client permission page
+agent.client-permission.title = Do you have permission to register on behalf of your client?
+agent.client-permission.header = Do you have permission to register on behalf of your client?
+agent.client-permission.error.general.hasPermission = There is a problem with the client permission question.
+agent.client-permission.hasPermission.not-selected.error = You must answer client permission question
+agent.client-permission.hasPermission.selected.ated.yes.notice = Your client must have completed an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1">ATED 1</a>. Submission of form 64-8 ‘Authorising your agent’ to HMRC for other tax matters does not cover ATED or ATED related CGT. An ATED 1 can be completed online before you submit the ATED return.
+agent.client-permission.hasPermission.selected.ated.no.notice = You must have permission from your client to register on their behalf before you can continue. Your client must have completed an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1">ATED 1</a>. Submission of form 64-8 ‘Authorising your agent’ to HMRC for other tax matters does not cover ATED or ATED related CGT. An ATED 1 can be completed online before you submit the ATED return.
+
 
 # agent enter business details
 agent.enter-business-details-error.businessName = You must enter a company name.
