@@ -54,6 +54,7 @@ object Status extends Enumeration {
   val Active = Value
   val Rejected = Value
   val Expired = Value
+  val Cancelled = Value
   val PendingCancellation = Value
   val PendingActivation = Value
 

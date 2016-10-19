@@ -20,7 +20,7 @@ import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
 import uk.gov.hmrc.play.config.{AppName, RunMode, ServicesConfig}
-import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.play.frontend.auth.connectors.{AuthConnector, DelegationConnector}
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost, WSPut}
 
 object FrontendAuditConnector extends Auditing with AppName {
@@ -41,4 +41,9 @@ object AgentClientMandateSessionCache extends SessionCache with AppName with Ser
   override lazy val defaultSource = appName
   override lazy val baseUri = baseUrl("session-cache")
   override lazy val domain = getConfString("session-cache.domain", throw new Exception(s"Could not find config 'session-cache.domain'"))
+}
+
+object FrontendDelegationConnector extends DelegationConnector with ServicesConfig {
+  val serviceUrl = baseUrl("delegation")
+  lazy val http = WSHttp
 }

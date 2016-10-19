@@ -8,6 +8,7 @@ confirm-button = Confirm
 mandate.back = Back
 
 mandate.checkbox-i-agree.confirm.error = Please confirm that you want to submit this
+mandate.agent.delegation.url.text = Change client
 
 
 agent-client-mandate.error.summaryHeader = There is a problem with the form
