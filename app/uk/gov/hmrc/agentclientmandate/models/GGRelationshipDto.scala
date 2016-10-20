@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.agentclientmandate.services
+package uk.gov.hmrc.agentclientmandate.models
 
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mock.MockitoSugar
-import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
+import play.api.libs.json.Json
 
-class GovernmentGatewayServiceSpec extends PlaySpec with OneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
+case class GGRelationshipDto(serviceName: String, agentPartyId: String, credId: String, clientSubscriptionId: String)
 
-  "GovernmentGatewayService" should {
-
-  }
+object GGRelationshipDto {
+  implicit val formats = Json.format[GGRelationshipDto]
 }
