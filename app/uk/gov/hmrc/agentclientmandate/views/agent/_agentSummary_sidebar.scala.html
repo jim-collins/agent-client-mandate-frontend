@@ -4,20 +4,19 @@
 
 @(agentDetails: AgentDetails)(implicit request: Request[_])
 
-<div style="border-top: 10px solid #005ea5;"></div>
+<section class="section section--blue-top">
 
-<div class="form-group">
+   <h2 class="heading-small" id="sidebar.agentname">@agentDetails.agentName</h2>
 
-    <div class="form-group">
-        <ul>
-            <li class="font-xsmall" id="sidebar.agentname">@agentDetails.agentName</li>
-            <li class="font-xsmall" id="sidebar.addressLine1">@agentDetails.addressDetails.addressLine1</li>
-            <li class="font-xsmall" id="sidebar.addressLine2">@agentDetails.addressDetails.addressLine2</li>
-            <li class="font-xsmall" id="sidebar.addressLine3">@agentDetails.addressDetails.addressLine3</li>
-            <li class="font-xsmall" id="sidebar.addressLine4">@agentDetails.addressDetails.addressLine4</li>
-            <li class="font-xsmall" id="sidebar.postcode">@agentDetails.addressDetails.postalCode</li>
-            <li class="font-xsmall" id="sidebar.countrycode">@agentDetails.addressDetails.countryCode</li>
-        </ul>
-    </div>
+   <div class="form-group">
+      <ul>
+         <li class="font-xsmall" id="sidebar.addressLine1">@agentDetails.addressDetails.addressLine1</li>
+         <li class="font-xsmall" id="sidebar.addressLine2">@agentDetails.addressDetails.addressLine2</li>
+         <li class="font-xsmall" id="sidebar.addressLine3">@agentDetails.addressDetails.addressLine3</li>
+         <li class="font-xsmall" id="sidebar.addressLine4">@agentDetails.addressDetails.addressLine4</li>
+         <li class="font-xsmall" id="sidebar.postcode">@agentDetails.addressDetails.postalCode</li>
+         <li class="font-xsmall" id="sidebar.countrycode">@agentDetails.addressDetails.countryCode</li>
+      </ul>
+   </div>
 
-</div>
+</section>
