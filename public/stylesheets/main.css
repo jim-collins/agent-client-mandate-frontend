@@ -24,3 +24,19 @@
   overflow: hidden;
   position: absolute !important;
 }
+
+.error {
+  border: 5px solid #b10e1e;
+  margin-left:2px;
+}
+
+.form-control {
+  border: 2px solid #6f777b;
+}
+
+.form-control.error {
+  border: 5px solid #b10e1e;
+  margin-left:2px;
+}
+
+
