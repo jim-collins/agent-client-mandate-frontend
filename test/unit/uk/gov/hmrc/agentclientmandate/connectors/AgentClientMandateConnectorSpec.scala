@@ -171,6 +171,17 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       response.status must be(OK)
     }
 
+    "import existing agent-client relationship" in {
+      val ggRelationshipDtoList = List(GGRelationshipDto("serviceName", "agentPartyId", "cred-id", "clinetSubscriptionId"))
+
+      when(mockWSHttp.POST[JsValue, HttpResponse]
+        (Matchers.any(), Matchers.any(), Matchers.any())
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+
+      val response = await(TestAgentClientMandateConnector.importExistingRelationships(ggRelationshipDtoList))
+      response.status must be(OK)
+    }
+
   }
 
 

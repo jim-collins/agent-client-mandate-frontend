@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.agentclientmandate.service
 
+import play.api.Logger
 import play.api.http.Status._
-import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
+import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, GovernmentGatewayConnector}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.utils.{AgentClientMandateUtils, MandateConstants}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
@@ -34,6 +35,8 @@ trait AgentClientMandateService extends MandateConstants {
   def dataCacheService: DataCacheService
 
   def agentClientMandateConnector: AgentClientMandateConnector
+
+  def ggConnector: GovernmentGatewayConnector
 
   def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[String] = {
     dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) flatMap {
@@ -80,7 +83,7 @@ trait AgentClientMandateService extends MandateConstants {
   }
 
   def fetchAllClientMandates(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandates]] = {
-    agentClientMandateConnector.fetchAllMandates(arn,serviceName) map {
+    agentClientMandateConnector.fetchAllMandates(arn, serviceName) flatMap {
       response => response.status match {
         case OK =>
           val mandates = response.json.asOpt[Seq[Mandate]]
@@ -88,10 +91,29 @@ trait AgentClientMandateService extends MandateConstants {
             case Some(x) =>
               val pendingMandates = x.filter(a => AgentClientMandateUtils.isPendingStatus(a.currentStatus.status))
               val activeMandates = x.filter(a => a.currentStatus.status == Status.Active)
-              Some(Mandates(activeMandates, pendingMandates))
-            case None => None
+              Future.successful(Some(Mandates(activeMandates, pendingMandates)))
+            case None => Future.successful(None)
           }
-        case status => None
+        case NOT_FOUND =>
+          ggConnector.retrieveClientList flatMap { clientList =>
+            val ggRelationshipDtoList = clientList flatMap (_.identifiersForDisplay.headOption) map { x =>
+              GGRelationshipDto(serviceName = serviceName,
+                agentPartyId = arn,
+                credId = ac.user.userId,
+                clientSubscriptionId = x.value)
+            }
+            agentClientMandateConnector.importExistingRelationships(ggRelationshipDtoList) flatMap { resp =>
+              resp.status match {
+                case OK =>
+                  Logger.info(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import in progress - status - OK")
+                  Future.successful(None)
+                case status =>
+                  Logger.info(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import failed - status - $status")
+                  Future.successful(None)
+              }
+            }
+          }
+        case _ => Future.successful(None)
       }
     }
   }
@@ -108,8 +130,8 @@ trait AgentClientMandateService extends MandateConstants {
   def acceptClient(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Boolean] = {
     agentClientMandateConnector.activateMandate(mandateId).map { response =>
       response.status match {
-        case OK =>  true
-        case _ =>  false
+        case OK => true
+        case _ => false
       }
     }
   }
@@ -141,4 +163,5 @@ trait AgentClientMandateService extends MandateConstants {
 object AgentClientMandateService extends AgentClientMandateService {
   val dataCacheService = DataCacheService
   val agentClientMandateConnector = AgentClientMandateConnector
+  val ggConnector = GovernmentGatewayConnector
 }

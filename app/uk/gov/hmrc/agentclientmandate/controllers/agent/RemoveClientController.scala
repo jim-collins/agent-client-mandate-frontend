@@ -39,7 +39,8 @@ trait RemoveClientController extends FrontendController with Actions {
 
       acmService.fetchClientMandate(mandateId).map { response =>
         response match {
-          case Some(mandate) => Ok(views.html.agent.removeClient(new YesNoQuestionForm("agent.remove-client.error").yesNoQuestionForm, service, mandate.clientParty.get.name, mandateId))
+          case Some(mandate) => Ok(views.html.agent.removeClient(new YesNoQuestionForm("agent.remove-client.error").yesNoQuestionForm, service,
+            mandate.clientParty.get.name, mandateId))
           case _ => throw new RuntimeException("No Mandate returned")
         }
       }

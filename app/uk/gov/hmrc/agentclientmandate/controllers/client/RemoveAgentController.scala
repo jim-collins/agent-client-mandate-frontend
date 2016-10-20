@@ -46,7 +46,8 @@ trait RemoveAgentController extends FrontendController with Actions {
         case Some(returnUrl) =>
           dataCacheService.cacheFormData[String]("RETURN_URL", returnUrl).flatMap { cache =>
             acmService.fetchClientMandate(mandateId).map {
-              case Some(mandate) => Ok(views.html.client.removeAgent(new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm, mandate.agentParty.name, mandateId))
+              case Some(mandate) => Ok(views.html.client.removeAgent(new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm,
+                mandate.agentParty.name, mandateId))
               case _ => throw new RuntimeException("No Mandate returned")
             }
           }

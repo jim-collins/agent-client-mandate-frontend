@@ -40,7 +40,8 @@ trait RejectClientController extends FrontendController with Actions {
   def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       acmService.fetchClientMandate(mandateId).map {
-        case Some(mandate) => Ok(views.html.agent.rejectClient(service, new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm, mandate.clientParty.get.name, mandateId))
+        case Some(mandate) => Ok(views.html.agent.rejectClient(service, new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm,
+          mandate.clientParty.get.name, mandateId))
         case _ => throw new RuntimeException("No Mandate returned")
       }
   }

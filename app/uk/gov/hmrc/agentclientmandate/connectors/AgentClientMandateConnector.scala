@@ -19,7 +19,7 @@ package uk.gov.hmrc.agentclientmandate.connectors
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.agentclientmandate.config.WSHttp
-import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, CreateMandateDto, Mandate}
+import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, CreateMandateDto, GGRelationshipDto, Mandate}
 import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.AuthContext
@@ -36,6 +36,7 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
   val activateUri = "activate"
   val rejectClientUri = "rejectClient"
   val removeUri = "remove"
+  val importExistingUri = "importExisting"
 
   def http: HttpGet with HttpPost with HttpDelete
 
@@ -95,6 +96,14 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     val postUrl = s"$serviceUrl$authLink/$mandateUri/$removeUri/$mandateId"
     Logger.info(s"[AgentClientMandateConnector][removeAgent] - POST - $postUrl")
     http.POST[JsValue, HttpResponse](postUrl, Json.parse("{}"))
+  }
+
+  def importExistingRelationships(ggRelationshipDtoList: List[GGRelationshipDto])(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+    val authLink = AuthUtils.getAuthLink
+    val jsonData = Json.toJson(ggRelationshipDtoList)
+    val postUrl = s"$serviceUrl$authLink/$mandateUri/$importExistingUri"
+    Logger.info(s"[AgentClientMandateConnector][importExistingRelationships] - POST - $postUrl")
+    http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 
 }
