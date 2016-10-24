@@ -17,10 +17,10 @@
 package unit.uk.gov.hmrc.agentclientmandate.utils
 
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
-import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
 import uk.gov.hmrc.agentclientmandate.utils.DelegationUtils
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.play.frontend.auth.{AuthContext, TaxIdentifiers}
+import unit.uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
 
 class DelegationUtilsSpec extends PlaySpec with OneServerPerSuite {
 

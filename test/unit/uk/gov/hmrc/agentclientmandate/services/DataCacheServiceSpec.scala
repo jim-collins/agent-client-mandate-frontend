@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.services
+package unit.uk.gov.hmrc.agentclientmandate.services
 
 import org.mockito.Matchers
 import org.mockito.Mockito._

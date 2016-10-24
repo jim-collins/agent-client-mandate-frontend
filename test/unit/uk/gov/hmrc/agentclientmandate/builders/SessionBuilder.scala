@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.builders
+package unit.uk.gov.hmrc.agentclientmandate.builders
 
 import java.util.UUID
 

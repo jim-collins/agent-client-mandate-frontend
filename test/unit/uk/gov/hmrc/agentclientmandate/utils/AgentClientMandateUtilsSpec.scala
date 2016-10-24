@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.utils
+package unit.uk.gov.hmrc.agentclientmandate.utils
 
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
+import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils
 
 class AgentClientMandateUtilsSpec extends PlaySpec with OneServerPerSuite {
 

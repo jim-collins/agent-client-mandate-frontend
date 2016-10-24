@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.auth
+package unit.uk.gov.hmrc.agentclientmandate.controllers.auth
 
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
+import uk.gov.hmrc.agentclientmandate.controllers.auth.ExternalUrls
 
 class ExternalUrlsSpec extends PlaySpec with OneServerPerSuite {
 

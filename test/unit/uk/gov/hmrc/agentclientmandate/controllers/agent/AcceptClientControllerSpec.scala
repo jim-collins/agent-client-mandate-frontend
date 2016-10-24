@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.agent
+package unit.uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import java.util.UUID
 
@@ -26,10 +26,11 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.controllers.agent.AcceptClientController
 import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
+import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 
 import scala.concurrent.Future
 

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.utils
+package unit.uk.gov.hmrc.agentclientmandate.utils
 
 import org.joda.time.DateTime
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import uk.gov.hmrc.agentclientmandate.utils.DateUtils
 
 class DateUtilsSpec extends PlaySpec with MockitoSugar {
 

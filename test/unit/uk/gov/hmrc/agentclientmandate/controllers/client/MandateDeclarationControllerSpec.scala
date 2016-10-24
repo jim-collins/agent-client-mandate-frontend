@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.client
+package unit.uk.gov.hmrc.agentclientmandate.controllers.client
 
 import java.util.UUID
 
@@ -27,12 +27,13 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController
 import uk.gov.hmrc.agentclientmandate.models.{MandateStatus, Service, Status, Subscription, _}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, ClientEmail}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
+import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 
 import scala.concurrent.Future
 
@@ -154,6 +155,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
     val dataCacheService = mockDataCacheService
     val mandateService = mockMandateService
   }
+
   val service = "ATED"
 
   def viewUnAuthenticatedClient(test: Future[Result] => Any) {
