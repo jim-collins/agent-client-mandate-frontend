@@ -52,7 +52,7 @@ class GovernmentGatewayConnectorSpec extends PlaySpec with OneServerPerSuite wit
   }
 
   "GovernmentGatewayConnector" must {
-    import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder._
+    import unit.uk.gov.hmrc.agentclientmandate.builders.AuthBuilder._
 
     "retrieve client list" must {
       "work for an agent" in {

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.auth
+package unit.uk.gov.hmrc.agentclientmandate.controllers.auth
 
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
-import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
+import uk.gov.hmrc.agentclientmandate.controllers.auth.{AgentGovernmentGateway, AgentRegime}
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
+import unit.uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
 
 class AgentRegimeSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
 

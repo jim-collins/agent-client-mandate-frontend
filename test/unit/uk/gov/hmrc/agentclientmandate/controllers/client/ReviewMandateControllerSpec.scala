@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.controllers.client
+package unit.uk.gov.hmrc.agentclientmandate.controllers.client
 
 import java.util.UUID
 
@@ -28,12 +28,13 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientCache
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
+import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 
 import scala.concurrent.Future
 
@@ -118,6 +119,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     reset(mockAuthConnector)
     reset(mockDataCacheService)
   }
+
   val service = "ATED"
 
   def viewWithUnAuthenticatedClient(test: Future[Result] => Any) {

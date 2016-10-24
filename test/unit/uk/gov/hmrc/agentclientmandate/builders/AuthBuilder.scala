@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.builders
+package unit.uk.gov.hmrc.agentclientmandate.builders
 
 import org.mockito.Matchers
 import org.mockito.Mockito._
@@ -61,7 +61,8 @@ object AuthBuilder {
       confidenceLevel = ConfidenceLevel.L50,
       userDetailsLink = Some("/user-details/1234567890"),
       enrolments = Some("/auth/oid/1234567890/enrolments"),
-      ids = None
+      ids = None,
+      legacyOid = ""
     )
   }
 
@@ -75,7 +76,8 @@ object AuthBuilder {
       confidenceLevel = ConfidenceLevel.L50,
       userDetailsLink = Some("/user-details/1234567890"),
       enrolments = Some("/auth/oid/1234567890/enrolments"),
-      ids = None
+      ids = None,
+      legacyOid = ""
     )
   }
 
@@ -89,7 +91,8 @@ object AuthBuilder {
       confidenceLevel = ConfidenceLevel.L50,
       userDetailsLink = None,
       enrolments = None,
-      ids = None
+      ids = None,
+      legacyOid = ""
     )
   }
 
@@ -108,7 +111,8 @@ object AuthBuilder {
       confidenceLevel = ConfidenceLevel.L50,
       userDetailsLink = Some("/user-details/1234567890"),
       enrolments = Some("/auth/oid/1234567890/enrolments"),
-      ids = None
+      ids = None,
+      legacyOid = ""
     )
   }
 

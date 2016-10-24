@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.connectors
+package unit.uk.gov.hmrc.agentclientmandate.connectors
 
 import org.mockito.Matchers
 import org.mockito.Mockito._
@@ -23,6 +23,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
+import uk.gov.hmrc.agentclientmandate.connectors.EmailServiceConnector
 import uk.gov.hmrc.play.http.ws.{WSGet, WSPost}
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.agentclientmandate.connectors
+package unit.uk.gov.hmrc.agentclientmandate.connectors
 
 import org.joda.time.DateTime
 import org.mockito.Matchers
@@ -24,17 +24,13 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
-
-import uk.gov.hmrc.agentclientmandate.builders.AgentBusinessUtrGenerator
-import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto
-
-import uk.gov.hmrc.agentclientmandate.models._
-import uk.gov.hmrc.agentclientmandate.builders.AgentBusinessUtrGenerator
-import uk.gov.hmrc.agentclientmandate.models.CreateMandateDto
+import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
+import uk.gov.hmrc.agentclientmandate.models.{CreateMandateDto, _}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
-import uk.gov.hmrc.agentclientmandate.builders.AuthBuilder._
+import unit.uk.gov.hmrc.agentclientmandate.builders.AgentBusinessUtrGenerator
+import unit.uk.gov.hmrc.agentclientmandate.builders.AuthBuilder._
 
 import scala.concurrent.Future
 
