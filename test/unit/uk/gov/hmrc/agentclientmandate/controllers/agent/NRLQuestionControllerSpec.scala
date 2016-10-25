@@ -78,7 +78,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
           document.getElementById("header").text() must include("Is your client a non-resident landlord?")
           document.getElementById("pre-header").text() must be("Add a client")
           document.getElementById("paysSA_legend").text() must be("Is your client a non-resident landlord?")
-          document.getElementById("submit").text() must be("Submit")
+          document.getElementById("continue").text() must be("Continue")
         }
       }
     }

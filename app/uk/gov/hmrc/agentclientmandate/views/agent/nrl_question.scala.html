@@ -11,14 +11,18 @@
 
 @main_template(title = Messages("agent.nrl-question.title")) {
 
+@mandateErrorSummary(nrlQuestionForm, "agent.nrl-question.error.general")
+
   <h1 id="header" class="heading-xlarge">
     <span id="pre-header" class="pre-heading">@Messages("agent.add-a-client.sub-header")</span>
     @Messages("agent.nrl-question.header")
   </h1>
 
-  <p class ="lede" id="non-resident-text"> @Messages("agent.nrl-question.text")</p>
+  <div class ="form-group" id="non-resident-text">
+    <span class ="lede">@Messages("agent.nrl-question.text")</span>
+  </div>
 
-  @mandateErrorSummary(nrlQuestionForm, "agent.nrl-question.error.general")
+
 
   @form(action = routes.NRLQuestionController.submit(service)) {
 
@@ -36,7 +40,7 @@
     </div>
 
     <div class="form-group">
-      <button class="button" id="submit" type="submit">@Messages("submit-button")</button>
+      <button class="button" id="continue" type="submit">@Messages("continue-button")</button>
     </div>
 
   }
