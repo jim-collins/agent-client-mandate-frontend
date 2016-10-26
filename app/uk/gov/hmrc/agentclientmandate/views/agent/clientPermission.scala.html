@@ -15,12 +15,12 @@
 
 @main_template(title = Messages("agent.client-permission.title"), scriptElem = Some(pageScripts)) {
 
+@mandateErrorSummary(clientPermissionForm, "agent.client-permission.error.general")
+
   <h1 id="header" class="heading-xlarge">
     <span id="pre-header" class="pre-heading">@Messages("agent.add-a-client.sub-header")</span>
     @Messages("agent.client-permission.header")
   </h1>
-
-  @mandateErrorSummary(clientPermissionForm, "agent.client-permission.error.general")
 
   @form(action = routes.ClientPermissionController.submit(service)) {
 
@@ -39,24 +39,22 @@
 
     <div class="form-group">
       @if(service.toUpperCase == "ATED") {
-      <div id="client-permission-true-hidden" class="panel-indent">
-        <div class="confirmation-notice">
-          <div class="icon-important"></div>
-          <strong>@Html(Messages("agent.client-permission.hasPermission.selected.ated.yes.notice"))</strong>
+      <div id="client-permission-true-hidden">
+        <div class="form-group">
+          <p class="important-notice">@Html(Messages("agent.client-permission.hasPermission.selected.ated.yes.notice"))</p>
         </div>
       </div>
 
-      <div id="client-permission-false-hidden" class="panel-indent">
-        <div class="confirmation-notice">
-          <div class="icon-important"></div>
-          <strong>@Html(Messages("agent.client-permission.hasPermission.selected.ated.no.notice"))</strong>
+      <div id="client-permission-false-hidden">
+        <div class="form-group">
+          <p class="important-notice">@Html(Messages("agent.client-permission.hasPermission.selected.ated.no.notice"))</p>
         </div>
       </div>
       }
     </div>
 
     <div class="form-group">
-      <button class="button" id="submit" type="submit">@Messages("submit-button")</button>
+      <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
     </div>
     <div class="form-group">
       <a class="button" id="view-all-clients" href="@routes.AgentSummaryController.view(service)">@Messages("agent.all-my-clients.button")</a>

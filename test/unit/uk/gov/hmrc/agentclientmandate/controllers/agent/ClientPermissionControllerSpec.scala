@@ -78,7 +78,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
           document.getElementById("pre-header").text() must be("Add a client")
           document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
-          document.getElementById("submit").text() must be("Submit")
+          document.getElementById("submit").text() must be("Continue")
         }
       }
     }
