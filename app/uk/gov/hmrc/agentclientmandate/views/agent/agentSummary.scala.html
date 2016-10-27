@@ -11,7 +11,10 @@
 
 @main_template(title = Messages("client.summary.title", service), sidebarLinks = Some(_agentSummary_sidebar(agentDetails))){
 
-  <h1 id="header" class="heading-xlarge">@Messages("client.summary.title", service)</h1>
+<div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
+  <h1 class="heading-xlarge" id="header">
+  @Messages("client.summary.title", service.toUpperCase)
+  </h1>
 
   @mandatesList.map { mandate =>
 
