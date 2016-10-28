@@ -27,6 +27,7 @@ import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController
+import uk.gov.hmrc.agentclientmandate.utils.{FeatureSwitch, MandateFeatureSwitches}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
@@ -75,7 +76,8 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     "return 'select service question' view for AUTHORISED agent" when {
 
-      "agent requests(GET) for 'select service question' view" in {
+      "agent requests(GET) for 'select service question' view and single service feature is disabled" in {
+        FeatureSwitch.disable(MandateFeatureSwitches.singleService)
         viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -89,7 +91,18 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     }
 
-    "redirect to 'collect agent email question' Page" when {
+    "redirect to 'summary page for ated' view for AUTHORISED agent" when {
+
+      "agent requests(GET) for 'select service question' view and single service feature is enabled" in {
+        viewWithAuthorisedAgent { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/agent/summary/ated"))
+        }
+      }
+
+    }
+
+    "redirect to 'agent summary page for service' Page" when {
       "valid form is submitted" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("service" -> "ated")
         submitWithAuthorisedAgent(fakeRequest) { result =>
@@ -121,6 +134,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
 
   override def beforeEach(): Unit = {
     reset(mockAuthConnector)
+    FeatureSwitch.enable(MandateFeatureSwitches.singleService)
   }
 
   def viewWithUnAuthenticatedAgent(test: Future[Result] => Any) {
