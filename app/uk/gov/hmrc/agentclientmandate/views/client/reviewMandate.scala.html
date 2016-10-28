@@ -18,7 +18,12 @@
    @form(action = routes.ReviewMandateController.submit()) {
      <table>
        <tr>
-         <th class="heading-small td-height" id ="table-head" colspan="3">@mandate.agentParty.name</th>
+         <td class="heading-small td-height" id ="service">@Messages("client.review-agent.service-header")</td>
+         <td id ="service-name">@mandate.subscription.service.name.toUpperCase</td>
+       </tr>
+       <tr>
+         <td class="heading-small td-height" id ="agency">Agency</td>
+         <td id ="agency-name">@mandate.agentParty.name</td>
        </tr>
        <tr>
          <td class="heading-small td-height" id="agent-reference-label">@Messages("client.review-agent.agent-reference")</td>
