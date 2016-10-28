@@ -13,15 +13,14 @@
 
 @mandateErrorSummary(nrlQuestionForm, "agent.nrl-question.error.general")
 
-  <h1 id="header" class="heading-xlarge">
-    <span id="pre-header" class="pre-heading">@Messages("agent.add-a-client.sub-header")</span>
-    @Messages("agent.nrl-question.header")
-  </h1>
+<div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
+<h1 class="heading-xlarge" id="header">
+  @Messages("agent.nrl-question.header")
+</h1>
 
   <div class ="form-group" id="non-resident-text">
     <span class ="lede">@Messages("agent.nrl-question.text")</span>
   </div>
-
 
 
   @form(action = routes.NRLQuestionController.submit(service)) {

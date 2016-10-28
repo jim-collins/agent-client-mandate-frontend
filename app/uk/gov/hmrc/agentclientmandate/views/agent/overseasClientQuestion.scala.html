@@ -11,11 +11,10 @@
 
 @main_template(title = Messages("agent.overseas-client-question.title")) {
 
+  @mandateErrorSummary(overseasClientQuestionForm, "agent.overseas-client-question.error.general")
 
-@mandateErrorSummary(overseasClientQuestionForm, "agent.overseas-client-question.error.general")
-
-  <h1 id="header" class="heading-xlarge">
-    <span id="pre-header" class="pre-heading">@Messages("agent.add-a-client.sub-header")</span>
+  <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
+  <h1 class="heading-xlarge" id="header">
     @Messages("agent.overseas-client-question.header")
   </h1>
 

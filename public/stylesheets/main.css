@@ -40,3 +40,14 @@
 }
 
 
+.heading-xlarge {
+    margin-bottom: 0.8em;
+    margin-top:0em;
+}
+
+.heading-sub {
+    font-size: 24px;
+    color: #808080;
+    margin-bottom:0.4em;
+}
+
