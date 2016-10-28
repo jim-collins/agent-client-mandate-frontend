@@ -71,7 +71,6 @@ client.review-agent.agent-reference = Agent reference
 client.review-agent.email = Your email address
 client.review-agent.submit = Confirm and appoint agent
 client.review-agent.service-header = Service
-client.review-agent.service-ated = ATED
 
 #client agent declaration
 client.agent-declaration.title = Declaration and consent
