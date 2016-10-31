@@ -17,9 +17,11 @@
   @Messages("agent.enter-email.header")
 </h1>
 
-  <p id="info" class="lede">
-    @Messages("agent.enter-email.info.text", service.toUpperCase)
-  </p>
+  <div class="form-group">
+    <span id="info" class="lede">
+      @Messages("agent.enter-email.info.text", service.toUpperCase)
+    </span>
+  </div>
 
   @form(action = routes.CollectAgentEmailController.submit(service)) {
 
