@@ -15,9 +15,11 @@
         @Messages("agent.remove-client.header", clientName)
     </h1>
 
-    <p>
-    @Messages("agent.remove-client.text")
-    </p>
+    <div class="form-group">
+        <span class="lede">
+        @Messages("agent.remove-client.text")
+        </span>
+    </div>
 
     @form(action = routes.RemoveClientController.confirm(service, mandateId, clientName)) {
 
