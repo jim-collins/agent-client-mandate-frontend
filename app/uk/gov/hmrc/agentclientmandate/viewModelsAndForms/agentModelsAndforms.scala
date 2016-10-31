@@ -113,7 +113,7 @@ object CollectClientBusinessDetailsForm {
   )(CollectClientBusinessDetails.apply)(CollectClientBusinessDetails.unapply))
 }
 
-case class EditMandateDetails( displayname: String, email: String)
+case class EditMandateDetails( displayName: String, email: String)
 
 object EditMandateDetailsForm {
 
@@ -150,6 +150,24 @@ object ClientPermissionForm {
     mapping(
       "hasPermission" -> optional(boolean).verifying(Messages("agent.client-permission.hasPermission.not-selected.error"), a => a.isDefined)
     )(ClientPermission.apply)(ClientPermission.unapply)
+  )
+
+}
+
+case class ClientDisplayName(name: String)
+
+object ClientDisplayName {
+  implicit val formats = Json.format[ClientDisplayName]
+}
+
+object ClientDisplayNameForm {
+
+  val clientDisplayNameForm = Form(
+    mapping(
+      "clientDisplayName" -> text
+        .verifying(Messages("agent.client-display-name.error.not-selected"), x => x.length > 0)
+        .verifying(Messages("agent.client-display-name.error.length"), x => x.isEmpty || (x.nonEmpty && x.length <= 99))
+    )(ClientDisplayName.apply)(ClientDisplayName.unapply)
   )
 
 }

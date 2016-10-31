@@ -45,7 +45,7 @@ trait OverseasClientQuestionController extends FrontendController with Actions {
         data => {
           val isOverSeas = data.isOverseas.getOrElse(false)
           if (isOverSeas) Redirect(routes.NRLQuestionController.view(service))
-          else Redirect(routes.MandateDetailsController.view(service))
+          else Redirect(routes.ClientDisplayNameController.view(service))
         }
       )
   }

@@ -1,0 +1,39 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@(clientDisplayNameForm: Form[ClientDisplayName], service: String)(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@implicitFormInstance = @{ Some(clientDisplayNameForm) }
+
+@main_template(title = Messages("agent.client-display-name.title")) {
+
+    @mandateErrorSummary(clientDisplayNameForm, "agent.client-display-name.error.general")
+
+    <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
+    <h1 class="heading-xlarge" id="header">
+        @Messages("agent.client-display-name.header")
+    </h1>
+
+    <p id="info" class="lede">
+    @Messages("agent.client-display-name.text", service.toUpperCase)
+    </p>
+
+    @form(action = routes.CollectAgentEmailController.submit(service)) {
+
+        <div id="client-display-name-form" class="form-group">
+
+            @mandateInput(clientDisplayNameForm("clientDisplayName"),
+                '_showConstraints -> false)
+
+        </div>
+
+        <div class="form-group">
+            <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+        </div>
+
+    }
+
+}

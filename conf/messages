@@ -139,6 +139,14 @@ agent.overseas-client-question.header = Does your client have an overseas compan
 agent.overseas-client-question.error.general.isOverseas = There is a problem with the overseas client question
 agent.overseas-client-question.error.isOverseas = You must answer overseas client question
 
+# agent - client display name question
+agent.client-display-name.title = What display name do you want to use for the client?
+agent.client-display-name.header = What display name do you want to use for the client?
+agent.client-display-name.text = This will only be displayed on your screens and does not change your client''s official company name.
+agent.client-display-name.error.not-selected = You must answer client display name question.
+agent.client-display-name.error.length = A client display name cannot be more than 99 characters.
+agent.client-display-name.error.general.clientDisplayName = There is a problem with the client display name question.
+
 # agent - nrl question page
 agent.nrl-question.title = Is your client a non-resident landlord?
 agent.nrl-question.header = Is your client a non-resident landlord?
@@ -153,7 +161,6 @@ agent.client-permission.error.general.hasPermission = There is a problem with th
 agent.client-permission.hasPermission.not-selected.error = You must answer client permission question
 agent.client-permission.hasPermission.selected.ated.yes.notice = Your client must have completed an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1">ATED 1</a>. Submission of form 64-8 ‘Authorising your agent’ to HMRC for other tax matters does not cover ATED or ATED related CGT. An ATED 1 can be completed online before you submit the ATED return.
 agent.client-permission.hasPermission.selected.ated.no.notice = You must have permission from your client to register on their behalf before you can continue. Your client must have completed an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1">ATED 1</a>. Submission of form 64-8 ‘Authorising your agent’ to HMRC for other tax matters does not cover ATED or ATED related CGT. An ATED 1 can be completed online before you submit the ATED return.
-
 
 # agent enter business details
 agent.enter-business-details-error.businessName = You must enter a company name.
