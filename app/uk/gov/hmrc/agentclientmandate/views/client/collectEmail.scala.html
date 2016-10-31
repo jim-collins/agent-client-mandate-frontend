@@ -8,6 +8,8 @@
 
 @main_template(title = Messages("client.collect-email.title")) {
 
+  @mandateErrorSummary(addEmailForm, "client.collect-email.error.general")
+
   <h1 id="header" class="heading-xlarge">
     <span class="pre-heading" id="pre-heading">@Messages("client.collect-email.preheader")</span>
     @Messages("client.collect-email.header")
@@ -16,8 +18,6 @@
   <p class="lede" id="lede">
     @Messages("client.collect-email.lede")
   </p>
-
-  @mandateErrorSummary(addEmailForm, "client.collect-email.error.general")
 
   @form(action = routes.CollectEmailController.submit()) {
 

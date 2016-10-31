@@ -9,12 +9,12 @@
 
 @main_template(title = Messages("client.search-mandate.title")) {
 
+@mandateErrorSummary(mandateRefForm, "client.search-mandate.error.general")
+
   <h1 id="header" class="heading-xlarge">
     <span class="pre-heading" id="pre-heading">@Messages("client.search-mandate.title")</span>
     @Messages("client.search-mandate.header")
   </h1>
-
-  @mandateErrorSummary(mandateRefForm, "client.search-mandate.error.general")
 
   @form(action = routes.SearchMandateController.submit()) {
 

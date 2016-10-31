@@ -8,17 +8,16 @@
 
 @main_template(title = Messages("agent.remove-client.title")) {
 
-<div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header", service)</div>
-<h1 class="heading-xlarge" id="header">
-    @Messages("agent.remove-client.header", clientName)
-</h1>
+@mandateErrorSummary(removeClientForm, "yes-no.error.general", Some("agent.remove-client.error"))
 
+    <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header", service)</div>
+    <h1 class="heading-xlarge" id="header">
+        @Messages("agent.remove-client.header", clientName)
+    </h1>
 
     <p>
     @Messages("agent.remove-client.text")
     </p>
-
-    @mandateErrorSummary(removeClientForm, "yes-no.error.general", Some("agent.remove-client.error"))
 
     @form(action = routes.RemoveClientController.confirm(service, mandateId, clientName)) {
 

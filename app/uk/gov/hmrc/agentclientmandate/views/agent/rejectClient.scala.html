@@ -8,6 +8,8 @@
 
 @main_template(title = Messages("agent.reject-client.title", clientName)) {
 
+    @mandateErrorSummary(rejectClientForm, "yes-no.error.general", Some("agent.reject-client.error"))
+
     <h1 id="header" class="heading-xlarge">
         <span class="pre-heading" id="pre-heading">@Messages("agent.edit-mandate-details.pre-header", service)</span>
         <span id="heading">@Messages("agent.reject-client.header", clientName)</span>
@@ -16,8 +18,6 @@
     <p>
     @Messages("agent.reject-client.text")
     </p>
-
-    @mandateErrorSummary(rejectClientForm, "yes-no.error.general", Some("agent.reject-client.error"))
 
     @form(action = routes.RejectClientController.submit(service, mandateId, clientName)) {
 
