@@ -20,11 +20,13 @@ import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+
+import scala.concurrent.Future
 
 
 object MandateDetailsController extends MandateDetailsController {
@@ -43,9 +45,13 @@ trait MandateDetailsController extends FrontendController with Actions with Mand
 
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) map {
-        case Some(x) => Ok(views.html.agent.mandateDetails(x.email, service))
-        case None => Redirect(routes.CollectAgentEmailController.view(service))
+      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) flatMap {
+        case Some(agentEmail) =>
+          dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) map {
+            case Some(x) => Ok(views.html.agent.mandateDetails(agentEmail.email, service, x.name))
+            case _ => Redirect(routes.ClientDisplayNameController.view(service))
+          }
+        case _ => Future.successful(Redirect(routes.CollectAgentEmailController.view(service)))
       }
   }
 

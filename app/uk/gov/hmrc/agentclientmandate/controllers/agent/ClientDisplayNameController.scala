@@ -21,7 +21,7 @@ import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayNameForm._
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayName
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
@@ -55,7 +55,10 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
     implicit authContext => implicit request =>
       clientDisplayNameForm.bindFromRequest.fold(
         formWithError => Future.successful(BadRequest(views.html.agent.clientDisplayName(formWithError, service))),
-        data => Future.successful(Redirect(routes.MandateDetailsController.view(service)))
+        data =>
+          dataCacheService.cacheFormData[ClientDisplayName](clientDisplayNameFormId, data) map { cachedData =>
+            Redirect(routes.OverseasClientQuestionController.view(service))
+          }
       )
   }
 }

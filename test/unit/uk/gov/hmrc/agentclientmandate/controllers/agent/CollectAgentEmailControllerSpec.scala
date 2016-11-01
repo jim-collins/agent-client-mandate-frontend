@@ -109,12 +109,12 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
     }
 
-    "redirect to 'overseas client question' Page" when {
+    "redirect to 'client display name' Page" when {
       "valid form is submitted with valid email" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@aa.com")
         submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/agent/overseas-client-question/ATED"))
+          redirectLocation(result) must be(Some("/mandate/agent/client-display-name/ATED"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())

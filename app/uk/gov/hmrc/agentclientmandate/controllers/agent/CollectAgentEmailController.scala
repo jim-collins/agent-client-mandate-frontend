@@ -60,7 +60,7 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
           emailService.validate(data.email) flatMap { isValidEmail =>
             if (isValidEmail) {
               dataCacheService.cacheFormData[AgentEmail](agentEmailFormId, data) flatMap { cachedData =>
-                Future.successful(Redirect(routes.OverseasClientQuestionController.view(service)))
+                Future.successful(Redirect(routes.ClientDisplayNameController.view(service)))
               }
             } else {
               val errorMsg = Messages("agent.enter-email.error.email.invalid-by-email-service")

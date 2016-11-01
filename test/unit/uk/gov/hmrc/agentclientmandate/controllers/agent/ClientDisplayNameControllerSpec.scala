@@ -100,7 +100,8 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("clientDisplayName" -> "client display name")
         submitClientDisplayNameAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/agent/details/ATED"))
+          redirectLocation(result) must be(Some("/mandate/agent/overseas-client-question/ATED"))
+          verify(mockDataCacheService, times(1)).cacheFormData[ClientDisplayName](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
     }
