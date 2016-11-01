@@ -1,16 +1,22 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.agentclientmandate.models._
 
-@(agentName: String)(implicit request: Request[_])
+@(agentName: String, service: String)(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import org.joda.time.LocalDate
+@import org.joda.time.format.DateTimeFormat
+
 
 @main_template(title = Messages("client.agent-confirmation.title")) {
 
   <div class="transaction-banner--complete" id="banner">
     <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'>@Messages("client.agent-confirmation.banner-text", agentName)</h1>
+    <span class="heading-small" id="date">
+      @Messages("client.agent-confirmation.banner-confirmation.submitted.date", DateTimeFormat.forPattern("dd MMM yyyy").print(new LocalDate()))
+    </span>
   </div>
 
   <span id="notification" class="heading-small">@Messages("client.agent-confirmation.notification")</span>
@@ -19,11 +25,13 @@
 
   <h2 id="heading" class="heading-large">@Messages("client.agent-confirmation.header")</h2>
 
-  <ul id="list" class="bullets">
-    <li>@Messages("client.agent-confirmation.your-agent")</li>
-    <li>@Html(Messages("client.agent-confirmation.this-authority"))</li>
-    <li>@Html(Messages("client.agent-confirmation.sign-in"))</li>
-  </ul>
+  <div class="form-group">
+    <ul id="list" class="bullets">
+      <li>@Messages("client.agent-confirmation.your-agent")</li>
+      <li>@Html(Messages("client.agent-confirmation.this-authority"))</li>
+      <li>@Html(Messages("client.agent-confirmation.sign-in", service.toUpperCase))</li>
+    </ul>
+  </div>
 
   <div class="form-group">
     <button class="button" id="finish_btn" type="submit">@Messages("client.agent-confirmation.finish-signout")</button>

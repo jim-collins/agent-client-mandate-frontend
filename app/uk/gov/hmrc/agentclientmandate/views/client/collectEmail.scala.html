@@ -8,16 +8,16 @@
 
 @main_template(title = Messages("client.collect-email.title")) {
 
- <div class="heading-sub" id="pre-heading">@Messages("client.collect-email.preheader")</div>
-<h1 class="heading-xlarge" id="header">
-  @Messages("client.collect-email.header")
-</h1>
+  @mandateErrorSummary(addEmailForm, "client.collect-email.error.general")
+
+  <div class="heading-sub" id="pre-heading">@Messages("client.collect-email.preheader")</div>
+  <h1 class="heading-xlarge" id="header">
+    @Messages("client.collect-email.header")
+  </h1>
 
   <p class="lede" id="lede">
     @Messages("client.collect-email.lede")
   </p>
-
-  @mandateErrorSummary(addEmailForm, "client.collect-email.error.general")
 
   @form(action = routes.CollectEmailController.submit()) {
 

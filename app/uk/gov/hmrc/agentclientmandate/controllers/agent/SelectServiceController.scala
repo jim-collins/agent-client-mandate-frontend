@@ -23,6 +23,7 @@ import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.agentclientmandate.utils.MandateFeatureSwitches._
 
 object SelectServiceController extends SelectServiceController {
   // $COVERAGE-OFF$
@@ -33,7 +34,9 @@ object SelectServiceController extends SelectServiceController {
 trait SelectServiceController extends FrontendController with Actions {
 
   def view = AuthorisedFor(AgentRegime, GGConfidence) {
-    implicit authContext => implicit request => Ok(views.html.agent.selectService(selectServiceForm))
+    implicit authContext => implicit request =>
+      if(singleService.enabled) Redirect(routes.AgentSummaryController.view("ated"))
+      else Ok(views.html.agent.selectService(selectServiceForm))
   }
 
   def submit = AuthorisedFor(AgentRegime, GGConfidence) {

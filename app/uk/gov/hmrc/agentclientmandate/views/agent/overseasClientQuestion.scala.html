@@ -11,13 +11,12 @@
 
 @main_template(title = Messages("agent.overseas-client-question.title")) {
 
-<div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
- <h1 class="heading-xlarge" id="header">
-   @Messages("agent.overseas-client-question.header")
- </h1>
+  @mandateErrorSummary(overseasClientQuestionForm, "agent.overseas-client-question.error.general")
 
-
-   @mandateErrorSummary(overseasClientQuestionForm, "agent.overseas-client-question.error.general")
+  <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
+  <h1 class="heading-xlarge" id="header">
+    @Messages("agent.overseas-client-question.header")
+  </h1>
 
   @form(action = routes.OverseasClientQuestionController.submit(service)) {
 

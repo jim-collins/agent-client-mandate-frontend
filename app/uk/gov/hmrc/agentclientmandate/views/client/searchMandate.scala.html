@@ -9,20 +9,19 @@
 
 @main_template(title = Messages("client.search-mandate.title")) {
 
-
-<div class="heading-sub" id="pre-heading">@Messages("client.search-mandate.title")</div>
-<h1 class="heading-xlarge" id="header">
-  @Messages("client.search-mandate.header")
-</h1>
-
   @mandateErrorSummary(mandateRefForm, "client.search-mandate.error.general")
+
+  <div class="heading-sub" id="pre-heading">@Messages("client.search-mandate.preheader")</div>
+  <h1 class="heading-xlarge" id="header">
+    @Messages("client.search-mandate.header")
+  </h1>
 
   @form(action = routes.SearchMandateController.submit()) {
 
     <div class="form-group">
 
       @mandateInput(mandateRefForm("mandateRef"),
-      '_label -> Messages("client.search-mandate.label"),
+      '_hintText -> Messages("client.search-mandate.hint"),
       '_fieldsetAttributesHelpQuestion -> "search-mandate-help-question",
       '_fieldsetQuestion -> Messages("client.search-mandate.help.question"),
       '_HelpQuestionAnswer -> Html(Messages("client.search-mandate.help.answer")),
@@ -32,9 +31,4 @@
 
     </div>
   }
-
-  <div class="form-group">
-    <a href="@routes.CollectEmailController.view()" id="back" class="back-link">@Messages("mandate.back")</a>
-  </div>
-
 }

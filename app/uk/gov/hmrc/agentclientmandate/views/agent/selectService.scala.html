@@ -11,13 +11,12 @@
 
 @main_template(title = Messages("agent.select-service.title")) {
 
-<div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
+@mandateErrorSummary(selectServiceForm, "agent.select-service.error.general")
+
+  <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
   <h1 class="heading-xlarge" id="header">
     @Messages("agent.select-service.header")
   </h1>
-
-
-  @mandateErrorSummary(selectServiceForm, "agent.select-service.error.general")
 
   @form(action = routes.SelectServiceController.submit()) {
 
@@ -41,3 +40,4 @@
   }
 
 }
+

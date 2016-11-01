@@ -43,6 +43,20 @@ object AgentClientMandateSessionCache extends SessionCache with AppName with Ser
   override lazy val domain = getConfString("session-cache.domain", throw new Exception(s"Could not find config 'session-cache.domain'"))
 }
 
+object BusinessCustomerSessionCache extends SessionCache with AppName with ServicesConfig {
+  override lazy val http = WSHttp
+  override lazy val defaultSource: String = getConfString("session-cache.review-details.cache", "business-customer-frontend")
+  override lazy val baseUri = baseUrl("session-cache")
+  override lazy val domain = getConfString("session-cache.domain", throw new Exception(s"Could not find config 'session-cache.domain'"))
+}
+
+object AtedSubscriptionSessionCache extends SessionCache with AppName with ServicesConfig {
+  override lazy val http = WSHttp
+  override lazy val defaultSource: String = getConfString("session-cache.ated-subscription.cache", "ated-subscription-frontend")
+  override lazy val baseUri = baseUrl("session-cache")
+  override lazy val domain = getConfString("session-cache.domain", throw new Exception(s"Could not find config 'session-cache.domain'"))
+}
+
 object FrontendDelegationConnector extends DelegationConnector with ServicesConfig {
   val serviceUrl = baseUrl("delegation")
   lazy val http = WSHttp
