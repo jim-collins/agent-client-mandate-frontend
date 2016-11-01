@@ -84,11 +84,12 @@ client.agent-declaration.information = that the information I have provided is c
 #client agent confirmation
 client.agent-confirmation.title = What happens next?
 client.agent-confirmation.banner-text = Your request to appoint {0} has been successfully submitted
+client.agent-confirmation.banner-confirmation.submitted.date = on {0}
 client.agent-confirmation.notification = Your agent will receive an email notification.
 client.agent-confirmation.header = What happens next?
 client.agent-confirmation.your-agent = Your agent has 28 days to accept your request by accessing the ATED service.
 client.agent-confirmation.this-authority = This authority will remain in place until you <a href="#">change or cancel your agent.</a>
-client.agent-confirmation.sign-in = You can sign in at any point to view your <a href="#">{0} online service</a>
+client.agent-confirmation.sign-in = You can sign in at any point to view your <a href="#">ATED online service</a>
 client.agent-confirmation.finish-signout = Finish and sign out
 client.declaration.error.general.agree = There is a problem with the checkbox.
 
