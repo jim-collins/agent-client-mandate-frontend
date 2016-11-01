@@ -52,7 +52,8 @@ client.collect-email.error.email.invalid-by-email-service = This email is invali
 client.collect-email.error.general.client-collect-email-form = This email is invalid
 
 #client search mandate
-client.search-mandate.title =  Appoint an agent
+client.search-mandate.title =  What is the agent''s reference?
+client.search-mandate.preheader = Appoint an agent
 client.search-mandate.header = What is the agent''s reference?
 client.search-mandate.hint = Example, GG123456
 client.search-mandate.help.question = What is an agent reference?
