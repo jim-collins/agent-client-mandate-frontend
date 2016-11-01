@@ -59,7 +59,8 @@ class CollectClientBusinessDetailsControllerSpec extends PlaySpec with OneServer
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What are your clients company details?")
-          document.getElementById("header").text() must include("Add a client")
+          document.getElementById("pre-header").text() must include("Add a client")
+          document.getElementById("header").text() must include("What are your clients company details?")
           document.getElementById("continue").text() must include("Continue")
         }
 
