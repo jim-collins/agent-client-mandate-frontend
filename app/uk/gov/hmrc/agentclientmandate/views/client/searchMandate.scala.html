@@ -9,10 +9,10 @@
 
 @main_template(title = Messages("client.search-mandate.title")) {
 
-@mandateErrorSummary(mandateRefForm, "client.search-mandate.error.general")
+  @mandateErrorSummary(mandateRefForm, "client.search-mandate.error.general")
 
-  <h1 id="header" class="heading-xlarge">
-    <span class="pre-heading" id="pre-heading">@Messages("client.search-mandate.preheader")</span>
+  <div class="heading-sub" id="pre-heading">@Messages("client.search-mandate.preheader")</div>
+  <h1 class="heading-xlarge" id="header">
     @Messages("client.search-mandate.header")
   </h1>
 
