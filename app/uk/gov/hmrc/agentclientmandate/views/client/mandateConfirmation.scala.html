@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.agentclientmandate.models._
 
-@(agentName: String)(implicit request: Request[_])
+@(agentName: String, service: String)(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
@@ -22,7 +22,7 @@
   <ul id="list" class="bullets">
     <li>@Messages("client.agent-confirmation.your-agent")</li>
     <li>@Html(Messages("client.agent-confirmation.this-authority"))</li>
-    <li>@Html(Messages("client.agent-confirmation.sign-in"))</li>
+    <li>@Html(Messages("client.agent-confirmation.sign-in", service.toUpperCase))</li>
   </ul>
 
   <div class="form-group">
