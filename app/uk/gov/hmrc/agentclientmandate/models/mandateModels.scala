@@ -97,7 +97,8 @@ case class Mandate(id: String,
                    clientParty: Option[Party] = None,
                    currentStatus: MandateStatus,
                    statusHistory: Seq[MandateStatus] = Nil,
-                   subscription: Subscription)
+                   subscription: Subscription,
+                   clientDisplayName: String)
 
 object Mandate {
   implicit val formats = Json.format[Mandate]

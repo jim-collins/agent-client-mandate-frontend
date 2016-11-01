@@ -56,7 +56,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
   val serviceName = "ATED"
   val arn = new AgentBusinessUtrGenerator().nextAgentBusinessUtr
 
-  val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED")
+  val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED", "client display name")
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val ac: AuthContext = createRegisteredAgentAuthContext("agent", "agentId")
 
@@ -68,7 +68,8 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       clientParty = Some(Party("client-id", "client name", `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None))),
       currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
       statusHistory = Nil,
-      subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = ""))
+      subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")),
+      clientDisplayName = "client display name"
     )
 
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
