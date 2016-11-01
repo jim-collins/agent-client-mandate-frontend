@@ -29,7 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
@@ -52,28 +52,41 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
     "return 'mandate details' view for AUTHORISED agent" when {
 
       "agent requests(GET) for check client details view and email has been cached previously" in {
-        viewWithAuthorisedAgent(Some(agentEmail)) { result =>
+        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail("", ""))))
+        when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientDisplayName("client display name"))))
+        viewWithAuthorisedAgent() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Check your clients details")
           document.getElementById("pre-header").text must be("Add a client")
           document.getElementById("header").text must be("Check your clients details")
-          document.getElementById("your-email").text must be("Your email address")
+          document.getElementById("email-address-label").text must be("Your email address")
           document.getElementById("submit").text must be("Confirm and add client")
         }
       }
-
     }
 
     "redirect to 'collect agent email' view for AUTHORISED agent" when {
 
       "agent requests(GET) for check client details view and email has NOT been cached previously" in {
-        viewWithAuthorisedAgent(None) { result =>
+        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+        viewWithAuthorisedAgent() { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some(s"/mandate/agent/email/$service"))
         }
       }
+    }
 
+    "redirect to 'client display name' view for AUTHORISED agent" when {
+
+      "agent requests(GET) for check client details view and display name has NOT been cached previously" in {
+        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail("", ""))))
+        when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+        viewWithAuthorisedAgent() { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some(s"/mandate/agent/client-display-name/$service"))
+        }
+      }
     }
 
     "redirect client details view for UNAUTHORISED agent" when {
@@ -84,7 +97,6 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
           redirectLocation(result).get must include("/gg/sign-in")
         }
       }
-
     }
 
     "redirect Authorised Agent to 'unique agent reference' view" when {
@@ -127,12 +139,11 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
     test(result)
   }
 
-  def viewWithAuthorisedAgent(cachedData: Option[AgentEmail] = None)(test: Future[Result] => Any) {
+  def viewWithAuthorisedAgent()(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestMandateDetailsController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }

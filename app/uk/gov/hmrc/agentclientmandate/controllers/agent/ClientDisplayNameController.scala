@@ -18,8 +18,9 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
-import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
+import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayNameForm._
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
@@ -28,40 +29,36 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
-
-object MandateDetailsController extends MandateDetailsController {
+object ClientDisplayNameController extends ClientDisplayNameController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
   val dataCacheService: DataCacheService = DataCacheService
-  val mandateService: AgentClientMandateService = AgentClientMandateService
+  val emailService: EmailService = EmailService
   // $COVERAGE-ON$
 }
 
-trait MandateDetailsController extends FrontendController with Actions with MandateConstants {
+trait ClientDisplayNameController extends FrontendController with Actions with MandateConstants {
 
   def dataCacheService: DataCacheService
 
-  def mandateService: AgentClientMandateService
+  def authConnector: AuthConnector
 
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
-    implicit authContext => implicit request =>
-      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) flatMap {
-        case Some(agentEmail) =>
-          dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) map {
-            case Some(x) => Ok(views.html.agent.mandateDetails(agentEmail.email, service, x.name))
-            case _ => Redirect(routes.ClientDisplayNameController.view(service))
-          }
-        case _ => Future.successful(Redirect(routes.CollectAgentEmailController.view(service)))
+    implicit user => implicit request =>
+      dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) map {
+        case Some(clientDisplayname) => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm.fill(clientDisplayname), service))
+        case None => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm, service))
       }
   }
 
   def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-    for {
-      mandateId <- mandateService.createMandate(service)
-    } yield {
-      Redirect(routes.UniqueAgentReferenceController.view(service))
-    }
+      clientDisplayNameForm.bindFromRequest.fold(
+        formWithError => Future.successful(BadRequest(views.html.agent.clientDisplayName(formWithError, service))),
+        data =>
+          dataCacheService.cacheFormData[ClientDisplayName](clientDisplayNameFormId, data) map { cachedData =>
+            Redirect(routes.OverseasClientQuestionController.view(service))
+          }
+      )
   }
-
 }

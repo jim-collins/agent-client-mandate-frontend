@@ -1,4 +1,4 @@
-@(email: String, service: String)(implicit request: Request[_])
+@(email: String, service: String, displayName: String)(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
@@ -15,13 +15,21 @@
     @Messages("agent.check-client-details.header")
    </h1>
 
-
-
   <table>
     <tr>
-      <th id ="your-email">@Messages("agent.check-client-details.your-email")</th>
+      <td id ="service-label"><strong>@Messages("agent.check-client-details.service")</strong></td>
+      <td id ="service">@service.toUpperCase</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td id ="email-address-label"><strong>@Messages("agent.check-client-details.your-email")</strong></td>
       <td id ="email-address">@email</td>
-      <td><a href="#">Edit</a></td>
+      <td><a href="@routes.CollectAgentEmailController.view(service)">Edit</a></td>
+    </tr>
+    <tr>
+      <td id ="display-name-label"><strong>@Messages("agent.check-client-details.display-name")</strong></td>
+      <td id ="display-name">@displayName</td>
+      <td><a href="@routes.ClientDisplayNameController.view(service)">Edit</a></td>
     </tr>
   </table>
 

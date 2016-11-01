@@ -21,7 +21,7 @@ import play.api.http.Status._
 import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, GovernmentGatewayConnector}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.utils.{AgentClientMandateUtils, MandateConstants}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -41,18 +41,22 @@ trait AgentClientMandateService extends MandateConstants {
   def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[String] = {
     dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) flatMap {
       case Some(cachedEmail) =>
-        val mandateDto = CreateMandateDto(cachedEmail.email, service)
-        agentClientMandateConnector.createMandate(mandateDto) flatMap {
-          response => response.status match {
-            case CREATED =>
-              val mandateId = (response.json \ "mandateId").as[String]
-              dataCacheService.clearCache() flatMap { clearCacheResponse =>
-                dataCacheService.cacheFormData[String](agentRefCacheId, mandateId) flatMap { cachingResponse =>
-                  Future.successful(mandateId)
-                }
+        dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) flatMap {
+          case Some(displayName) =>
+            val mandateDto = CreateMandateDto(cachedEmail.email, service, displayName.name)
+            agentClientMandateConnector.createMandate(mandateDto) flatMap {
+              response => response.status match {
+                case CREATED =>
+                  val mandateId = (response.json \ "mandateId").as[String]
+                  dataCacheService.clearCache() flatMap { clearCacheResponse =>
+                    dataCacheService.cacheFormData[String](agentRefCacheId, mandateId) flatMap { cachingResponse =>
+                      Future.successful(mandateId)
+                    }
+                  }
+                case status => throw new RuntimeException("Mandate not created")
               }
-            case status => throw new RuntimeException("Mandate not created")
-          }
+            }
+          case None => throw new RuntimeException("Client Display Name not found in cache")
         }
       case None => throw new RuntimeException("Email not found in cache")
     }

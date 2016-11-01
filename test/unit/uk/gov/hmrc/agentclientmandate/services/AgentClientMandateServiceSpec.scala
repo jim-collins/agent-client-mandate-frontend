@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, GovernmentGatewayConnector}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, Mandates}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AgentBusinessUtrGenerator, AuthBuilder}
 
@@ -52,11 +52,25 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
       }
 
+      "no client display name is found in the keystore" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val cachedEmail = AgentEmail("aa@aa.com", "aa@aa.com")
+        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestAgentClientMandateService.agentEmailFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
+        when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestAgentClientMandateService.clientDisplayNameFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
+
+        val response = TestAgentClientMandateService.createMandate(service)
+        val thrown = the[RuntimeException] thrownBy await(response)
+        thrown.getMessage must include("Client Display Name not found in cache")
+
+      }
+
       "there is a problem while creating the mandate" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         val cachedEmail = AgentEmail("aa@aa.com", "aa@aa.com")
+        val displayName = ClientDisplayName("client display name")
 
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestAgentClientMandateService.agentEmailFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
+        when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestAgentClientMandateService.clientDisplayNameFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(displayName))
         when(mockAgentClientMandateConnector.createMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(SERVICE_UNAVAILABLE, None))
 
         val response = TestAgentClientMandateService.createMandate(service)
@@ -71,9 +85,11 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       "agent email is found in the keystore" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         val cachedEmail = AgentEmail("aa@aa.com", "aa@aa.com")
+        val displayName = ClientDisplayName("client display name")
         val respJson = Json.parse("""{"mandateId": "AS12345678"}""")
 
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestAgentClientMandateService.agentEmailFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
+        when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestAgentClientMandateService.clientDisplayNameFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(displayName))
         when(mockAgentClientMandateConnector.createMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(CREATED, Some(respJson)))
         when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
         when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestAgentClientMandateService.agentRefCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("AS12345678"))
@@ -289,7 +305,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
   val agentDetails = AgentDetails("Agent Ltd.", registeredAddressDetails)
 
-  val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED")
+  val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED", "client display name")
   val time1 = DateTime.now()
 
   val mockAgentClientMandateConnector = mock[AgentClientMandateConnector]
@@ -305,13 +321,13 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   val userId = s"user-${UUID.randomUUID}"
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")))
+  val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 
-  val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
+  val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 
-  val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
+  val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 
-  val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")))
+  val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 
 
   object TestAgentClientMandateService extends AgentClientMandateService {

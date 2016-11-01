@@ -69,7 +69,8 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
           clientParty = Some(Party("client-id", "client name",
             `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None))),
           currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
-          statusHistory = Nil, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")))
+          statusHistory = Nil, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")),
+          clientDisplayName = "client display name")
         val returnData = ClientCache(mandate = Some(mandate))
         viewWithAuthorisedClient(Some(returnData)) { result =>
           status(result) must be(OK)

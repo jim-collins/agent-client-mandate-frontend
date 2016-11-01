@@ -37,6 +37,9 @@ POST    /agent/service             uk.gov.hmrc.agentclientmandate.controllers.ag
 GET     /agent/email/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.view(service: String)
 POST    /agent/email/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.submit(service: String)
 
+GET     /agent/client-display-name/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.view(service: String)
+POST    /agent/client-display-name/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.submit(service: String)
+
 GET     /agent/overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.view(service: String)
 POST    /agent/overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.submit(service: String)
 
