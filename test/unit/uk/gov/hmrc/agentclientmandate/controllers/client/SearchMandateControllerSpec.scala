@@ -79,7 +79,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         viewWithAuthorisedClient() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is the agent's reference?")
+          document.title() must be("Appoint an agent")
           document.getElementById("header").text() must include("What is the agent's reference?")
           document.getElementById("mandateRef").`val`() must be("")
           document.getElementById("submit").text() must be("Continue")

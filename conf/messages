@@ -52,11 +52,11 @@ client.collect-email.error.email.invalid-by-email-service = This email is invali
 client.collect-email.error.general.client-collect-email-form = This email is invalid
 
 #client search mandate
-client.search-mandate.title = What is the agent''s reference?
+client.search-mandate.title =  Appoint an agent
 client.search-mandate.header = What is the agent''s reference?
-client.search-mandate.label = Agent reference
+client.search-mandate.hint = Example, GG123456
 client.search-mandate.help.question = What is an agent reference?
-client.search-mandate.help.answer = Your agent must set up their agency for {0} and send you their agent reference.
+client.search-mandate.help.answer = Your agent must set up their agency and send you their agent reference.
 client.search-mandate.error.general.mandateRef = There is a problem with the agent reference question
 client.search-mandate.error.mandateRef = You must answer agent reference question
 client.search-mandate.error.mandateRef.length = Agent reference cannot be more than 10 characters.
