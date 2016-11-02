@@ -183,7 +183,7 @@ agent.enter-business-details-error.businessName.utr = There is a problem with th
 
 # agent unique reference
 agent.unique-reference.title = Your unique agent reference for {0} is {1}
-agent.unique-reference.header = Your unique agent reference for {0} is<br>{1}
+agent.unique-reference.header = Your unique agent reference for {0} is<br><span id="mandate-reference">{1}</span>
 agent.unique-reference.next.heading.text = What happens next?
 agent.unique-reference.text1 = You need to give this agent reference to your client so they can authorise you.
 agent.unique-reference.text2 = Your client will then need to:
