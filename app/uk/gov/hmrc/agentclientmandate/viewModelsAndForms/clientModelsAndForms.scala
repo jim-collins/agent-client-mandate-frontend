@@ -78,13 +78,19 @@ object MandateReference {
 }
 
 object MandateReferenceForm {
+//
+//  def mandateRefValidation = {
+//
+//    text.verifying
+//
+//  }
 
   val mandateRefLength = 10
 
   val mandateRefForm =
     Form(
       mapping(
-        "mandateRef" -> text
+        "mandateRef" -> text.transform[String](a => a.trim.replaceAll("\\s+", ""), a => a.trim.replaceAll("\\s+", ""))
           .verifying(Messages("client.search-mandate.error.mandateRef"), x => x.nonEmpty)
           .verifying(Messages("client.search-mandate.error.mandateRef.length"), x => x.isEmpty || (x.nonEmpty && x.length <= mandateRefLength))
       )
