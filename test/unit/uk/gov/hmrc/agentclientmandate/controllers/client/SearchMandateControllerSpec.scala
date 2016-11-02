@@ -103,6 +103,19 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         }
       }
 
+      "valid form is submitted but with mandate having spaces, mandate is found from backend, cache object exists and update of cache with mandate is successful" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> s"   $mandateId   ")
+        val clientParty = Some(Party("client-id", "client name",
+          `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None)))
+        val cachedData = ClientCache(email = Some(ClientEmail("bb@bb.com", "bb@bb.com")))
+        val mandate1 = mandate.copy(clientParty = clientParty)
+        val returnCache = cachedData.copy(mandate = Some(mandate1))
+        submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/review"))
+        }
+      }
+
       "throw an exception when cached email not found from cache" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> s"$mandateId")
         val clientParty = Some(Party("client-id", "client name",
