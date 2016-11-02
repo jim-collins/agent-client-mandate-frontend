@@ -174,7 +174,8 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("The agent reference you entered was not found. Please check and try again.")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference question")
+          document.getElementsByClass("error-notification").text() must include("The agent reference you entered was not found. Please check and try again.")
           verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
