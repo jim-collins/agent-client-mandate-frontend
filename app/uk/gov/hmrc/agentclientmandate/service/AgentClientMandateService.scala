@@ -21,7 +21,7 @@ import play.api.http.Status._
 import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, GovernmentGatewayConnector}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.utils.{AgentClientMandateUtils, MandateConstants}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayDetails, ClientDisplayName}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -49,7 +49,8 @@ trait AgentClientMandateService extends MandateConstants {
                 case CREATED =>
                   val mandateId = (response.json \ "mandateId").as[String]
                   dataCacheService.clearCache() flatMap { clearCacheResponse =>
-                    dataCacheService.cacheFormData[String](agentRefCacheId, mandateId) flatMap { cachingResponse =>
+                    val clientDetails = ClientDisplayDetails(displayName.name, mandateId)
+                    dataCacheService.cacheFormData[ClientDisplayDetails](agentRefCacheId, clientDetails) flatMap { cachingResponse =>
                       Future.successful(mandateId)
                     }
                   }
