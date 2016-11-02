@@ -75,7 +75,7 @@ trait SearchMandateController extends FrontendController with Actions with Manda
           }
           case None =>
             val errorMsg = Messages("client.search-mandate.error.mandateRef.not-found-by-mandate-service")
-            val errorForm = mandateRefForm.withError(key = "mandate-ref-form", message = errorMsg).fill(data)
+            val errorForm = mandateRefForm.withError(key = "mandateRef", message = errorMsg).fill(data)
             Future.successful(BadRequest(views.html.client.searchMandate(errorForm)))
         }
       )
