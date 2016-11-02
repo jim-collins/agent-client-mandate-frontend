@@ -20,6 +20,7 @@ import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayDetails
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
@@ -38,7 +39,7 @@ trait UniqueAgentReferenceController extends FrontendController with Actions wit
 
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      dataCacheService.fetchAndGetFormData[String](agentRefCacheId) map {
+      dataCacheService.fetchAndGetFormData[ClientDisplayDetails](agentRefCacheId) map {
         case Some(x) => Ok(views.html.agent.uniqueAgentReference(x, service))
         case None => Redirect(routes.SelectServiceController.view())
       }

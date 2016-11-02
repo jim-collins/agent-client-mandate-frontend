@@ -160,6 +160,13 @@ object ClientDisplayName {
   implicit val formats = Json.format[ClientDisplayName]
 }
 
+
+case class ClientDisplayDetails(name: String, mandateId: String)
+
+object ClientDisplayDetails {
+  implicit val formats = Json.format[ClientDisplayDetails]
+}
+
 object ClientDisplayNameForm {
 
   val clientDisplayNameForm = Form(

@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, GovernmentGatewayConnector}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, Mandates}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayDetails, ClientDisplayName}
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AgentBusinessUtrGenerator, AuthBuilder}
 
@@ -92,7 +92,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestAgentClientMandateService.clientDisplayNameFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(displayName))
         when(mockAgentClientMandateConnector.createMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(CREATED, Some(respJson)))
         when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
-        when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestAgentClientMandateService.agentRefCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("AS12345678"))
+        when(mockDataCacheService.cacheFormData[ClientDisplayDetails](Matchers.eq(TestAgentClientMandateService.agentRefCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(ClientDisplayDetails("test name","AS12345678")))
 
         val response = TestAgentClientMandateService.createMandate(service)
         await(response) must be("AS12345678")

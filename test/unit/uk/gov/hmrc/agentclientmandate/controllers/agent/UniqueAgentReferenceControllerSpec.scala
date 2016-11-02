@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayDetails
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
@@ -74,11 +75,11 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
     "return 'what is your email address' for AUTHORISED agent" when {
 
       "agent requests(GET) for 'Your unique agent reference' view" in {
-        viewWithAuthorisedAgent(Some(mandateId)) { result =>
+        viewWithAuthorisedAgent(Some(ClientDisplayDetails("test name", mandateId))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Your unique agent reference for {0} is {1}")
-          document.getElementById("banner-text").text() must include("Your unique agent reference for [client name] is ABC123")
+          document.getElementById("banner-text").text() must include("Your unique agent reference for test name is ABC123")
           document.getElementById("what-happens-next").text must be("What happens next?")
           document.getElementById("authorise-instruction").text must be("You need to give this agent reference to your client so they can authorise you.")
           document.getElementById("client-instruction").text must be("Your client will then need to:")
@@ -140,13 +141,14 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
     test(result)
   }
 
-  def viewWithAuthorisedAgent(mandateId: Option[String] = None)(test: Future[Result] => Any) {
+  def viewWithAuthorisedAgent(clientDisplayDetails: Option[ClientDisplayDetails] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
 
-    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestUniqueAgentReferenceController.agentRefCacheId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mandateId))
+    when(mockDataCacheService.fetchAndGetFormData[ClientDisplayDetails](Matchers.eq(TestUniqueAgentReferenceController.agentRefCacheId))
+      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(clientDisplayDetails))
 
     val result = TestUniqueAgentReferenceController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
