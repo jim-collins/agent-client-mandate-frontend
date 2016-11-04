@@ -65,7 +65,7 @@ object AgentClientMandateUtils {
   }
 
   def statusCantBeActioned(status: Status): Boolean = {
-    status == Status.PendingActivation || status == Status.PendingCancellation
+    status == Status.PendingActivation || status == Status.PendingCancellation || status == Status.New
   }
 
 }

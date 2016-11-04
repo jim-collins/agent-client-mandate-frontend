@@ -31,7 +31,7 @@ client.summary.client-pending.title = Requests ({0})
 client.summary.client-active.title = Current ({0})
 client.summary.client-details-for = details for
 client.summary.client-accept = Accept
-client.summary.client.pending-status = Pending
+client.summary.client.pending-status = Awaiting client
 client.summary.no-clients = You have no clients
 
 #client collect email
@@ -148,6 +148,7 @@ agent.client-display-name.text = This will only be displayed on your screens and
 agent.client-display-name.error.not-selected = You must answer client display name question.
 agent.client-display-name.error.length = A client display name cannot be more than 99 characters.
 agent.client-display-name.error.general.clientDisplayName = There is a problem with the client display name question.
+agent.client-display-name.change = Display name
 
 # agent - nrl question page
 agent.nrl-question.title = Is your client a non-resident landlord?

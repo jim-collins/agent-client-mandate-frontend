@@ -137,13 +137,20 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       assert(document.getElementById("client-action").text === "Action")
 
       And("The Pending Clients table - has the correct data and Accept link")
+
       assert(document.getElementById("pending-client-data-0").child(0).text() === "client display name 1")
-      assert(document.getElementById("pending-client-data-0").child(1).text() === "Reject")
-      assert(document.getElementById("accept-1").text() === "Accept")
+      assert(document.getElementById("pending-client-data-0").child(2).text() === "Awaiting client")
+      assert(document.getElementById("reject-client-link-0") === null)
       assert(document.getElementById("pending-client-data-1").child(0).text() === "client display name 5")
-      assert(document.getElementById("pending-client-data-1").child(2).text() === "Pending")
+      assert(document.getElementById("pending-client-data-1").child(2).text() === "Awaiting client")
+      assert(document.getElementById("reject-client-link-1") === null)
       assert(document.getElementById("pending-client-data-2").child(0).text() === "client display name 3")
+      assert(document.getElementById("pending-client-data-2").child(2).text() === "Accept")
+      assert(document.getElementById("reject-client-link-2").text() === "Reject")
       assert(document.getElementById("pending-client-data-3").child(0).text() === "client display name 4")
+      assert(document.getElementById("pending-client-data-3").child(2).text() === "Awaiting client")
+      assert(document.getElementById("reject-client-link-3") === null)
+
 
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
