@@ -75,7 +75,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("pending-client-data-3").child(0).text() must be("client display name 4")
           document.getElementById("pending-client-data-3").child(2).text() must be("Awaiting client")
           document.getElementById("reject-client-link-3") must be(null)
-          
+
           document.getElementById("sidebar.agentname").text() must be("ABC Ltd.")
         }
       }
