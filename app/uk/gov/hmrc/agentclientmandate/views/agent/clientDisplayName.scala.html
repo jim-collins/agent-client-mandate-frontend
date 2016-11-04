@@ -26,7 +26,9 @@
         <div id="client-display-name-form" class="form-group">
 
             @mandateInput(clientDisplayNameForm("clientDisplayName"),
-                '_showConstraints -> false)
+            '_label -> Messages("agent.client-display-name.change"),
+            '_labelClass ->  "visuallyhidden",
+            '_showConstraints -> false)
 
         </div>
 
