@@ -90,15 +90,25 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       Then("The title should match - Your ATED clients")
       assert(document.title() === "Your ATED clients")
 
+      Then("The sidebar has the correct agent name - ABC Ltd.")
+      assert(document.getElementById("sidebar.agentname").text() === "ABC Ltd.")
+
       And("The Clients tab - should exist and have 1 item")
       assert(document.getElementById("clients").text === "Current (1)")
-
       And("The Pending Clients tab - should not exist")
       assert(document.getElementById("pending-clients") === null)
 
+      And("The Clients table - should have a name and action")
+      assert(document.getElementById("yourClients-name").text === "Name")
+      assert(document.getElementById("yourClients-action").text === "Action")
+
+      And("The Clients table - has the correct data and View link")
+      assert(document.getElementById("remove-client-link-0").text === "Remove client display name 2")
+      assert(document.getElementById("client-name-0").text === "client display name 2")
+      assert(document.getElementById("client-view-0").text === "View details for client display name 2")
+      
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
-
       And("The Add Client Link - should exist")
       assert(document.getElementById("add-client-link").text() === "Add a new client")
     }
@@ -109,7 +119,7 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       When("The agent views the mandates")
       implicit val request = FakeRequest()
 
-      val mandates = Mandates(activeMandates = Nil, pendingMandates = Seq(mandateNew))
+      val mandates = Mandates(activeMandates = Nil, pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation))
 
       val html = views.html.agent.agentSummary("ATED", Some(mandates), agentDetails)
 
@@ -119,13 +129,24 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
 
       And("The Clients tab - should exist and have 0 items")
       assert(document.getElementById("clients").text === "Current (0)")
-
       And("The Pending Clients tab - should not exist")
-      assert(document.getElementById("pending-clients").text === "Requests (1)")
+      assert(document.getElementById("pending-clients").text === "Requests (4)")
+
+      And("The Pending Clients table - should have a name and action")
+      assert(document.getElementById("client-name").text === "Name")
+      assert(document.getElementById("client-action").text === "Action")
+
+      And("The Pending Clients table - has the correct data and Accept link")
+      assert(document.getElementById("pending-client-data-0").child(0).text() === "client display name 1")
+      assert(document.getElementById("pending-client-data-0").child(1).text() === "Reject")
+      assert(document.getElementById("accept-1").text() === "Accept")
+      assert(document.getElementById("pending-client-data-1").child(0).text() === "client display name 5")
+      assert(document.getElementById("pending-client-data-1").child(2).text() === "Pending")
+      assert(document.getElementById("pending-client-data-2").child(0).text() === "client display name 3")
+      assert(document.getElementById("pending-client-data-3").child(0).text() === "client display name 4")
 
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
-
       And("The Add Client Link - should exist")
       assert(document.getElementById("add-client-link").text() === "Add a new client")
     }
@@ -136,7 +157,7 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       When("The agent views the mandates")
       implicit val request = FakeRequest()
 
-      val mandates = Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation))
+      val mandates = Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew))
 
       val html = views.html.agent.agentSummary("ATED", Some(mandates), agentDetails)
 
@@ -146,13 +167,11 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
 
       And("The Clients tab - should exist and have 1 item")
       assert(document.getElementById("clients").text === "Current (1)")
-
       And("The Pending Clients tab - should not exist")
-      assert(document.getElementById("pending-clients").text === "Requests (4)")
+      assert(document.getElementById("pending-clients").text === "Requests (1)")
 
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
-
       And("The Add Client Link - should exist")
       assert(document.getElementById("add-client-link").text() === "Add a new client")
     }

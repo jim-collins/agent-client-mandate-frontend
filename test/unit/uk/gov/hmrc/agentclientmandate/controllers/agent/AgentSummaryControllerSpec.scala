@@ -59,18 +59,6 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.title() must be("Your ATED clients")
           document.getElementById("header").text must be("Your ATED clients")
           document.getElementById("add-client-link").text() must be("Add a new client")
-          document.getElementById("yourClients-name").text() must be("Name")
-          document.getElementById("yourClients-action").text() must be("Action")
-          document.getElementById("remove-client").text() must be("Remove client display name 2")
-          document.getElementById("client-name-0").text() must be("client display name 2")
-          document.getElementById("pending-client-data-0").child(0).text() must be("client display name 1")
-          document.getElementById("pending-client-data-0").child(1).text() must be("Reject")
-          document.getElementById("accept-1").text() must be("Accept")
-          document.getElementById("pending-client-data-1").child(0).text() must be("client display name 5")
-          document.getElementById("pending-client-data-2").child(0).text() must be("client display name 3")
-          document.getElementById("pending-client-data-3").child(0).text() must be("client display name 4")
-          document.getElementById("pending-client-data-1").child(2).text() must be("Pending")
-          document.getElementById("sidebar.agentname").text() must be("ABC Ltd.")
         }
       }
     }

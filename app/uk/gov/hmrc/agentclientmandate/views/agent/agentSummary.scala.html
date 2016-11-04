@@ -70,7 +70,7 @@
                 <a id="client-link-@index"
                    href='@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))'
                 >
-                  <button type="submit">@Messages("client.summary.client-view")
+                  <button type="submit" id="client-view-@index">@Messages("client.summary.client-view")
                     <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
                   </button>
                 </a>
