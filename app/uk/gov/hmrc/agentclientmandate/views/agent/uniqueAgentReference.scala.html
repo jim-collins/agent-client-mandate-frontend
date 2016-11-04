@@ -32,7 +32,9 @@
   <p id="admin-instruction">@Html(Messages("agent.unique-reference.text5", service))</p>
 
   <div class="form-group">
-    <a class="button" id="submit" href="#">@Messages("agent.unique-reference.button")</a>
+    <form action="@routes.AgentSummaryController.view(service)">
+      <button class="button" id="submit" type="submit">@Messages("agent.unique-reference.button")</button>
+    </form>
   </div>
 
 

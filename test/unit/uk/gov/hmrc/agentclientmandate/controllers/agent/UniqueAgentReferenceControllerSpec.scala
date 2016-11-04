@@ -88,7 +88,7 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
           document.getElementById("email-instruction").text must be("Once they have done this you will receive an email notification.")
           document.getElementById("request-expire").text must be("You have 28 days to sign in and accept their request.")
           document.getElementById("admin-instruction").text must be("If you have a number of agents working on ATED within your organisation you may want to filter your clients. To do this you need to add administrators to your account in Government Gateway.")
-          document.getElementById("submit").attr("href") must be("#")
+          document.getElementById("submit").text must be("View all my clients")
           document.getElementById("ated-service").attr("href") must be("#")
           document.getElementById("admin").attr("href") must be("#")
 
