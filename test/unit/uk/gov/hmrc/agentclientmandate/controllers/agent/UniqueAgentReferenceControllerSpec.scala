@@ -97,7 +97,7 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
 
   val mockAuthConnector = mock[AuthConnector]
   val mockDataCacheService = mock[DataCacheService]
-  val service = "ated".toUpperCase
+  val service = "ated"
   val mandateId = "ABC123"
 
 

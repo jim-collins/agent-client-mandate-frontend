@@ -30,15 +30,15 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
 
     info("as a user I want to view the correct page content")
 
-    scenario("user has visited the page") {
+    scenario("user has visited the page from ated") {
 
-      Given("A user visits the page")
-      When("The user views the page")
+      Given("A user visits the page from ated")
+      When("The user views the page from ated")
       implicit val request = FakeRequest()
 
       val mandateId = "ABC123"
       val clientDisplayDetails = ClientDisplayDetails("test name", mandateId)
-      val html = views.html.agent.uniqueAgentReference(clientDisplayDetails,  "ATED")
+      val html = views.html.agent.uniqueAgentReference(clientDisplayDetails,  "ated")
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Your unique agent reference for {0} is {1}")
@@ -51,7 +51,7 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
       And("The authorise-instruction - What happens next?")
       assert(document.getElementById("authorise-instruction").text() === "You need to give this agent reference to your client so they can authorise you.")
 
-      And("The client-instruction")
+      And("The client-instruction - should be correct for the relevant service")
       assert(document.getElementById("client-instruction").text() === "Your client will then need to:")
       assert(document.getElementById("client-instruction-1").text() === "Register their company to use the new ATED service, they may need to create a new organisational Government Gateway account.")
       assert(document.getElementById("client-instruction-2").text() === "Enter the agent reference you gave them.")
@@ -66,15 +66,12 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
       assert(document.getElementById("admin-instruction").text() === "If you have a number of agents working on ATED within your organisation you may want to filter your clients. To do this you need to add administrators to your account in Government Gateway.")
 
       And("The submit : View all my clients has the correct link")
-      assert(document.getElementById("view-clients-form").attr("action") === "/mandate/agent/summary/ATED")
+      assert(document.getElementById("view-clients-form").attr("action") === "/mandate/agent/summary/ated")
       assert(document.getElementById("submit").text() === "View all my clients")
 
       And("Return to service : Has the correct link")
-      assert(document.getElementById("ATED-service").text() === "ATED service")
-      assert(document.getElementById("ATED-service").attr("href") === "/test-url")
-
-      And("Admin : Has the correct link")
-      assert(document.getElementById("admin") === null)
+      assert(document.getElementById("calling-service").text() === "ATED service")
+      assert(document.getElementById("calling-service").attr("href") === "/ated/welcome")
 
     }
   }

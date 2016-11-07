@@ -20,16 +20,15 @@
 <div class = "form-group">
   <p id="client-instruction">@Messages("agent.unique-reference.text2")</p>
 
-  @FrontendAppConfig.callingService.getString(s"$service.return-url")
   <ol class="list-number">
-    <li id="client-instruction-1">@Html(Messages("agent.unique-reference.ated.list.text1", FrontendAppConfig.callingService.getString(s"$service.return-url"), service))</li>
+    <li id="client-instruction-1">@Html(Messages("agent.unique-reference.ated.list.text1", FrontendAppConfig.callingService.getString(s"$service.return-url"), service.toUpperCase))</li>
     <li id="client-instruction-2">@Messages("agent.unique-reference.ated.list.text2")</li>
   </ol>
 </div>
 
   <p id="email-instruction">@Messages("agent.unique-reference.text3")</p>
   <p id="request-expire">@Messages("agent.unique-reference.text4")</p>
-  <p id="admin-instruction">@Html(Messages("agent.unique-reference.text5", service))</p>
+  <p id="admin-instruction">@Html(Messages("agent.unique-reference.text5", service.toUpperCase))</p>
 
   <div class="form-group">
     <form action="@routes.AgentSummaryController.view(service)" id="view-clients-form">
