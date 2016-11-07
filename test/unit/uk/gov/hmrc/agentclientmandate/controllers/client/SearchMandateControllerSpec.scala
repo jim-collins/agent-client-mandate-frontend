@@ -175,7 +175,21 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference question")
-          document.getElementsByClass("error-notification").text() must include("The agent reference you entered was not found. Please check and try again.")
+          document.getElementsByClass("error-notification").text() must include("The agent reference number you entered cannot be found. Check the number, or enter a different number.")
+          verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
+      "agent reference is already used" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "invalidId")
+        val returnCache = ClientCache(mandate = Some(mandate1))
+        submitWithAuthorisedClient(request = fakeRequest, cachedData = None, mandate = Some(mandate1), returnCache = returnCache) { result =>
+          status(result) must be(BAD_REQUEST)
+          val document = Jsoup.parse(contentAsString(result))
+          document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference question")
+          document.getElementsByClass("error-notification").text() must include("The agent reference number you entered has already been used. Check the number, or enter a different number.")
           verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -192,6 +206,14 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       contactDetails = ContactDetails("aa@aa.com", None)),
     clientParty = None,
     currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
+    statusHistory = Nil, subscription = Subscription(referenceNumber = None,
+      service = Service(id = "ated-ref-no", name = "")),
+    clientDisplayName = "client display name")
+  val mandate1 = Mandate(id = mandateId, createdBy = User("cerdId", "Joe Bloggs"),
+    agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation,
+      contactDetails = ContactDetails("aa@aa.com", None)),
+    clientParty = None,
+    currentStatus = MandateStatus(status = Status.Approved, DateTime.now(), updatedBy = ""),
     statusHistory = Nil, subscription = Subscription(referenceNumber = None,
       service = Service(id = "ated-ref-no", name = "")),
     clientDisplayName = "client display name")

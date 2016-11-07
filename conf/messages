@@ -62,7 +62,8 @@ client.search-mandate.error.general.mandateRef = There is a problem with the age
 client.search-mandate.error.mandateRef = You must answer agent reference question
 client.search-mandate.error.mandateRef.length = Agent reference cannot be more than 10 characters.
 client.search-mandate.error.general.mandate-ref-form = The agent reference you entered was not found. Please check and try again.
-client.search-mandate.error.mandateRef.not-found-by-mandate-service = The agent reference you entered was not found. Please check and try again.
+client.search-mandate.error.mandateRef.not-found-by-mandate-service = The agent reference number you entered cannot be found. Check the number, or enter a different number.
+client.search-mandate.error.mandateRef.already-used-by-mandate-service = The agent reference number you entered has already been used. Check the number, or enter a different number.
 
 #client review agent
 client.review-agent.title = Check that this is the agent that you want to appoint
