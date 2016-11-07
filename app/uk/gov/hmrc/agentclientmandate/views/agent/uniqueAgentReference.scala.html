@@ -3,9 +3,8 @@
 @import uk.gov.hmrc.agentclientmandate.models._
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayDetails
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
-
 @import uk.gov.hmrc.agentclientmandate.views.html._
-
+@import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig
 
 @main_template(title = Messages("agent.unique-reference.title")) {
 
@@ -21,8 +20,9 @@
 <div class = "form-group">
   <p id="client-instruction">@Messages("agent.unique-reference.text2")</p>
 
+  @FrontendAppConfig.callingService.getString(s"$service.return-url")
   <ol class="list-number">
-    <li id="client-instruction-1">@Html(Messages("agent.unique-reference.ated.list.text1", service))</li>
+    <li id="client-instruction-1">@Html(Messages("agent.unique-reference.ated.list.text1", FrontendAppConfig.callingService.getString(s"$service.return-url"), service))</li>
     <li id="client-instruction-2">@Messages("agent.unique-reference.ated.list.text2")</li>
   </ol>
 </div>

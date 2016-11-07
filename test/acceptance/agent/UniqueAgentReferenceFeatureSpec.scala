@@ -69,9 +69,11 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
       assert(document.getElementById("view-clients-form").attr("action") === "/mandate/agent/summary/ATED")
       assert(document.getElementById("submit").text() === "View all my clients")
 
-      assert(document.getElementById("ated-service").text() === "ATED service")
-      assert(document.getElementById("ated-service").attr("href") === "#")
+      And("Return to service : Has the correct link")
+      assert(document.getElementById("ATED-service").text() === "ATED service")
+      assert(document.getElementById("ATED-service").attr("href") === "/test-url")
 
+      And("Admin : Has the correct link")
       assert(document.getElementById("admin") === null)
 
     }
