@@ -65,14 +65,14 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
       And("The admin-instruction : If you have a number of agents working on ATED ..")
       assert(document.getElementById("admin-instruction").text() === "If you have a number of agents working on ATED within your organisation you may want to filter your clients. To do this you need to add administrators to your account in Government Gateway.")
 
-      And("The submit : View all my clients")
+      And("The submit : View all my clients has the correct link")
+      assert(document.getElementById("view-clients-form").attr("action") === "/mandate/agent/summary/ATED")
       assert(document.getElementById("submit").text() === "View all my clients")
 
+      assert(document.getElementById("ated-service").text() === "ATED service")
       assert(document.getElementById("ated-service").attr("href") === "#")
 
-      assert(document.getElementById("admin").attr("href") === "#")
-
-
+      assert(document.getElementById("admin") === null)
 
     }
   }
