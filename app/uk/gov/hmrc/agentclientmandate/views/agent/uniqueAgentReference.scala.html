@@ -4,7 +4,7 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayDetails
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
-@import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig
+@import uk.gov.hmrc.agentclientmandate.utils.DelegationUtils
 
 @main_template(title = Messages("agent.unique-reference.title")) {
 
@@ -21,7 +21,9 @@
   <p id="client-instruction">@Messages("agent.unique-reference.text2")</p>
 
   <ol class="list-number">
-    <li id="client-instruction-1">@Html(Messages("agent.unique-reference.ated.list.text1", FrontendAppConfig.callingService.getString(s"$service.return-url"), service.toUpperCase))</li>
+
+    <li id="client-instruction-1">@Html(Messages("agent.unique-reference.ated.list.text1", DelegationUtils.getDelegatedServiceHomeUrl(service), service.toUpperCase))</li>
+
     <li id="client-instruction-2">@Messages("agent.unique-reference.ated.list.text2")</li>
   </ol>
 </div>

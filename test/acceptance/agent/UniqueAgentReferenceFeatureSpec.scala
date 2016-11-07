@@ -71,7 +71,7 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
 
       And("Return to service : Has the correct link")
       assert(document.getElementById("calling-service").text() === "ATED service")
-      assert(document.getElementById("calling-service").attr("href") === "/ated/welcome")
+      assert(document.getElementById("calling-service").attr("href").contains("/ated/welcome") === true)
 
     }
   }

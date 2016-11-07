@@ -48,4 +48,7 @@ object DelegationUtils extends ServicesConfig {
     getString(s"microservice.delegated-service-redirect-url.${service.toLowerCase}")
   }
 
+  def getDelegatedServiceHomeUrl(service: String): String = {
+    getString(s"microservice.delegated-service-home-url.${service.toLowerCase}")
+  }
 }
