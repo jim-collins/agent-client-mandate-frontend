@@ -29,7 +29,6 @@ trait AppConfig {
   val betaFeedbackUrl: String
   val betaFeedbackUnauthenticatedUrl: String
   val logoutUrl: String
-  val callingService: Config
 
   def nonUkUri(service: String): String
 }
@@ -37,8 +36,6 @@ trait AppConfig {
 object FrontendAppConfig extends AppConfig with ServicesConfig {
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
-
-  override lazy val callingService = ConfigFactory.load("calling-service.properties")
 
   private val contactHost = configuration.getString("contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "agent-client-mandate-frontend"
