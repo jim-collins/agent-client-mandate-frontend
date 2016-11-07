@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.agentclientmandate.config
 
+import com.typesafe.config.{Config, ConfigFactory}
 import play.api.Play.{configuration, current}
 import uk.gov.hmrc.play.config.ServicesConfig
 
