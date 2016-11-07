@@ -54,24 +54,32 @@ trait SearchMandateController extends FrontendController with Actions with Manda
       mandateRefForm.bindFromRequest.fold(
         formWithErrors => Future.successful(BadRequest(views.html.client.searchMandate(formWithErrors))),
         data => mandateService.fetchClientMandate(data.mandateRef) flatMap {
-          case Some(x) => dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
-            case Some(y) =>
-              //id and name as well as type will be updated/populated by mandate backend
-              //same applies to mandate current status as well as history
-              val clientParty = Party(
-                id = "",
-                name = "",
-                `type` = PartyType.Organisation,
-                contactDetails = ContactDetails(y.email.map(_.email).getOrElse(throw new RuntimeException("email not cached")))
-              )
-              val updatedMandate = x.copy(clientParty = Some(clientParty))
-              dataCacheService.cacheFormData[ClientCache](
-              clientFormId,
-              y.copy(mandate = Some(updatedMandate))
-            ) flatMap { cachedData =>
-              Future.successful(Redirect(routes.ReviewMandateController.view()))
+          case Some(x) => {
+            if (x.currentStatus.status != uk.gov.hmrc.agentclientmandate.models.Status.New) {
+              val errorMsg = Messages("client.search-mandate.error.mandateRef.already-used-by-mandate-service")
+              val errorForm = mandateRefForm.withError(key = "mandateRef", message = errorMsg).fill(data)
+              Future.successful(BadRequest(views.html.client.searchMandate(errorForm)))
+            } else {
+              dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
+                case Some(y) =>
+                  //id and name as well as type will be updated/populated by mandate backend
+                  //same applies to mandate current status as well as history
+                  val clientParty = Party(
+                    id = "",
+                    name = "",
+                    `type` = PartyType.Organisation,
+                    contactDetails = ContactDetails(y.email.map(_.email).getOrElse(throw new RuntimeException("email not cached")))
+                  )
+                  val updatedMandate = x.copy(clientParty = Some(clientParty))
+                  dataCacheService.cacheFormData[ClientCache](
+                    clientFormId,
+                    y.copy(mandate = Some(updatedMandate))
+                  ) flatMap { cachedData =>
+                    Future.successful(Redirect(routes.ReviewMandateController.view()))
+                  }
+                case None => Future.successful(Redirect(routes.CollectEmailController.view()))
+              }
             }
-            case None => Future.successful(Redirect(routes.CollectEmailController.view()))
           }
           case None =>
             val errorMsg = Messages("client.search-mandate.error.mandateRef.not-found-by-mandate-service")
