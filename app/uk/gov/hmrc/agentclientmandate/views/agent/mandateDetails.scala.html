@@ -24,12 +24,20 @@
     <tr>
       <td id ="email-address-label"><strong>@Messages("agent.check-client-details.your-email")</strong></td>
       <td id ="email-address">@email</td>
-      <td><a href="@routes.CollectAgentEmailController.view(service)">Edit</a></td>
+      <td>
+        <a href="@routes.CollectAgentEmailController.view(service)">@Messages("edit-link")
+           <span class="screen-reader-text">@Messages("agent.check-client-details.your-email")</span>
+        </a>
+      </td>
     </tr>
     <tr>
       <td id ="display-name-label"><strong>@Messages("agent.check-client-details.display-name")</strong></td>
       <td id ="display-name">@displayName</td>
-      <td><a href="@routes.ClientDisplayNameController.view(service)">Edit</a></td>
+      <td>
+        <a href="@routes.ClientDisplayNameController.view(service)">@Messages("edit-link")
+          <span class="screen-reader-text">@Messages("agent.check-client-details.display-name")</span>
+        </a>
+      </td>
     </tr>
   </table>
 
