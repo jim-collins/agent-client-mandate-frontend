@@ -1,6 +1,6 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
-@(clientDisplayNameForm: Form[ClientDisplayName], service: String)(implicit request: Request[_])
+@(clientDisplayNameForm: Form[ClientDisplayName], service: String, redirectUrl: Option[String])(implicit request: Request[_])
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
@@ -21,7 +21,7 @@
     @Messages("agent.client-display-name.text", service.toUpperCase)
     </p>
 
-    @form(action = routes.ClientDisplayNameController.submit(service)) {
+    @form(action = routes.ClientDisplayNameController.submit(service, redirectUrl)) {
 
         <div id="client-display-name-form" class="form-group">
 
