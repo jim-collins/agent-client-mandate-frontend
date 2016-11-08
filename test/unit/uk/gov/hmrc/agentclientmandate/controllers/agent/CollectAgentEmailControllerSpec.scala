@@ -58,7 +58,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     "redirect to login page for UNAUTHENTICATED agent" when {
 
       "agent requests(GET) for 'what is your email address' view" in {
-        viewEmailUnAuthenticatedAgent { result =>
+        viewEmailUnAuthenticatedAgent() { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -69,7 +69,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     "redirect to unauthorised page for UNAUTHORISED agent" when {
 
       "agent requests(GET) for 'what is your email address' view" in {
-        viewEmailUnAuthorisedAgent { result =>
+        viewEmailUnAuthorisedAgent() { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -115,6 +115,19 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
         submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("/mandate/agent/client-display-name/ATED"))
+          verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(1)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+    }
+
+    "redirect to 'review business details' Page" when {
+      "valid form is submitted with valid email after edit" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@aa.com")
+        submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true, Some("http://redirectUrl")) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("http://redirectUrl"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -180,41 +193,41 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     reset(mockAuthConnector)
   }
 
-  def viewEmailUnAuthenticatedAgent(test: Future[Result] => Any) {
+  def viewEmailUnAuthenticatedAgent(redirectUrl: Option[String]  = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestCollectAgentEmailController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestCollectAgentEmailController.view(service, redirectUrl).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def viewEmailUnAuthorisedAgent(test: Future[Result] => Any) {
+  def viewEmailUnAuthorisedAgent(redirectUrl: Option[String]  = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestCollectAgentEmailController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestCollectAgentEmailController.view(service,redirectUrl).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def viewEmailAuthorisedAgent(cachedData: Option[AgentEmail] = None)(test: Future[Result] => Any) {
+  def viewEmailAuthorisedAgent(cachedData: Option[AgentEmail] = None, redirectUrl: Option[String] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(formId1))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
-    val result = TestCollectAgentEmailController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestCollectAgentEmailController.view(service, redirectUrl).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def submitEmailAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded], isValidEmail: Boolean = false)(test: Future[Result] => Any) {
+  def submitEmailAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded], isValidEmail: Boolean = false,redirectUrl: Option[String]  = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
     when(mockEmailService.validate(Matchers.any())(Matchers.any())).thenReturn(Future.successful(isValidEmail))
     when(mockDataCacheService.cacheFormData[AgentEmail](Matchers.eq(formId1), Matchers.eq(agentEmail))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(agentEmail))
-    val result = TestCollectAgentEmailController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestCollectAgentEmailController.submit(service, redirectUrl).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

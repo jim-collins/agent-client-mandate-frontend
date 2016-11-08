@@ -44,28 +44,31 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
 
   def emailService: EmailService
 
-  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit user => implicit request =>
       dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) map {
-        case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(agentEmail), service))
-        case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service))
+        case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(agentEmail), service, redirectUrl))
+        case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service, redirectUrl))
       }
   }
 
-  def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def submit(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       validateConfirmEmail(agentEmailForm.bindFromRequest).fold(
-        formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service))),
+        formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service, redirectUrl))),
         data => {
           emailService.validate(data.email) flatMap { isValidEmail =>
             if (isValidEmail) {
               dataCacheService.cacheFormData[AgentEmail](agentEmailFormId, data) flatMap { cachedData =>
-                Future.successful(Redirect(routes.ClientDisplayNameController.view(service)))
+                redirectUrl match {
+                  case Some(redirect) => Future.successful(Redirect(redirect))
+                  case None => Future.successful(Redirect(routes.ClientDisplayNameController.view(service)))
+                }
               }
             } else {
               val errorMsg = Messages("agent.enter-email.error.email.invalid-by-email-service")
               val errorForm = agentEmailForm.withError(key = "agent-enter-email-form", message = errorMsg).fill(data)
-              Future.successful(BadRequest(views.html.agent.agentEnterEmail(errorForm, service)))
+              Future.successful(BadRequest(views.html.agent.agentEnterEmail(errorForm, service, redirectUrl)))
             }
           }
         }
