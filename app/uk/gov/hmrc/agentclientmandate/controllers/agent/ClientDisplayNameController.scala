@@ -43,21 +43,25 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
 
   def authConnector: AuthConnector
 
-  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit user => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) map {
-        case Some(clientDisplayname) => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm.fill(clientDisplayname), service))
-        case None => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm, service))
+        case Some(clientDisplayname) => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm.fill(clientDisplayname), service, redirectUrl))
+        case None => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm, service, redirectUrl))
       }
   }
 
-  def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+
+  def submit(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       clientDisplayNameForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.agent.clientDisplayName(formWithError, service))),
+        formWithError => Future.successful(BadRequest(views.html.agent.clientDisplayName(formWithError, service, redirectUrl))),
         data =>
           dataCacheService.cacheFormData[ClientDisplayName](clientDisplayNameFormId, data) map { cachedData =>
-            Redirect(routes.OverseasClientQuestionController.view(service))
+            redirectUrl match {
+              case Some(redirect) => Redirect(redirect)
+              case None => Redirect(routes.OverseasClientQuestionController.view(service))
+            }
           }
       )
   }
