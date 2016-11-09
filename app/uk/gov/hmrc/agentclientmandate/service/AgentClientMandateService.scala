@@ -163,6 +163,18 @@ trait AgentClientMandateService extends MandateConstants {
       }
     }
   }
+
+  def editMandate(mandate: Mandate)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandate]] = {
+    println("inside Acmservice.editMandate...........")
+    agentClientMandateConnector.editMandate(mandate).flatMap { response =>
+      response.status match {
+        case OK =>
+          val mandate = response.json.asOpt[Mandate]
+          Future.successful(mandate)
+        case status => Future.successful(None)
+      }
+    }
+  }
 }
 
 object AgentClientMandateService extends AgentClientMandateService {
