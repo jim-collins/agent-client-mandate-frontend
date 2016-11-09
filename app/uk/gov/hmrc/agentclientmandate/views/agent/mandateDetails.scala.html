@@ -18,7 +18,7 @@
   <table>
     <tr>
       <td id ="service-label"><strong>@Messages("agent.check-client-details.service")</strong></td>
-      <td id ="service">@service.toUpperCase</td>
+      <td id ="service-name">@service.toUpperCase</td>
       <td></td>
     </tr>
     <tr>
@@ -32,7 +32,7 @@
     </tr>
     <tr>
       <td id ="display-name-label"><strong>@Messages("agent.check-client-details.display-name")</strong></td>
-      <td id ="display-name">@displayName</td>
+      <td id ="clientDisplayName">@displayName</td>
       <td>
         <a href="@routes.ClientDisplayNameController.view(service)">@Messages("edit-link")
           <span class="screen-reader-text">@Messages("agent.check-client-details.display-name")</span>
