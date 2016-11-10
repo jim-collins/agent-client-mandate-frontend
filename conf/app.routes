@@ -46,6 +46,9 @@ POST    /agent/overseas-client-question/:service      uk.gov.hmrc.agentclientman
 GET     /agent/nrl-question/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.NRLQuestionController.view(service: String)
 POST    /agent/nrl-question/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.NRLQuestionController.submit(service: String)
 
+GET     /agent/paySA-question/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.PaySAQuestionController.view(service: String)
+POST    /agent/paySA-question/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.PaySAQuestionController.submit(service: String)
+
 GET     /agent/client-permission/:service       uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.view(service: String)
 POST    /agent/client-permission/:service       uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.submit(service: String)
 

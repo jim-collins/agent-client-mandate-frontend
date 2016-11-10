@@ -130,14 +130,26 @@ object EditMandateDetailsForm {
   )(EditMandateDetails.apply)(EditMandateDetails.unapply))
 }
 
-case class NRLQuestion(paysSA: Option[Boolean] = None)
+case class NRLQuestion(nrl: Option[Boolean] = None)
 
 object NRLQuestionForm {
 
   val nrlQuestionForm = Form(
     mapping(
-      "paysSA" -> optional(boolean).verifying(Messages("agent.nrl-question.paysSA.not-selected.error"), a => a.isDefined)
+      "nrl" -> optional(boolean).verifying(Messages("agent.nrl-question.nrl.not-selected.error"), a => a.isDefined)
     )(NRLQuestion.apply)(NRLQuestion.unapply)
+  )
+
+}
+
+case class PaySAQuestion(paySA: Option[Boolean] = None)
+
+object PaySAQuestion {
+
+  val paySAQuestionForm = Form(
+    mapping(
+      "paySA" -> optional(boolean).verifying(Messages("agent.paySA-question.paySA.not-selected.error"), a => a.isDefined)
+    )(PaySAQuestion.apply)(PaySAQuestion.unapply)
   )
 
 }

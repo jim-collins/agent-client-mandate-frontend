@@ -1,0 +1,42 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+
+@(paySAQuestionForm: Form[PaySAQuestion], service: String)(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@implicitFormInstance = @{ Some(paySAQuestionForm) }
+
+@main_template(title = Messages("agent.paySA-question.title")) {
+
+@mandateErrorSummary(paySAQuestionForm, "agent.paySA-question.error.general")
+
+<div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
+<h1 class="heading-xlarge" id="header">
+    @Messages("agent.paySA-question.header")
+</h1>
+
+@form(action = routes.PaySAQuestionController.submit(service)) {
+
+<div class="form-group" id="paySA">
+    @mandateInputRadioGroup(
+    paySAQuestionForm("paySA"),
+    Seq("true" -> Messages("radio-yes"),
+    "false" -> Messages("radio-no")),
+    '_groupClass -> "inline",
+    '_legend -> Messages("agent.paySA-question.header"),
+    '_legendClass -> "screen-reader-text",
+    '_labelClass -> "block-label",
+    '_labelAfter -> true
+    )
+</div>
+
+<div class="form-group">
+    <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+</div>
+
+}
+
+}

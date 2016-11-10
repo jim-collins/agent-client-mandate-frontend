@@ -18,16 +18,12 @@
   @Messages("agent.nrl-question.header")
 </h1>
 
-  <div class ="form-group" id="non-resident-text">
-    <span class ="lede">@Messages("agent.nrl-question.text")</span>
-  </div>
-
 
   @form(action = routes.NRLQuestionController.submit(service)) {
 
-    <div class="form-group" id="paysSA">
+    <div class="form-group" id="nrl">
       @mandateInputRadioGroup(
-      nrlQuestionForm("paysSA"),
+      nrlQuestionForm("nrl"),
       Seq("true" -> Messages("radio-yes"),
       "false" -> Messages("radio-no")),
       '_groupClass -> "inline",

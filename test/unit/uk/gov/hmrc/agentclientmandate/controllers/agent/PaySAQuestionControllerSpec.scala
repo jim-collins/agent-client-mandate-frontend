@@ -26,26 +26,26 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.controllers.agent.NRLQuestionController
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
+import uk.gov.hmrc.agentclientmandate.controllers.agent.PaySAQuestionController
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 
 import scala.concurrent.Future
 
-class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with BeforeAndAfterEach with MockitoSugar {
+class PaySAQuestionControllerSpec extends PlaySpec with OneServerPerSuite with BeforeAndAfterEach with MockitoSugar {
 
-  "NRLQuestionController" must {
+  "PaySAQuestionController" must {
 
     "not return NOT_FOUND at route " when {
 
-      "GET /mandate/agent/overseas-client-question/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/nrl-question/$service")).get
+      "GET /mandate/agent/paySA-question/:service" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/paySA-question/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
-      "POST /mandate/agent/overseas-client-question/:service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/nrl-question/$service")).get
+      "POST /mandate/agent/paySA-question/:service" in {
+        val result = route(FakeRequest(POST, s"/mandate/agent/paySA-question/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -69,15 +69,15 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
       }
     }
 
-    "return 'nrl question' view for AUTHORISED agent" when {
+    "return 'paySA question' view for AUTHORISED agent" when {
       "agent requests(GET) for 'nrl question' view" in {
         viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Is your client a non-resident landlord?")
-          document.getElementById("header").text() must include("Is your client a non-resident landlord?")
+          document.title() must be("Does your client pay tax in the UK through self assessment?")
+          document.getElementById("header").text() must include("Does your client pay tax in the UK through self assessment?")
           document.getElementById("pre-header").text() must be("Add a client")
-          document.getElementById("nrl_legend").text() must be("Is your client a non-resident landlord?")
+          document.getElementById("paySA_legend").text() must be("Does your client pay tax in the UK through self assessment?")
           document.getElementById("submit").text() must be("Continue")
         }
       }
@@ -85,17 +85,17 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
 
     "redirect agent to 'mandate details' page" when {
       "valid form is submitted and YES is selected as client pays self-assessment" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("nrl" -> "true")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("paySA" -> "true")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/paySA-question/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/details/$service"))
         }
       }
     }
 
     "redirect agent to 'client permission' page" when {
       "valid form is submitted and NO is selected as client pays self-assessment" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("nrl" -> "false")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("paySA" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some(s"/mandate/agent/client-permission/$service"))
@@ -105,12 +105,12 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
 
     "returns BAD_REQUEST" when {
       "invalid form is submitted" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("nrl" -> "")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("paySA" -> "")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the non-resident landlord question.")
-          document.getElementsByClass("error-notification").text() must include("You must answer non-resident landlord question")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the do you pay self assessment question.")
+          document.getElementsByClass("error-notification").text() must include("You must answer the self assessment question")
         }
       }
     }
@@ -120,7 +120,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
   val mockAuthConnector = mock[AuthConnector]
   val service = "ATED"
 
-  object TestNRLQuestionController extends NRLQuestionController {
+  object TestPaySAQuestionController extends PaySAQuestionController {
     override val authConnector = mockAuthConnector
   }
 
@@ -132,7 +132,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestNRLQuestionController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestPaySAQuestionController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -141,7 +141,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestNRLQuestionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestPaySAQuestionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -150,7 +150,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestNRLQuestionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestPaySAQuestionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -159,7 +159,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestNRLQuestionController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestPaySAQuestionController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 
