@@ -18,32 +18,34 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.NRLQuestionForm._
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.PaySAQuestion._
 import uk.gov.hmrc.agentclientmandate.views
+import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-object NRLQuestionController extends NRLQuestionController {
+
+
+object PaySAQuestionController extends PaySAQuestionController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
   // $COVERAGE-ON$
 }
 
-trait NRLQuestionController extends FrontendController with Actions {
+trait PaySAQuestionController extends FrontendController with Actions {
 
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit user => implicit request =>
-      Ok(views.html.agent.nrl_question(nrlQuestionForm, service))
+      Ok(views.html.agent.paySAQuestion(paySAQuestionForm, service))
   }
 
 
   def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
     implicit user => implicit request =>
-      nrlQuestionForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(views.html.agent.nrl_question(formWithErrors, service)),
+      paySAQuestionForm.bindFromRequest.fold(
+        formWithErrors => BadRequest(views.html.agent.paySAQuestion(formWithErrors, service)),
         data => {
-          if (data.nrl.getOrElse(false)) Redirect(routes.PaySAQuestionController.view(service))
+          if (data.paySA.getOrElse(false)) Redirect(routes.MandateDetailsController.view(service))
           else Redirect(routes.ClientPermissionController.view(service))
         }
       )
