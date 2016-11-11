@@ -162,7 +162,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference question")
-          document.getElementsByClass("error-notification").text() must include("Agent reference cannot be more than 10 characters.")
+          document.getElementsByClass("error-notification").text() must include("Agent reference cannot be more than 8 characters.")
           verify(mockMandateService, times(0)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -170,7 +170,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       }
 
       "invalid agent reference is passed" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "invalidId")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "A1B2C3D4")
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
@@ -183,7 +183,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       }
 
       "agent reference is already used" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "invalidId")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> "A1B2C3D4")
         val returnCache = ClientCache(mandate = Some(mandate1))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = None, mandate = Some(mandate1), returnCache = returnCache) { result =>
           status(result) must be(BAD_REQUEST)
