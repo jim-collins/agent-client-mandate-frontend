@@ -9,6 +9,8 @@
 
 @main_template(title = Messages("agent.edit-mandate-details.title")) {
 
+  @mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")
+
   <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header", service)</div>
   <h1 class="heading-xlarge" id="header">
     @Messages("agent.edit-mandate-details.header", service)
@@ -16,7 +18,7 @@
 
   <h2 id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</h2>
 
-  @form(action = routes.EditClientController.submit(service, mandateId)) {
+  @form(action = routes.EditMandateDetailsController.submit(service, mandateId)) {
   <div class="form-group">
 
     <div class="form-field">

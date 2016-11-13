@@ -19,11 +19,9 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 import play.api.i18n.Messages
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
-import uk.gov.hmrc.agentclientmandate.controllers.client.routes
-import uk.gov.hmrc.agentclientmandate.models.{ContactDetails, Party}
+import uk.gov.hmrc.agentclientmandate.models.ContactDetails
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, EmailService}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmailForm._
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{EditMandateDetails, YesNoQuestionForm}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.EditMandateDetails
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.EditMandateDetailsForm._
@@ -31,7 +29,7 @@ import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.EditMandateDetailsForm.
 import scala.concurrent.Future
 import uk.gov.hmrc.play.frontend.auth.{Actions, Delegator}
 
-trait EditClientController extends FrontendController with Actions {
+trait EditMandateDetailsController extends FrontendController with Actions {
 
   def acmService: AgentClientMandateService
 
@@ -60,10 +58,8 @@ trait EditClientController extends FrontendController with Actions {
                 acmService.editMandate(m.copy(clientDisplayName = editMandate.displayName,
                   clientParty = Some(clientParty))) map {
                   case Some(updatedMandate) =>
-                    val editedMandate = EditMandateDetails(displayName = updatedMandate.clientDisplayName,
-                      email = updatedMandate.clientParty.fold(throw new RuntimeException("No client found!"))(_.contactDetails.email))
                     Redirect(routes.AgentSummaryController.view(service))
-                  case None => Redirect(routes.EditClientController.view(service, mandateId))
+                  case None => Redirect(routes.EditMandateDetailsController.view(service, mandateId))
                 }
               case None => throw new RuntimeException("No Mandate Found!")
             }
@@ -78,7 +74,7 @@ trait EditClientController extends FrontendController with Actions {
   }
 }
 
-object EditClientController extends EditClientController {
+object EditMandateDetailsController extends EditMandateDetailsController {
   // $COVERAGE-OFF$
   val authConnector = FrontendAuthConnector
   val acmService = AgentClientMandateService

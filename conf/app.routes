@@ -69,5 +69,5 @@ GET     /agent/remove-client/:service/:mandateId             uk.gov.hmrc.agentcl
 POST    /agent/remove-client/:service/:mandateId/:clientName          uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.confirm(service: String, mandateId: String, clientName: String)
 GET     /agent/remove-client/showConfirmation/:service/:clientName   uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.showConfirmation(service: String, clientName: String)
 
-GET     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditClientController.view(service: String, mandateId: String)
-POST     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditClientController.submit(service: String, mandateId: String)
+GET     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.view(service: String, mandateId: String)
+POST     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.submit(service: String, mandateId: String)
