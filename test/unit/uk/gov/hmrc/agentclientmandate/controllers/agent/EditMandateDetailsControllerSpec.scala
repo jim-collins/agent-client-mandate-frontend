@@ -65,15 +65,6 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
       }
     }
 
-    "throw No client found exception" when {
-      "clientParty does exist for the mandate fetched" in {
-        viewWithAuthorisedAgent(Some(mandate1)) { result =>
-          val thrown = the[RuntimeException] thrownBy await(result)
-          thrown.getMessage must include("No client found!")
-        }
-      }
-    }
-
     "throw No Mandate returned exception" when {
       "clientParty does exist for the mandate fetched" in {
         viewWithAuthorisedAgent() { result =>
@@ -109,16 +100,6 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         submitEditMandateDetails(fakeRequest, true) { result =>
           val thrown = the[RuntimeException] thrownBy await(result)
           thrown.getMessage must include("No Mandate Found!")
-        }
-      }
-    }
-
-    "throw No client found exception" when {
-      "valid form is submitted, valid mandate is fetched but does not have a client party" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "disp-name", "email" -> "aa@mail.com")
-        submitEditMandateDetails(fakeRequest, true, getMandate = Some(mandate1)) { result =>
-          val thrown = the[RuntimeException] thrownBy await(result)
-          thrown.getMessage must include("No client party found!")
         }
       }
     }

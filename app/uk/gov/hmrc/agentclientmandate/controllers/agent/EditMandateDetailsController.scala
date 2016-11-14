@@ -40,7 +40,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
       acmService.fetchClientMandate(mandateId).map {
         case Some(mandate) =>
           val editMandateDetails = EditMandateDetails(displayName = mandate.clientDisplayName,
-            email = mandate.clientParty.fold(throw new RuntimeException("No client found!"))(_.contactDetails.email))
+            email = mandate.agentParty.contactDetails.email)
           Ok(views.html.agent.editClient(editMandateDetailsForm.fill(editMandateDetails), service, mandateId))
         case _ => throw new RuntimeException("No Mandate returned")
       }
@@ -54,9 +54,9 @@ trait EditMandateDetailsController extends FrontendController with Actions {
           if (isValidEmail) {
             acmService.fetchClientMandate(mandateId) flatMap {
               case Some(m) =>
-                val clientParty = m.clientParty.fold(throw new RuntimeException("No client party found!"))(_.copy(contactDetails = ContactDetails(email = editMandate.email)))
+                val agentParty = m.agentParty.copy(contactDetails = ContactDetails(email = editMandate.email))
                 acmService.editMandate(m.copy(clientDisplayName = editMandate.displayName,
-                  clientParty = Some(clientParty))) map {
+                  agentParty = agentParty)) map {
                   case Some(updatedMandate) =>
                     Redirect(routes.AgentSummaryController.view(service))
                   case None => Redirect(routes.EditMandateDetailsController.view(service, mandateId))

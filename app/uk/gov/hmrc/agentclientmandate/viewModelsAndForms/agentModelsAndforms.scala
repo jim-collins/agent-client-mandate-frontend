@@ -120,11 +120,12 @@ object EditMandateDetailsForm {
   val length40 = 40
   val length0 = 0
   val length105 = 105
+  val length99 = 99
 
   val editMandateDetailsForm = Form(mapping(
   "displayName" -> text
     .verifying(Messages("agent.edit-client.error.dispName"), x => x.length > length0)
-    .verifying(Messages("agent.edit-client.error.dispName.length"), x => x.isEmpty || (x.nonEmpty && x.length <= length105)),
+    .verifying(Messages("agent.edit-client.error.dispName.length"), x => x.isEmpty || (x.nonEmpty && x.length <= length99)),
 
    "email" -> text.verifying(Messages("agent.edit-client.error.email"), email => email.nonEmpty)
   )(EditMandateDetails.apply)(EditMandateDetails.unapply))

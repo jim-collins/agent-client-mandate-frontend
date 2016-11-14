@@ -98,7 +98,11 @@
             <tr id="pending-client-data-@index">
               <td>@pending.clientDisplayName</td>
               @if(statusCantBeActioned(pending.currentStatus.status)){
-                <td></td>
+              <td id="edit-pending-client">
+                <a id="edit-pending-client-link-@index" href="@routes.EditMandateDetailsController.view(service, pending.id)">
+                  @Messages("Edit") <span class="screen-reader-text">@pending.clientDisplayName</span>
+                </a>
+              </td>
               } else {
                 <td id="reject-client">
                   <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)">
