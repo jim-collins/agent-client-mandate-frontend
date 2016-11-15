@@ -105,7 +105,7 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       And("The Clients table - has the correct data and View link")
       assert(document.getElementById("remove-client-link-0").text === "Remove client display name 2")
       assert(document.getElementById("client-name-0").text === "client display name 2")
-      assert(document.getElementById("client-view-0").text === "View details for client display name 2")
+      assert(document.getElementById("client-link-0").text === "View details for client display name 2")
       
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
