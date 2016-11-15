@@ -9,7 +9,11 @@
 
 @(service: String, mandatesList: Option[Mandates], agentDetails: AgentDetails)(implicit request: Request[_])
 
-@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails))){
+@pageScripts = {
+<script type="text/javascript" src='@controllers.routes.Assets.at("javascript/agent-summary.js")'></script>
+}
+
+@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), scriptElem = Some(pageScripts)){
 
 <div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
   <h1 class="heading-xlarge" id="header">
@@ -73,10 +77,10 @@
               <td class="tdRight">
                 <a id="client-link-@index"
                    href='@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))'
-                >
-                  <button type="submit" id="client-view-@index">@Messages("client.summary.client-view")
+                   class='button'
+                   onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))")'
+                >@Messages("client.summary.client-view")
                     <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
-                  </button>
                 </a>
               </td>
             </tr>
@@ -129,6 +133,7 @@
     <h3 class="heading-medium">@Messages("client.summary.no-clients")</h3>
 
     <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-btn" class="button">@Messages("client.summary.add-client")</a>
+
   }
 
 }
