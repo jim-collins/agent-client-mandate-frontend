@@ -39,7 +39,12 @@ i.e.
     ated = "http://localhost:9916/ated/welcome"
   }
 ```
-These also need to be updated in app-config-prod
+
+| Property | Description |
+|------|-------------------|-------------|
+| ```/delegated-service-redirect-url``` | The page that the agent will return to when they click on a client after it's accepted the mandate |
+| ```/delegated-service-home-url``` | After the agent has created a mandated they're told to get the client to visit this page to log in and accept it |
+
 
 
 ### License
