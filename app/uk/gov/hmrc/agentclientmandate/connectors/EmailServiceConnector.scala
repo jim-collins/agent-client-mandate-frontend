@@ -36,7 +36,7 @@ trait EmailServiceConnector extends ServicesConfig with RawResponseReads {
 
   def validate(email: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val getUrl = s"$serviceUrl/validate-email-address"
-    Logger.info(s"[EmailServiceConnector][validate] - getUrl = $getUrl & email = $email")
+    Logger.debug(s"[EmailServiceConnector][validate] - getUrl = $getUrl & email = $email")
     http.GET[HttpResponse](getUrl, queryParams = Seq("email" -> email))
   }
 
