@@ -17,16 +17,16 @@ This service creates a relationship between an agent and a client for a given se
 | ```/mandate/client/email``` | GET | A link to a page for the client to enter their email and then the mandate reference so that they can accept it |
 
 
-## Adding a new service
+# Adding a new service
 
-# First service to be added after ATED
+## First service to be added after ATED
 Note: If this is the first service to be added after ATED then the feature switch at MandateFeatureSwitches.singleService will have to be removed.
 This feature switch causes the ```/mandate/agent/service ``` to be skipped and go straight to the ATED summary page.
 
-# Adding a new service to the view
+## Adding a new service to the view
 Update the page selectService.scala.html to add any new services that the agent can choose from.
 
-# Update the application.conf to add links back to the new service
+## Update the application.conf to add links back to the new service
 Ensure that you update application.conf with the links back to the dev version of your service.
 i.e.
   delegated-service-redirect-url {
