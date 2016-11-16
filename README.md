@@ -42,8 +42,8 @@ i.e.
 
 | Property | Description |
 |------|-------------------|-------------|
-| ```/delegated-service-redirect-url``` | The page that the agent will return to when they click on a client after it's accepted the mandate |
-| ```/delegated-service-home-url``` | After the agent has created a mandated they're told to get the client to visit this page to log in and accept it |
+| delegated-service-redirect-url | The page that the agent will return to when they click on a client after it's accepted the mandate |
+| delegated-service-home-url | After the agent has created a mandated they're told to get the client to visit this page to log in and accept it |
 
 
 
