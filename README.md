@@ -29,6 +29,8 @@ Update the page selectService.scala.html to add any new services that the agent 
 ## Update the application.conf to add links back to the new service
 Ensure that you update application.conf with the links back to the dev version of your service.
 i.e.
+
+```
   delegated-service-redirect-url {
     ated = "http://localhost:9916/ated/account-summary"
   }
@@ -36,7 +38,7 @@ i.e.
   delegated-service-home-url {
     ated = "http://localhost:9916/ated/welcome"
   }
-
+```
 These also need to be updated in app-config-prod
 
 
