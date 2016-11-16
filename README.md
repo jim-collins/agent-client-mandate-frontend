@@ -9,12 +9,12 @@ This service creates a relationship between an agent and a client for a given se
 
 ## Useful Pages for external services to link to
 
-| PATH | Supported Methods | Description |
+| PATH  | Page Description |
 |------|-------------------|-------------|
-| ```/mandate/agent/service ``` | GET | Shows a list of services that the agent may have clients for. If there is only one then it should forward to the summary page |
-| ```/mandate/agent/summary/:service``` | GET | Shows any pending or current clients for a given service. Also has a link to create a mandate for a new client |
-| ```/mandate/email/:service``` | GET | Show the page to allow an agent to create a mandate for a new client |
-| ```/mandate/client/email``` | GET | A link to a page for the client to enter their email and then the mandate reference so that they can accept it |
+| ```/mandate/agent/service ``` | Shows a list of services that the agent can create mandates for |
+| ```/mandate/agent/summary/:service``` | Shows any pending or current clients for a given service. Also has a link to create a mandate for a new client |
+| ```/mandate/email/:service``` | Starts the process of creating a mandate for a new client |
+| ```/mandate/client/email``` | Starts the process for the client to accept a mandate |
 
 
 # Adding a new service
