@@ -5,7 +5,7 @@
 @import uk.gov.hmrc.agentclientmandate.utils.DateUtils
 @import org.joda.time.DateTime
 
-@main_template(title = Messages("agent.remove-client-confirmation.title")) {
+@main_template(title = Messages("agent.remove-client-confirmation.title"), delegatedService = Some(service)) {
 
     <div class="transaction-banner--complete" id="banner">
         <h1 id="banner-text"> @Messages("agent.remove-client-confirmation.banner-text", clientName) </h1>

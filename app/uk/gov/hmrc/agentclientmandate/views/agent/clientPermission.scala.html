@@ -13,7 +13,7 @@
   <script type="text/javascript" src='@controllers.routes.Assets.at("javascript/client-permission.js")'></script>
 }
 
-@main_template(title = Messages("agent.client-permission.title"), scriptElem = Some(pageScripts)) {
+@main_template(title = Messages("agent.client-permission.title"), scriptElem = Some(pageScripts), delegatedService = Some(service)) {
 
 @mandateErrorSummary(clientPermissionForm, "agent.client-permission.error.general")
 

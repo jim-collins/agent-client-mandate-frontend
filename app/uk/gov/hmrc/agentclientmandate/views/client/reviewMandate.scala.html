@@ -8,7 +8,7 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@main_template(title = Messages("client.review-agent.title")) {
+@main_template(title = Messages("client.review-agent.title"), delegatedService = Some(mandate.subscription.service.id)) {
 
 
 <div class="heading-sub" id="pre-heading">@Messages("client.review-agent.preheader")</div>

@@ -10,7 +10,7 @@
 @import org.joda.time.format.DateTimeFormat
 
 
-@main_template(title = Messages("client.agent-confirmation.title")) {
+@main_template(title = Messages("client.agent-confirmation.title"), delegatedService = Some(service)) {
 
   <div class="transaction-banner--complete" id="banner">
     <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'>@Messages("client.agent-confirmation.banner-text", agentName)</h1>

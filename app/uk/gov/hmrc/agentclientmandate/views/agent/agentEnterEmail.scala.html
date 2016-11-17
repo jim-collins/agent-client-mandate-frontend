@@ -8,7 +8,7 @@
 
 @implicitFormInstance = @{ Some(agentEmailForm) }
 
-@main_template(title = Messages("agent.enter-email.title")) {
+@main_template(title = Messages("agent.enter-email.title"), delegatedService = Some(service)) {
 
 @mandateErrorSummary(agentEmailForm, "agent.enter-email.error.general")
 

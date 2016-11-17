@@ -74,6 +74,9 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
 
       And("The Add Client Link - should not exist")
       assert(document.getElementById("add-client-link") === null)
+
+      And("The sign out link should return to ATED")
+      assert(document.getElementById("logOutNavHref").attr("href") === ("http://localhost:9916/ated/logout"))
     }
 
     scenario("agent has visited the page and has clients but no pending clients") {

@@ -6,7 +6,7 @@
 
 @(service: String, rejectClientForm: Form[YesNoQuestion], clientName: String, mandateId: String)(implicit request: Request[_])
 
-@main_template(title = Messages("agent.reject-client.title", clientName)) {
+@main_template(title = Messages("agent.reject-client.title", clientName), delegatedService = Some(service)) {
 
 @mandateErrorSummary(rejectClientForm, "yes-no.error.general", Some("agent.reject-client.error"))
 

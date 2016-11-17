@@ -9,7 +9,7 @@
 
 @implicitFormInstance = @{ Some(nrlQuestionForm) }
 
-@main_template(title = Messages("agent.nrl-question.title")) {
+@main_template(title = Messages("agent.nrl-question.title"), delegatedService = Some(service)) {
 
 @mandateErrorSummary(nrlQuestionForm, "agent.nrl-question.error.general")
 

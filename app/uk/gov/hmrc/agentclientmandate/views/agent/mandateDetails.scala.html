@@ -8,7 +8,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 
 
-@main_template(title = Messages("agent.check-client-details.header")) {
+@main_template(title = Messages("agent.check-client-details.header"), delegatedService = Some(service)) {
 
 <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
   <h1 class="heading-xlarge" id="header">

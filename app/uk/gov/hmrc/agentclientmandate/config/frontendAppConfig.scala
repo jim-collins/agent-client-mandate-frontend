@@ -29,6 +29,7 @@ trait AppConfig {
   val betaFeedbackUnauthenticatedUrl: String
   val logoutUrl: String
 
+  def serviceSignOutUrl(service: Option[String]): String
   def nonUkUri(service: String): String
 }
 
@@ -45,9 +46,15 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   override lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback"
   override lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
-  override val logoutUrl = s"""${configuration.getString("microservice.logout.url").getOrElse("/gg/sign-out")}"""
+  override lazy val logoutUrl = s"""${configuration.getString("microservice.logout.url").getOrElse("/gg/sign-out")}"""
 
   override def nonUkUri(service: String): String = s"""${configuration.getString("microservice.services.business-customer-frontend.nonUK-uri").
     getOrElse("")}/${service.toLowerCase}"""
 
+  override def serviceSignOutUrl(service: Option[String]): String = {
+    service match {
+      case Some(delegatedService) if (!delegatedService.isEmpty()) => configuration.getString(s"microservice.delegated-service-sign-out-url.${delegatedService.toLowerCase}").getOrElse(logoutUrl)
+      case _ => logoutUrl
+    }
+  }
 }
