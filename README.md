@@ -1,12 +1,50 @@
-# agent-client-mandate-frontend
+agent-client-mandate-frontend
+=============================
+
+This service creates a relationship between an agent and a client for a given service. Once the mandate has been agreed it's stored in a locally and ensures that the agent can work on behalf of the client for that service.
+
 
 [![Build Status](https://travis-ci.org/hmrc/agent-client-mandate-frontend.svg)](https://travis-ci.org/hmrc/agent-client-mandate-frontend) [ ![Download](https://api.bintray.com/packages/hmrc/releases/agent-client-mandate-frontend/images/download.svg) ](https://bintray.com/hmrc/releases/agent-client-mandate-frontend/_latestVersion)
 
-This is a placeholder README.md for a new repository
+
+## Useful Pages for external services to link to
+
+| PATH  | Page Description |
+|------|-------------------|-------------|
+| ```/mandate/agent/service ``` | Shows a list of services that the agent can create mandates for |
+| ```/mandate/agent/summary/:service``` | Shows any pending or current clients for a given service. Also has a link to create a mandate for a new client |
+| ```/mandate/email/:service``` | Starts the process of creating a mandate for a new client |
+| ```/mandate/client/email``` | Starts the process for the client to accept a mandate |
+
 
 # Adding a new service
 
-Ensure that you update application.conf with the links back to the dev version of your service. The prod version needs to be added to app
+## First service to be added after ATED
+Note: If this is the first service to be added after ATED then the feature switch at MandateFeatureSwitches.singleService will have to be removed.
+This feature switch causes the ```/mandate/agent/service ``` to be skipped and go straight to the ATED summary page.
+
+## Adding a new service to the view
+Update the page selectService.scala.html to add any new services that the agent can choose from.
+
+## Update the application.conf to add links back to the new service
+Ensure that you update application.conf with the links back to the dev version of your service.
+i.e.
+
+```
+  delegated-service-redirect-url {
+    ated = "http://localhost:9916/ated/account-summary"
+  }
+
+  delegated-service-home-url {
+    ated = "http://localhost:9916/ated/welcome"
+  }
+```
+
+| Property | Description |
+|------|-------------------|-------------|
+| delegated-service-redirect-url | The page that the agent will return to when they click on a client after it's accepted the mandate |
+| delegated-service-home-url | After the agent has created a mandated they're told to get the client to visit this page to log in and accept it |
+
 
 
 ### License
