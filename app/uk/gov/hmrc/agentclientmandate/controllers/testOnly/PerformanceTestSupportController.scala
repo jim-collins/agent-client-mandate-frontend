@@ -27,6 +27,7 @@ trait PerformanceTestSupportController extends FrontendController with Actions {
 
   def agentClientMandateConnector: AgentClientMandateConnector
 
+  // $COVERAGE-OFF$
   def createMandate() = UnauthorisedAction.async { implicit request =>
     Logger.debug("inserting test mandate")
      agentClientMandateConnector.testOnlyCreateMandate(request.body.asJson.get.as[Mandate]).map { x =>
@@ -34,6 +35,7 @@ trait PerformanceTestSupportController extends FrontendController with Actions {
        Ok
      }
   }
+  // $COVERAGE-ON$
 }
 
 object PerformanceTestSupportController extends PerformanceTestSupportController {
