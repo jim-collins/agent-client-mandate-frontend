@@ -7,7 +7,7 @@
 
 @(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String)(implicit request: Request[_])
 
-@main_template(title = Messages("agent.edit-mandate-details.title")) {
+@main_template(title = Messages("agent.edit-mandate-details.title"), delegatedService = Some(service)) {
 
   @mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")
 

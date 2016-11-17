@@ -5,7 +5,7 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 
-@main_template(title = Messages("agent.reject-client-confirmation.title")) {
+@main_template(title = Messages("agent.reject-client-confirmation.title"), delegatedService = Some(service)) {
 
     <div class="transaction-banner--complete" id="banner">
         <h1 id="banner-text"> @Messages("agent.reject-client-confirmation.banner-text", clientName) </h1>

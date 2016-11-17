@@ -6,7 +6,7 @@
 
 @(removeClientForm: Form[YesNoQuestion], service: String, clientName: String, mandateId: String)(implicit request: Request[_])
 
-@main_template(title = Messages("agent.remove-client.header", clientName)) {
+@main_template(title = Messages("agent.remove-client.header", clientName), delegatedService = Some(service)) {
 
 @mandateErrorSummary(removeClientForm, "yes-no.error.general", Some("agent.remove-client.error"))
 

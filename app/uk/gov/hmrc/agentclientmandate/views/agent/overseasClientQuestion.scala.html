@@ -9,7 +9,7 @@
 
 @implicitFormInstance = @{ Some(overseasClientQuestionForm) }
 
-@main_template(title = Messages("agent.overseas-client-question.title")) {
+@main_template(title = Messages("agent.overseas-client-question.title"), delegatedService = Some(service)) {
 
   @mandateErrorSummary(overseasClientQuestionForm, "agent.overseas-client-question.error.general")
 
