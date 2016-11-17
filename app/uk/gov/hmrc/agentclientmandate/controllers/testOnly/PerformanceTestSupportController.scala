@@ -39,6 +39,8 @@ trait PerformanceTestSupportController extends FrontendController with Actions {
 }
 
 object PerformanceTestSupportController extends PerformanceTestSupportController {
+  // $COVERAGE-OFF$
   val agentClientMandateConnector = AgentClientMandateConnector
   val authConnector = FrontendAuthConnector
+  // $COVERAGE-ON$
 }
