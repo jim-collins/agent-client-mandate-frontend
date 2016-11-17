@@ -14,7 +14,7 @@
 
 @implicitFormInstance = @{ Some(declarationForm) }
 
-@main_template(title = Messages("Declaration and consent"), scriptElem = Some(pageScripts)) {
+@main_template(title = Messages("Declaration and consent"), scriptElem = Some(pageScripts), delegatedService = Some(mandate.subscription.service.id)) {
 
   @mandateErrorSummary(declarationForm, "client.declaration.error.general")
 
