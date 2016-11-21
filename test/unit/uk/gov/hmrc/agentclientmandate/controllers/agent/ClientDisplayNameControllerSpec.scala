@@ -142,6 +142,20 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
       }
     }
 
+    "retrieve client display name stored in session" when {
+      "return ok" in {
+        retrieveClientDisplayNameFromSessionAuthorisedAgent(Some(ClientDisplayName("client display name"))) { result =>
+          status(result) must be(OK)
+        }
+      }
+
+      "return server error" in {
+        retrieveClientDisplayNameFromSessionAuthorisedAgent() { result =>
+          status(result) must be(INTERNAL_SERVER_ERROR)
+        }
+      }
+    }
+
   }
 
 
@@ -192,6 +206,16 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
     when(mockDataCacheService.cacheFormData[ClientDisplayName](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(clientDisplayName))
     val result = TestClientDisplayNameController.submit(service, redirectUrl).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    test(result)
+  }
+
+  def retrieveClientDisplayNameFromSessionAuthorisedAgent(cachedData:  Option[ClientDisplayName] = None)(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
+    val result = TestClientDisplayNameController.getClientDisplayName(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

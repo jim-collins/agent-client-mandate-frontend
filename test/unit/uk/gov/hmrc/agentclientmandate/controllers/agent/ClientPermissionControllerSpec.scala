@@ -27,6 +27,7 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.agentclientmandate.connectors.{AtedSubscriptionFrontendConnector, BusinessCustomerFrontendConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
@@ -127,20 +128,20 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
   }
 
   val mockAuthConnector = mock[AuthConnector]
-  val mockAtedSubDataCache = mock[DataCacheService]
-  val mockBcDataCache = mock[DataCacheService]
+  val mockBusinessCustomerConnector = mock[BusinessCustomerFrontendConnector]
+  val mockAtedSubscriptionConnector = mock[AtedSubscriptionFrontendConnector]
   val service = "ATED"
 
   object TestClientPermissionController extends ClientPermissionController {
     override val authConnector = mockAuthConnector
-    override val atedSubscriptionDataCache = mockAtedSubDataCache
-    override val businessCustomerDataCache = mockBcDataCache
+    override val businessCustomerConnector = mockBusinessCustomerConnector
+    override val atedSubscriptionConnector = mockAtedSubscriptionConnector
   }
 
   override def beforeEach(): Unit = {
     reset(mockAuthConnector)
-    reset(mockAtedSubDataCache)
-    reset(mockBcDataCache)
+    reset(mockBusinessCustomerConnector)
+    reset(mockAtedSubscriptionConnector)
   }
 
   def viewWithUnAuthenticatedAgent(test: Future[Result] => Any) {
@@ -164,9 +165,9 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    when(mockBusinessCustomerConnector.clearCache(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(HttpResponse(200)))
+    when(mockAtedSubscriptionConnector.clearCache(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(HttpResponse(200)))
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    when(mockBcDataCache.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
-    when(mockAtedSubDataCache.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
     val result = TestClientPermissionController.view(serviceUsed).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }

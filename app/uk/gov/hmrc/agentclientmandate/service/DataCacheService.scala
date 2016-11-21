@@ -17,7 +17,7 @@
 package uk.gov.hmrc.agentclientmandate.service
 
 import play.api.libs.json.Format
-import uk.gov.hmrc.agentclientmandate.config.{AgentClientMandateSessionCache, AtedSubscriptionSessionCache, BusinessCustomerSessionCache}
+import uk.gov.hmrc.agentclientmandate.config.AgentClientMandateSessionCache
 import uk.gov.hmrc.http.cache.client.SessionCache
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 
@@ -45,17 +45,5 @@ trait DataCacheService {
 object DataCacheService extends DataCacheService {
   // $COVERAGE-OFF$
   val sessionCache: SessionCache = AgentClientMandateSessionCache
-  // $COVERAGE-ON$
-}
-
-object BusinessCustomerDataCacheService extends DataCacheService {
-  // $COVERAGE-OFF$
-  val sessionCache: SessionCache = BusinessCustomerSessionCache
-  // $COVERAGE-ON$
-}
-
-object AtedSubscriptionDataCacheService extends DataCacheService {
-  // $COVERAGE-OFF$
-  val sessionCache: SessionCache = AtedSubscriptionSessionCache
   // $COVERAGE-ON$
 }

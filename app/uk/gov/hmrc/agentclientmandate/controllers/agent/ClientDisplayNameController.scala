@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
+import play.api.Logger
+import play.api.libs.json.Json
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
@@ -64,5 +66,16 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
             }
           }
       )
+  }
+
+  def getClientDisplayName(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+    implicit authContext => implicit request =>
+      dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId).map {
+        case Some(displayName) => Logger.info(s"client display name retrieved for $service")
+          Ok(Json.toJson(displayName))
+        case _ =>
+          Logger.error(s"could not retrieve client display name for $service")
+          InternalServerError
+      }
   }
 }

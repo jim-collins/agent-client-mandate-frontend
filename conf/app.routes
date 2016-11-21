@@ -36,9 +36,11 @@ POST    /agent/service             uk.gov.hmrc.agentclientmandate.controllers.ag
 
 GET     /agent/email/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.view(service: String, redirectUrl : Option[String] ?= None)
 POST    /agent/email/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.submit(service: String, redirectUrl : Option[String] ?= None)
+GET     /agent/email-session/:service     uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.getAgentEmail(service: String)
 
 GET     /agent/client-display-name/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.view(service: String, redirectUrl : Option[String] ?= None)
 POST    /agent/client-display-name/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.submit(service: String, redirectUrl : Option[String] ?= None)
+GET     /agent/client-display-name-session/:service   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.getClientDisplayName(service: String)
 
 GET     /agent/overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.view(service: String)
 POST    /agent/overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.submit(service: String)
@@ -61,7 +63,6 @@ GET     /agent/unique-reference/:service    uk.gov.hmrc.agentclientmandate.contr
 GET     /agent/summary/:service             uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.view(service: String)
 GET     /agent/doDelegation/:service/:serviceId/:clientName  uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.doDelegation(service: String, serviceId: String, clientName: String)
 
-
 GET     /agent/reject/:service/:id              uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.view(service: String, id: String)
 POST    /agent/reject/:service/:id/:clientName  uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.submit(service: String, id: String, clientName: String)
 GET     /agent/reject/confirmation/:service/:clientName  uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.confirmation(service: String, clientName: String)
@@ -73,4 +74,4 @@ POST    /agent/remove-client/:service/:mandateId/:clientName          uk.gov.hmr
 GET     /agent/remove-client/showConfirmation/:service/:clientName   uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.showConfirmation(service: String, clientName: String)
 
 GET     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.view(service: String, mandateId: String)
-POST     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.submit(service: String, mandateId: String)
+POST    /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.submit(service: String, mandateId: String)
