@@ -38,6 +38,7 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
   val removeUri = "remove"
   val importExistingUri = "importExisting"
   val editMandate = "edit"
+  val deleteMandate = "delete"
 
   def http: HttpGet with HttpPost with HttpDelete
 
@@ -121,6 +122,12 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     val postUrl = s"$serviceUrl/test-only/$mandateUri/create"
     Logger.debug("postUrl: " + postUrl)
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
+  }
+
+  def testOnlyDeleteMandate(mandateId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val deleteUrl = s"$serviceUrl/test-only/$mandateUri/$deleteMandate/$mandateId"
+    Logger.debug("deleteUrl: " + deleteUrl)
+    http.DELETE[HttpResponse](deleteUrl)
   }
   // $COVERAGE-ON$
 }
