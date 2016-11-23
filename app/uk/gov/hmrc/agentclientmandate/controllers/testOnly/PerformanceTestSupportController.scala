@@ -35,6 +35,14 @@ trait PerformanceTestSupportController extends FrontendController with Actions {
        Ok
      }
   }
+
+  def deleteMandate(mandateId: String) = UnauthorisedAction.async { implicit request =>
+    Logger.debug(s"deleting mandate: $mandateId")
+    agentClientMandateConnector.testOnlyDeleteMandate(mandateId).map { x =>
+      Logger.debug("deleted mandate")
+      Ok
+    }
+  }
   // $COVERAGE-ON$
 }
 
