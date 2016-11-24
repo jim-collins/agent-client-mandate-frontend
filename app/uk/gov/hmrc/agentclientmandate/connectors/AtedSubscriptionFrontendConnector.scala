@@ -17,20 +17,23 @@
 package uk.gov.hmrc.agentclientmandate.connectors
 
 import play.api.Logger
+import play.api.mvc.Request
 import uk.gov.hmrc.agentclientmandate.config.WSHttp
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.AuthContext
+import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
+import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 
 import scala.concurrent.Future
 
-trait AtedSubscriptionFrontendConnector extends ServicesConfig with RawResponseReads {
+trait AtedSubscriptionFrontendConnector extends ServicesConfig with RawResponseReads with HeaderCarrierForPartialsConverter {
 
-  def serviceUrl: String
+  def serviceUrl: String = baseUrl("ated-subscription-frontend")
   def http: HttpGet
   val clearCacheUri = "clear-cache"
 
-  def clearCache(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+  def clearCache(service: String)(implicit request: Request[_], ac: AuthContext): Future[HttpResponse] = {
     val getUrl = s"$serviceUrl/$clearCacheUri/$service"
     Logger.debug(s"[AtedSubscriptionFrontendConnector][clearCache] - GET - $getUrl")
     http.GET[HttpResponse](getUrl)
@@ -40,7 +43,7 @@ trait AtedSubscriptionFrontendConnector extends ServicesConfig with RawResponseR
 
 object AtedSubscriptionFrontendConnector extends AtedSubscriptionFrontendConnector {
   // $COVERAGE-OFF$
-  val serviceUrl = baseUrl("ated-subscription-frontend")
   val http = WSHttp
+  override def crypto: (String) => String = SessionCookieCryptoFilter.encrypt _
   // $COVERAGE-ON$
 }

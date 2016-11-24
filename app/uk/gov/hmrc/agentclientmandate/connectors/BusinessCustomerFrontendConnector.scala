@@ -17,21 +17,24 @@
 package uk.gov.hmrc.agentclientmandate.connectors
 
 import play.api.Logger
+import play.api.mvc.Request
 import uk.gov.hmrc.agentclientmandate.config.WSHttp
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.AuthContext
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpResponse}
+import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
+import uk.gov.hmrc.play.http.{HttpGet, HttpResponse}
+import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 
 import scala.concurrent.Future
 
-trait BusinessCustomerFrontendConnector extends ServicesConfig with RawResponseReads {
+trait BusinessCustomerFrontendConnector extends ServicesConfig with RawResponseReads with HeaderCarrierForPartialsConverter {
 
-  def serviceUrl: String
+  def serviceUrl: String = baseUrl("business-customer-frontend")
   def http: HttpGet
   val businessCustomerUri = "business-customer"
   val clearCacheUri = "clear-cache"
 
-  def clearCache(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+  def clearCache(service: String)(implicit request: Request[_], ac: AuthContext): Future[HttpResponse] = {
     val getUrl = s"$serviceUrl/$businessCustomerUri/$clearCacheUri/$service"
     Logger.debug(s"[BusinessCustomerFrontendConnector][clearCache] - GET - $getUrl")
     http.GET[HttpResponse](getUrl)
@@ -41,7 +44,7 @@ trait BusinessCustomerFrontendConnector extends ServicesConfig with RawResponseR
 
 object BusinessCustomerFrontendConnector extends BusinessCustomerFrontendConnector {
   // $COVERAGE-OFF$
-  val serviceUrl = baseUrl("business-customer-frontend")
   val http = WSHttp
+  override def crypto: (String) => String = SessionCookieCryptoFilter.encrypt _
   // $COVERAGE-ON$
 }
