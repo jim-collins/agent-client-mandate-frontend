@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
+import play.api.Logger
 import play.api.i18n.Messages
+import play.api.libs.json.Json
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
@@ -73,6 +75,18 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
           }
         }
       )
+  }
+
+  def getAgentEmail(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+    implicit authContext => implicit request =>
+      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId).map {
+        case Some(agentEmail) =>
+          Logger.info(s"agent email retrieved for $service")
+          Ok(Json.toJson(agentEmail))
+        case _ =>
+          Logger.error(s"could not retrieve agent email for $service")
+          InternalServerError
+      }
   }
 
 }
