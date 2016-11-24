@@ -29,7 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
@@ -177,6 +177,14 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
       }
     }
 
+    "retrieve client display name stored in session" when {
+      "return ok" in {
+        retrieveAgentEmailFromSessionAuthorisedAgent(Some(AgentEmail("agent@agency.com", "agent@agency.com"))) { result =>
+          status(result) must be(OK)
+        }
+      }
+    }
+
   }
 
   val mockAuthConnector = mock[AuthConnector]
@@ -228,6 +236,16 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     when(mockEmailService.validate(Matchers.any())(Matchers.any())).thenReturn(Future.successful(isValidEmail))
     when(mockDataCacheService.cacheFormData[AgentEmail](Matchers.eq(formId1), Matchers.eq(agentEmail))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(agentEmail))
     val result = TestCollectAgentEmailController.submit(service, redirectUrl).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    test(result)
+  }
+
+  def retrieveAgentEmailFromSessionAuthorisedAgent(cachedData:  Option[AgentEmail] = None)(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
+    val result = TestCollectAgentEmailController.getAgentEmail(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
