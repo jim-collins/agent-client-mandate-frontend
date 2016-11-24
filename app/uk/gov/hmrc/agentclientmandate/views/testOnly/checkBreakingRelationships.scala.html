@@ -1,0 +1,24 @@
+@import uk.gov.hmrc.agentclientmandate.controllers.testOnly.routes
+@()(implicit request: Request[_])
+
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@main_template(title = Messages("test-only"), delegatedService = None) {
+
+    @form(action = routes.GGBreakingRelationshipController.submit()) {
+
+        <div class="form-group">
+
+            <input name="mandateId" id="mandateId" />
+
+        </div>
+
+        <div class="form-group">
+            <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+        </div>
+
+    }
+
+}
