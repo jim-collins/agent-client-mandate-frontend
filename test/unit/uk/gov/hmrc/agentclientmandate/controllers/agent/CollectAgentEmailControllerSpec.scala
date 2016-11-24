@@ -183,12 +183,6 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           status(result) must be(OK)
         }
       }
-
-      "return server error" in {
-        retrieveAgentEmailFromSessionAuthorisedAgent() { result =>
-          status(result) must be(INTERNAL_SERVER_ERROR)
-        }
-      }
     }
 
   }

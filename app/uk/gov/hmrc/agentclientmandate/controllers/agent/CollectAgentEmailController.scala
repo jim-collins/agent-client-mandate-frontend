@@ -79,13 +79,8 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
 
   def getAgentEmail(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId).map {
-        case Some(agentEmail) =>
-          Logger.info(s"agent email retrieved for $service")
+      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId).map { agentEmail =>
           Ok(Json.toJson(agentEmail))
-        case _ =>
-          Logger.error(s"could not retrieve agent email for $service")
-          InternalServerError
       }
   }
 
