@@ -119,13 +119,13 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
   // $COVERAGE-OFF$
   def testOnlyCreateMandate(mandate: Mandate)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val jsonData = Json.toJson(mandate)
-    val postUrl = s"$serviceUrl/test-only/$mandateUri/create"
+    val postUrl = s"$serviceUrl/$mandateUri/test-only/create"
     Logger.debug("postUrl: " + postUrl)
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 
   def testOnlyDeleteMandate(mandateId: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    val deleteUrl = s"$serviceUrl/test-only/$mandateUri/$deleteMandate/$mandateId"
+    val deleteUrl = s"$serviceUrl/$mandateUri/test-only/$deleteMandate/$mandateId"
     Logger.debug("deleteUrl: " + deleteUrl)
     http.DELETE[HttpResponse](deleteUrl)
   }
