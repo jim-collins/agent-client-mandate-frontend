@@ -57,9 +57,9 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
         viewWithAuthorisedAgent() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Check your clients details")
+          document.title() must be("Check your clients details are correct")
           document.getElementById("pre-header").text must be("Add a client")
-          document.getElementById("header").text must be("Check your clients details")
+          document.getElementById("header").text must be("Check your clients details are correct")
           document.getElementById("email-address-label").text must be("Your email address")
           document.getElementById("submit").text must be("Confirm and add client")
         }

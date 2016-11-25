@@ -204,7 +204,7 @@ agent.unique-reference.button = View all my clients
 
 # agent client details
 agent.check-client-details.title = Add a client
-agent.check-client-details.header = Check your clients details
+agent.check-client-details.header = Check your clients details are correct
 agent.check-client-details.service = Service
 agent.check-client-details.your-email = Your email address
 agent.check-client-details.display-name = Display name
@@ -265,7 +265,7 @@ agent.remove-client-confirmation.banner-text = You have removed {0}
 agent.remove-client-confirmation.banner-text-date = on {0}
 agent.remove-client-confirmation.notification = Your client will receive an email notification.
 agent.remove-client-confirmation.what-next = What happens next?
-agent.remove-client-confirmation.request-new-client = you can request a new client
+agent.remove-client-confirmation.request-new-client = you can add a new client
 agent.remove-client-confirmation.submit-returns = submit returns for an existing client
 agent.remove-client-confirmation.view-all-clients = View all your clients
 
