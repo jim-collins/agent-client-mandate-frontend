@@ -11,21 +11,25 @@
         <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'>
             @Messages("agent.remove-client-confirmation.banner-text", clientName)
         </h1>
-            <span class="heading-small" id="date"> @Messages("agent.remove-client-confirmation.banner-text-date", DateUtils.getDateAsText(DateTime.now))</span>
+            <span class="heading-medium" id="date">
+                @Messages("agent.remove-client-confirmation.banner-text-date", DateUtils.getDateAsText(DateTime.now))
+            </span>
     </div>
 
     <div class="form-group">
-        <span id="notification" class="h3-heading">@Messages("agent.remove-client-confirmation.notification")</span>
+        <span id="notification" class="heading-medium">@Messages("agent.remove-client-confirmation.notification")</span>
     </div>
 
-    <div class="divider--top--thick">
-        <h2 id="heading" class="heading-large">@Messages("agent.remove-client-confirmation.what-next")</h2>
-    </div>
+    <div class="form-group">
+        <div class="divider--top--thick">
+            <h2 id="heading" class="heading-large">@Messages("agent.remove-client-confirmation.what-next")</h2>
+        </div>
 
-    <ul id="list" class="bullets">
-        <li>@Messages("agent.remove-client-confirmation.request-new-client")</li>
-        <li>@Messages("agent.remove-client-confirmation.submit-returns")</li>
-    </ul>
+        <ul id="list" class="bullets">
+            <li>@Messages("agent.remove-client-confirmation.request-new-client")</li>
+            <li>@Messages("agent.remove-client-confirmation.submit-returns")</li>
+        </ul>
+    </div>
 
     <div class="form-group">
         <form action="@routes.AgentSummaryController.view(service)">
