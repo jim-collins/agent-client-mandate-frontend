@@ -19,20 +19,22 @@
    @form(action = routes.ReviewMandateController.submit()) {
      <table>
        <tr>
-         <td class="heading-small td-height" id ="service">@Messages("client.review-agent.service-header")</td>
+         <th id ="service">@Messages("client.review-agent.service-header")</th>
          <td id ="service-name">@mandate.subscription.service.name.toUpperCase</td>
+         <td></td>
        </tr>
        <tr>
-         <td class="heading-small td-height" id ="agency">Agency</td>
+         <th id ="agency">Agency</th>
          <td id ="agency-name">@mandate.agentParty.name</td>
+         <td></td>
        </tr>
        <tr>
-         <td class="heading-small td-height" id="agent-reference-label">@Messages("client.review-agent.agent-reference")</td>
+         <th id="agent-reference-label">@Messages("client.review-agent.agent-reference")</th>
          <td>@mandate.id</td>
          <td><a href="#">@Messages("edit-link")</a></td>
        </tr>
        <tr>
-         <td class="heading-small td-height" id="email-address-label">@Messages("client.review-agent.email")</td>
+         <th id="email-address-label">@Messages("client.review-agent.email")</td>
          @mandate.clientParty.map { clientParty =>
          <td>@clientParty.contactDetails.email</td>
          }

@@ -75,8 +75,8 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         viewWithAuthorisedClient(Some(returnData)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Check that this is the agent that you want to appoint")
-          document.getElementById("header").text() must include("Check that this is the agent that you want to appoint")
+          document.title() must be("Check that this is the agency you want to appoint")
+          document.getElementById("header").text() must include("Check that this is the agency you want to appoint")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("agent-reference-label").text() must be("Agent reference")
           document.getElementById("email-address-label").text() must be("Your email address")
