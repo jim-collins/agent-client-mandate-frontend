@@ -15,9 +15,11 @@
     @Messages("client.collect-email.header")
   </h1>
 
-  <p class="lede" id="lede">
-    @Messages("client.collect-email.lede")
-  </p>
+  <div class="form-group">
+    <span class="lede" id="lede">
+      @Messages("client.collect-email.lede")
+    </span>
+  </div>
 
   @form(action = routes.CollectEmailController.submit()) {
 

@@ -39,7 +39,7 @@ client.summary.no-clients = You have no clients
 client.collect-email.title = What is your email address?
 client.collect-email.preheader = Appoint an agent
 client.collect-email.header = What is your email address?
-client.collect-email.lede = We need this to send you notifications. For example when your agent accepts your request to act on your behalf. This should be your address not your agents.
+client.collect-email.lede = We need this to send you notifications. For example when your agent accepts your request to act on your behalf. This should be your address not your agent''s.
 client.collect-email.email = Email address
 client.collect-email.confirm-email = Confirm email address
 client.collect-email.error.general.email = There is a problem with the email address question
@@ -67,8 +67,8 @@ client.search-mandate.error.mandateRef.not-found-by-mandate-service = The agent 
 client.search-mandate.error.mandateRef.already-used-by-mandate-service = The agent reference number you entered has already been used. Check the number, or enter a different number.
 
 #client review agent
-client.review-agent.title = Check that this is the agent that you want to appoint
-client.review-agent.header = Check that this is the agent that you want to appoint
+client.review-agent.title = Check that this is the agency you want to appoint
+client.review-agent.header = Check that this is the agency you want to appoint
 client.review-agent.preheader = Appoint an agent
 client.review-agent.agent-reference = Agent reference
 client.review-agent.email = Your email address
