@@ -24,7 +24,7 @@
 </h1>
 
   <p id="declaration-info">
-    @Html(Messages("client.agent-declaration.declaration-info"))
+    @Html(Messages("client.agent-declaration.declaration-info", mandate.subscription.service.name.toUpperCase))
   </p>
 
   <h2 id="declare-title">
@@ -32,7 +32,7 @@
   </h2>
 
   <ul class="bullets">
-    <li id="agent-name">@Messages("client.agent-declaration.agent-name", mandate.agentParty.name)</li>
+    <li id="agent-name">@Messages("client.agent-declaration.agent-name", mandate.agentParty.name, mandate.subscription.service.name.toUpperCase)</li>
     <li id="dec-info">@Messages("client.agent-declaration.information")</li>
   </ul>
 

@@ -143,8 +143,9 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
       contactDetails = ContactDetails("aa@aa.com", None)),
     clientParty = None,
     currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
-    statusHistory = Nil, subscription = Subscription(referenceNumber = None,
-      service = Service(id = "ated-ref-no", name = "")),
+    statusHistory = Nil,
+    subscription = Subscription(referenceNumber = None,
+      service = Service(id = "ated-ref-no", name = "ATED")),
     clientDisplayName = "client display name")
 
   val mockAuthConnector = mock[AuthConnector]

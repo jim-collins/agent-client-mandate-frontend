@@ -8,7 +8,7 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import org.joda.time.LocalDate
 @import org.joda.time.format.DateTimeFormat
-
+@import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig
 
 @main_template(title = Messages("client.agent-confirmation.title"), delegatedService = Some(service)) {
 
@@ -34,7 +34,9 @@
   </div>
 
   <div class="form-group">
-    <button class="button" id="finish_btn" type="submit">@Messages("client.agent-confirmation.finish-signout")</button>
+    <form action="@FrontendAppConfig.serviceSignOutUrl(None)">
+      <button class="button" id="finish_btn" type="submit">@Messages("client.agent-confirmation.finish-signout")</button>
+    </form>
   </div>
 
 }
