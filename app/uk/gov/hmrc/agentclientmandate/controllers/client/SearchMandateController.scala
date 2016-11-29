@@ -22,7 +22,7 @@ import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.models.{ContactDetails, Party, PartyType}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientCache
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, MandateReference}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.MandateReferenceForm.mandateRefForm
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
@@ -44,9 +44,15 @@ trait SearchMandateController extends FrontendController with Actions with Manda
 
   def mandateService: AgentClientMandateService
 
-  def view() = AuthorisedFor(ClientRegime, GGConfidence) {
+  def view() = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      Ok(views.html.client.searchMandate(mandateRefForm))
+
+      dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map { a =>
+        a.flatMap(_.mandate) match {
+          case Some(x) => Ok(views.html.client.searchMandate(mandateRefForm.fill(MandateReference(x.id))))
+          case None => Ok(views.html.client.searchMandate(mandateRefForm))
+        }
+      }
   }
 
   def submit() = AuthorisedFor(ClientRegime, GGConfidence).async {
