@@ -57,13 +57,7 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
       assert(document.getElementById("client-instruction-2").text() === "Enter the agent reference you gave them.")
 
       And("The email-instruction : Once they have done this you will receive an email notification.")
-      assert(document.getElementById("email-instruction").text() === "Once they have done this you will receive an email notification.")
-
-      And("The request-expire : You have 28 days to sign in and accept their request.")
-      assert(document.getElementById("request-expire").text() === "You have 28 days to sign in and accept their request.")
-
-      And("The admin-instruction : If you have a number of agents working on ATED ..")
-      assert(document.getElementById("admin-instruction").text() === "If you have a number of agents working on ATED within your organisation you may want to filter your clients. To do this you need to add administrators to your account in Government Gateway.")
+      assert(document.getElementById("email-instruction").text() === "Once they have done this you will receive an email notification. You have 28 days to sign in and accept their request.")
 
       And("The submit : View all my clients has the correct link")
       assert(document.getElementById("view-clients-form").attr("action") === "/mandate/agent/summary/ated")
