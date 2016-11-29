@@ -197,9 +197,7 @@ agent.unique-reference.text1 = You need to give this agent reference to your cli
 agent.unique-reference.text2 = Your client will then need to:
 agent.unique-reference.ated.list.text1 = Register their company to use the new <a href="{0}" id="calling-service" rel="calling-service">{1} service</a>, they may need to create a new organisational Government Gateway account.
 agent.unique-reference.ated.list.text2 = Enter the agent reference you gave them.
-agent.unique-reference.text3 = Once they have done this you will receive an email notification.
-agent.unique-reference.text4 = You have 28 days to sign in and accept their request.
-agent.unique-reference.text5 = If you have a number of agents working on {0} within your organisation you may want to filter your clients. To do this you need to add administrators to your account in Government Gateway.
+agent.unique-reference.text3 = Once they have done this you will receive an email notification. You have 28 days to sign in and accept their request.
 agent.unique-reference.button = View all my clients
 
 # agent client details
