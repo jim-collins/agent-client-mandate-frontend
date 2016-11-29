@@ -86,6 +86,18 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         }
       }
 
+      "client requests(GET) for search mandate view pre-populated and the data has been cached" in {
+        val cached = ClientCache(mandate = Some(mandate1))
+        viewWithAuthorisedClient(Some(cached)) { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What is the agent's reference?")
+          document.getElementById("header").text() must include("What is the agent's reference?")
+          document.getElementById("mandateRef").`val`() must be("ABC123")
+          document.getElementById("submit").text() must be("Continue")
+        }
+      }
+
     }
 
     "redirect to 'Review Mandate view' view for Authorised Client" when {
