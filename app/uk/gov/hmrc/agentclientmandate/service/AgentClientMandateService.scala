@@ -72,6 +72,15 @@ trait AgentClientMandateService extends MandateConstants {
     }
   }
 
+  def fetchClientMandateByClient(clientId: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandate]] = {
+    agentClientMandateConnector.fetchMandateByClient(clientId, serviceName) map {
+      response => response.status match {
+        case OK => response.json.asOpt[Mandate]
+        case status => None
+      }
+    }
+  }
+
   def approveMandate(mandate: Mandate)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandate]] = {
     agentClientMandateConnector.approveMandate(mandate) flatMap { response =>
       response.status match {

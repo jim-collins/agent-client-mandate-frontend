@@ -1,0 +1,16 @@
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@(agentName: String, removeAgentUrl: String)
+
+<div class="attorneyBanner grid" id="clientBanner">
+    <div class="grid grid-2-3">
+        <div class="inner-block">
+            <span class="heading-small" id="client-banner-text">@Messages("client.banner.text", agentName)</span>
+        </div>
+    </div>
+    <div class="grid grid-1-3">
+        <div class="inner-block">
+            <a href="@removeAgentUrl" id="client-banner-text-link">@Messages("client.banner.link-text")</a>
+        </div>
+    </div>
+</div>
