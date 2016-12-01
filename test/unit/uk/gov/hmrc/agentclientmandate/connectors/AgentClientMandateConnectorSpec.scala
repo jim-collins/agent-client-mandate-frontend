@@ -90,7 +90,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     }
 
     "fetch a valid mandate" in {
-      val successResponse = Json.toJson(mandateDto)
+      val successResponse = Json.toJson(mandate)
 
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())
@@ -186,6 +186,18 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       val response = await(TestAgentClientMandateConnector.editMandate(mandate))
       response.status must be(OK)
+    }
+
+    "fetch a mandate for a client" in {
+      val successResponse = Json.toJson(mandate)
+
+      when(mockWSHttp.GET[HttpResponse]
+        (Matchers.any())
+        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+
+      val response = TestAgentClientMandateConnector.fetchMandateByClient("clientId", "service")
+      await(response).status must be(OK)
+
     }
 
   }

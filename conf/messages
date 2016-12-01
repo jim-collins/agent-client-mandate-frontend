@@ -267,3 +267,6 @@ agent.remove-client-confirmation.request-new-client = you can add a new client
 agent.remove-client-confirmation.submit-returns = submit returns for an existing client
 agent.remove-client-confirmation.view-all-clients = View all your clients
 
+# client banner partial
+client.banner.text = You have requested {0} to act on your behalf
+client.banner.link-text = Cancel

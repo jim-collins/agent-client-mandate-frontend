@@ -321,6 +321,26 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       }
     }
 
+    "fetch mandate for client" when {
+      "returns a mandate when client party exists, is active, and for correct service" in {
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "client")
+        val respJson = Json.toJson(mandateActive)
+        when(mockAgentClientMandateConnector.fetchMandateByClient(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful(HttpResponse(OK, Some(respJson))))
+        val response = TestAgentClientMandateService.fetchClientMandateByClient("clientId", "service")
+        await(response) must be(Some(mandateActive))
+      }
+
+      "returns None for all other" in {
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "client")
+        val respJson = Json.toJson(mandateActive)
+        when(mockAgentClientMandateConnector.fetchMandateByClient(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful(HttpResponse(NOT_FOUND)))
+        val response = TestAgentClientMandateService.fetchClientMandateByClient("clientId", "service")
+        await(response) must be(None)
+      }
+    }
+
   }
 
 
