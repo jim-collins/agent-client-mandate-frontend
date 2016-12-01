@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
+import play.api.Logger
 import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.connectors.{AtedSubscriptionFrontendConnector, BusinessCustomerFrontendConnector}
@@ -44,6 +45,7 @@ trait ClientPermissionController extends FrontendController with Actions {
 
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit user => implicit request =>
+      Logger.debug("spurious logging")
       for {
         clearBcResp <- businessCustomerConnector.clearCache(service)
         serviceResp <- {
