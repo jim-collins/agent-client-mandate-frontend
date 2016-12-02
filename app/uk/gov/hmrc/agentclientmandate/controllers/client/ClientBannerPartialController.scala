@@ -20,19 +20,26 @@ import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 import uk.gov.hmrc.agentclientmandate.views.html.partials.client_banner
+import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.http.BadRequestException
 
-trait ClientBannerPartialController extends FrontendController with Actions {
+trait ClientBannerPartialController extends FrontendController with Actions with ServicesConfig {
 
   def mandateService: AgentClientMandateService
 
-  def getBanner(clientId: String, service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def getBanner(clientId: String, service: String, returnUrl: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request => {
+
+      // $COVERAGE-OFF$
+      if (Option(returnUrl).isEmpty) throw new BadRequestException("The return url is a mandatory parameter")
+      // $COVERAGE-ON$
+
       mandateService.fetchClientMandateByClient(clientId, service).map { x =>
         x match {
-          case Some(mandate) => Ok(client_banner(mandate.agentParty.name, routes.RemoveAgentController.view(mandate.id).url))
+          case Some(mandate) => Ok(client_banner(mandate.agentParty.name, baseUrl("agent-client-mandate-frontend") + routes.RemoveAgentController.view(mandate.id, returnUrl).url))
           case None => NotFound
         }
       }
@@ -41,6 +48,8 @@ trait ClientBannerPartialController extends FrontendController with Actions {
 }
 
 object ClientBannerPartialController extends ClientBannerPartialController {
+  // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
   val mandateService: AgentClientMandateService = AgentClientMandateService
+  // $COVERAGE-ON$
 }

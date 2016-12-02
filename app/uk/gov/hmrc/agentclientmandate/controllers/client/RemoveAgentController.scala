@@ -23,6 +23,7 @@ import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import uk.gov.hmrc.play.http.BadRequestException
 
 import scala.concurrent.Future
 
@@ -40,18 +41,19 @@ trait RemoveAgentController extends FrontendController with Actions {
 
   def dataCacheService: DataCacheService
 
-  def view(mandateId: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(mandateId: String, returnUrl: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      request.getQueryString("returnUrl") match {
-        case Some(returnUrl) =>
-          dataCacheService.cacheFormData[String]("RETURN_URL", returnUrl).flatMap { cache =>
-            acmService.fetchClientMandate(mandateId).map {
-              case Some(mandate) => Ok(views.html.client.removeAgent(new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm,
-                mandate.agentParty.name, mandateId))
-              case _ => throw new RuntimeException("No Mandate returned")
-            }
-          }
-        case _ => throw new RuntimeException("No returnUrl specified")
+
+      // $COVERAGE-OFF$
+      if (Option(returnUrl).isEmpty) throw new BadRequestException("The return url is a mandatory parameter")
+      // $COVERAGE-ON$
+
+      dataCacheService.cacheFormData[String]("RETURN_URL", returnUrl).flatMap { cache =>
+        acmService.fetchClientMandate(mandateId).map {
+          case Some(mandate) => Ok(views.html.client.removeAgent(new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm,
+            mandate.agentParty.name, mandateId))
+          case _ => throw new RuntimeException("No Mandate returned")
+        }
       }
   }
 
