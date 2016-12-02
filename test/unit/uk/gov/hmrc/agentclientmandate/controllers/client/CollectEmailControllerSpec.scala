@@ -51,7 +51,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "redirect to login page for UNAUTHENTICATED client" when {
 
       "client requests(GET) for collect email view" in {
-        viewWithUnAuthenticatedClient { result =>
+        viewWithUnAuthenticatedClient() { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -95,9 +95,9 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@aa.com")
         val cachedData = ClientCache()
         val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")))
-        submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = Some(cachedData), returnCache = returnData) { result =>
+        submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = Some(cachedData), returnCache = returnData, mode = Some("edit")) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/search"))
+          redirectLocation(result) must be(Some("/mandate/client/review"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -197,32 +197,36 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   val service = "ATED"
 
 
-  def viewWithUnAuthenticatedClient(test: Future[Result] => Any) {
+  def viewWithUnAuthenticatedClient(mode: Option[String] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestCollectEmailController.view().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestCollectEmailController.view(mode).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def viewWithAuthorisedClient(cachedData: Option[ClientCache] = None)(test: Future[Result] => Any) {
+  def viewWithAuthorisedClient(cachedData: Option[ClientCache] = None, mode: Option[String] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
-    val result = TestCollectEmailController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestCollectEmailController.view(mode).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded], cachedData: Option[ClientCache] = None, isValidEmail: Boolean = false, returnCache: ClientCache = ClientCache())(test: Future[Result] => Any) {
+  def submitWithAuthorisedClient(request: FakeRequest[AnyContentAsFormUrlEncoded],
+                                 cachedData: Option[ClientCache] = None,
+                                 isValidEmail: Boolean = false,
+                                 returnCache: ClientCache = ClientCache(),
+                                 mode: Option[String] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     when(mockEmailService.validate(Matchers.any())(Matchers.any())).thenReturn(Future.successful(isValidEmail))
     when(mockDataCacheService.cacheFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId), Matchers.eq(returnCache))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(returnCache))
-    val result = TestCollectEmailController.submit().apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestCollectEmailController.submit(mode).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 
