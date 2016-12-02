@@ -4,7 +4,7 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@(addEmailForm: Form[ClientEmail])(implicit request: Request[_])
+@(addEmailForm: Form[ClientEmail], mode: Option[String])(implicit request: Request[_])
 
 @main_template(title = Messages("client.collect-email.title")) {
 
@@ -21,7 +21,7 @@
     </span>
   </div>
 
-  @form(action = routes.CollectEmailController.submit()) {
+  @form(action = routes.CollectEmailController.submit(mode)) {
 
     <div class="form-group">
 

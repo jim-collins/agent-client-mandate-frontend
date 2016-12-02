@@ -4,8 +4,8 @@ GET     /assets/*file                   controllers.Assets.at(path="/public", fi
 
 ## Client URIs ##
 
-GET     /client/email              uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.view()
-POST    /client/email              uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.submit()
+GET     /client/email              uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.view(mode: Option[String] ?= None)
+POST    /client/email              uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.submit(mode: Option[String] ?= None)
 
 GET     /client/search             uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.view()
 POST    /client/search             uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.submit()

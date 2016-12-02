@@ -38,7 +38,7 @@
          @mandate.clientParty.map { clientParty =>
          <td>@clientParty.contactDetails.email</td>
          }
-         <td><a href="@routes.CollectEmailController.view()" id ="edit-agent-email">@Messages("edit-link")</a></td>
+         <td><a href='@routes.CollectEmailController.view(Some("edit"))' id ="edit-agent-email">@Messages("edit-link")</a></td>
        </tr>
      </table>
 
