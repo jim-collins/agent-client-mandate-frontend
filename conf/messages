@@ -15,7 +15,7 @@ mandate.agent.delegation.url.text = Change client
 agent-client-mandate.error.summaryHeader = There is a problem with the form
 agent.add-a-client.sub-header = Add a client
 
-mandate.main-title = Annual Tax on Enveloped Dwellings (ATED)
+mandate.main-title = Submit and view your ATED returns
 mandate.sign-out = Sign out
 
 #agent client summary
