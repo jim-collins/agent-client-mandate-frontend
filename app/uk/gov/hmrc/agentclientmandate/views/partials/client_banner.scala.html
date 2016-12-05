@@ -1,17 +1,17 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@(agentName: String, removeAgentUrl: String)
+@(agentName: String, url: String, bannerStyling: String, textKey: String, linkKey: String)
 
 <div class=" grid-wrapper attorneyContainer">
-    <div class="attorneyBanner grid attorneyBanner--client-request-requested" id="client-banner-text">
+    <div class="attorneyBanner grid @bannerStyling">
         <div class="grid grid-2-3">
-            <div class="inner-block">
-                @Html(Messages("client.banner.text", agentName))
+            <div class="inner-block" id="client-banner-text">
+                @Html(Messages("client.banner.text."+textKey, agentName))
             </div>
         </div>
         <div class="grid grid-1-3">
             <div class="inner-block">
-                <a href="@removeAgentUrl" id="client-banner-text-link" class="banner-links">@Messages("client.banner.link-text")</a>
+                <a href="@url" id="client-banner-text-link" class="banner-links">@Messages("client.banner.link-text."+linkKey)</a>
             </div>
         </div>
     </div>

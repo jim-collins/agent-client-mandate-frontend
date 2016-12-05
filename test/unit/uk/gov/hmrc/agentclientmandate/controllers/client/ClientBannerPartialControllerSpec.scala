@@ -67,13 +67,43 @@ class ClientBannerPartialControllerSpec extends PlaySpec with OneServerPerSuite 
       }
     }
 
-    "return partial if mandate is found" in {
-      when(mockMandateService.fetchClientMandateByClient(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
+    "return partial if mandate is found and approved" in {
+      when(mockMandateService.fetchClientMandateByClient(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(approvedMandate))
       viewWithAuthorisedClient() { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
-        document.getElementById("client-banner-text").text() must include("You have requested Agent Ltd to act on your behalf")
+        document.getElementById("client-banner-text").text() must include("You have requested Agent Ltd to act as your agent")
         document.getElementById("client-banner-text-link").attr("href") must include("/client/remove/1")
+      }
+    }
+
+    "return partial if mandate is found and active" in {
+      when(mockMandateService.fetchClientMandateByClient(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(activeMandate))
+      viewWithAuthorisedClient() { result =>
+        status(result) must be(OK)
+        val document = Jsoup.parse(contentAsString(result))
+        document.getElementById("client-banner-text").text() must include("Agent Ltd is now your appointed agent")
+        document.getElementById("client-banner-text-link").attr("href") must include("/client/remove/1")
+      }
+    }
+
+    "return partial if mandate is found and cancelled" in {
+      when(mockMandateService.fetchClientMandateByClient(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cancelledMandate))
+      viewWithAuthorisedClient() { result =>
+        status(result) must be(OK)
+        val document = Jsoup.parse(contentAsString(result))
+        document.getElementById("client-banner-text").text() must include("Agent Ltd has cancelled you as their client")
+        document.getElementById("client-banner-text-link").attr("href") must include("/client/email")
+      }
+    }
+
+    "return partial if mandate is found and rejected" in {
+      when(mockMandateService.fetchClientMandateByClient(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(rejectedMandate))
+      viewWithAuthorisedClient() { result =>
+        status(result) must be(OK)
+        val document = Jsoup.parse(contentAsString(result))
+        document.getElementById("client-banner-text").text() must include("Agent Ltd has rejected your request to act as your agent")
+        document.getElementById("client-banner-text-link").attr("href") must include("/client/email")
       }
     }
   }
@@ -94,7 +124,10 @@ class ClientBannerPartialControllerSpec extends PlaySpec with OneServerPerSuite 
 
   val service = "ATED"
   implicit val hc = new HeaderCarrier()
-  val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
+  val approvedMandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.Approved, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
+  val activeMandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.Active, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
+  val cancelledMandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.Cancelled, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
+  val rejectedMandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.Rejected, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 
   def viewWithUnAuthenticatedClient(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
