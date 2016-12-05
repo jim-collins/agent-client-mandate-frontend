@@ -18,10 +18,10 @@ POST    /client/declaration        uk.gov.hmrc.agentclientmandate.controllers.cl
 
 GET     /client/confirmation     uk.gov.hmrc.agentclientmandate.controllers.client.MandateConfirmationController.view()
 
-GET     /client/remove/:id                   uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(id: String)
+GET     /client/remove/return-to-service            uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.returnToService
+GET     /client/remove/:id                   uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(id: String, returnUrl: String)
 POST    /client/remove/:id/:clientName       uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.submit(id: String, clientName: String)
 GET     /client/remove/confirmation/:clientName     uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.confirmation(clientName: String)
-GET     /client/remove/return-to-service            uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.returnToService
 
 GET     /client/change/:agentName               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.view(agentName: String)
 POST    /client/change/:agentName               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.submit(agentName: String)
@@ -76,4 +76,4 @@ GET     /agent/remove-client/showConfirmation/:service/:clientName   uk.gov.hmrc
 GET     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.view(service: String, mandateId: String)
 POST    /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.submit(service: String, mandateId: String)
 
-GET     /client/partial-banner/:clientId/:service                uk.gov.hmrc.agentclientmandate.controllers.client.ClientBannerPartialController.getBanner(clientId: String, service: String)
+GET     /client/partial-banner/:clientId/:service                uk.gov.hmrc.agentclientmandate.controllers.client.ClientBannerPartialController.getBanner(clientId: String, service: String, returnUrl: String)

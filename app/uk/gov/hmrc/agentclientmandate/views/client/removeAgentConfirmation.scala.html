@@ -4,6 +4,7 @@
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig
 
 @main_template(title = Messages("client.remove-agent-confirmation.title")) {
 
@@ -25,8 +26,10 @@
 
     <div class="form-group">
 
-        <button class="button" id="finish_btn" type="submit">@Messages("client.agent-confirmation.finish-signout")</button>
+        <a class="link" id="finish_link" href="@FrontendAppConfig.serviceSignOutUrl(None)">@Messages("client.agent-confirmation.finish-signout")</a>
 
+        <br/>
+        <br/>
         <form action="@routes.RemoveAgentController.returnToService">
             <button class="button" id="return_to_service_button" type="submit">@Messages("client.remove-agent-confirmation.service_button")</button>
         </form>

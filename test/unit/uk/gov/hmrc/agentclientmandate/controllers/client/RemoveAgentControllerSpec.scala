@@ -89,16 +89,6 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         }
       }
 
-      "no query parameter, throw exception" in {
-        val userId = s"user-${UUID.randomUUID}"
-        implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
-        AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-        val request = FakeRequest(GET, "/client/remove-agent/1").withJsonBody(Json.toJson("""{}"""))
-        val thrown = the[RuntimeException] thrownBy await(TestRemoveAgentController.view("1").apply(SessionBuilder.updateRequestWithSession(request, userId)))
-
-        thrown.getMessage must be("No returnUrl specified")
-      }
-
       "can't find mandate, throw exception" in {
         when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
         when(mockDataCacheService.cacheFormData[String](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("AS12345678"))
@@ -106,7 +96,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
         AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
         val request = FakeRequest(GET, "/client/remove-agent/1?returnUrl=/app/return").withJsonBody(Json.toJson("""{}"""))
-        val thrown = the[RuntimeException] thrownBy await(TestRemoveAgentController.view("1").apply(SessionBuilder.updateRequestWithSession(request, userId)))
+        val thrown = the[RuntimeException] thrownBy await(TestRemoveAgentController.view("1", "returnUrl").apply(SessionBuilder.updateRequestWithSession(request, userId)))
 
         thrown.getMessage must be("No Mandate returned")
       }
@@ -202,7 +192,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
           document.getElementById("banner-text").text() must include("You have removed ACME Ltd as your agent")
           document.getElementById("notification").text() must be("Your agent will receive an email notification.")
           document.getElementById("heading").text() must be("What happens next?")
-          document.getElementById("finish_btn").text() must be("Finish and sign out")
+          document.getElementById("finish_link").text() must be("Finish and sign out")
           document.getElementById("return_to_service_button").text() must be("Your ATED online service")
         }
       }
@@ -236,7 +226,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestRemoveAgentController.view("1").apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestRemoveAgentController.view("1", "returnUrl").apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -246,7 +236,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestRemoveAgentController.view("1").apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestRemoveAgentController.view("1", "returnUrl").apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -255,7 +245,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestRemoveAgentController.view("1").apply(SessionBuilder.updateRequestWithSession(request, userId))
+    val result = TestRemoveAgentController.view("1", "returnUrl").apply(SessionBuilder.updateRequestWithSession(request, userId))
     test(result)
   }
 

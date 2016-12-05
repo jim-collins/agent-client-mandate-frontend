@@ -100,7 +100,7 @@ class ClientBannerPartialControllerSpec extends PlaySpec with OneServerPerSuite 
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestClientBannerPartialController.getBanner("clientId", "service").apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestClientBannerPartialController.getBanner("clientId", "service", "returnUrl").apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -109,7 +109,7 @@ class ClientBannerPartialControllerSpec extends PlaySpec with OneServerPerSuite 
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestClientBannerPartialController.getBanner("clientId", "service").apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientBannerPartialController.getBanner("clientId", "service", "returnUrl").apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
