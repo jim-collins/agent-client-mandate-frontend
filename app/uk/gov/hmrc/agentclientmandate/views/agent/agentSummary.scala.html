@@ -69,7 +69,7 @@
                   @Messages("client.summary.client-remove") <span class="screen-reader-text">@active.clientDisplayName</span>
                 </a>
               </td>
-              <td id="edit-client">
+              <td>
                 <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)">
                   @Messages("Edit") <span class="screen-reader-text">@active.clientDisplayName</span>
                 </a>
@@ -102,7 +102,7 @@
             <tr id="pending-client-data-@index">
               <td>@pending.clientDisplayName</td>
               @if(statusCantBeActioned(pending.currentStatus.status)){
-              <td id="edit-pending-client">
+              <td>
                 <a id="edit-pending-client-link-@index" href="@routes.EditMandateDetailsController.view(service, pending.id)">
                   @Messages("Edit") <span class="screen-reader-text">@pending.clientDisplayName</span>
                 </a>
