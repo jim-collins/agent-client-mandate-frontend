@@ -28,6 +28,7 @@ trait AppConfig {
   val betaFeedbackUrl: String
   val betaFeedbackUnauthenticatedUrl: String
   val logoutUrl: String
+  val mandateFrontendHost: String
 
   def serviceSignOutUrl(service: Option[String]): String
   def nonUkUri(service: String): String
@@ -57,4 +58,6 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
       case _ => logoutUrl
     }
   }
+
+  override lazy val mandateFrontendHost = configuration.getString(s"microservice.services.agent-client-mandate-frontend.host").getOrElse("")
 }
