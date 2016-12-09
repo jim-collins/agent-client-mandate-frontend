@@ -35,7 +35,6 @@ trait AtedSubscriptionFrontendConnector extends ServicesConfig with RawResponseR
 
   def clearCache(service: String)(implicit request: Request[_], ac: AuthContext): Future[HttpResponse] = {
     val getUrl = s"$serviceUrl/$clearCacheUri/$service"
-    Logger.debug(s"[AtedSubscriptionFrontendConnector][clearCache] - GET - $getUrl")
     http.GET[HttpResponse](getUrl)
   }
 

@@ -156,7 +156,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         val thrown = the[RuntimeException] thrownBy await(TestRemoveAgentController.submit("1", "ACME")
           .apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
 
-        thrown.getMessage must be("Cache Retrieval Failed")
+        thrown.getMessage must be("Cache Retrieval Failed with id 1")
       }
     }
 

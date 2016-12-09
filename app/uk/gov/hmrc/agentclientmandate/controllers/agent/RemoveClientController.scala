@@ -59,7 +59,7 @@ trait RemoveClientController extends FrontendController with Actions {
                 Redirect(routes.RemoveClientController.showConfirmation(service, clientName))
               }
               else {
-                throw new RuntimeException("Client removal Failed")
+                throw new RuntimeException(s"Client removal Failed with id $mandateId for service $service")
               }
             }
           }
