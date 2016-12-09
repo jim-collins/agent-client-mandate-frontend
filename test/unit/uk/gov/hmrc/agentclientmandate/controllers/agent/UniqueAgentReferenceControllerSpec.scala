@@ -78,7 +78,7 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
         viewWithAuthorisedAgent(Some(ClientDisplayDetails("test name", mandateId))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Your unique agent reference for {0} is {1}")
+          document.title() must be("Your unique agent reference for test name is ABC123")
         }
       }
 
