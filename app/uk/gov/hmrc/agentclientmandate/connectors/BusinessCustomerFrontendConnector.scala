@@ -36,7 +36,6 @@ trait BusinessCustomerFrontendConnector extends ServicesConfig with RawResponseR
 
   def clearCache(service: String)(implicit request: Request[_], ac: AuthContext): Future[HttpResponse] = {
     val getUrl = s"$serviceUrl/$businessCustomerUri/$clearCacheUri/$service"
-    Logger.debug(s"[BusinessCustomerFrontendConnector][clearCache] - GET - $getUrl")
     http.GET[HttpResponse](getUrl)
   }
 

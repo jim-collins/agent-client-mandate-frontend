@@ -42,7 +42,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
           val editMandateDetails = EditMandateDetails(displayName = mandate.clientDisplayName,
             email = mandate.agentParty.contactDetails.email)
           Ok(views.html.agent.editClient(editMandateDetailsForm.fill(editMandateDetails), service, mandateId))
-        case _ => throw new RuntimeException("No Mandate returned")
+        case _ => throw new RuntimeException(s"No Mandate returned with id $mandateId for service $service")
       }
   }
 
@@ -61,7 +61,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
                     Redirect(routes.AgentSummaryController.view(service))
                   case None => Redirect(routes.EditMandateDetailsController.view(service, mandateId))
                 }
-              case None => throw new RuntimeException("No Mandate Found!")
+              case None => throw new RuntimeException(s"No Mandate Found with id $mandateId for service $service")
             }
           } else {
             val errorMsg = Messages("agent.enter-email.error.email.invalid-by-email-service")

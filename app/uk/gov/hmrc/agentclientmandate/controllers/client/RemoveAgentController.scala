@@ -73,7 +73,7 @@ trait RemoveAgentController extends FrontendController with Actions {
           else {
             dataCacheService.fetchAndGetFormData[String]("RETURN_URL").map {
               case Some(x) => Redirect(x)
-              case _ => throw new RuntimeException("Cache Retrieval Failed")
+              case _ => throw new RuntimeException(s"Cache Retrieval Failed with id $mandateId")
             }
           }
         }

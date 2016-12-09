@@ -46,14 +46,12 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     val agentLink = ac.principal.accounts.agent.map(_.link).getOrElse("")
     val postUrl = s"$serviceUrl$agentLink/$mandateUri"
     val jsonData = Json.toJson(mandateDto)
-    Logger.debug(s"[AgentClientMandateConnector][createMandate] - POST - $postUrl and JSON Data - $jsonData")
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 
   def fetchMandate(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
     val getUrl = s"$serviceUrl$authLink/$mandateUri/$mandateId"
-    Logger.debug(s"[AgentClientMandateConnector][fetchMandate] - GET - $getUrl")
     http.GET[HttpResponse](getUrl)
   }
 
@@ -61,42 +59,36 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     val authLink = AuthUtils.getAuthLink
     val jsonData = Json.toJson(mandate)
     val postUrl = s"$serviceUrl$authLink/$mandateUri/approve"
-    Logger.debug(s"[AgentClientMandateConnector][approveMandate] - POST - $postUrl and JSON Data - $jsonData")
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 
   def fetchAllMandates(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
     val getUrl = s"$serviceUrl$authLink/$mandateUri/service/$arn/$serviceName"
-    Logger.debug(s"[AgentClientMandateConnector][fetchAllMandates] - GET - $getUrl")
     http.GET[HttpResponse](getUrl)
   }
 
   def rejectClient(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
     val postUrl = s"$serviceUrl$authLink/$mandateUri/$rejectClientUri/$mandateId"
-    Logger.debug(s"[AgentClientMandateConnector][rejectClient] - POST - $postUrl")
     http.POST[JsValue, HttpResponse](postUrl, Json.parse("{}"))
   }
 
   def fetchAgentDetails()(implicit hc: HeaderCarrier, ac: AuthContext): Future[AgentDetails] = {
     val authLink = AuthUtils.getAuthLink
     val getUrl = s"$serviceUrl$authLink/$mandateUri/agentDetails"
-    Logger.debug(s"[AgentClientMandateConnector][fetchAgentDetails] - GET - $getUrl")
     http.GET[AgentDetails](getUrl)
   }
 
   def activateMandate(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
     val postUrl = s"$serviceUrl$authLink/$mandateUri/$activateUri/$mandateId"
-    Logger.debug(s"[AgentClientMandateConnector][activateMandate] - POST - $postUrl")
     http.POST[JsValue, HttpResponse](postUrl, Json.parse("{}"))
   }
 
   def remove(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
     val postUrl = s"$serviceUrl$authLink/$mandateUri/$removeUri/$mandateId"
-    Logger.debug(s"[AgentClientMandateConnector][removeAgent] - POST - $postUrl")
     http.POST[JsValue, HttpResponse](postUrl, Json.parse("{}"))
   }
 
@@ -104,7 +96,6 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     val authLink = AuthUtils.getAuthLink
     val jsonData = Json.toJson(ggRelationshipDtoList)
     val postUrl = s"$serviceUrl$authLink/$mandateUri/$importExistingUri"
-    Logger.debug(s"[AgentClientMandateConnector][importExistingRelationships] - POST - $postUrl")
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 
@@ -112,14 +103,12 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     val authLink = AuthUtils.getAuthLink
     val jsonData = Json.toJson(mandate)
     val postUrl = s"$serviceUrl$authLink/$mandateUri/$editMandate"
-    Logger.debug(s"[AgentClientMandateConnector][editMandate] - POST - $postUrl")
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 
   def fetchMandateByClient(clientId: String, service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
     val getUrl = s"$serviceUrl$authLink/$mandateUri/$clientId/$service"
-    Logger.debug(s"[AgentClientMandateConnector][fetchMandateByClient] - GET - $getUrl")
     http.GET[HttpResponse](getUrl)
   }
 

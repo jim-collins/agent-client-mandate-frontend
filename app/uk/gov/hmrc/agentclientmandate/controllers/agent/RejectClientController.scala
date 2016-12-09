@@ -42,7 +42,7 @@ trait RejectClientController extends FrontendController with Actions {
       acmService.fetchClientMandate(mandateId).map {
         case Some(mandate) => Ok(views.html.agent.rejectClient(service, new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm,
           mandate.clientParty.get.name, mandateId))
-        case _ => throw new RuntimeException("No Mandate returned")
+        case _ => throw new RuntimeException(s"No Mandate returned with id $mandateId for service $service")
       }
   }
 
@@ -59,7 +59,7 @@ trait RejectClientController extends FrontendController with Actions {
                 Redirect(routes.RejectClientController.confirmation(service, clientName))
               }
               else {
-                throw new RuntimeException("Client Rejection Failed")
+                throw new RuntimeException(s"Client Rejection Failed with id $mandateId for service $service")
               }
             }
           }

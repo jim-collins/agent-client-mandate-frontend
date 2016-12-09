@@ -45,7 +45,6 @@ trait ClientPermissionController extends FrontendController with Actions {
 
   def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
     implicit user => implicit request =>
-      Logger.debug("spurious logging")
       for {
         clearBcResp <- businessCustomerConnector.clearCache(service)
         serviceResp <- {

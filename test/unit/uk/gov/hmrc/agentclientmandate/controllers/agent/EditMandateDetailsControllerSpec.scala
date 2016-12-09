@@ -99,7 +99,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "disp-name", "email" -> "aa@mail.com")
         submitEditMandateDetails(fakeRequest, true) { result =>
           val thrown = the[RuntimeException] thrownBy await(result)
-          thrown.getMessage must include("No Mandate Found!")
+          thrown.getMessage must include("No Mandate Found with id AS123456 for service ATED")
         }
       }
     }

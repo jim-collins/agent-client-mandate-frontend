@@ -54,12 +54,12 @@ trait AgentClientMandateService extends MandateConstants {
                       Future.successful(mandateId)
                     }
                   }
-                case status => throw new RuntimeException("Mandate not created")
+                case status => throw new RuntimeException(s"Mandate not created for $service")
               }
             }
-          case None => throw new RuntimeException("Client Display Name not found in cache")
+          case None => throw new RuntimeException(s"Client Display Name not found in cache for $service")
         }
-      case None => throw new RuntimeException("Email not found in cache")
+      case None => throw new RuntimeException(s"Email not found in cache for $service")
     }
   }
 
@@ -122,7 +122,7 @@ trait AgentClientMandateService extends MandateConstants {
                   Logger.debug(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import in progress - status - OK")
                   Future.successful(None)
                 case status =>
-                  Logger.debug(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import failed - status - $status")
+                  Logger.warn(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import failed for $arn - status - $status")
                   Future.successful(None)
               }
             }
