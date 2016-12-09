@@ -202,7 +202,7 @@ agent.unique-reference.button = View all my clients
 
 # agent client details
 agent.check-client-details.title = Add a client
-agent.check-client-details.header = Check your clients details are correct
+agent.check-client-details.header = Check your client''s details are correct
 agent.check-client-details.service = Service
 agent.check-client-details.your-email = Your email address
 agent.check-client-details.display-name = Display name
