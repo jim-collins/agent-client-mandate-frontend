@@ -6,7 +6,7 @@
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.utils.DelegationUtils
 
-@main_template(title = Messages("agent.unique-reference.title"), delegatedService = Some(service)) {
+@main_template(title = Messages("agent.unique-reference.title", clientDisplayDetails.name, clientDisplayDetails.mandateId), delegatedService = Some(service)) {
 
 
 <div class="transaction-banner--complete" id="banner">
@@ -17,7 +17,7 @@
 
 <div class="form-group">
   
-  <span class="heading-medium" id="what-happens-next">@Messages("agent.unique-reference.next.heading.text")</span>
+  <span class="heading-small" id="what-happens-next">@Messages("agent.unique-reference.next.heading.text")</span>
 
   <p id="authorise-instruction">@Messages("agent.unique-reference.text1")</p>
 
@@ -35,6 +35,8 @@
   <p id="email-instruction">@Messages("agent.unique-reference.text3")</p>
 
 </div>
+
+<br>
 
   <div class="form-group">
     <form action="@routes.AgentSummaryController.view(service)" id="view-clients-form">
