@@ -91,7 +91,6 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
           document.getElementById("banner-text").text() must include("Your request to appoint name has been successfully submitted")
           document.getElementById("notification").text() must be("Your agent will receive an email notification.")
           document.getElementById("heading").text() must be("What happens next?")
-          document.getElementById("list").child(0).text() must include("Your agent has 28 days to accept your request by accessing the ATED service.")
           document.getElementById("finish_btn").text() must be("Finish and sign out")
         }
       }

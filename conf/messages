@@ -90,7 +90,6 @@ client.agent-confirmation.banner-text = Your request to appoint {0} has been suc
 client.agent-confirmation.banner-confirmation.submitted.date = on {0}
 client.agent-confirmation.notification = Your agent will receive an email notification.
 client.agent-confirmation.header = What happens next?
-client.agent-confirmation.your-agent = Your agent has 28 days to accept your request by accessing the ATED service.
 client.agent-confirmation.this-authority = This authority will remain in place until you change or cancel your agent.
 client.agent-confirmation.sign-in = You can sign in at any point to view your online service
 client.agent-confirmation.finish-signout = Finish and sign out
