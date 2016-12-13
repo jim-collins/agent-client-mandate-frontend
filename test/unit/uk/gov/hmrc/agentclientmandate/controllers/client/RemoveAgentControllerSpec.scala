@@ -188,10 +188,10 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         confirmationWithAuthorisedClient { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What happens next?")
+          document.title() must be("What happens next")
           document.getElementById("banner-text").text() must include("You have removed ACME Ltd as your agent")
           document.getElementById("notification").text() must be("Your agent will receive an email notification.")
-          document.getElementById("heading").text() must be("What happens next?")
+          document.getElementById("heading").text() must be("What happens next")
           document.getElementById("finish_link").text() must be("Finish and sign out")
           document.getElementById("return_to_service_button").text() must be("Your ATED online service")
         }
