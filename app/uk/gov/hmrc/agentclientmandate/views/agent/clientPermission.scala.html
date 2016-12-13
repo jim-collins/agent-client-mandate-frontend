@@ -23,6 +23,12 @@
     @Messages("agent.client-permission.header")
   </h1>
 
+<div class="form-group">
+  <span class="lede">
+    @Html(Messages("agent.client-permission.hasPermission.selected.ated.yes.notice"))
+  </span>
+</div>
+
 
   @form(action = routes.ClientPermissionController.submit(service)) {
 
@@ -41,12 +47,6 @@
 
     <div class="form-group">
       @if(service.toUpperCase == "ATED") {
-      <div id="client-permission-true-hidden">
-        <div class="form-group">
-          <div class="important-notice">@Html(Messages("agent.client-permission.hasPermission.selected.ated.yes.notice"))</div>
-        </div>
-      </div>
-
       <div id="client-permission-false-hidden">
         <div class="form-group">
           <div class="important-notice">@Html(Messages("agent.client-permission.hasPermission.selected.ated.no.notice"))</div>
