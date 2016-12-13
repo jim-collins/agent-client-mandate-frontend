@@ -57,7 +57,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
           document.title() must be("Edit ACME Limited")
           document.getElementById("header").text() must include("Edit ACME Limited")
           document.getElementById("pre-header").text() must include("Manage your ATED service")
-          document.getElementById("sub-heading").text() must be("Unique agent reference AS123456")
+          document.getElementById("sub-heading").text() must be("Agent reference number AS123456")
           document.getElementById("displayName_field").text() must include("Display name")
           document.getElementById("displayName_hint").text() must include("This does not change the official company name.")
           document.getElementById("submit").text() must be("Save changes")
