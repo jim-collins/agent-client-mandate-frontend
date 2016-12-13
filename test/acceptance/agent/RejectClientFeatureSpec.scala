@@ -47,7 +47,7 @@ class RejectClientFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       assert(document.getElementById("heading").text() === "Are you sure you want to reject the request from ACME Limited?")
 
       And("The reject text is - Rejecting a client request means you will not be able to act on their behalf unless they submit another request.")
-      assert(document.getElementById("reject-text").text() === "Rejecting a client request means you will not be able to act on their behalf unless they submit another request.")
+      assert(document.getElementById("reject-text").text() === "Rejecting a client request means you will not be able to act for them unless they submit another request.")
 
       And("The yes no radio buttons - exist and are set to Yes and No")
       assert(document.getElementById("yesNo-true").attr("value") === "true")
