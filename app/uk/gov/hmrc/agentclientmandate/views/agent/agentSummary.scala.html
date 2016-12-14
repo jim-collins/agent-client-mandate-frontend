@@ -15,41 +15,47 @@
 
 @main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), scriptElem = Some(pageScripts), delegatedService = Some(service)){
 
-<div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
+  <div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
   <h1 class="heading-xlarge" id="header">
-  @Messages("client.summary.title", service.toUpperCase)
+    @Messages("client.summary.title", service.toUpperCase)
   </h1>
 
   @mandatesList.map { mandate =>
 
-    <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link">@Messages("client.summary.add-client")</a>
-
-    <div data-tabs>
-      <ul class="tabs-nav" role="tablist">
-
+    @if(mandate.pendingMandates.isEmpty && mandate.activeMandates.isEmpty){
+      <h3 class="heading-medium">@Messages("client.summary.no-clients")</h3>
+      <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-btn" class="button">@Messages("client.summary.add-client")</a>
+    } else {
+      <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link">@Messages("client.summary.add-client")</a>
+      <div data-tabs>
+        <ul class="tabs-nav" role="tablist">
         @if(mandate.pendingMandates.isEmpty){
           <li id="clients" data-tab-link="1" role="tab" aria-selected="true" aria-controls="tabContent1" tabindex="0">
             <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandate.activeMandates.size">
               @Messages("client.summary.client-active.title", mandate.activeMandates.size)
             </span>
-        } else {
-          <li id="clients" data-tab-link="1" role="tab" aria-selected="false" aria-controls="tabContent1" tabindex="1">
-            <span class="tabs-nav__tab" data-clients="@mandate.activeMandates.size">
-              @Messages("client.summary.client-active.title", mandate.activeMandates.size)
-            </span>
           </li>
-        }
-
-        @if(mandate.pendingMandates.isEmpty){
-
         } else {
+          @if(mandate.activeMandates.isEmpty){
           <li id="pending-clients" data-tab-link="2" role="tab" aria-selected="true" aria-controls="tabContent2" tabindex="0">
             <span class="tabs-nav__tab tabs-nav__tab--active" data-pending-clients="@mandate.pendingMandates.size">
               @Messages("client.summary.client-pending.title", mandate.pendingMandates.size)
             </span>
           </li>
+          } else {
+          <li id="clients" data-tab-link="1" role="tab" aria-selected="true" aria-controls="tabContent1" tabindex="0">
+            <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandate.activeMandates.size">
+              @Messages("client.summary.client-active.title", mandate.activeMandates.size)
+            </span>
+          </li>
+          <li id="pending-clients" data-tab-link="2" role="tab" aria-selected="true" aria-controls="tabContent2" tabindex="0">
+            <span class="tabs-nav__tab tabs-nav__tab--active" data-pending-clients="@mandate.pendingMandates.size">
+              @Messages("client.summary.client-pending.title", mandate.pendingMandates.size)
+            </span>
+          </li>
+          }
         }
-      </ul>
+        </ul>
 
       <div id="tabContent1" data-tab-content="1" role="tabpanel" aria-labelledby="clients">
         <table>
@@ -129,6 +135,7 @@
         </table>
       </div>
     </div>
+    }
   }.getOrElse {
     <h3 class="heading-medium">@Messages("client.summary.no-clients")</h3>
 

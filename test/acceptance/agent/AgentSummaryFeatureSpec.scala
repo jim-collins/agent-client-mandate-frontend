@@ -129,9 +129,7 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Your ATED clients")
       assert(document.title() === "Your ATED clients")
-
-      And("The Clients tab - should exist and have 0 items")
-      assert(document.getElementById("clients").text === "Current (0)")
+      
       And("The Pending Clients tab - should not exist")
       assert(document.getElementById("pending-clients").text === "Requests (4)")
 
