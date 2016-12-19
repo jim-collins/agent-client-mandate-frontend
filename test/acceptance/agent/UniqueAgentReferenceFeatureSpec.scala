@@ -24,7 +24,11 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayDetails
 import uk.gov.hmrc.agentclientmandate.views
 
+
 class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach with GivenWhenThen{
+
+  implicit val request = FakeRequest()
+  implicit val messages : play.api.i18n.Messages = play.api.i18n.Messages.Implicits.applicationMessages
 
   feature("The user can view the reject client page") {
 
@@ -34,7 +38,6 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
 
       Given("A user visits the page from ated")
       When("The user views the page from ated")
-      implicit val request = FakeRequest()
 
       val mandateId = "ABC123"
       val clientDisplayDetails = ClientDisplayDetails("test name", mandateId)

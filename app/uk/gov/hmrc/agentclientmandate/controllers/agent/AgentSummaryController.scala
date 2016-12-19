@@ -25,7 +25,8 @@ import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.connectors.DelegationConnector
 import uk.gov.hmrc.play.frontend.auth.{Actions, Delegator}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-
+import play.api.i18n.Messages.Implicits._
+import play.api.Play.current
 
 object AgentSummaryController extends AgentSummaryController {
   val authConnector = FrontendAuthConnector

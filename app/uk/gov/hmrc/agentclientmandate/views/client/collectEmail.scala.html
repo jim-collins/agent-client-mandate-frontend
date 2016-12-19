@@ -4,7 +4,7 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@(addEmailForm: Form[ClientEmail], mode: Option[String])(implicit request: Request[_])
+@(addEmailForm: Form[ClientEmail], mode: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("client.collect-email.title")) {
 

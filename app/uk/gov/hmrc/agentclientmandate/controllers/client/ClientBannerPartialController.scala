@@ -26,6 +26,8 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.BadRequestException
 import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
+import play.api.i18n.Messages.Implicits._
+import play.api.Play.current
 
 trait ClientBannerPartialController extends FrontendController with Actions with ServicesConfig {
 

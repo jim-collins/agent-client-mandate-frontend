@@ -4,7 +4,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(removeClientForm: Form[YesNoQuestion], service: String, clientName: String, mandateId: String)(implicit request: Request[_])
+@(removeClientForm: Form[YesNoQuestion], service: String, clientName: String, mandateId: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("agent.remove-client.header", clientName), delegatedService = Some(service)) {
 

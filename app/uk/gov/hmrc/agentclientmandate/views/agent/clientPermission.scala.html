@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(clientPermissionForm: Form[ClientPermission], service: String)(implicit request: Request[_])
+@(clientPermissionForm: Form[ClientPermission], service: String)(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
