@@ -17,6 +17,8 @@
 package uk.gov.hmrc.agentclientmandate.utils
 
 import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
+import play.api.Play.current
 import uk.gov.hmrc.domain.AtedUtr
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.{AuthContext, DelegationContext, Link, TaxIdentifiers}

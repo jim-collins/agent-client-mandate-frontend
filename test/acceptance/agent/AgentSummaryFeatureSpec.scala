@@ -49,6 +49,8 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
   val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty4), currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 4")
   val mandatePendingActivation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123451", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty2), currentStatus = MandateStatus(Status.PendingActivation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 5")
 
+  implicit val request = FakeRequest()
+  implicit val messages : play.api.i18n.Messages = play.api.i18n.Messages.Implicits.applicationMessages
 
   feature("The agent can view the agent summary page") {
 
@@ -58,7 +60,6 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
 
       Given("An agent visits the page and has no mandates")
       When("The agent views the empty page")
-      implicit val request = FakeRequest()
 
       val html = views.html.agent.agentSummary("ATED", None, agentDetails)
 

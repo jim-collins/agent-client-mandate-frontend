@@ -22,6 +22,8 @@ import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.models.Mandate
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.{FrontendController, UnauthorisedAction}
+import play.api.i18n.Messages.Implicits._
+import play.api.Play.current
 
 trait PerformanceTestSupportController extends FrontendController with Actions {
 

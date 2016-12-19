@@ -4,7 +4,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(service: String, rejectClientForm: Form[YesNoQuestion], clientName: String, mandateId: String)(implicit request: Request[_])
+@(service: String, rejectClientForm: Form[YesNoQuestion], clientName: String, mandateId: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("agent.reject-client.title", clientName), delegatedService = Some(service)) {
 

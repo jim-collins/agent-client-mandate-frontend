@@ -7,7 +7,7 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@(service: String, mandatesList: Option[Mandates], agentDetails: AgentDetails)(implicit request: Request[_])
+@(service: String, mandatesList: Option[Mandates], agentDetails: AgentDetails)(implicit request: Request[_], messages: Messages)
 
 @pageScripts = {
 <script type="text/javascript" src='@controllers.routes.Assets.at("javascript/agent-summary.js")'></script>

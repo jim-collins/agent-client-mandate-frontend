@@ -119,7 +119,6 @@ trait AgentClientMandateService extends MandateConstants {
             agentClientMandateConnector.importExistingRelationships(ggRelationshipDtoList) flatMap { resp =>
               resp.status match {
                 case OK =>
-                  Logger.debug(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import in progress - status - OK")
                   Future.successful(None)
                 case status =>
                   Logger.warn(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import failed for $arn - status - $status")

@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.client
 
+import play.api.i18n.Messages.Implicits._
+import play.api.Play.current
 import play.api.i18n.Messages
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime

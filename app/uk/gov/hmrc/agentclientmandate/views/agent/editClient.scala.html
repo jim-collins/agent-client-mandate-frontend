@@ -5,7 +5,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.models._
 
-@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String)(implicit request: Request[_])
+@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("agent.edit-mandate-details.title"), delegatedService = Some(service)) {
 

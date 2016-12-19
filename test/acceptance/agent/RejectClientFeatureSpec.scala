@@ -26,6 +26,9 @@ import uk.gov.hmrc.agentclientmandate.views
 
 class RejectClientFeatureSpec extends FeatureSpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach with GivenWhenThen{
 
+  implicit val request = FakeRequest()
+  implicit val messages : play.api.i18n.Messages = play.api.i18n.Messages.Implicits.applicationMessages
+
   feature("The user can view the reject client page") {
 
     info("as a user I want to view the correct page content")
@@ -34,7 +37,6 @@ class RejectClientFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
 
       Given("A user visits the page")
       When("The user views the page")
-      implicit val request = FakeRequest()
 
       val html = views.html.agent.rejectClient("ATED", new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm, "ACME Limited", "")
 
