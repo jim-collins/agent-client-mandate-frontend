@@ -70,7 +70,7 @@
           @for((active, index) <- mandate.activeMandates.zipWithIndex) {
             <tr>
               <td id="client-name-@index">@active.clientDisplayName</td>
-              <td id="remove-client">
+              <td>
                 <a id="remove-client-link-@index" href="@routes.RemoveClientController.view(service, active.id)">
                   @Messages("client.summary.client-remove") <span class="screen-reader-text">@active.clientDisplayName</span>
                 </a>
@@ -114,7 +114,7 @@
                 </a>
               </td>
               } else {
-                <td id="reject-client">
+                <td>
                   <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)">
                     @Messages("client.summary.client-reject")
                   </a>
