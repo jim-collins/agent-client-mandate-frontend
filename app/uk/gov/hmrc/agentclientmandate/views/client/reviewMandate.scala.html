@@ -31,14 +31,22 @@
        <tr>
          <th id="agent-reference-label">@Messages("client.review-agent.agent-reference")</th>
          <td>@mandate.id</td>
-         <td><a href="@routes.SearchMandateController.view()" id ="edit-agent-reference-number">@Messages("edit-link")</a></td>
+         <td>
+           <a href="@routes.SearchMandateController.view()" id ="edit-agent-reference-number">@Messages("edit-link")
+             <span class="screen-reader-text">@Messages("client.review-agent.agent-reference")</span>
+           </a>
+         </td>
        </tr>
        <tr>
          <th id="email-address-label">@Messages("client.review-agent.email")</td>
          @mandate.clientParty.map { clientParty =>
          <td>@clientParty.contactDetails.email</td>
          }
-         <td><a href='@routes.CollectEmailController.view(Some("edit"))' id ="edit-agent-email">@Messages("edit-link")</a></td>
+         <td>
+           <a href='@routes.CollectEmailController.view(Some("edit"))' id ="edit-agent-email">@Messages("edit-link")
+             <span class="screen-reader-text">@Messages("client.review-agent.email")</span>
+           </a>
+         </td>
        </tr>
      </table>
 
