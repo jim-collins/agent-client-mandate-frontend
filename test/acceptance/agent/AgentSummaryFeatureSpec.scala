@@ -147,7 +147,7 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       assert(document.getElementById("pending-client-data-1").child(2).text() === "Awaiting client")
       assert(document.getElementById("reject-client-link-1") === null)
       assert(document.getElementById("pending-client-data-2").child(0).text() === "client display name 3")
-      assert(document.getElementById("pending-client-data-2").child(2).text() === "Accept")
+      assert(document.getElementById("pending-client-data-2").child(2).text() === "Accept client display name 3")
       assert(document.getElementById("reject-client-link-2").text() === "Reject")
       assert(document.getElementById("pending-client-data-3").child(0).text() === "client display name 4")
       assert(document.getElementById("pending-client-data-3").child(2).text() === "Awaiting client")
