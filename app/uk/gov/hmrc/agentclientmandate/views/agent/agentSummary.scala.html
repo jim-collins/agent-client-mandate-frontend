@@ -116,7 +116,7 @@
               } else {
                 <td>
                   <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)">
-                    @Messages("client.summary.client-reject")
+                    @Messages("client.summary.client-reject") <span class="screen-reader-text">@pending.clientDisplayName</span>
                   </a>
                 </td>
               }
