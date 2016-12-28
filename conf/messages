@@ -227,6 +227,7 @@ agent.edit-mandate-details.submit = Save changes
 agent.edit-client.error.dispName = You must answer client display name question.
 agent.edit-client.error.dispName.length = Client display name cannot be more than 99 characters.
 agent.edit-client.error.email = You must answer email address question.
+agent.edit-client.error.general.agent-enter-email-form = There is a problem with email address.
 
 # agent reject client
 agent.reject-client.title = Are you sure you want to reject the request from {0}?
