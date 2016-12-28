@@ -124,8 +124,8 @@
                 <td>@Messages("client.summary.client.pending-status")</td>
               } else {
                 <td id ="accept-client">
-                  <a href="@routes.AcceptClientController.view(service, pending.id)" id="accept-@(index+1)">
-                    <button type="submit" class="button" value="Accept">@Messages("client.summary.client-accept")</button>
+                  <a href="@routes.AcceptClientController.view(service, pending.id)" id="accept-@(index+1)" class="button">
+                    @Messages("client.summary.client-accept") <span class="screen-reader-text">@pending.clientDisplayName</span>
                   </a>
                 </td>
               }
