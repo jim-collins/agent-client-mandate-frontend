@@ -11,13 +11,12 @@
 
 @main_template(title = Messages("agent.nrl-question.title"), delegatedService = Some(service)) {
 
-@mandateErrorSummary(nrlQuestionForm, "agent.nrl-question.error.general")
-
 <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
 <h1 class="heading-xlarge" id="header">
   @Messages("agent.nrl-question.header")
 </h1>
 
+@mandateErrorSummary(nrlQuestionForm, "agent.nrl-question.error.general")
 
   @form(action = routes.NRLQuestionController.submit(service)) {
 

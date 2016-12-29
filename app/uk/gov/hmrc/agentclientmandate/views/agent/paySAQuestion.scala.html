@@ -11,12 +11,12 @@
 
 @main_template(title = Messages("agent.paySA-question.title"), delegatedService = Some(service)) {
 
-@mandateErrorSummary(paySAQuestionForm, "agent.paySA-question.error.general")
-
 <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
 <h1 class="heading-xlarge" id="header">
     @Messages("agent.paySA-question.header")
 </h1>
+
+@mandateErrorSummary(paySAQuestionForm, "agent.paySA-question.error.general")
 
 @form(action = routes.PaySAQuestionController.submit(service)) {
 

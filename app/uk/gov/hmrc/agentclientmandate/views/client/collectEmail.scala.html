@@ -8,12 +8,12 @@
 
 @main_template(title = Messages("client.collect-email.title")) {
 
-  @mandateErrorSummary(addEmailForm, "client.collect-email.error.general")
-
   <div class="heading-sub" id="pre-heading">@Messages("client.collect-email.preheader")</div>
   <h1 class="heading-xlarge" id="header">
     @Messages("client.collect-email.header")
   </h1>
+
+  @mandateErrorSummary(addEmailForm, "client.collect-email.error.general")
 
   <div class="form-group">
     <span class="lede" id="lede">

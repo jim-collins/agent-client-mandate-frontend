@@ -8,12 +8,12 @@
 
 @main_template(title = Messages("client.remove-agent.title")) {
 
-@mandateErrorSummary(removeAgentForm, "yes-no.error.general", Some("client.remove-agent.error"))
-
     <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header")</div>
     <h1 class="heading-xlarge" id="header">
         @Messages("client.remove-agent.header", agentName)
     </h1>
+
+    @mandateErrorSummary(removeAgentForm, "yes-no.error.general", Some("client.remove-agent.error"))
 
     @form(action = routes.RemoveAgentController.submit(mandateId, agentName)) {
 
