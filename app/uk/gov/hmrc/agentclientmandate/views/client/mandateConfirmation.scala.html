@@ -12,30 +12,34 @@
 
 @main_template(title = Messages("client.agent-confirmation.title"), delegatedService = Some(service)) {
 
-  <div class="transaction-banner--complete" id="banner">
-    <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'>@Messages("client.agent-confirmation.banner-text", agentName)</h1>
+<div class="transaction-banner--complete" id="banner">
+    <h1 id="banner-text"><img class="tick" alt="tick" src='@controllers.routes.Assets.at("images/tick.png")'>@Messages("client.agent-confirmation.banner-text",
+        agentName)</h1>
     <span class="heading-small" id="date">
       @Messages("client.agent-confirmation.banner-confirmation.submitted.date", DateTimeFormat.forPattern("dd MMM yyyy").print(new LocalDate()))
     </span>
-  </div>
+</div>
+<div class="form-group">
+    <span id="notification" class="heading-small">@Messages("client.agent-confirmation.notification")</span>
+</div>
 
-  <span id="notification" class="heading-small">@Messages("client.agent-confirmation.notification")</span>
 
-  <hr>
+<div class="divider--top--thick"></div>
 
-  <h2 id="heading" class="heading-large">@Messages("client.agent-confirmation.header")</h2>
+<h2 id="heading" class="heading-medium">@Messages("client.agent-confirmation.header")</h2>
 
-  <div class="form-group">
+<div class="form-group">
     <ul id="list" class="bullets">
-      <li>@Html(Messages("client.agent-confirmation.this-authority"))</li>
-      <li>@Html(Messages("client.agent-confirmation.sign-in", service.toUpperCase))</li>
+        <li>@Html(Messages("client.agent-confirmation.this-authority"))</li>
+        <li>@Html(Messages("client.agent-confirmation.sign-in", service.toUpperCase))</li>
     </ul>
-  </div>
+</div>
 
-  <div class="form-group">
+<div class="form-group">
     <form action="@FrontendAppConfig.serviceSignOutUrl(Some(service))">
-      <button class="button" id="finish_btn" type="submit">@Messages("client.agent-confirmation.finish-signout")</button>
+        <button class="button" id="finish_btn" type="submit">@Messages("client.agent-confirmation.finish-signout")
+        </button>
     </form>
-  </div>
+</div>
 
 }
