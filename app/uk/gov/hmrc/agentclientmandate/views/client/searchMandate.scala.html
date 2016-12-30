@@ -16,19 +16,27 @@
     @Messages("client.search-mandate.header")
   </h1>
 
+    <div class="form-group">
+        <span class="lede" id="client.search-mandate.help">
+          @Messages("client.search-mandate.lede")
+        </span>
+    </div>
+
   @form(action = routes.SearchMandateController.submit()) {
 
     <div class="form-group">
 
       @mandateInput(mandateRefForm("mandateRef"),
       '_hintText -> Messages("client.search-mandate.hint"),
-      '_fieldsetAttributesHelpQuestion -> "search-mandate-help-question",
-      '_fieldsetQuestion -> Messages("client.search-mandate.help.question"),
-      '_HelpQuestionAnswer -> Html(Messages("client.search-mandate.help.answer")),
       '_showConstraints -> false)
 
-      <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
 
     </div>
+      <div class="form-group">
+            <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+      </div>
+
+
+
   }
 }
