@@ -82,7 +82,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
           clientParty = Some(Party("client-id", "client name",
             `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None))),
           currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
-          statusHistory = Nil, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = "")),
+          statusHistory = Nil, subscription = Subscription(referenceNumber = None, service = Service(id = "ated-ref-no", name = service)),
           clientDisplayName = "client display name")
         viewAuthorisedClient(Some(mandate)) { result =>
           status(result) must be(OK)
