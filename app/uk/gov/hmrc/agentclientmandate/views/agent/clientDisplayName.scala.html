@@ -10,12 +10,12 @@
 
 @main_template(title = Messages("agent.client-display-name.title"), delegatedService = Some(service)) {
 
-    @mandateErrorSummary(clientDisplayNameForm, "agent.client-display-name.error.general")
-
     <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
     <h1 class="heading-xlarge" id="header">
         @Messages("agent.client-display-name.header")
     </h1>
+
+    @mandateErrorSummary(clientDisplayNameForm, "agent.client-display-name.error.general")
 
     <div class="form-group">
         <span id="info" class="lede">

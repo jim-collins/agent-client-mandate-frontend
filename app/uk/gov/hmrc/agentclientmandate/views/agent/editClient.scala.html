@@ -9,12 +9,12 @@
 
 @main_template(title = Messages("agent.edit-mandate-details.title"), delegatedService = Some(service)) {
 
-  @mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")
-
   <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header", service)</div>
   <h1 class="heading-xlarge" id="header">
     @Messages("agent.edit-mandate-details.header", service)
   </h1>
+
+  @mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")
 
   <h2 id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</h2>
 

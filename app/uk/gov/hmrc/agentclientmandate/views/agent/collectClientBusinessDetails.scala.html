@@ -11,12 +11,12 @@
 
 @main_template(title = Messages("agent.enter-business-details.title"), delegatedService = Some(service)) {
 
-@mandateErrorSummary(collectClientBusinessDetails, "agent.enter-business-details-error.businessName")
-
 <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
 <h1 class="heading-xlarge" id="header">
   @Messages("agent.enter-business-details.header")
 </h1>
+
+@mandateErrorSummary(collectClientBusinessDetails, "agent.enter-business-details-error.businessName")
 
 @form(action = routes.CollectClientBusinessDetailsController.submit(service)) {
 

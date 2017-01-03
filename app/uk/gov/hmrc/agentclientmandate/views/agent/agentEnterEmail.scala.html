@@ -10,12 +10,14 @@
 
 @main_template(title = Messages("agent.enter-email.title"), delegatedService = Some(service)) {
 
-@mandateErrorSummary(agentEmailForm, "agent.enter-email.error.general")
+
 
 <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
 <h1 class="heading-xlarge" id="header">
   @Messages("agent.enter-email.header")
 </h1>
+
+@mandateErrorSummary(agentEmailForm, "agent.enter-email.error.general")
 
   <div class="form-group">
     <span id="info" class="lede">
