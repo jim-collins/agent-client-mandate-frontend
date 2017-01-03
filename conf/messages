@@ -143,8 +143,8 @@ agent.overseas-client-question.error.general.isOverseas = There is a problem wit
 agent.overseas-client-question.error.isOverseas = You must answer overseas client question
 
 # agent - client display name question
-agent.client-display-name.title = What display name do you want to use for the client?
-agent.client-display-name.header = What display name do you want to use for the client?
+agent.client-display-name.title = What display name do you want to use for this client?
+agent.client-display-name.header = What display name do you want to use for this client?
 agent.client-display-name.text = This will only be displayed on your screens and does not change your client''s official company name.
 agent.client-display-name.error.not-selected = You must answer client display name question.
 agent.client-display-name.error.length = A client display name cannot be more than 99 characters.

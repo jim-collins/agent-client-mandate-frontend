@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,8 +84,8 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
         viewClientDisplayNameAuthorisedAgent() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What display name do you want to use for the client?")
-          document.getElementById("header").text() must include("What display name do you want to use for the client?")
+          document.title() must be("What display name do you want to use for this client?")
+          document.getElementById("header").text() must include("What display name do you want to use for this client?")
         }
       }
 
@@ -93,7 +93,7 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
         viewClientDisplayNameAuthorisedAgent(Some(ClientDisplayName("client display name"))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What display name do you want to use for the client?")
+          document.title() must be("What display name do you want to use for this client?")
           document.getElementById("clientDisplayName").`val`() must be("client display name")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientDisplayName](Matchers.any())(Matchers.any(), Matchers.any())
         }
