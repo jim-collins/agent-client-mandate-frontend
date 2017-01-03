@@ -9,6 +9,7 @@
 @import org.joda.time.LocalDate
 @import org.joda.time.format.DateTimeFormat
 @import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig
+@import uk.gov.hmrc.agentclientmandate.utils.DelegationUtils
 
 @main_template(title = Messages("client.agent-confirmation.title"), delegatedService = Some(service)) {
 
@@ -31,7 +32,7 @@
 <div class="form-group">
     <ul id="list" class="bullets">
         <li>@Html(Messages("client.agent-confirmation.this-authority"))</li>
-        <li>@Html(Messages("client.agent-confirmation.sign-in", service.toUpperCase))</li>
+        <li>@Html(Messages("client.agent-confirmation.sign-in", DelegationUtils.getDelegatedServiceRedirectUrl(service)))</li>
     </ul>
 </div>
 
