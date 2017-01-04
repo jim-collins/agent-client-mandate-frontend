@@ -37,7 +37,7 @@ object AgentSelectServiceForm {
     )
 }
 
-case class AgentEmail(email: String, confirmEmail: String)
+case class AgentEmail(email: String)
 
 object AgentEmail {
   implicit val formats = Json.format[AgentEmail]
@@ -47,8 +47,7 @@ object AgentEmailForm {
   val agentEmailForm =
     Form(
       mapping(
-        "email" -> text.verifying(Messages("agent.enter-email.error.email"), email => email.nonEmpty),
-        "confirmEmail" -> text.verifying(Messages("agent.enter-email.error.confirmEmail"), email => email.nonEmpty)
+        "email" -> text.verifying(Messages("agent.enter-email.error.email"), email => email.nonEmpty)
       )(AgentEmail.apply)(AgentEmail.unapply)
     )
 

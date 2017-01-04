@@ -54,7 +54,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
       "no client display name is found in the keystore" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        val cachedEmail = AgentEmail("aa@aa.com", "aa@aa.com")
+        val cachedEmail = AgentEmail("aa@aa.com")
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestAgentClientMandateService.agentEmailFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestAgentClientMandateService.clientDisplayNameFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
 
@@ -66,7 +66,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
       "there is a problem while creating the mandate" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        val cachedEmail = AgentEmail("aa@aa.com", "aa@aa.com")
+        val cachedEmail = AgentEmail("aa@aa.com")
         val displayName = ClientDisplayName("client display name")
 
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestAgentClientMandateService.agentEmailFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(cachedEmail))
@@ -84,7 +84,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
       "agent email is found in the keystore" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        val cachedEmail = AgentEmail("aa@aa.com", "aa@aa.com")
+        val cachedEmail = AgentEmail("aa@aa.com")
         val displayName = ClientDisplayName("client display name")
         val respJson = Json.parse("""{"mandateId": "AS12345678"}""")
 
