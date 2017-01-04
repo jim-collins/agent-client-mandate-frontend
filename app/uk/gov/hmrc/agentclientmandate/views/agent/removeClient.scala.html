@@ -23,7 +23,7 @@
 
     @form(action = routes.RemoveClientController.confirm(service, mandateId, clientName)) {
 
-        <div class="form-group" id="rejectClient">
+        <div class="form-group" id="removeClient">
         @mandateInputRadioGroup(
             removeClientForm("yesNo"),
             Seq("true" -> Messages("radio-yes"),
