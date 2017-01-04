@@ -197,7 +197,7 @@ agent.unique-reference.next.heading.text = What happens next
 agent.unique-reference.text1 =  You need to give this agent reference number to your client so they can authorise you.
 agent.unique-reference.text2 =  Your client will then need to:
 agent.unique-reference.ated.list.text1 = register their company to use the new <a href="{0}" id="calling-service" rel="calling-service">{1} service</a>, they may need to create a new organisational Government Gateway account
-agent.unique-reference.ated.list.text2 = enter the agent reference you gave them
+agent.unique-reference.ated.list.text2 = enter the agent reference number you gave them
 agent.unique-reference.text3 = Once they have done this you will receive an email notification. You have 28 days to sign in and accept their request.
 agent.unique-reference.button = View all my clients
 
