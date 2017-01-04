@@ -62,7 +62,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
     "return mandate declaration view for AUTHORISED client" when {
 
       "client requests(GET) for mandate declaration view" in {
-        val cachedData = Some(ClientCache(email = Some(ClientEmail("bb@bb.com", "bb@bb.com")), mandate = Some(mandate)))
+        val cachedData = Some(ClientCache(email = Some(ClientEmail("bb@bb.com")), mandate = Some(mandate)))
         viewAuthorisedClient(cachedData) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))

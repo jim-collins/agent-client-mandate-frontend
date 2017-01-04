@@ -69,21 +69,18 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("header").text() must include("What is your email address?")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("email_field").text() must be("Email address")
-          document.getElementById("confirmEmail_field").text() must be("Confirm email address")
           document.getElementById("email").`val`() must be("")
-          document.getElementById("confirmEmail").`val`() must be("")
           document.getElementById("submit").text() must be("Continue")
         }
       }
 
       "client requests(GET) for collect email view pre-populated and the data has been cached" in {
-        val cached = ClientCache(email = Some(ClientEmail("aa@mail.com", "aa@mail.com")))
+        val cached = ClientCache(email = Some(ClientEmail("aa@mail.com")))
         viewWithAuthorisedClient(Some(cached)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What is your email address?")
           document.getElementById("email").`val`() must be("aa@mail.com")
-          document.getElementById("confirmEmail").`val`() must be("aa@mail.com")
         }
       }
 
@@ -92,9 +89,9 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "redirect to respective page " when {
 
       "valid form is submitted, while updating existing client cache object" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@aa.com")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com")
         val cachedData = ClientCache()
-        val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")))
+        val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com")))
         submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = Some(cachedData), returnCache = returnData, mode = Some("edit")) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("/mandate/client/review"))
@@ -105,8 +102,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       }
 
       "valid form is submitted, while creating new client cache object" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@aa.com")
-        val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com", "aa@aa.com")))
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com")
+        val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com")))
         submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = None, returnCache = returnData) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("/mandate/client/search"))
@@ -120,14 +117,12 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
     "returns BAD_REQUEST" when {
       "empty form is submitted" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "", "confirmEmail" -> "")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "")
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the email address question")
-          document.getElementsByClass("error-list").text() must include("There is a problem with the confirm email address question")
           document.getElementsByClass("error-notification").text() must include("You must answer email address question")
-          document.getElementsByClass("error-notification").text() must include("You must answer confirm email address question")
           verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -135,35 +130,21 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       }
 
       "email field and confirmEmail field has more than expected length" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "a" * 242, "confirmEmail" -> "a" * 242)
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "a" * 242)
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the email address question")
-          document.getElementsByClass("error-list").text() must include("There is a problem with the confirm email address question")
           document.getElementsByClass("error-notification").text() must include("Email address cannot be more than 241 characters.")
-          document.getElementsByClass("error-notification").text() must include("Confirm email address cannot be more than 241 characters.")
           verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
 
-      "confirmEmail field value is not equal to email field value" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@bb.com")
-        submitWithAuthorisedClient(fakeRequest) { result =>
-          status(result) must be(BAD_REQUEST)
-          val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the confirm email address question")
-          document.getElementsByClass("error-notification").text() must include("You must enter same email address in confirm email address")
-          verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
-          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
-          verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
-        }
-      }
 
       "invalid email id is passed" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@invalid.com", "confirmEmail" -> "aa@invalid.com")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@invalid.com")
         submitWithAuthorisedClient(fakeRequest, isValidEmail = false) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))

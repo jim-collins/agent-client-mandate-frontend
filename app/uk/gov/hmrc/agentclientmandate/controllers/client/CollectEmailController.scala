@@ -55,7 +55,7 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
 
   def submit(mode: Option[String]) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
-      validateConfirmEmail(clientEmailForm.bindFromRequest).fold(
+      clientEmailForm.bindFromRequest.fold(
         formWithError => Future.successful(BadRequest(views.html.client.collectEmail(formWithError, mode))),
         data => {
           emailService.validate(data.email) flatMap { isValidEmail =>

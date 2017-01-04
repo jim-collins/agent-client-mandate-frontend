@@ -89,8 +89,6 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           document.getElementById("info").text() must be(s"We need your email address to send you notifications relating to this client's activity within the $service online service. You can use a group email address and change it at a later date.")
           document.getElementById("email_field").text() must be("Email address")
           document.getElementById("email").`val`() must be("")
-          document.getElementById("confirmEmail").`val`() must be("")
-          document.getElementById("confirmEmail_field").text() must be("Confirm email address")
           document.getElementById("submit").text() must be("Continue")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
         }
@@ -102,7 +100,6 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What is your email address?")
           document.getElementById("email").`val`() must be("aa@aa.com")
-          document.getElementById("confirmEmail").`val`() must be("aa@aa.com")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
@@ -111,7 +108,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
     "redirect to 'client display name' Page" when {
       "valid form is submitted with valid email" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@aa.com")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com")
         submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("/mandate/agent/client-display-name/ATED"))
@@ -124,7 +121,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
     "redirect to 'review business details' Page" when {
       "valid form is submitted with valid email after edit" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@aa.com")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com")
         submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true, Some("http://redirectUrl")) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("http://redirectUrl"))
@@ -137,35 +134,21 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
     "returns BAD_REQUEST" when {
       "empty form is submitted" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "", "confirmEmail" -> "")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "")
         submitEmailAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the email address question")
-          document.getElementsByClass("error-list").text() must include("There is a problem with the confirm email address question")
           document.getElementsByClass("error-notification").text() must include("You must answer email address question")
-          document.getElementsByClass("error-notification").text() must include("You must answer confirm email address question")
           verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
 
-      "confirmEmail field value is not equal to email field value" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com", "confirmEmail" -> "aa@bb.com")
-        submitEmailAuthorisedAgent(fakeRequest) { result =>
-          status(result) must be(BAD_REQUEST)
-          val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the confirm email address question")
-          document.getElementsByClass("error-notification").text() must include("You must enter same email address in confirm email address")
-          verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
-          verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
-          verify(mockDataCacheService, times(0)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
-        }
-      }
 
       "invalid email id is passed" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@invalid.com", "confirmEmail" -> "aa@invalid.com")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@invalid.com")
         submitEmailAuthorisedAgent(fakeRequest, isValidEmail = false) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
@@ -179,7 +162,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
     "retrieve client display name stored in session" when {
       "return ok" in {
-        retrieveAgentEmailFromSessionAuthorisedAgent(Some(AgentEmail("agent@agency.com", "agent@agency.com"))) { result =>
+        retrieveAgentEmailFromSessionAuthorisedAgent(Some(AgentEmail("agent@agency.com"))) { result =>
           status(result) must be(OK)
         }
       }
@@ -193,7 +176,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
 
   val service = "ated".toUpperCase
   val formId1 = "agent-email"
-  val agentEmail = AgentEmail("aa@aa.com", "aa@aa.com")
+  val agentEmail = AgentEmail("aa@aa.com")
 
   override def beforeEach(): Unit = {
     reset(mockDataCacheService)

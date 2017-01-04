@@ -106,7 +106,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> s"$mandateId")
         val clientParty = Some(Party("client-id", "client name",
           `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None)))
-        val cachedData = ClientCache(email = Some(ClientEmail("bb@bb.com", "bb@bb.com")))
+        val cachedData = ClientCache(email = Some(ClientEmail("bb@bb.com")))
         val mandate1 = mandate.copy(clientParty = clientParty)
         val returnCache = cachedData.copy(mandate = Some(mandate1))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
@@ -119,7 +119,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("mandateRef" -> s"   $mandateId   ")
         val clientParty = Some(Party("client-id", "client name",
           `type` = PartyType.Organisation, contactDetails = ContactDetails("bb@bb.com", None)))
-        val cachedData = ClientCache(email = Some(ClientEmail("bb@bb.com", "bb@bb.com")))
+        val cachedData = ClientCache(email = Some(ClientEmail("bb@bb.com")))
         val mandate1 = mandate.copy(clientParty = clientParty)
         val returnCache = cachedData.copy(mandate = Some(mandate1))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>

@@ -52,7 +52,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
     "return 'mandate details' view for AUTHORISED agent" when {
 
       "agent requests(GET) for check client details view and email has been cached previously" in {
-        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail("", ""))))
+        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail(""))))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientDisplayName("client display name"))))
         viewWithAuthorisedAgent() { result =>
           status(result) must be(OK)
@@ -80,7 +80,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
     "redirect to 'client display name' view for AUTHORISED agent" when {
 
       "agent requests(GET) for check client details view and display name has NOT been cached previously" in {
-        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail("", ""))))
+        when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail(""))))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
         viewWithAuthorisedAgent() { result =>
           status(result) must be(SEE_OTHER)
@@ -127,7 +127,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
   }
 
   val service = "ated"
-  val agentEmail = AgentEmail("aa@mail.com", "aa@mail.com")
+  val agentEmail = AgentEmail("aa@mail.com")
   val mandateId = "AS12345678"
 
   def viewWithUnAuthorisedAgent(test: Future[Result] => Any) {

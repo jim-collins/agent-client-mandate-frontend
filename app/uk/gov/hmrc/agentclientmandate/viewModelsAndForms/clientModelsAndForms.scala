@@ -26,7 +26,7 @@ import uk.gov.hmrc.agentclientmandate.models.Mandate
 
 import scala.annotation.tailrec
 
-case class ClientEmail(email: String, confirmEmail: String)
+case class ClientEmail(email: String)
 
 object ClientEmail {
   implicit val formats = Json.format[ClientEmail]
@@ -41,26 +41,10 @@ object ClientEmailForm {
       mapping(
         "email" -> text
           .verifying(Messages("client.collect-email.error.email"), email => email.nonEmpty)
-          .verifying(Messages("client.collect-email.error.email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength)),
-        "confirmEmail" -> text
-          .verifying(Messages("client.collect-email.error.confirmEmail"), email => email.nonEmpty)
-          .verifying(Messages("client.collect-email.error.confirmEmail.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
+          .verifying(Messages("client.collect-email.error.email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
       )
       (ClientEmail.apply)(ClientEmail.unapply)
     )
-
-  def validateConfirmEmail(emailForm: Form[ClientEmail]): Form[ClientEmail] = {
-    def validate = {
-      val email = emailForm.data.get("email").map(_.trim)
-      val confirmEmail = emailForm.data.get("confirmEmail").map(_.trim)
-      (email, confirmEmail) match {
-        case (Some(e1), Some(e2)) if e1 == e2 => Seq()
-        case (Some(e1), Some(e2)) => Seq(Some(FormError("confirmEmail", Messages("client.collect-email.error.confirm-email.not-equal"))))
-        case _ => Seq()
-      }
-    }
-    addErrorsToForm(emailForm, validate.flatten)
-  }
 
   private def addErrorsToForm[A](form: Form[A], formErrors: Seq[FormError]): Form[A] = {
     @tailrec
