@@ -29,6 +29,8 @@ trait AppConfig {
   val betaFeedbackUnauthenticatedUrl: String
   val logoutUrl: String
   val mandateFrontendHost: String
+  val defaultTimeoutSeconds: Int
+  val timeoutCountdown: Int
 
   def serviceSignOutUrl(service: Option[String]): String
   def nonUkUri(service: String): String
@@ -48,6 +50,8 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   override lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback"
   override lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
   override lazy val logoutUrl = s"""${configuration.getString("microservice.logout.url").getOrElse("/gg/sign-out")}"""
+  override lazy val timeoutCountdown: Int = loadConfig("timeoutCountdown").toInt
+  override lazy val defaultTimeoutSeconds: Int = loadConfig("defaultTimeoutSeconds").toInt
 
   override def nonUkUri(service: String): String = s"""${configuration.getString("microservice.services.business-customer-frontend.nonUK-uri").
     getOrElse("")}/${service.toLowerCase}"""

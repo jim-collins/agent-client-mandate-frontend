@@ -30,6 +30,20 @@
   <li><a href="@appConfig.serviceSignOutUrl(delegatedService)" id="logOutNavHref">@Messages("mandate.sign-out")</a></li>
 }
 
+
+@scriptElement = {
+  <script type="text/javascript" src='@controllers.routes.Assets.at("jquery/jquery-ui-1.12.1.min.js")'></script>
+  <script type="text/javascript" src='@controllers.routes.Assets.at("javascript/timeout-dialog.js")'></script>
+  <script type="text/javascript" charset="utf-8">
+  @if(userLoggedIn) {
+     $.timeoutDialog({timeout: @appConfig.defaultTimeoutSeconds, countdown: @appConfig.timeoutCountdown, keep_alive_url: '/mandate/keep-alive', logout_url: '@appConfig.serviceSignOutUrl(delegatedService)', logout_redirect_url: '@appConfig.serviceSignOutUrl(delegatedService)', restart_on_yes: true, background_no_scroll: true});
+     var dialogOpen;
+  }
+  </script>
+  @scriptElem
+}
+
+
 @article = {
   @uiLayouts.article(content = mainContent, includeGridWrapper = false, articleClasses = None)
 }
@@ -49,7 +63,7 @@
       analyticsToken = Some(appConfig.analyticsToken),
       analyticsHost = appConfig.analyticsHost,
       ssoUrl = None,
-      scriptElem = scriptElem,
+      scriptElem = Some(scriptElement),
       gaCalls = None)
 }
 
