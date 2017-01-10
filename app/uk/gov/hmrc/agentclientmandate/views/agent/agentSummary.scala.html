@@ -26,7 +26,7 @@
       <h3 class="heading-medium">@Messages("client.summary.no-clients")</h3>
       <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-btn" class="button">@Messages("client.summary.add-client")</a>
     } else {
-      <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link">@Messages("client.summary.add-client")</a>
+      <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
       <div data-tabs>
         <ul class="tabs-nav" role="tablist">
         @if(mandate.pendingMandates.isEmpty){
