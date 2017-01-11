@@ -50,7 +50,6 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     }
 
     "return check client details view for agent" when {
-
       "client requests(GET) for check client details view" in {
         viewAuthorisedAgent { result =>
 
@@ -73,6 +72,51 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val result = TestAgentSummaryController.doDelegation(service, atedUtr.utr, "Client-Name").apply(SessionBuilder.buildRequestWithSession(userId))
         status(result) must be(SEE_OTHER)
         redirectLocation(result) must be(Some("http://localhost:9916/ated/account-summary"))
+      }
+    }
+
+    "activate client" when {
+      "agent selects and activates client" in {
+        activateClientByAuthorisedAgent { result =>
+
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Your ATED clients")
+          document.getElementById("header").text must be("Your ATED clients")
+          document.getElementById("add-client-link").text() must be("Add a new client")
+          document.getElementById("yourClients-name").text() must be("Name")
+        }
+      }
+
+      "could not accept client" in {
+        val userId = s"user-${UUID.randomUUID}"
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
+        AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+
+        when(mockAgentClientMandateService.acceptClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+          Future.successful(false)
+        }
+
+        val thrown = the[RuntimeException] thrownBy await(TestAgentSummaryController.activate(service, "mandateId").apply(SessionBuilder.buildRequestWithSession(userId)))
+        thrown.getMessage must include("Failed to accept client")
+      }
+
+      "could not fetch mandate when accepting client" in {
+        val userId = s"user-${UUID.randomUUID}"
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
+        AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+
+        when(mockAgentClientMandateService.acceptClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+          Future.successful(true)
+        }
+        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+          Future.successful(None)
+        }
+
+        val thrown = the[RuntimeException] thrownBy await(TestAgentSummaryController.activate(service, "mandateId").apply(SessionBuilder.buildRequestWithSession(userId)))
+        thrown.getMessage must include("Failed to fetch client")
       }
     }
 
@@ -130,6 +174,27 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
 
     val result = TestAgentSummaryController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def activateClientByAuthorisedAgent(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+
+    when(mockAgentClientMandateService.acceptClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+      Future.successful(true)
+    }
+    when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+      Future.successful(Some(mandateActive))
+    }
+    when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+      Future.successful(Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation))))
+    }
+    when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
+
+    val result = TestAgentSummaryController.activate(service, "mandateId").apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

@@ -7,11 +7,13 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@(service: String, mandatesList: Option[Mandates], agentDetails: AgentDetails)(implicit request: Request[_], messages: Messages)
+@(service: String, mandatesList: Option[Mandates], agentDetails: AgentDetails, screenReaderText: String)(implicit request: Request[_], messages: Messages)
 
 @pageScripts = {
 <script type="text/javascript" src='@controllers.routes.Assets.at("javascript/agent-summary.js")'></script>
 }
+
+<span class="screen-reader-text">@screenReaderText</span>
 
 @main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), scriptElem = Some(pageScripts), delegatedService = Some(service)){
 
@@ -124,10 +126,10 @@
                 <td>@Messages("client.summary.client.pending-status")</td>
               } else {
                 <td id ="accept-client">
-                  <a href="@routes.AcceptClientController.view(service, pending.id)"
+                  <a href="@routes.AgentSummaryController.activate(service, pending.id)"
                      id="accept-@(index+1)"
                      class="button"
-                     onkeyup='spaceBarHandler(event,"@routes.AcceptClientController.view(service, pending.id)")'>
+                     onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.activate(service, pending.id)")'>
                     @Messages("client.summary.client-accept") <span class="screen-reader-text">@pending.clientDisplayName</span>
                   </a>
                 </td>

@@ -25,6 +25,7 @@ import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.connectors.DelegationConnector
 import uk.gov.hmrc.play.frontend.auth.{Actions, Delegator}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
 
@@ -45,7 +46,27 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
         mandates <- agentClientMandateService.fetchAllClientMandates(arn, service)
         agentDetails <- agentClientMandateService.fetchAgentDetails()
       } yield {
-        Ok(views.html.agent.agentSummary(service, mandates, agentDetails))
+        Ok(views.html.agent.agentSummary(service, mandates, agentDetails, ""))
+      }
+  }
+
+  def activate(service: String, mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+    implicit authContext => implicit request =>
+      agentClientMandateService.acceptClient(mandateId).flatMap { clientAccepted =>
+        if (clientAccepted) {
+          agentClientMandateService.fetchClientMandate(mandateId).flatMap {
+            case Some(x) =>
+              val arn = AuthUtils.getArn
+              for {
+                mandates <- agentClientMandateService.fetchAllClientMandates(arn, service)
+                agentDetails <- agentClientMandateService.fetchAgentDetails()
+              } yield {
+                Ok(views.html.agent.agentSummary(service, mandates, agentDetails, Messages("client.summary.hidden.client_activated", x.clientParty.get.name)))
+              }
+            case _ => throw new RuntimeException("Failed to fetch client")
+          }
+        }
+        else throw new RuntimeException("Failed to accept client")
       }
   }
 

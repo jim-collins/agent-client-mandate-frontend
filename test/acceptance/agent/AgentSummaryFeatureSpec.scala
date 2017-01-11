@@ -61,7 +61,7 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       Given("An agent visits the page and has no mandates")
       When("The agent views the empty page")
 
-      val html = views.html.agent.agentSummary("ATED", None, agentDetails)
+      val html = views.html.agent.agentSummary("ATED", None, agentDetails, "")
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Your ATED clients")
@@ -88,7 +88,7 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
 
       val mandates = Mandates(activeMandates = Seq(mandateActive), pendingMandates = Nil)
 
-      val html = views.html.agent.agentSummary("ATED", Some(mandates), agentDetails)
+      val html = views.html.agent.agentSummary("ATED", Some(mandates), agentDetails, "")
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Your ATED clients")
@@ -125,7 +125,7 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
 
       val mandates = Mandates(activeMandates = Nil, pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation))
 
-      val html = views.html.agent.agentSummary("ATED", Some(mandates), agentDetails)
+      val html = views.html.agent.agentSummary("ATED", Some(mandates), agentDetails, "")
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Your ATED clients")
@@ -168,7 +168,7 @@ class AgentSummaryFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
 
       val mandates = Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew))
 
-      val html = views.html.agent.agentSummary("ATED", Some(mandates), agentDetails)
+      val html = views.html.agent.agentSummary("ATED", Some(mandates), agentDetails, "")
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Your ATED clients")
