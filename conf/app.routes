@@ -61,7 +61,7 @@ POST    /agent/client-details/:service      uk.gov.hmrc.agentclientmandate.contr
 GET     /agent/unique-reference/:service    uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 
 
-GET     /agent/summary/:service             uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.view(service: String)
+GET     /agent/summary/:service                 uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.view(service: String, tabName : Option[String] ?= None)
 GET     /agent/doDelegation/:service/:serviceId/:clientName  uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.doDelegation(service: String, serviceId: String, clientName: String)
 GET     /agent/summary/:service/activate/:mandateId   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.activate(service: String, mandateId: String)
 

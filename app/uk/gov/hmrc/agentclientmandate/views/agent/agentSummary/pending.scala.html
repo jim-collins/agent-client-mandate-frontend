@@ -1,0 +1,90 @@
+@import uk.gov.hmrc.agentclientmandate.service._
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@import uk.gov.hmrc.agentclientmandate.models._
+@import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils._
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+@import uk.gov.hmrc.agentclientmandate.models.Mandate
+
+@(service: String, mandates: Mandates, agentDetails: AgentDetails, screenReaderText: String)(implicit request: Request[_], messages: Messages)
+
+@pageScripts = {
+<script type="text/javascript" src='@controllers.routes.Assets.at("javascript/agent-summary.js")'></script>
+}
+
+<span class="screen-reader-text">@screenReaderText</span>
+
+@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), scriptElem = Some(pageScripts), delegatedService = Some(service)){
+
+  <div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
+  <h1 class="heading-xlarge" id="header">
+    @Messages("client.summary.title", service.toUpperCase)
+  </h1>
+
+  <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
+  <div data-tabs>
+    <ul class="tabs-nav" role="tablist">
+      @if(!mandates.activeMandates.isEmpty){
+      <li id="clients"  tabindex="0">
+            <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandates.activeMandates.size">
+                <a href="@routes.AgentSummaryController.view(service)" id="view-clients" class="link" tabindex="0">@Messages("client.summary.client-active.title", mandates.activeMandates.size)</a>
+            </span>
+      </li>
+      }
+      <li id="pending-clients" data-tab-link="2" role="tab" aria-selected="true" aria-controls="tabContent2" tabindex="0">
+        <span class="tabs-nav__tab tabs-nav__tab--active" data-pending-clients="@mandates.pendingMandates.size">
+          @Messages("client.summary.client-pending.title", mandates.pendingMandates.size)
+        </span>
+      </li>
+
+    </ul>
+    <div id="tabContent2" data-tab-content="2" role="tabpanel" aria-labelledby="clients">
+      <table>
+        <thead>
+        <tr>
+          <th id="client-name">@Messages("client.summary.client-name.title")</th>
+          <th id="client-action">@Messages("client.summary.client-action.title")</th>
+          <td id="noHeader2" colspan="2">  </td>
+        </tr>
+        </thead>
+        <tbody>
+        @for((pending, index) <- mandates.pendingMandates.zipWithIndex) {
+        <tr id="pending-client-data-@index">
+          <td>@pending.clientDisplayName</td>
+          @if(statusCantBeActioned(pending.currentStatus.status)){
+          <td>
+            <a id="edit-pending-client-link-@index" href="@routes.EditMandateDetailsController.view(service, pending.id)">
+              @Messages("Edit") <span class="screen-reader-text">@pending.clientDisplayName</span>
+            </a>
+          </td>
+          } else {
+          <td>
+            <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)">
+              @Messages("client.summary.client-reject") <span class="screen-reader-text">@pending.clientDisplayName</span>
+            </a>
+          </td>
+          }
+          @if(statusCantBeActioned(pending.currentStatus.status)) {
+          <td>@Messages("client.summary.client.pending-status")</td>
+          } else {
+          <td id ="accept-client">
+            <a href="@routes.AgentSummaryController.activate(service, pending.id)"
+               id="accept-@(index+1)"
+               class="button"
+               onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.activate(service, pending.id)")'>
+              @Messages("client.summary.client-accept") <span class="screen-reader-text">@pending.clientDisplayName</span>
+            </a>
+          </td>
+          }
+        </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+
+}

@@ -1,0 +1,82 @@
+@import uk.gov.hmrc.agentclientmandate.service._
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@import uk.gov.hmrc.agentclientmandate.models._
+@import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils._
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+
+@(service: String, mandates: Mandates, agentDetails: AgentDetails, screenReaderText: String)(implicit request: Request[_], messages: Messages)
+
+@pageScripts = {
+<script type="text/javascript" src='@controllers.routes.Assets.at("javascript/agent-summary.js")'></script>
+}
+
+<span class="screen-reader-text">@screenReaderText</span>
+
+@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), scriptElem = Some(pageScripts), delegatedService = Some(service)){
+
+  <div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
+  <h1 class="heading-xlarge" id="header">
+    @Messages("client.summary.title", service.toUpperCase)
+  </h1>
+
+  <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
+  <div data-tabs>
+    <ul class="tabs-nav" role="tablist">
+      <li id="clients" data-tab-link="1" role="tab" aria-selected="true" aria-controls="tabContent1" tabindex="0">
+        <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandates.activeMandates.size">
+          @Messages("client.summary.client-active.title", mandates.activeMandates.size)
+        </span>
+      </li>
+      @if(!mandates.pendingMandates.isEmpty){
+      <li id="pending-clients" tabindex="0" >
+          <span class="tabs-nav__tab tabs-nav__tab--active" data-pending-clients="@mandates.pendingMandates.size">
+              <a href="@routes.AgentSummaryController.view(service, Some("pending-clients"))" id="view-pending-clients" class="link" tabindex="0">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)</a>
+          </span>
+      </li>
+      }
+    </ul>
+
+    <div id="tabContent1" data-tab-content="1" role="tabpanel" aria-labelledby="clients">
+      <table>
+        <thead>
+        <tr>
+          <th id="yourClients-name">@Messages("client.summary.client-name.title")</th>
+          <th id="yourClients-action">@Messages("client.summary.client-action.title")</th>
+          <td id="noHeader" colspan="2">  </td>
+        </tr>
+        </thead>
+        <tbody>
+        @for((active, index) <- mandates.activeMandates.zipWithIndex) {
+        <tr>
+          <td id="client-name-@index">@active.clientDisplayName</td>
+          <td>
+            <a id="remove-client-link-@index" href="@routes.RemoveClientController.view(service, active.id)">
+              @Messages("client.summary.client-remove") <span class="screen-reader-text">@active.clientDisplayName</span>
+            </a>
+          </td>
+          <td>
+            <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)">
+              @Messages("Edit") <span class="screen-reader-text">@active.clientDisplayName</span>
+            </a>
+          </td>
+          <td class="tdRight">
+            <a id="client-link-@index"
+               href='@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))'
+               class='button'
+               onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))")'
+            >@Messages("client.summary.client-view")
+              <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
+            </a>
+          </td>
+        </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+}
