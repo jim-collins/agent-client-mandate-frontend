@@ -92,7 +92,7 @@ class ClientBannerPartialControllerSpec extends PlaySpec with OneServerPerSuite 
       viewWithAuthorisedClient() { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
-        document.getElementById("client-banner-text").text() must include("Agent Ltd has cancelled you as their client")
+        document.getElementById("client-banner-text").text() must include("The ATED agent can no longer act for the client")
         document.getElementById("client-banner-text-link").attr("href") must include("/client/email")
       }
     }
