@@ -24,23 +24,31 @@
   </h1>
 
   <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
-  <div data-tabs>
-    <ul class="tabs-nav" role="tablist">
-      <li id="clients" data-tab-link="1" role="tab" aria-selected="true" aria-controls="tabContent1" tabindex="0">
-        <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandates.activeMandates.size">
+
+<style>
+
+</style>
+
+
+
+  <div class="section-tabs">
+    <ul>
+      <li id="clients" class="active">
+        <h1>
           @Messages("client.summary.client-active.title", mandates.activeMandates.size)
-        </span>
+        </h1>
       </li>
       @if(!mandates.pendingMandates.isEmpty){
-      <li id="pending-clients" tabindex="0" >
-          <span class="tabs-nav__tab tabs-nav__tab--active" data-pending-clients="@mandates.pendingMandates.size">
+      <li id="pending-clients" class="active">
+          <h1>
               <a href="@routes.AgentSummaryController.view(service, Some("pending-clients"))" id="view-pending-clients" class="link" tabindex="0">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)</a>
-          </span>
+          </h1>
       </li>
       }
     </ul>
+  </div>
 
-    <div id="tabContent1" data-tab-content="1" role="tabpanel" aria-labelledby="clients">
+    <div class="form-group">
       <table>
         <thead>
         <tr>
@@ -77,6 +85,6 @@
         </tbody>
       </table>
     </div>
-  </div>
+
 
 }
