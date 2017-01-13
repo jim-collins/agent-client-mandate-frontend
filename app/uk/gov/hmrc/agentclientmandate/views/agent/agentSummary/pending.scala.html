@@ -23,24 +23,26 @@
     @Messages("client.summary.title", service.toUpperCase)
   </h1>
 
-  <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
-  <div data-tabs>
-    <ul class="tabs-nav" role="tablist">
-      @if(!mandates.activeMandates.isEmpty){
-      <li id="clients"  tabindex="0">
-            <span class="tabs-nav__tab tabs-nav__tab--active" data-clients="@mandates.activeMandates.size">
-                <a href="@routes.AgentSummaryController.view(service)" id="view-clients" class="link" tabindex="0">@Messages("client.summary.client-active.title", mandates.activeMandates.size)</a>
-            </span>
+
+  <div class="form-group">
+    <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
+  </div>
+
+  <div class="form-group">
+    <ul class="ated-tabs">
+      @if(mandates.activeMandates.size > 0){
+      <li id="clients" class="heading-small">
+        <a href="@routes.AgentSummaryController.view(service)" id="view-clients">@Messages("client.summary.client-active.title", mandates.activeMandates.size)</a>
       </li>
       }
-      <li id="pending-clients" data-tab-link="2" role="tab" aria-selected="true" aria-controls="tabContent2" tabindex="0">
-        <span class="tabs-nav__tab tabs-nav__tab--active" data-pending-clients="@mandates.pendingMandates.size">
-          @Messages("client.summary.client-pending.title", mandates.pendingMandates.size)
-        </span>
+      <li id="pending-clients" class="selected heading-small">
+        @Messages("client.summary.client-pending.title", mandates.pendingMandates.size)
       </li>
-
     </ul>
-    <div id="tabContent2" data-tab-content="2" role="tabpanel" aria-labelledby="clients">
+  </div>
+
+
+<div class="form-group">
       <table>
         <thead>
         <tr>
@@ -83,8 +85,6 @@
         </tbody>
       </table>
     </div>
-
-  </div>
 
 
 }

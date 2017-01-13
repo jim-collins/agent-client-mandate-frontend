@@ -162,7 +162,13 @@ html.noScroll {
 }
 
 .ated-tabs a {
-text-decoration: none;
+    text-decoration: none;
+    color: #005ea5;
+}
+
+.ated-tabs a:hover {
+    text-decoration: none;
+    color: #2e8aca;
 }
 
 .ated-tabs:after {
@@ -188,6 +194,25 @@ text-decoration: none;
 .ated-tabs li.selected {
     z-index: 2;
     background: #FFF;
-    color: #000;
-    border-bottom-color: #FFF;
+    color: #005ea5;
+    border-color: #AAA;
+    border: 1px solid #AAA;
+    border-bottom-color: #FFF
+
+}
+
+@media (max-width: 640px) {
+    .ated-tabs li {
+        width: calc(100% - 10px);
+        padding: 10px 0 10px 10px;
+    }
+
+    .ated-tabs li {
+        margin: 0px;
+        margin: 5px 0 0 0;
+    }
+
+    .ated-tabs li.selected {
+        border: 1px solid #AAA;
+    }
 }
