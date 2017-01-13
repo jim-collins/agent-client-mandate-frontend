@@ -60,8 +60,8 @@ class DelegationUtilsSpec extends PlaySpec with OneServerPerSuite {
 
     "getDelegatedServiceHomeUrl" must {
       "returns delegated service home url for specific service" in {
-        DelegationUtils.getDelegatedServiceHomeUrl("ated") must be("http://localhost:9916/ated/welcome")
-        DelegationUtils.getDelegatedServiceHomeUrl("ATED") must be("http://localhost:9916/ated/welcome")
+        DelegationUtils.getDelegatedServiceHomeUrl("ated") must be("https://www.gov.uk/guidance/register-for-the-annual-tax-on-enveloped-dwellings-online-service")
+        DelegationUtils.getDelegatedServiceHomeUrl("ATED") must be("https://www.gov.uk/guidance/register-for-the-annual-tax-on-enveloped-dwellings-online-service")
       }
     }
   }
