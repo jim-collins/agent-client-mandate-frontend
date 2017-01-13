@@ -1,0 +1,26 @@
+@import uk.gov.hmrc.agentclientmandate.service._
+@import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+@import uk.gov.hmrc.agentclientmandate.models._
+@import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils._
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@(service: String, agentDetails: AgentDetails)(implicit request: Request[_], messages: Messages)
+
+@pageScripts = {
+<script type="text/javascript" src='@controllers.routes.Assets.at("javascript/agent-summary.js")'></script>
+}
+
+@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), scriptElem = Some(pageScripts), delegatedService = Some(service)){
+
+  <div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
+  <h1 class="heading-xlarge" id="header">
+    @Messages("client.summary.title", service.toUpperCase)
+  </h1>
+
+  <h3 class="heading-medium">@Messages("client.summary.no-clients")</h3>
+  <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-btn" class="button">@Messages("client.summary.add-client")</a>
+
+}

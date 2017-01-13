@@ -49,15 +49,71 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       }
     }
 
+    "return check client details view for agent when they have no data" when {
+      "client requests(GET) for check client details view" in {
+        val mockMandates = Some(Mandates(activeMandates = Nil, pendingMandates = Nil))
+        viewAuthorisedAgent(mockMandates) { result =>
+
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Your ATED clients")
+          document.getElementById("header").text must be("Your ATED clients")
+          document.getElementById("add-client-btn").text() must be("Add a new client")
+          document.getElementById("add-client-link") must be(null)
+
+          document.getElementById("view-pending-clients") must be(null)
+          document.getElementById("view-clients") must be(null)
+        }
+      }
+    }
+
     "return check client details view for agent" when {
       "client requests(GET) for check client details view" in {
-        viewAuthorisedAgent { result =>
+        val mockMandates = Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)))
+        viewAuthorisedAgent(mockMandates) { result =>
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Your ATED clients")
           document.getElementById("header").text must be("Your ATED clients")
           document.getElementById("add-client-link").text() must be("Add a new client")
+          document.getElementById("add-client-btn") must be(null)
+          document.getElementById("view-pending-clients").attr("href") must be("/mandate/agent/summary/ATED?tabName=pending-clients")
+          document.getElementById("view-clients") must be(null)
+        }
+      }
+    }
+
+    "return check pending details view for agent who wants to see this" when {
+      "client requests(GET) for check client details view" in {
+        val mockMandates = Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)))
+
+        viewAuthorisedAgent(mockMandates, Some("pending-clients")) { result =>
+
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Your ATED clients")
+          document.getElementById("header").text must be("Your ATED clients")
+          document.getElementById("add-client-link").text() must be("Add a new client")
+          document.getElementById("view-pending-clients") must be(null)
+          document.getElementById("view-clients").attr("href") must be("/mandate/agent/summary/ATED")
+        }
+      }
+    }
+
+    "return check pending details view for agent when that's all they have" when {
+      "client requests(GET) for check client details view" in {
+        val mockMandates = Some(Mandates(activeMandates = Nil, pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)))
+
+        viewAuthorisedAgent(mockMandates) { result =>
+
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Your ATED clients")
+          document.getElementById("header").text must be("Your ATED clients")
+          document.getElementById("add-client-link").text() must be("Add a new client")
+          document.getElementById("view-pending-clients") must be(null)
+          document.getElementById("view-clients") must be(null)
         }
       }
     }
@@ -162,18 +218,18 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
   val mandatePendingActivation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123451", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty2), currentStatus = MandateStatus(Status.PendingActivation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 5")
 
-  def viewAuthorisedAgent(test: Future[Result] => Any) {
+  def viewAuthorisedAgent(mockMandates: Option[Mandates], tabName: Option[String] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
 
     when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
-      Future.successful(Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation))))
+      Future.successful(mockMandates)
     }
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
 
-    val result = TestAgentSummaryController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestAgentSummaryController.view(service, tabName).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
