@@ -68,7 +68,7 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
 
       And("Return to service : Has the correct link")
       assert(document.getElementById("calling-service").text() === "ATED service")
-      assert(document.getElementById("calling-service").attr("href").contains("/ated/welcome") === true)
+      assert(document.getElementById("calling-service").attr("href").contains("https://www.gov.uk/guidance/register-for-the-annual-tax-on-enveloped-dwellings-online-service") === true)
 
     }
   }
