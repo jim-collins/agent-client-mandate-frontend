@@ -42,7 +42,7 @@ trait RemoveAgentController extends FrontendController with Actions {
 
   def dataCacheService: DataCacheService
 
-  def view(mandateId: String, returnUrl: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(service: String, mandateId: String, returnUrl: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
 
       // $COVERAGE-OFF$
@@ -51,23 +51,23 @@ trait RemoveAgentController extends FrontendController with Actions {
 
       dataCacheService.cacheFormData[String]("RETURN_URL", returnUrl).flatMap { cache =>
         acmService.fetchClientMandate(mandateId).map {
-          case Some(mandate) => Ok(views.html.client.removeAgent(new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm,
+          case Some(mandate) => Ok(views.html.client.removeAgent(service, new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm,
             mandate.agentParty.name, mandateId))
           case _ => throw new RuntimeException("No Mandate returned")
         }
       }
   }
 
-  def submit(mandateId: String, agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(service: String, mandateId: String, agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       val form = new YesNoQuestionForm("client.remove-agent.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.client.removeAgent(formWithError, agentName, mandateId))),
+        formWithError => Future.successful(BadRequest(views.html.client.removeAgent(service, formWithError, agentName, mandateId))),
         data => {
           val removeAgent = data.yesNo.getOrElse(false)
           if (removeAgent) {
             acmService.removeAgent(mandateId).map { removedAgent =>
-              if (removedAgent) Redirect(routes.ChangeAgentController.view(agentName))
+              if (removedAgent) Redirect(routes.ChangeAgentController.view(service, agentName))
               else throw new RuntimeException("Agent Removal Failed")
             }
           }
@@ -81,9 +81,9 @@ trait RemoveAgentController extends FrontendController with Actions {
       )
   }
 
-  def confirmation(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
+  def confirmation(service: String, agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.removeAgentConfirmation(agentName))
+      Ok(views.html.client.removeAgentConfirmation(service, agentName))
   }
 
   def returnToService = AuthorisedFor(ClientRegime, GGConfidence).async {

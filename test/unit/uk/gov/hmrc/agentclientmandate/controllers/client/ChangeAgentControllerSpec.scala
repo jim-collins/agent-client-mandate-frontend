@@ -42,12 +42,12 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
   "ChangeAgentController" must {
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/change/agentName" in {
-        val result = route(FakeRequest(GET, "/mandate/client/change/ACME")).get
+        val result = route(FakeRequest(GET, "/mandate/client/change/ATED/ACME")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/client/change/agentName" in {
-        val result = route(FakeRequest(POST, s"/mandate/client/change/ACME")).get
+        val result = route(FakeRequest(POST, s"/mandate/client/change/ATED/ACME")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -144,7 +144,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view(agentName).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestChangeAgentController.view(service, agentName).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -154,7 +154,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view(agentName).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestChangeAgentController.view(service, agentName).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -163,7 +163,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view(agentName).apply(SessionBuilder.updateRequestWithSession(request, userId))
+    val result = TestChangeAgentController.view(service, agentName).apply(SessionBuilder.updateRequestWithSession(request, userId))
     test(result)
   }
 
@@ -173,7 +173,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
 
-    val result = TestChangeAgentController.submit(agentName).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestChangeAgentController.submit(service, agentName).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

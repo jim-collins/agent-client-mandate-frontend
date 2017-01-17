@@ -1,13 +1,13 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(mandateRefForm: Form[MandateReference])(implicit request: Request[_], messages: Messages)
+@(service: String, mandateRefForm: Form[MandateReference])(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@main_template(title = Messages("client.search-mandate.title")) {
+@main_template(title = Messages("client.search-mandate.title"), delegatedService = Some(service)) {
 
   <div class="heading-sub" id="pre-heading">@Messages("client.search-mandate.preheader")</div>
   <h1 class="heading-xlarge" id="header">
@@ -22,7 +22,7 @@
         </span>
     </div>
 
-  @form(action = routes.SearchMandateController.submit()) {
+  @form(action = routes.SearchMandateController.submit(service)) {
 
     <div class="form-group">
 

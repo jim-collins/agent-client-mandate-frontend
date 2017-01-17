@@ -37,19 +37,19 @@ trait ReviewMandateController extends FrontendController with Actions with Manda
 
   def dataCacheService: DataCacheService
 
-  def view() = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map {
         _.flatMap(_.mandate) match {
-          case Some(x) => Ok(views.html.client.reviewMandate(x))
-          case None => Redirect(routes.SearchMandateController.view())
+          case Some(x) => Ok(views.html.client.reviewMandate(service, x))
+          case None => Redirect(routes.SearchMandateController.view(service))
         }
       }
   }
 
-  def submit() = AuthorisedFor(ClientRegime, GGConfidence) {
+  def submit(service: String) = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Redirect(routes.MandateDeclarationController.view())
+      Redirect(routes.MandateDeclarationController.view(service))
   }
 
 }
