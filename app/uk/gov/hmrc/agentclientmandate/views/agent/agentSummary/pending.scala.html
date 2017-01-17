@@ -25,7 +25,7 @@
 
 
   <div class="form-group">
-    <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
+    <a href="@routes.CollectAgentEmailController.view(service)" id="add-client-link" class="link" tabindex="0" data-journey-click="agent-client-mandate:click:add-client-link">@Messages("client.summary.add-client")</a>
   </div>
 
   <div class="form-group">
@@ -57,13 +57,13 @@
           <td>@pending.clientDisplayName</td>
           @if(statusCantBeActioned(pending.currentStatus.status)){
           <td>
-            <a id="edit-pending-client-link-@index" href="@routes.EditMandateDetailsController.view(service, pending.id)">
+            <a id="edit-pending-client-link-@index" href="@routes.EditMandateDetailsController.view(service, pending.id)" data-journey-click="agent-client-mandate:click:edit-pending-client-link">
               @Messages("Edit") <span class="screen-reader-text">@pending.clientDisplayName</span>
             </a>
           </td>
           } else {
           <td>
-            <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)">
+            <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)"data-journey-click="agent-client-mandate:click:reject-client-link">
               @Messages("client.summary.client-reject") <span class="screen-reader-text">@pending.clientDisplayName</span>
             </a>
           </td>
@@ -72,7 +72,7 @@
           <td>@Messages("client.summary.client.pending-status")</td>
           } else {
           <td id ="accept-client">
-            <a href="@routes.AgentSummaryController.activate(service, pending.id)"
+            <a href="@routes.AgentSummaryController.activate(service, pending.id)" data-journey-click="agent-client-mandate:click:accept-client"
                id="accept-@(index+1)"
                class="button"
                onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.activate(service, pending.id)")'>

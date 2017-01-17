@@ -34,7 +34,7 @@
       </li>
       @if(!mandates.pendingMandates.isEmpty){
       <li id="pending-clients" class="heading-small">
-        <a href="@routes.AgentSummaryController.view(service, Some("pending-clients"))" id="view-pending-clients">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)</a>
+        <a href="@routes.AgentSummaryController.view(service, Some("pending-clients"))" id="view-pending-clients" data-journey-click="agent-client-mandate:click:view-pending-clients">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)</a>
       </li>
       }
     </ul>
@@ -56,18 +56,18 @@
         <tr>
           <td id="client-name-@index">@active.clientDisplayName</td>
           <td>
-            <a id="remove-client-link-@index" href="@routes.RemoveClientController.view(service, active.id)">
+            <a id="remove-client-link-@index" href="@routes.RemoveClientController.view(service, active.id)" data-journey-click="agent-client-mandate:click:remove-client-link">
               @Messages("client.summary.client-remove") <span class="screen-reader-text">@active.clientDisplayName</span>
             </a>
           </td>
           <td>
-            <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)">
+            <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)" data-journey-click="agent-client-mandate:click:edit-client-link>
               @Messages("Edit") <span class="screen-reader-text">@active.clientDisplayName</span>
             </a>
           </td>
           <td class="tdRight">
             <a id="client-link-@index"
-               href='@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))'
+               href='@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))' data-journey-click="agent-client-mandate:click:client-link
                class='button'
                onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))")'
             >@Messages("client.summary.client-view")
