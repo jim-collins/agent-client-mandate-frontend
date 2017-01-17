@@ -44,7 +44,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/review" in {
-        val result = route(FakeRequest(GET, "/mandate/client/review")).get
+        val result = route(FakeRequest(GET, "/mandate/client/review/ATED")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -91,7 +91,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       "client requests(GET) for review mandate view, but mandate has not been cached on search mandate submit" in {
         viewWithAuthorisedClient() { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/search"))
+          redirectLocation(result) must be(Some("/mandate/client/search/ATED"))
         }
       }
 
@@ -101,7 +101,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       "client submits form" in {
         submitWithAuthorisedClient { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/declaration"))
+          redirectLocation(result) must be(Some("/mandate/client/declaration/ATED"))
         }
       }
     }
@@ -127,7 +127,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestReviewMandateController.view().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestReviewMandateController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -137,7 +137,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestReviewMandateController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
-    val result = TestReviewMandateController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestReviewMandateController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -146,7 +146,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestReviewMandateController.submit().apply(SessionBuilder.updateRequestFormWithSession(FakeRequest().withFormUrlEncodedBody(), userId))
+    val result = TestReviewMandateController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(FakeRequest().withFormUrlEncodedBody(), userId))
     test(result)
   }
 

@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.agentclientmandate.models._
 
-@(mandate: Mandate)(implicit request: Request[_], messages: Messages)
+@(service: String, mandate: Mandate)(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
@@ -16,7 +16,7 @@
   @Messages("client.review-agent.header")
 </h1>
 
-   @form(action = routes.ReviewMandateController.submit()) {
+   @form(action = routes.ReviewMandateController.submit(mandate.subscription.service.id)) {
      <table>
        <tr>
          <th id ="service">@Messages("client.review-agent.service-header")</th>
@@ -32,7 +32,7 @@
          <th id="agent-reference-label">@Messages("client.review-agent.agent-reference")</th>
          <td>@mandate.id</td>
          <td>
-           <a href="@routes.SearchMandateController.view()" id ="edit-agent-reference-number">@Messages("edit-link")
+           <a href="@routes.SearchMandateController.view(service)" id ="edit-agent-reference-number">@Messages("edit-link")
              <span class="screen-reader-text">@Messages("client.review-agent.agent-reference")</span>
            </a>
          </td>
@@ -43,7 +43,7 @@
          <td>@clientParty.contactDetails.email</td>
          }
          <td>
-           <a href='@routes.CollectEmailController.view(Some("edit"))' id ="edit-agent-email">@Messages("edit-link")
+           <a href='@routes.CollectEmailController.view(service, Some("edit"))' id ="edit-agent-email">@Messages("edit-link")
              <span class="screen-reader-text">@Messages("client.review-agent.email")</span>
            </a>
          </td>

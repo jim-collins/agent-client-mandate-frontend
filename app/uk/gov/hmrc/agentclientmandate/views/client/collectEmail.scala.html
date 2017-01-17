@@ -4,9 +4,9 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@(addEmailForm: Form[ClientEmail], mode: Option[String])(implicit request: Request[_], messages: Messages)
+@(service: String, addEmailForm: Form[ClientEmail], mode: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Messages("client.collect-email.title")) {
+@main_template(title = Messages("client.collect-email.title"), delegatedService = Some(service)) {
 
   <div class="heading-sub" id="pre-heading">@Messages("client.collect-email.preheader")</div>
   <h1 class="heading-xlarge" id="header">
@@ -21,7 +21,7 @@
     </span>
   </div>
 
-  @form(action = routes.CollectEmailController.submit(mode)) {
+  @form(action = routes.CollectEmailController.submit(service, mode)) {
 
     <div class="form-group">
 

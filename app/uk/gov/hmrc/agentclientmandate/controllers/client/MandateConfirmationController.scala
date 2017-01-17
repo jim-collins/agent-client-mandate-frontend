@@ -36,11 +36,11 @@ trait MandateConfirmationController extends FrontendController with Actions with
 
   def dataCacheService: DataCacheService
 
-  def view() = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[Mandate](clientApprovedMandateId) map {
         case Some(x) => Ok(views.html.client.mandateConfirmation(x.agentParty.name, x.subscription.service.name))
-        case None => Redirect(routes.ReviewMandateController.view())
+        case None => Redirect(routes.ReviewMandateController.view(service))
       }
   }
 
