@@ -40,7 +40,8 @@
       '_legend -> Messages("agent.client-permission.header"),
       '_legendClass -> "screen-reader-text",
       '_labelClass -> "block-label",
-      '_labelAfter -> true
+      '_labelAfter -> true,
+      '_trackGA -> true
       )
     </div>
 
@@ -58,7 +59,7 @@
       <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
     </div>
     <div class="form-group">
-      <a class="button" id="view-all-clients" href="@routes.AgentSummaryController.view(service)">@Messages("agent.all-my-clients.button")</a>
+      <a class="button" id="view-all-clients" href="@routes.AgentSummaryController.view(service)" data-journey-click="agent-client-mandate:click:view-all-clients">@Messages("agent.all-my-clients.button")</a>
     </div>
 
   }

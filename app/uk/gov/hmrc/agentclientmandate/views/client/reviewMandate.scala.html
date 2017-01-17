@@ -32,7 +32,7 @@
          <th id="agent-reference-label">@Messages("client.review-agent.agent-reference")</th>
          <td>@mandate.id</td>
          <td>
-           <a href="@routes.SearchMandateController.view(service)" id ="edit-agent-reference-number">@Messages("edit-link")
+           <a href="@routes.SearchMandateController.view(service)" id ="edit-agent-reference-number" data-journey-click="agent-client-mandate:click:edit-agent-reference-number">@Messages("edit-link")
              <span class="screen-reader-text">@Messages("client.review-agent.agent-reference")</span>
            </a>
          </td>
@@ -43,7 +43,7 @@
          <td>@clientParty.contactDetails.email</td>
          }
          <td>
-           <a href='@routes.CollectEmailController.view(service, Some("edit"))' id ="edit-agent-email">@Messages("edit-link")
+           <a href='@routes.CollectEmailController.view(service, Some("edit"))' id ="edit-agent-email" data-journey-click="agent-client-mandate:click:edit-agent-email ">@Messages("edit-link")
              <span class="screen-reader-text">@Messages("client.review-agent.email")</span>
            </a>
          </td>
