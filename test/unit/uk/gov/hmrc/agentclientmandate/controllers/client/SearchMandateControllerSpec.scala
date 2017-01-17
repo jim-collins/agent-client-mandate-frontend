@@ -45,7 +45,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/client/search" in {
-        val result = route(FakeRequest(GET, "/mandate/client/search")).get
+        val result = route(FakeRequest(GET, "/mandate/client/search/ATED")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -111,7 +111,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val returnCache = cachedData.copy(mandate = Some(mandate1))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review"))
+          redirectLocation(result) must be(Some("/mandate/client/review/ATED"))
         }
       }
 
@@ -124,7 +124,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val returnCache = cachedData.copy(mandate = Some(mandate1))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review"))
+          redirectLocation(result) must be(Some("/mandate/client/review/ATED"))
         }
       }
 
@@ -148,7 +148,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val returnCache = ClientCache(mandate = Some(mandate))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = None, mandate = Some(mandate), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/email"))
+          redirectLocation(result) must be(Some("/mandate/client/email/ATED"))
         }
       }
     }
@@ -251,7 +251,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestSearchMandateController.view().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestSearchMandateController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -261,7 +261,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestSearchMandateController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
-    val result = TestSearchMandateController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestSearchMandateController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -275,7 +275,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestSearchMandateController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     when(mockMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(mandate))
     when(mockDataCacheService.cacheFormData[ClientCache](Matchers.eq(TestSearchMandateController.clientFormId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(returnCache))
-    val result = TestSearchMandateController.submit().apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestSearchMandateController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

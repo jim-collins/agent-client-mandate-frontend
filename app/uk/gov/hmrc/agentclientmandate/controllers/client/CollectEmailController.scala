@@ -43,45 +43,45 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
 
   def emailService: EmailService
 
-  def view(mode: Option[String]) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(service: String, mode: Option[String]) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map { a =>
         a.flatMap(_.email) match {
-          case Some(x) => Ok(views.html.client.collectEmail(clientEmailForm.fill(x),mode))
-          case None => Ok(views.html.client.collectEmail(clientEmailForm, mode))
+          case Some(x) => Ok(views.html.client.collectEmail(service, clientEmailForm.fill(x),mode))
+          case None => Ok(views.html.client.collectEmail(service, clientEmailForm, mode))
         }
       }
   }
 
-  def submit(mode: Option[String]) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(service: String, mode: Option[String]) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       clientEmailForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.client.collectEmail(formWithError, mode))),
+        formWithError => Future.successful(BadRequest(views.html.client.collectEmail(service, formWithError, mode))),
         data => {
           emailService.validate(data.email) flatMap { isValidEmail =>
             if (isValidEmail) {
               dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
                 case Some(x) => dataCacheService.cacheFormData[ClientCache](clientFormId, x.copy(email = Some(data))) flatMap { cachedData =>
-                  Future.successful(redirect(mode))
+                  Future.successful(redirect(service, mode))
                 }
                 case None => dataCacheService.cacheFormData[ClientCache](clientFormId, ClientCache(email = Some(data))) flatMap { cachedData =>
-                  Future.successful(redirect(mode))
+                  Future.successful(redirect(service, mode))
                 }
               }
             } else {
               val errorMsg = Messages("client.collect-email.error.email.invalid-by-email-service")
               val errorForm = clientEmailForm.withError(key = "client-collect-email-form", message = errorMsg).fill(data)
-              Future.successful(BadRequest(views.html.client.collectEmail(errorForm, mode)))
+              Future.successful(BadRequest(views.html.client.collectEmail(service, errorForm, mode)))
             }
           }
         }
       )
   }
 
-  private def redirect(mode: Option[String]) = {
+  private def redirect(service: String, mode: Option[String]) = {
     mode match {
-      case Some("edit") => Redirect(routes.ReviewMandateController.view())
-      case _ => Redirect(routes.SearchMandateController.view())
+      case Some("edit") => Redirect(routes.ReviewMandateController.view(service))
+      case _ => Redirect(routes.SearchMandateController.view(service))
     }
   }
 }

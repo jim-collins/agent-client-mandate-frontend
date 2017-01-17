@@ -9,7 +9,7 @@
 
 @main_template(title = Messages("agent.edit-mandate-details.title"), delegatedService = Some(service)) {
 
-  <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header", service)</div>
+  <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header", service.toUpperCase)</div>
   <h1 class="heading-xlarge" id="header">
     @Messages("agent.edit-mandate-details.header", service)
   </h1>

@@ -50,7 +50,7 @@
 
 @insideHeader = {
     @uiLayouts.header_nav(
-      navTitle = Some(Messages("mandate.main-title")),
+      navTitle = delegatedService.map(Messages("mandate.main-title", _)),
       navTitleLink = None,
       showBetaLink = false,
       navLinks = Some(headerNavLinks))

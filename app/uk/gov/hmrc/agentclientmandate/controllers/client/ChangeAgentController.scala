@@ -42,23 +42,23 @@ trait ChangeAgentController extends FrontendController with Actions{
   def acmService: AgentClientMandateService
   def dataCacheService: DataCacheService
 
-  def view(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
+  def view(service: String, agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
     implicit authContext => implicit request =>
-      Ok(views.html.client.changeAgent(new YesNoQuestionForm("client.agent-change.error").yesNoQuestionForm, agentName))
+      Ok(views.html.client.changeAgent(service, new YesNoQuestionForm("client.agent-change.error").yesNoQuestionForm, agentName))
   }
 
-  def submit(agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(service: String, agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
     implicit authContext => implicit request =>
       val form = new YesNoQuestionForm("client.agent-change.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.client.changeAgent(formWithError, agentName))),
+        formWithError => Future.successful(BadRequest(views.html.client.changeAgent(service, formWithError, agentName))),
         data => {
           val changeAgent = data.yesNo.getOrElse(false)
           if (changeAgent) {
-            Future.successful(Redirect(routes.CollectEmailController.view()))
+            Future.successful(Redirect(routes.CollectEmailController.view(service)))
           }
           else {
-            Future.successful(Redirect(routes.RemoveAgentController.confirmation(agentName)))
+            Future.successful(Redirect(routes.RemoveAgentController.confirmation(service, agentName)))
           }
         }
       )

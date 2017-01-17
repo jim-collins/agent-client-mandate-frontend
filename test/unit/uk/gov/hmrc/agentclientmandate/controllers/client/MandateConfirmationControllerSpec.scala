@@ -44,7 +44,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/client/confirmation" in {
-        val result = route(FakeRequest(GET, "/mandate/client/confirmation")).get
+        val result = route(FakeRequest(GET, "/mandate/client/confirmation/ATED")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -101,7 +101,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
       "approved mandate is not returned in response" in {
         viewAuthorisedClient(None) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review"))
+          redirectLocation(result) must be(Some("/mandate/client/review/ATED"))
         }
       }
     }
@@ -126,7 +126,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestMandateConfirmationController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -136,7 +136,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestMandateConfirmationController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -146,7 +146,7 @@ class MandateConfirmationControllerSpec extends PlaySpec with OneServerPerSuite 
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[Mandate](Matchers.eq(TestMandateConfirmationController.clientApprovedMandateId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
-    val result = TestMandateConfirmationController.view().apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestMandateConfirmationController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

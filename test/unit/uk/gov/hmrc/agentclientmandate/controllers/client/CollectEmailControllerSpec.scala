@@ -42,7 +42,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/email" in {
-        val result = route(FakeRequest(GET, "/mandate/client/email")).get
+        val result = route(FakeRequest(GET, "/mandate/client/email/ATED")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -94,7 +94,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com")))
         submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = Some(cachedData), returnCache = returnData, mode = Some("edit")) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review"))
+          redirectLocation(result) must be(Some("/mandate/client/review/ATED"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -106,7 +106,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com")))
         submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = None, returnCache = returnData) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/search"))
+          redirectLocation(result) must be(Some("/mandate/client/search/ATED"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -182,7 +182,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestCollectEmailController.view(mode).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestCollectEmailController.view(service, mode).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -192,7 +192,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
-    val result = TestCollectEmailController.view(mode).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestCollectEmailController.view(service, mode).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -207,7 +207,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     when(mockEmailService.validate(Matchers.any())(Matchers.any())).thenReturn(Future.successful(isValidEmail))
     when(mockDataCacheService.cacheFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId), Matchers.eq(returnCache))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(returnCache))
-    val result = TestCollectEmailController.submit(mode).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestCollectEmailController.submit(service, mode).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 
