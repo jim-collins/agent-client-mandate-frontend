@@ -31,7 +31,7 @@
         <br/>
         <br/>
         <form action="@routes.RemoveAgentController.returnToService">
-            <button class="button" id="return_to_service_button" type="submit">@Messages("client.remove-agent-confirmation.service_button")</button>
+            <button class="button" id="return_to_service_button" type="submit">@Messages("client.remove-agent-confirmation.service_button", service.toUpperCase)</button>
         </form>
     </div>
 

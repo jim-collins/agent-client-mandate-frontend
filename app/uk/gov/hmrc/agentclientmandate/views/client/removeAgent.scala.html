@@ -8,9 +8,9 @@
 
 @main_template(title = Messages("client.remove-agent.title"), delegatedService = Some(service)) {
 
-    <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header")</div>
+    <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header", service.toUpperCase)</div>
     <h1 class="heading-xlarge" id="header">
-        @Messages("client.remove-agent.header", agentName)
+        @Messages("client.remove-agent.header", agentName, service.toUpperCase)
     </h1>
 
     @mandateErrorSummary(removeAgentForm, "yes-no.error.general", Some("client.remove-agent.error"))
@@ -24,7 +24,7 @@
                 "false" -> Messages("radio-no")),
             '_groupClass -> "inline",
             '_legendClass -> "screen-reader-text",
-            '_legend -> Messages("client.remove-agent.header", agentName),
+            '_legend -> Messages("client.remove-agent.header", agentName, service.toUpperCase),
             '_labelClass -> "block-label",
             '_labelAfter -> true
         )
