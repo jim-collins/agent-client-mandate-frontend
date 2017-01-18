@@ -61,13 +61,13 @@
             </a>
           </td>
           <td>
-            <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)" data-journey-click="agent-client-mandate:click:edit-client-link>
+            <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)" data-journey-click="agent-client-mandate:click:edit-client-link">
               @Messages("Edit") <span class="screen-reader-text">@active.clientDisplayName</span>
             </a>
           </td>
           <td class="tdRight">
             <a id="client-link-@index"
-               href='@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))' data-journey-click="agent-client-mandate:click:client-link
+               href='@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))' data-journey-click="agent-client-mandate:click:client-link"
                class='button'
                onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))")'
             >@Messages("client.summary.client-view")
