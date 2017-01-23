@@ -15,7 +15,7 @@ mandate.agent.delegation.url.text = Change client
 agent-client-mandate.error.summaryHeader = There is a problem with the form
 agent.add-a-client.sub-header = Add a client
 
-mandate.main-title = Submit and view your ATED returns
+mandate.main-title = Submit and view your {0} returns
 mandate.sign-out = Sign out
 
 #agent client summary
@@ -92,14 +92,14 @@ client.agent-confirmation.banner-confirmation.submitted.date = on {0}
 client.agent-confirmation.notification = Your agent will receive an email notification.
 client.agent-confirmation.header = What happens next
 client.agent-confirmation.this-authority = This authority will remain in place until you change or cancel your agent.
-client.agent-confirmation.sign-in = You can sign in at any point to view <a href="{0}" id="calling-service" rel="calling-service">your online service</a>
+client.agent-confirmation.sign-in = You can sign in at any point to view <a href="{0}" id="calling-service" rel="calling-service"data-journey-click="agent-client-mandate:click:sign-in-link">your online service</a>
 
 client.agent-confirmation.finish-signout = Finish and sign out
 client.declaration.error.general.agree = There is a problem with the checkbox.
 
 #client remove agent
 client.remove-agent.title = Confirm Agent Removal
-client.remove-agent.header = Are you sure you want to cancel the authority for {0} to act on your behalf for ATED?
+client.remove-agent.header = Are you sure you want to cancel the authority for {0} to act on your behalf for {1}?
 client.remove-agent.error = remove agent
 
 
@@ -108,7 +108,7 @@ client.remove-agent-confirmation.title = What happens next
 client.remove-agent-confirmation.banner-text = You have removed {0} as your agent
 client.remove-agent-confirmation.create-return = you can create a return
 client.remove-agent-confirmation.appoint-agent = you can appoint another agent to act for you
-client.remove-agent-confirmation.service_button = Your ATED online service
+client.remove-agent-confirmation.service_button = Your {0} online service
 
 #client change agent
 client.change-agent.title = Do you want to appoint another agent to act for you?
@@ -171,7 +171,7 @@ agent.client-permission.header = Do you have permission to register on behalf of
 agent.client-permission.error.general.hasPermission = There is a problem with the client permission question.
 agent.client-permission.hasPermission.not-selected.error = You must answer client permission question
 
-agent.client-permission.hasPermission.selected.ated.yes.notice = Your client must complete an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1">ATED 1</a>. Submission of form 64-8 does not cover ATED or ATED related CGT.
+agent.client-permission.hasPermission.selected.ated.yes.notice = Your client must complete an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1" data-journey-click="agent-client-mandate:click:ATED-1-link">ATED 1 </a>. Submission of form 64-8 does not cover ATED or ATED related CGT.
 agent.client-permission.hasPermission.selected.ated.no.notice =  	You must have permission from your client before you can continue.
 
 # agent enter business details
@@ -197,7 +197,7 @@ agent.unique-reference.header = Your unique agent reference number for {0} is<br
 agent.unique-reference.next.heading.text = What happens next
 agent.unique-reference.text1 =  You need to give this agent reference number to your client so they can authorise you.
 agent.unique-reference.text2 =  Your client will then need to:
-agent.unique-reference.ated.list.text1 = register their company to use the new <a href="{0}" id="calling-service" rel="calling-service">{1} service</a>, they may need to create a new organisational Government Gateway account
+agent.unique-reference.ated.list.text1 = register their company to use the new <a href="{0}" id="calling-service" rel="calling-service" data-journey-click="agent-client-mandate:click:new-gateway-account-link">{1} service</a>, they may need to create a new organisational Government Gateway account
 agent.unique-reference.ated.list.text2 = enter the agent reference number you gave them
 agent.unique-reference.text3 = Once they have done this you will receive an email notification. You have 28 days to sign in and accept their request.
 agent.unique-reference.button = View all my clients
@@ -215,7 +215,7 @@ agent.check-client-details.confirm = Confirm and add client
 # agent edit mandate details
 agent.edit-mandate-details.title = Edit ACME Limited
 agent.edit-mandate-details.header = Edit ACME Limited
-agent.edit-mandate-details.pre-header = Manage your ATED service
+agent.edit-mandate-details.pre-header = Manage your {0} service
 agent.edit-mandate-details.sub-heading = Agent reference number {0}
 agent.edit-mandate-details.displayName = Display name
 agent.edit-mandate-details.hint = This does not change the official company name.
@@ -274,6 +274,6 @@ agent.remove-client-confirmation.view-all-clients = View all your clients
 client.banner.text.approved = You have requested <span class="heading-small">{0}</span> to act as your agent
 client.banner.text.active = <span class="heading-small">{0}</span> is now your appointed agent
 client.banner.text.rejected = <span class="heading-small">{0}</span> has rejected your request to act as your agent
-client.banner.text.cancelled = The ATED agent can no longer act for the client
+client.banner.text.cancelled = The {1} agent can no longer act for the client
 client.banner.link-text.approved_active = Cancel
 client.banner.link-text.cancelled_rejected = Appoint an agent

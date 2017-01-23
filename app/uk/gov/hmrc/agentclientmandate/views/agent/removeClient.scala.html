@@ -8,7 +8,7 @@
 
 @main_template(title = Messages("agent.remove-client.header", clientName), delegatedService = Some(service)) {
 
-    <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header", service)</div>
+    <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header", service.toUpperCase)</div>
     <h1 class="heading-xlarge" id="header">
         @Messages("agent.remove-client.header", clientName)
     </h1>
@@ -32,7 +32,8 @@
             '_legendClass -> "screen-reader-text",
             '_legend -> Messages("agent.remove-client.header", clientName),
             '_labelClass -> "block-label",
-            '_labelAfter -> true
+            '_labelAfter -> true,
+            '_trackGA -> true
         )
         </div>
 

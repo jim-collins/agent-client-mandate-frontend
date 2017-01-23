@@ -5,27 +5,27 @@ GET     /keep-alive                     uk.gov.hmrc.agentclientmandate.controlle
 
 ## Client URIs ##
 
-GET     /client/email              uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.view(mode: Option[String] ?= None)
-POST    /client/email              uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.submit(mode: Option[String] ?= None)
+GET     /client/email/:service          uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.view(service: String, mode: Option[String] ?= None)
+POST    /client/email/:service          uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.submit(service: String, mode: Option[String] ?= None)
 
-GET     /client/search             uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.view()
-POST    /client/search             uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.submit()
+GET     /client/search/:service         uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.view(service: String)
+POST    /client/search/:service         uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.submit(service: String)
 
-GET     /client/review             uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.view()
-POST    /client/review             uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.submit()
+GET     /client/review/:service         uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.view(service: String)
+POST    /client/review/:service             uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.submit(service: String)
 
-GET     /client/declaration        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.view()
-POST    /client/declaration        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.submit()
+GET     /client/declaration/:service        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.view(service: String)
+POST    /client/declaration/:service        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.submit(service: String)
 
-GET     /client/confirmation     uk.gov.hmrc.agentclientmandate.controllers.client.MandateConfirmationController.view()
+GET     /client/confirmation/:service     uk.gov.hmrc.agentclientmandate.controllers.client.MandateConfirmationController.view(service: String)
 
 GET     /client/remove/return-to-service            uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.returnToService
-GET     /client/remove/:id                   uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(id: String, returnUrl: String)
-POST    /client/remove/:id/:clientName       uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.submit(id: String, clientName: String)
-GET     /client/remove/confirmation/:clientName     uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.confirmation(clientName: String)
+GET     /client/remove/:id/:service                    uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(service: String, id: String, returnUrl: String)
+POST    /client/remove/:id/:clientName/:service        uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.submit(service: String, id: String, clientName: String)
+GET     /client/remove/confirmation/:clientName/:service     uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.confirmation(service: String, clientName: String)
 
-GET     /client/change/:agentName               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.view(agentName: String)
-POST    /client/change/:agentName               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.submit(agentName: String)
+GET     /client/change/:service/:agentName               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.view(service: String, agentName: String)
+POST    /client/change/:service/:agentName               uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.submit(service: String, agentName: String)
 
 ## Agent URIs ##
 
@@ -61,7 +61,7 @@ POST    /agent/client-details/:service      uk.gov.hmrc.agentclientmandate.contr
 GET     /agent/unique-reference/:service    uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 
 
-GET     /agent/summary/:service             uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.view(service: String)
+GET     /agent/summary/:service                 uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.view(service: String, tabName : Option[String] ?= None)
 GET     /agent/doDelegation/:service/:serviceId/:clientName  uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.doDelegation(service: String, serviceId: String, clientName: String)
 GET     /agent/summary/:service/activate/:mandateId   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.activate(service: String, mandateId: String)
 
