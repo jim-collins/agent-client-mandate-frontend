@@ -80,8 +80,8 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
         viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Does your client have an overseas company or trust without a UK Unique Taxpayer Reference?")
-          document.getElementById("header").text() must include("Does your client have an overseas company or trust without a UK Unique Taxpayer Reference?")
+          document.title() must be("Do they have an overseas company registration number?")
+          document.getElementById("header").text() must include("Do they have an overseas company registration number?")
           document.getElementById("pre-header").text() must be("Add a client")
           document.getElementById("submit").text() must be("Continue")
         }
