@@ -116,14 +116,19 @@ trait AgentClientMandateService extends MandateConstants {
                 credId = ac.user.userId,
                 clientSubscriptionId = x.value)
             }
-            agentClientMandateConnector.importExistingRelationships(ggRelationshipDtoList) flatMap { resp =>
-              resp.status match {
-                case OK =>
-                  Future.successful(None)
-                case status =>
-                  Logger.warn(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import failed for $arn - status - $status")
-                  Future.successful(None)
+            if (ggRelationshipDtoList.size > 0) {
+              agentClientMandateConnector.importExistingRelationships(ggRelationshipDtoList) flatMap { resp =>
+                resp.status match {
+                  case OK =>
+                    Future.successful(None)
+                  case status =>
+                    Logger.warn(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import failed for $arn - status - $status")
+                    Future.successful(None)
+                }
               }
+            }
+            else {
+              Future.successful(None)
             }
           }
         case _ => Future.successful(None)
