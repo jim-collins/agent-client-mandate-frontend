@@ -44,7 +44,7 @@ trait ClientPermissionController extends FrontendController with Actions {
   def businessCustomerConnector: BusinessCustomerFrontendConnector
   def atedSubscriptionConnector: AtedSubscriptionFrontendConnector
 
-  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
       for {
         clearBcResp <- businessCustomerConnector.clearCache(service)
@@ -56,7 +56,7 @@ trait ClientPermissionController extends FrontendController with Actions {
   }
 
 
-  def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       clientPermissionForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.agent.clientPermission(formWithErrors, service)),

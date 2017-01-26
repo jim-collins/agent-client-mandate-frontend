@@ -46,7 +46,7 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
 
   def authConnector: AuthConnector
 
-  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) map {
         case Some(clientDisplayname) => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm.fill(clientDisplayname), service, redirectUrl))
@@ -55,7 +55,7 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
   }
 
 
-  def submit(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def submit(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       clientDisplayNameForm.bindFromRequest.fold(
         formWithError => Future.successful(BadRequest(views.html.agent.clientDisplayName(formWithError, service, redirectUrl))),
@@ -69,7 +69,7 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
       )
   }
 
-  def getClientDisplayName(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def getClientDisplayName(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId).map { displayName =>
           Ok(Json.toJson(displayName))

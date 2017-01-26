@@ -43,7 +43,7 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
 
   def emailService: EmailService
 
-  def view(service: String, mode: Option[String]) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(service: String, mode: Option[String]) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map { a =>
         a.flatMap(_.email) match {
@@ -53,7 +53,7 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
       }
   }
 
-  def submit(service: String, mode: Option[String]) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(service: String, mode: Option[String]) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       clientEmailForm.bindFromRequest.fold(
         formWithError => Future.successful(BadRequest(views.html.client.collectEmail(service, formWithError, mode))),

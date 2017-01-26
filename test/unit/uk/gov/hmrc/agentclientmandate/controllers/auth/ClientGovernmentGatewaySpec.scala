@@ -21,16 +21,18 @@ import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientGovernmentGateway
 
 class ClientGovernmentGatewaySpec extends PlaySpec with OneServerPerSuite {
 
+  val serviceName: String = "ATED"
+
   "ClientGovernmentGateway" must {
 
     "extend Government gateway trait" when {
 
       "overriding loginURL" in {
-        ClientGovernmentGateway.loginURL must be("http://localhost:9025/gg/sign-in")
+        ClientGovernmentGateway(serviceName).loginURL must be("http://localhost:9025/gg/sign-in")
       }
 
       "overriding continueURL" in {
-        ClientGovernmentGateway.continueURL must be("http://localhost:9959/mandate/client/email")
+        ClientGovernmentGateway(serviceName).continueURL must be("http://localhost:9959/mandate/client/email/ATED")
       }
 
     }

@@ -25,6 +25,8 @@ import unit.uk.gov.hmrc.agentclientmandate.builders.AuthBuilder
 
 class AgentRegimeSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
 
+  val serviceName: String = "ATED"
+
   "AgentRegime" must {
 
     "extend TaxRegime" when {
@@ -33,21 +35,21 @@ class AgentRegimeSpec extends PlaySpec with OneServerPerSuite with MockitoSugar 
         when(accounts.org).thenReturn(None)
         val registeredAgent = AuthBuilder.createRegisteredAgentAuthContext("userId", "userName")
         when(accounts.agent).thenReturn(registeredAgent.principal.accounts.agent)
-        AgentRegime.isAuthorised(accounts) must be(true)
+        AgentRegime(Some(serviceName)).isAuthorised(accounts) must be(true)
       }
 
       "overriding isAuthorised - when loggedInUser doesn't have agent account - return false" in {
         when(accounts.org).thenReturn(None)
         when(accounts.agent).thenReturn(None)
-        AgentRegime.isAuthorised(accounts) must be(false)
+        AgentRegime(Some(serviceName)).isAuthorised(accounts) must be(false)
       }
 
       "overriding authenticationType" in {
-        AgentRegime.authenticationType must be(AgentGovernmentGateway)
+        AgentRegime(Some(serviceName)).authenticationType must be(AgentGovernmentGateway(serviceName))
       }
 
       "overriding unauthorised page" in {
-        AgentRegime.unauthorisedLandingPage must be(None)
+        AgentRegime(Some(serviceName)).unauthorisedLandingPage must be(None)
       }
 
     }

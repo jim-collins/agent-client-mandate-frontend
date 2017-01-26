@@ -41,7 +41,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
 
   def agentClientMandateService: AgentClientMandateService
 
-  def view(service: String, tabName: Option[String] = None) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String, tabName: Option[String] = None) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       val arn = AuthUtils.getArn
       for {
@@ -52,7 +52,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
       }
   }
 
-  def activate(service: String, mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def activate(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       agentClientMandateService.acceptClient(mandateId).flatMap { clientAccepted =>
         if (clientAccepted) {
@@ -72,7 +72,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
       }
   }
 
-  def doDelegation(service: String, serviceId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def doDelegation(service: String, serviceId: String, clientName: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       startDelegationAndRedirect(createDelegationContext(service, serviceId, clientName), getDelegatedServiceRedirectUrl(service))
   }

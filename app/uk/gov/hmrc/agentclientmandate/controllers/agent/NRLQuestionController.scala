@@ -34,13 +34,13 @@ object NRLQuestionController extends NRLQuestionController {
 
 trait NRLQuestionController extends FrontendController with Actions {
 
-  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       Ok(views.html.agent.nrl_question(nrlQuestionForm, service))
   }
 
 
-  def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       nrlQuestionForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.agent.nrl_question(formWithErrors, service)),

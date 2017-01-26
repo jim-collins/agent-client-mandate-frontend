@@ -42,12 +42,12 @@ trait ChangeAgentController extends FrontendController with Actions{
   def acmService: AgentClientMandateService
   def dataCacheService: DataCacheService
 
-  def view(service: String, agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
+  def view(service: String, agentName: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence) {
     implicit authContext => implicit request =>
       Ok(views.html.client.changeAgent(service, new YesNoQuestionForm("client.agent-change.error").yesNoQuestionForm, agentName))
   }
 
-  def submit(service: String, agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(service: String, agentName: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       val form = new YesNoQuestionForm("client.agent-change.error")
       form.yesNoQuestionForm.bindFromRequest.fold(

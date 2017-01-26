@@ -19,11 +19,11 @@ package uk.gov.hmrc.agentclientmandate.controllers.auth
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
 import uk.gov.hmrc.play.frontend.auth.{AuthenticationProvider, TaxRegime}
 
-object AgentRegime extends TaxRegime {
+case class AgentRegime(service: Option[String] = None) extends TaxRegime {
 
   override def isAuthorised(accounts: Accounts): Boolean = accounts.agent.flatMap(_.agentBusinessUtr).isDefined
 
-  override def authenticationType: AuthenticationProvider = AgentGovernmentGateway
+  override def authenticationType: AuthenticationProvider = AgentGovernmentGateway(service.getOrElse(""))
 
   override def unauthorisedLandingPage: Option[String] = None
 

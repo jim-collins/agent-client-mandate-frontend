@@ -24,6 +24,8 @@ import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
 
 class ClientRegimeSpec extends PlaySpec with OneServerPerSuite with MockitoSugar {
 
+  val serviceName: String = "ATED"
+
   "ClientRegime" must {
 
     "extend TaxRegime" when {
@@ -31,21 +33,21 @@ class ClientRegimeSpec extends PlaySpec with OneServerPerSuite with MockitoSugar
       "overriding isAuthorised - when user has org account - return true" in {
         when(accounts.agent).thenReturn(None)
         when(accounts.org.isDefined).thenReturn(true)
-        ClientRegime.isAuthorised(accounts) must be(true)
+        ClientRegime(Some(serviceName)).isAuthorised(accounts) must be(true)
       }
 
       "overriding isAuthorised - when user doesn't have org account - return false" in {
         when(accounts.agent).thenReturn(None)
         when(accounts.org.isDefined).thenReturn(false)
-        ClientRegime.isAuthorised(accounts) must be(false)
+        ClientRegime(Some(serviceName)).isAuthorised(accounts) must be(false)
       }
 
       "overriding authenticationType" in {
-        ClientRegime.authenticationType must be(ClientGovernmentGateway)
+        ClientRegime(Some(serviceName)).authenticationType must be(ClientGovernmentGateway(serviceName))
       }
 
       "overriding unauthorised page" in {
-        ClientRegime.unauthorisedLandingPage must be(None)
+        ClientRegime(Some(serviceName)).unauthorisedLandingPage must be(None)
       }
 
     }
