@@ -35,12 +35,14 @@ object ClientEmail {
 object ClientEmailForm {
 
   val emailLength = 241
+  val lengthZero = 0
 
   val clientEmailForm =
     Form(
       mapping(
         "email" -> text
           .verifying(Messages("client.collect-email.error.email"), email => email.nonEmpty)
+          .verifying(Messages("client.collect-email.error.email"), x => x.trim.length > lengthZero)
           .verifying(Messages("client.collect-email.error.email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
       )
       (ClientEmail.apply)(ClientEmail.unapply)

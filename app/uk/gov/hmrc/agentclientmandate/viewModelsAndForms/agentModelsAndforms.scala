@@ -44,10 +44,13 @@ object AgentEmail {
 }
 
 object AgentEmailForm {
+  val lengthZero = 0
   val agentEmailForm =
     Form(
       mapping(
-        "email" -> text.verifying(Messages("agent.enter-email.error.email"), email => email.nonEmpty)
+        "email" -> text
+          .verifying(Messages("agent.enter-email.error.email"), email => email.nonEmpty)
+          .verifying(Messages("agent.enter-email.error.email"), x => x.trim.length > lengthZero)
       )(AgentEmail.apply)(AgentEmail.unapply)
     )
 
@@ -183,10 +186,11 @@ object ClientDisplayDetails {
 
 object ClientDisplayNameForm {
 
+  val lengthZero = 0
   val clientDisplayNameForm = Form(
     mapping(
       "clientDisplayName" -> text
-        .verifying(Messages("agent.client-display-name.error.not-selected"), x => x.length > 0)
+        .verifying(Messages("agent.client-display-name.error.not-selected"), x => x.trim.length > lengthZero)
         .verifying(Messages("agent.client-display-name.error.length"), x => x.isEmpty || (x.nonEmpty && x.length <= 99))
     )(ClientDisplayName.apply)(ClientDisplayName.unapply)
   )
