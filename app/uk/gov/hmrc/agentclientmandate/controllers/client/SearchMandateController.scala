@@ -46,7 +46,7 @@ trait SearchMandateController extends FrontendController with Actions with Manda
 
   def mandateService: AgentClientMandateService
 
-  def view(service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
 
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map { a =>
@@ -57,7 +57,7 @@ trait SearchMandateController extends FrontendController with Actions with Manda
       }
   }
 
-  def submit(service: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       mandateRefForm.bindFromRequest.fold(
         formWithErrors => Future.successful(BadRequest(views.html.client.searchMandate(service, formWithErrors))),

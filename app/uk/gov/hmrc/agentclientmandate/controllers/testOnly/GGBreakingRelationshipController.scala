@@ -31,12 +31,12 @@ object GGBreakingRelationshipController extends FrontendController with Actions 
   def agentClientMandateConnector: AgentClientMandateConnector = AgentClientMandateConnector
   override val authConnector = FrontendAuthConnector
 
-  def view() = AuthorisedFor(AgentRegime, GGConfidence) {
+  def view() = AuthorisedFor(AgentRegime(None), GGConfidence) {
     implicit authContext => implicit request =>
       Ok(views.html.testOnly.checkBreakingRelationships())
   }
 
-  def submit() = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def submit() = AuthorisedFor(AgentRegime(None), GGConfidence).async {
     implicit authContext => implicit request =>
       agentClientMandateConnector.remove(request.body.asFormUrlEncoded.get.apply("mandateId").head).map { x =>
         Logger.info("********" + x.body + "*************")

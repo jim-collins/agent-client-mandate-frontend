@@ -48,7 +48,7 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
 
   def emailService: EmailService
 
-  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
       dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) map {
         case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(agentEmail), service, redirectUrl))
@@ -56,7 +56,7 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
       }
   }
 
-  def submit(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def submit(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       agentEmailForm.bindFromRequest.fold(
         formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service, redirectUrl))),
@@ -79,7 +79,7 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
       )
   }
 
-  def getAgentEmail(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def getAgentEmail(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId).map { agentEmail =>
           Ok(Json.toJson(agentEmail))

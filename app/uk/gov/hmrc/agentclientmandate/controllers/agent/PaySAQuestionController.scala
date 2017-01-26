@@ -35,13 +35,13 @@ object PaySAQuestionController extends PaySAQuestionController {
 
 trait PaySAQuestionController extends FrontendController with Actions {
 
-  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       Ok(views.html.agent.paySAQuestion(paySAQuestionForm, service))
   }
 
 
-  def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       paySAQuestionForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.agent.paySAQuestion(formWithErrors, service)),

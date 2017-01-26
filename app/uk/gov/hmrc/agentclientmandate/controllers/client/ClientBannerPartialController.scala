@@ -33,7 +33,7 @@ trait ClientBannerPartialController extends FrontendController with Actions with
 
   def mandateService: AgentClientMandateService
 
-  def getBanner(clientId: String, service: String, returnUrl: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def getBanner(clientId: String, service: String, returnUrl: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request => {
 
       // $COVERAGE-OFF$

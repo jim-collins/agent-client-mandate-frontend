@@ -19,9 +19,9 @@ package uk.gov.hmrc.agentclientmandate.controllers.auth
 import uk.gov.hmrc.play.frontend.auth.GovernmentGateway
 import ExternalUrls._
 
-object ClientGovernmentGateway extends GovernmentGateway {
+case class ClientGovernmentGateway(service: String) extends GovernmentGateway {
 
   override val loginURL = s"$companyAuthHost/$loginPath"
-  override val continueURL = s"$loginCallbackClient"
+  override def continueURL = s"$loginCallbackClient/$service"
 
 }

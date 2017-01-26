@@ -42,7 +42,7 @@ trait MandateDeclarationController extends FrontendController with Actions with 
 
   def mandateService: AgentClientMandateService
 
-  def view(service: String)= AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(service: String)= AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map {
         _.flatMap(_.mandate) match {
@@ -52,7 +52,7 @@ trait MandateDeclarationController extends FrontendController with Actions with 
       }
   }
 
-  def submit(service: String) = AuthorisedFor(ClientRegime, GGConfidence) async {
+  def submit(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence) async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
         _.flatMap(_.mandate) match {

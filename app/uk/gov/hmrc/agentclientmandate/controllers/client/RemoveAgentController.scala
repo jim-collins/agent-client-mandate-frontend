@@ -42,7 +42,7 @@ trait RemoveAgentController extends FrontendController with Actions {
 
   def dataCacheService: DataCacheService
 
-  def view(service: String, mandateId: String, returnUrl: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def view(service: String, mandateId: String, returnUrl: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
 
       // $COVERAGE-OFF$
@@ -58,7 +58,7 @@ trait RemoveAgentController extends FrontendController with Actions {
       }
   }
 
-  def submit(service: String, mandateId: String, agentName: String) = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def submit(service: String, mandateId: String, agentName: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       val form = new YesNoQuestionForm("client.remove-agent.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
@@ -81,12 +81,12 @@ trait RemoveAgentController extends FrontendController with Actions {
       )
   }
 
-  def confirmation(service: String, agentName: String) = AuthorisedFor(ClientRegime, GGConfidence) {
+  def confirmation(service: String, agentName: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence) {
     implicit authContext => implicit request =>
       Ok(views.html.client.removeAgentConfirmation(service, agentName))
   }
 
-  def returnToService = AuthorisedFor(ClientRegime, GGConfidence).async {
+  def returnToService = AuthorisedFor(ClientRegime(), GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[String]("RETURN_URL").map {
         case Some(x) => Redirect(x)

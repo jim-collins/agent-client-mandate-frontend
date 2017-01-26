@@ -36,7 +36,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
 
   def emailService: EmailService
 
-  def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       acmService.fetchClientMandate(mandateId).map {
         case Some(mandate) =>
@@ -47,7 +47,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
       }
   }
 
-  def submit(service: String, mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def submit(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request => editMandateDetailsForm.bindFromRequest.fold(
       formWithError => Future.successful(BadRequest(views.html.agent.editClient(formWithError, service, mandateId))),
       editMandate => {

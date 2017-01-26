@@ -35,12 +35,12 @@ object OverseasClientQuestionController extends OverseasClientQuestionController
 
 trait OverseasClientQuestionController extends FrontendController with Actions {
 
-  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       Ok(views.html.agent.overseasClientQuestion(overseasClientQuestionForm, service))
   }
 
-  def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit authContext => implicit request =>
       overseasClientQuestionForm.bindFromRequest.fold(
         formWithError => BadRequest(views.html.agent.overseasClientQuestion(formWithError, service)),

@@ -33,12 +33,12 @@ object CollectClientBusinessDetailsController extends CollectClientBusinessDetai
 trait CollectClientBusinessDetailsController extends FrontendController with Actions {
 
 
-  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit authContext => implicit request =>
       Ok(views.html.agent.collectClientBusinessDetails(collectClientBusinessDetails, service))
   }
 
-  def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit authContext => implicit request =>
       collectClientBusinessDetails.bindFromRequest.fold(
         formWithError => BadRequest(views.html.agent.collectClientBusinessDetails(formWithError, service)),

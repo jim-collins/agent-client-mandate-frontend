@@ -44,7 +44,7 @@ trait MandateDetailsController extends FrontendController with Actions with Mand
 
   def mandateService: AgentClientMandateService
 
-  def view(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) flatMap {
         case Some(agentEmail) =>
@@ -56,7 +56,7 @@ trait MandateDetailsController extends FrontendController with Actions with Mand
       }
   }
 
-  def submit(service: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
     for {
       mandateId <- mandateService.createMandate(service)

@@ -39,7 +39,7 @@ trait RejectClientController extends FrontendController with Actions {
 
   def acmService: AgentClientMandateService
 
-  def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       acmService.fetchClientMandate(mandateId).map {
         case Some(mandate) => Ok(views.html.agent.rejectClient(service, new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm,
@@ -48,7 +48,7 @@ trait RejectClientController extends FrontendController with Actions {
       }
   }
 
-  def submit(service: String, mandateId: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence).async {
+  def submit(service: String, mandateId: String, clientName: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       val form = new YesNoQuestionForm("agent.reject-client.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
@@ -72,7 +72,7 @@ trait RejectClientController extends FrontendController with Actions {
       )
   }
 
-  def confirmation(service: String, clientName: String) = AuthorisedFor(AgentRegime, GGConfidence) {
+  def confirmation(service: String, clientName: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit authContext => implicit request =>
       Ok(views.html.agent.rejectClientConfirmation(service, clientName))
   }
