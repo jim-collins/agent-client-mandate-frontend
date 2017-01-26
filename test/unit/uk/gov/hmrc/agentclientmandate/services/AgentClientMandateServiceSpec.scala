@@ -188,6 +188,16 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
       }
 
+      "don't try and import any clients if there are none to import" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val clientList = List()
+        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(NOT_FOUND, None))
+        when(mockGovernmentGatewayConnector.retrieveClientList(Matchers.any(), Matchers.any())) thenReturn Future.successful(clientList)
+
+        await(TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName))
+        verify(mockAgentClientMandateConnector, times(0)).importExistingRelationships(Matchers.any())(Matchers.any(), Matchers.any())
+      }
+
     }
 
     "send approved mandate to backend and caches the response in keystore" when {
