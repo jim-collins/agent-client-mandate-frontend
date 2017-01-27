@@ -52,7 +52,7 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
       assert(document.getElementById("what-happens-next").text() === "What happens next")
 
       And("The authorise-instruction - What happens next?")
-      assert(document.getElementById("authorise-instruction").text() === "You need to give this agent reference number to your client so they can authorise you.")
+      assert(document.getElementById("authorise-instruction").text() === "You need to give this unique authorisation number to your client so they can authorise you to act for them. You can view this number when you sign back into the ATED online service.")
 
       And("The client-instruction - should be correct for the relevant service")
       assert(document.getElementById("client-instruction").text() === "Your client will then need to:")
