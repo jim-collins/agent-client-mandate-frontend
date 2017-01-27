@@ -83,10 +83,10 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
         viewEmailAuthorisedAgent() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your email address?")
-          document.getElementById("header").text() must include("What is your email address?")
+          document.title() must be("What email address do you want to use for this client?")
+          document.getElementById("header").text() must include("What email address do you want to use for this client?")
           document.getElementById("pre-header").text() must be("Add a client")
-          document.getElementById("info").text() must be(s"We need your email address to send you notifications relating to this client's activity within the $service online service. You can use a group email address and change it at a later date.")
+          document.getElementById("info").text() must be(s"We need your email address to send you notifications about this client's activity within the $service online service. No confidential information will be sent via email. You can use a group email address and change it.")
           document.getElementById("email_field").text() must be("Email address")
           document.getElementById("email").`val`() must be("")
           document.getElementById("submit").text() must be("Continue")
@@ -98,7 +98,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
         viewEmailAuthorisedAgent(Some(agentEmail)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your email address?")
+          document.title() must be("What email address do you want to use for this client?")
           document.getElementById("email").`val`() must be("aa@aa.com")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
         }
