@@ -1,7 +1,8 @@
 function showHideClientPermissionFunc() {
+
   var selectedDiv = $('#hidden-identifiers');
   var submitButton = $('#submit');
-  var viewClientsButton = $('#view-all-clients');
+  var viewClientsButton = $('#view-all-clients-div');
   var permissionFalse = $("#client-permission-false-hidden");
   var permissionTrue = $("#client-permission-true-hidden");
 
