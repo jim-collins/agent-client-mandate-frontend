@@ -9,19 +9,25 @@
 
     <div class="transaction-banner--complete" id="banner">
         <h1 id="banner-text"> @Messages("agent.reject-client-confirmation.banner-text", clientName) </h1>
-        <h2 id="banner-text-date"> @Messages("agent.reject-client-confirmation.banner-text-date", DateUtils.getDateAsText(DateTime.now)) </h2>
+        <span class="heading-medium" id="banner-text-date"> @Messages("agent.reject-client-confirmation.banner-text-date", DateUtils.getDateAsText(DateTime.now)) </span>
     </div>
 
-    <p id="notification" class="heading-small">@Messages("agent.reject-client-confirmation.notification")</p>
+    <div class="form-group">
+        <span id="notification" class="heading-small">@Messages("agent.reject-client-confirmation.notification")</span>
+    </div>
 
-    <hr>
+    <div class="form-group">
 
-    <h2 id="heading" class="heading-large">@Messages("agent.reject-client-confirmation.what-next")</h2>
+        <div class="divider--top--thick">
+            <h2 id="heading" class="heading-medium">@Messages("agent.reject-client-confirmation.what-next")</h2>
+        </div>
 
-    <ul id="list" class="bullets">
-        <li>@Messages("agent.reject-client-confirmation.request-new-client")</li>
-        <li>@Messages("agent.reject-client-confirmation.submit-returns")</li>
-    </ul>
+        <ul id="list" class="bullets">
+            <li>@Messages("agent.reject-client-confirmation.request-new-client")</li>
+            <li>@Messages("agent.reject-client-confirmation.submit-returns")</li>
+        </ul>
+        
+    </div>
 
     <div class="form-group">
         <form action="@routes.AgentSummaryController.view(service)">
