@@ -79,8 +79,8 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         viewWithAuthorisedClient() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your agent's reference number?")
-          document.getElementById("header").text() must include("What is your agent's reference number?")
+          document.title() must be("What is your unique authorisation number?")
+          document.getElementById("header").text() must include("What is your unique authorisation number?")
           document.getElementById("mandateRef").`val`() must be("")
           document.getElementById("submit").text() must be("Continue")
         }
@@ -91,8 +91,8 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         viewWithAuthorisedClient(Some(cached)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your agent's reference number?")
-          document.getElementById("header").text() must include("What is your agent's reference number?")
+          document.title() must be("What is your unique authorisation number?")
+          document.getElementById("header").text() must include("What is your unique authorisation number?")
           document.getElementById("mandateRef").`val`() must be("ABC123")
           document.getElementById("submit").text() must be("Continue")
         }
@@ -160,8 +160,8 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference number question")
-          document.getElementsByClass("error-notification").text() must include("You must answer agent reference number question")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the unique authorisation number question")
+          document.getElementsByClass("error-notification").text() must include("You must answer unique authorisation number question")
           verify(mockMandateService, times(0)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -173,8 +173,8 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference number question")
-          document.getElementsByClass("error-notification").text() must include("An agent reference number cannot be more than 8 characters.")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the unique authorisation number question")
+          document.getElementsByClass("error-notification").text() must include("A unique authorisation number cannot be more than 8 characters.")
           verify(mockMandateService, times(0)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -186,8 +186,8 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference number question")
-          document.getElementsByClass("error-notification").text() must include("The agent reference number you entered cannot be found. Check the number, or enter a different number.")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the unique authorisation number question")
+          document.getElementsByClass("error-notification").text() must include("The unique authorisation number you entered cannot be found. Check the number, or enter a different number.")
           verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -200,8 +200,8 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         submitWithAuthorisedClient(request = fakeRequest, cachedData = None, mandate = Some(mandate1), returnCache = returnCache) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the agent reference number question")
-          document.getElementsByClass("error-notification").text() must include("The agent reference number you entered has already been used. Check the number, or enter a different number.")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the unique authorisation number question")
+          document.getElementsByClass("error-notification").text() must include("The unique authorisation number you entered has already been used. Check the number, or enter a different number.")
           verify(mockMandateService, times(1)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())

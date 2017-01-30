@@ -45,9 +45,9 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Your unique agent reference for test name is ABC123")
-      assert(document.title() === "Your unique agent reference number for test name is ABC123")
-      And("The banner text is - Your unique agent reference for test name is ABC123")
-      assert(document.getElementById("banner-text").text() === "Your unique agent reference number for test name is ABC123")
+      assert(document.title() === "Your unique authorisation number for test name is ABC123")
+      And("The banner text is - Your unique authorisation number for test name is ABC123")
+      assert(document.getElementById("banner-text").text() === "Your unique authorisation number for test name is ABC123")
       And("The screen text is - What happens next?")
       assert(document.getElementById("what-happens-next").text() === "What happens next")
 
@@ -57,7 +57,7 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
       And("The client-instruction - should be correct for the relevant service")
       assert(document.getElementById("client-instruction").text() === "Your client will then need to:")
       assert(document.getElementById("client-instruction-1").text() === "register their company to use the new ATED service, they may need to create a new organisational Government Gateway account")
-      assert(document.getElementById("client-instruction-2").text() === "enter the agent reference number you gave them")
+      assert(document.getElementById("client-instruction-2").text() === "enter the unique authorisation number you gave them")
 
       And("The email-instruction : Once they have done this you will receive an email notification.")
       assert(document.getElementById("email-instruction").text() === "Once they have done this you will receive an email notification. You have 28 days to sign in and accept their request.")
