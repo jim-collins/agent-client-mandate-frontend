@@ -10,7 +10,7 @@
 @implicitFormInstance = @{ Some(clientPermissionForm) }
 
 @pageScripts = {
-  <script type="text/javascript" src='@controllers.routes.Assets.at("javascript/client-permission.js")'></script>
+  <script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/client-permission.js")'></script>
 }
 
 @main_template(title = Messages("agent.client-permission.title"), scriptElem = Some(pageScripts), delegatedService = Some(service)) {

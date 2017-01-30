@@ -1,6 +1,6 @@
 # micro-service specific routes
 
-GET     /assets/*file                   controllers.Assets.at(path="/public", file)
+GET     /assets/*file                   uk.gov.hmrc.agentclientmandate.controllers.AssetsController.at(path="/public", file)
 GET     /keep-alive                     uk.gov.hmrc.agentclientmandate.controllers.ApplicationController.keepAlive
 
 ## Client URIs ##

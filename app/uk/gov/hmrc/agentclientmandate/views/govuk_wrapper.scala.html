@@ -16,7 +16,7 @@
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
 
 @linkElement = {
-<link rel="stylesheet" href='@controllers.routes.Assets.at("stylesheets/main.css")'/>
+<link rel="stylesheet" href='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("stylesheets/main.css")'/>
 }
 
 @head = {
@@ -32,8 +32,8 @@
 
 
 @scriptElement = {
-  <script type="text/javascript" src='@controllers.routes.Assets.at("jquery/jquery-ui-1.12.1.min.js")'></script>
-  <script type="text/javascript" src='@controllers.routes.Assets.at("javascript/timeout-dialog.js")'></script>
+  <script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("jquery/jquery-ui-1.12.1.min.js")'></script>
+  <script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/timeout-dialog.js")'></script>
   <script type="text/javascript" charset="utf-8">
   @if(userLoggedIn) {
      $.timeoutDialog({timeout: @appConfig.defaultTimeoutSeconds, countdown: @appConfig.timeoutCountdown, keep_alive_url: '/mandate/keep-alive', logout_url: '@appConfig.serviceSignOutUrl(delegatedService)', logout_redirect_url: '@appConfig.serviceSignOutUrl(delegatedService)', restart_on_yes: true, background_no_scroll: true});
