@@ -11,7 +11,7 @@
 @(service: String, mandates: Mandates, agentDetails: AgentDetails, screenReaderText: String)(implicit request: Request[_], messages: Messages)
 
 @pageScripts = {
-<script type="text/javascript" src='@controllers.routes.Assets.at("javascript/agent-summary.js")'></script>
+<script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/agent-summary.js")'></script>
 }
 
 <span class="screen-reader-text">@screenReaderText</span>
