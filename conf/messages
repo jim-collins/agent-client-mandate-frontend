@@ -196,7 +196,7 @@ agent.enter-business-details-error.businessName.utr = There is a problem with th
 agent.unique-reference.title = Your unique agent reference number for {0} is {1}
 agent.unique-reference.header = Your unique agent reference number for {0} is<br><span id="mandate-reference">{1}</span>
 agent.unique-reference.next.heading.text = What happens next
-agent.unique-reference.text1 =  You need to give this agent reference number to your client so they can authorise you.
+agent.unique-reference.text1 =  You need to give this unique authorisation number to your client so they can authorise you to act for them. You can view this number when you sign back into the {0} online service.
 agent.unique-reference.text2 =  Your client will then need to:
 agent.unique-reference.ated.list.text1 = register their company to use the new <a href="{0}" id="calling-service" rel="calling-service" data-journey-click="agent-client-mandate:click:new-gateway-account-link">{1} service</a>, they may need to create a new organisational Government Gateway account
 agent.unique-reference.ated.list.text2 = enter the agent reference number you gave them
