@@ -16,22 +16,21 @@
 
 package uk.gov.hmrc.agentclientmandate.config
 
-import java.io.File
-
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
-import play.api.Mode._
+import play.api.Play._
+import play.api.i18n.Messages.Implicits._
 import play.api.mvc.Request
 import play.api.{Application, Configuration, Play}
 import play.twirl.api.Html
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.audit.filters.FrontendAuditFilter
 import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode}
+import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
 import uk.gov.hmrc.play.frontend.bootstrap.DefaultFrontendGlobal
 import uk.gov.hmrc.play.http.logging.filters.FrontendLoggingFilter
-import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
+
+import scala.collection.JavaConverters._
 
 object FrontendGlobal
   extends DefaultFrontendGlobal {
@@ -45,8 +44,14 @@ object FrontendGlobal
     ApplicationCrypto.verifyConfiguration()
   }
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
-    uk.gov.hmrc.agentclientmandate.views.html.error_template(pageTitle, heading, message)
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html = {
+    val bitsFromPath = rh.path.split("/")
+    val servicesUsed = configuration.getStringList("microservice.servicesUsed").map (_.asScala.toList) getOrElse (throw new Exception(s"Missing configuration for services used"))
+
+    val service = bitsFromPath.filter(servicesUsed.contains(_))
+
+    uk.gov.hmrc.agentclientmandate.views.html.error_template(pageTitle, heading, message, service.headOption)
+  }
 
   override def microserviceMetricsConfig(implicit app: Application): Option[Configuration] = app.configuration.getConfig(s"microservice.metrics")
 }

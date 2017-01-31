@@ -16,9 +16,10 @@
 
 package uk.gov.hmrc.agentclientmandate.config
 
-import com.typesafe.config.{Config, ConfigFactory}
 import play.api.Play.{configuration, current}
 import uk.gov.hmrc.play.config.ServicesConfig
+
+import scala.collection.JavaConverters._
 
 trait AppConfig {
   val analyticsToken: String
@@ -31,6 +32,7 @@ trait AppConfig {
   val mandateFrontendHost: String
   val defaultTimeoutSeconds: Int
   val timeoutCountdown: Int
+  val servicesUsed: List[String]
 
   def serviceSignOutUrl(service: Option[String]): String
   def nonUkUri(service: String): String
@@ -58,10 +60,15 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
 
   override def serviceSignOutUrl(service: Option[String]): String = {
     service match {
-      case Some(delegatedService) if (!delegatedService.isEmpty()) => configuration.getString(s"microservice.delegated-service-sign-out-url.${delegatedService.toLowerCase}").getOrElse(logoutUrl)
+      case Some(delegatedService) if !delegatedService.isEmpty =>
+        configuration.getString(s"microservice.delegated-service-sign-out-url.${delegatedService.toLowerCase}").getOrElse(logoutUrl)
       case _ => logoutUrl
     }
   }
 
   override lazy val mandateFrontendHost = configuration.getString(s"microservice.services.agent-client-mandate-frontend.host").getOrElse("")
+
+  override lazy val servicesUsed: List[String] = {
+    configuration.getStringList("microservice.servicesUsed").map (_.asScala.toList) getOrElse (throw new Exception(s"Missing configuration for services used"))
+  }
 }
