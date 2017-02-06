@@ -120,7 +120,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the client permission question.")
-          document.getElementsByClass("error-notification").text() must include("You must answer client permission question")
+          document.getElementsByClass("error-notification").text() must include("You must answer the client permission question.")
         }
       }
     }
