@@ -18,9 +18,10 @@ package unit.uk.gov.hmrc.agentclientmandate.utils
 
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils
+import uk.gov.hmrc.agentclientmandate.models.Status
+import uk.gov.hmrc.agentclientmandate.models.Status.Status
 
 class AgentClientMandateUtilsSpec extends PlaySpec with OneServerPerSuite {
-
 
   "AgentClientMandateUtils" must {
     "validateUTR" must {
@@ -45,6 +46,12 @@ class AgentClientMandateUtilsSpec extends PlaySpec with OneServerPerSuite {
       }
       "None as UTR return false" in {
         AgentClientMandateUtils.validateUTR(None) must be(false)
+      }
+    }
+
+    "checkStatus" when {
+      "a valid status is passed" in {
+        AgentClientMandateUtils.checkStatus(Status.PendingActivation) must be ("Pending")
       }
     }
   }

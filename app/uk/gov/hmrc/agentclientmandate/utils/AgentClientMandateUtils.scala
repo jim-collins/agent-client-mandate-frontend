@@ -64,8 +64,13 @@ object AgentClientMandateUtils {
     pendingStates.contains(status)
   }
 
-  def statusCantBeActioned(status: Status): Boolean = {
-    status == Status.PendingActivation || status == Status.PendingCancellation || status == Status.New
+  def checkStatus(status: Status): String = {
+    status match {
+      case Status.New => "Await"
+      case Status.PendingActivation | Status.PendingCancellation => "Pending"
+      case _ => ""
+    }
   }
+
 
 }

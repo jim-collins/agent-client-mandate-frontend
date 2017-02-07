@@ -14,6 +14,7 @@
 <script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/agent-summary.js")'></script>
 }
 
+
 <span class="screen-reader-text">@screenReaderText</span>
 
 @main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), scriptElem = Some(pageScripts), delegatedService = Some(service)){
@@ -55,7 +56,7 @@
         @for((pending, index) <- mandates.pendingMandates.zipWithIndex) {
         <tr id="pending-client-data-@index">
           <td>@pending.clientDisplayName</td>
-          @if(statusCantBeActioned(pending.currentStatus.status)){
+          @if(checkStatus(pending.currentStatus.status) == "Await" || checkStatus(pending.currentStatus.status) == "Pending"){
           <td>
             <a id="edit-pending-client-link-@index" href="@routes.EditMandateDetailsController.view(service, pending.id)" data-journey-click="agent-client-mandate:click:edit-pending-client-link">
               @Messages("Edit") <span class="screen-reader-text">@pending.clientDisplayName</span>
@@ -68,8 +69,10 @@
             </a>
           </td>
           }
-          @if(statusCantBeActioned(pending.currentStatus.status)) {
+          @if(checkStatus(pending.currentStatus.status) == "Await") {
           <td>@Messages("client.summary.client.pending-status")</td>
+          } @if(checkStatus(pending.currentStatus.status) == "Pending") {
+          <td>@Messages("client.summary.client-pending")</td>
           } else {
           <td id ="accept-client">
             <a href="@routes.AgentSummaryController.activate(service, pending.id)" data-journey-click="agent-client-mandate:click:accept-client"
