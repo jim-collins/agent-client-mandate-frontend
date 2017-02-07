@@ -14,7 +14,7 @@
 @main_template(title = Messages("client.agent-confirmation.title"), delegatedService = Some(service)) {
 
 <div class="transaction-banner--complete" id="banner">
-    <h1 id="banner-text"><img class="tick" alt="tick" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("images/tick.png")'>@Messages("client.agent-confirmation.banner-text",
+    <h1 id="banner-text">@Messages("client.agent-confirmation.banner-text",
         agentName)</h1>
     <span class="heading-small" id="date">
       @Messages("client.agent-confirmation.banner-confirmation.submitted.date", DateTimeFormat.forPattern("dd MMM yyyy").print(new LocalDate()))
