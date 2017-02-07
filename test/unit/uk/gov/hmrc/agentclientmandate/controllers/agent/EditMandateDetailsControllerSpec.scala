@@ -80,7 +80,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         submitEditMandateDetails(fakeRequest, false) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-notification").text() must include("You must answer client display name question. You must answer email address question.")
+          document.getElementsByClass("error-notification").text() must include("You must answer the client display name question. You must answer the email address question.")
         }
       }
     }

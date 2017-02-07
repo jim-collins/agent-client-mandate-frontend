@@ -127,7 +127,7 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the client display name question.")
-          document.getElementsByClass("error-notification").text() must include("You must answer client display name question.")
+          document.getElementsByClass("error-notification").text() must include("You must answer the client display name question.")
         }
       }
 
