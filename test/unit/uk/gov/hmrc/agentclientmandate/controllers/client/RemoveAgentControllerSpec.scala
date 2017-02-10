@@ -104,8 +104,9 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
 
     "submitting form" when {
       "invalid form is submitted" in {
+        when(mockAgentClientMandateService.fetchClientMandateAgentName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("Agent Limited"))
 
-        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "")
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
@@ -185,11 +186,14 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
 
     "showConfirmation" when {
       "agent has been removed show confirmation page" in {
+        when(mockAgentClientMandateService.fetchClientMandateAgentName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("Agent Limited"))
+
         confirmationWithAuthorisedClient { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What happens next")
-          document.getElementById("banner-text").text() must include("You have removed ACME Ltd as your agent")
+          document.getElementById("banner-text").text() must include("You have removed Agent Limited as your agent")
           document.getElementById("notification").text() must be("Your agent will receive an email notification.")
           document.getElementById("heading").text() must be("What happens next")
           document.getElementById("finish_link").text() must be("Finish and sign out")
