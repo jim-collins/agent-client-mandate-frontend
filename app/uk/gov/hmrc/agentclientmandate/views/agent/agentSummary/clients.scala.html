@@ -67,9 +67,9 @@
           </td>
           <td class="tdRight">
             <a id="client-link-@index"
-               href='@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))' data-journey-click="agent-client-mandate:click:client-link"
+               href='@routes.AgentSummaryController.doDelegation(service, active.id)' data-journey-click="agent-client-mandate:click:client-link"
                class='button'
-               onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.doDelegation(service, active.subscription.referenceNumber.getOrElse(""), active.clientParty.map(_.name).getOrElse(""))")'
+               onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.doDelegation(service, active.id)")'
             >@Messages("client.summary.client-view")
               <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
             </a>

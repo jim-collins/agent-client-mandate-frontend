@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
+import play.api.Logger
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.agentclientmandate.config.{FrontendAuthConnector, FrontendDelegationConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
@@ -72,11 +73,20 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
       }
   }
 
-  def doDelegation(service: String, serviceId: String, clientName: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def doDelegation(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      startDelegationAndRedirect(createDelegationContext(service, serviceId, clientName), getDelegatedServiceRedirectUrl(service))
-  }
+      agentClientMandateService.fetchClientMandate(mandateId).flatMap{
+        mandate =>
+          mandate.flatMap(_.subscription.referenceNumber) match {
+            case Some(serviceId) =>
+              val clientName = mandate.flatMap(_.clientParty.map(_.name)).getOrElse("")
+              startDelegationAndRedirect(createDelegationContext(service, serviceId, clientName), getDelegatedServiceRedirectUrl(service))
+            case None =>
+              throw new RuntimeException(s"[AgentSummaryController][doDelegation] Failed to doDelegation to for mandateId $mandateId for service $service")
+          }
 
+      }
+  }
 
   private def showView(service: String,
                        mandates: Option[Mandates],

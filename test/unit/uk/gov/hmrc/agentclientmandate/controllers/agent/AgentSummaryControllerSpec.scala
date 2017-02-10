@@ -120,14 +120,38 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
     "redirect to delegated service specific page" when {
       "agent selects and begins delegation on a particular client" in {
+
+        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+          Future.successful(Some(mandateActive))
+        }
+
         val userId = s"user-${UUID.randomUUID}"
         implicit val hc: HeaderCarrier = HeaderCarrier()
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
         AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+
         when(mockDelegationConnector.startDelegation(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(()))
-        val result = TestAgentSummaryController.doDelegation(service, atedUtr.utr, "Client-Name").apply(SessionBuilder.buildRequestWithSession(userId))
+        val result = TestAgentSummaryController.doDelegation(service, "1").apply(SessionBuilder.buildRequestWithSession(userId))
         status(result) must be(SEE_OTHER)
         redirectLocation(result) must be(Some("http://localhost:9916/ated/account-summary"))
+      }
+
+      "agent selects client but it fails as we have no serviceId" in {
+
+        val mandateWithNoSubscription = mandateActive.copy(subscription = mandateActive.subscription.copy(referenceNumber = None))
+        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+          Future.successful(Some(mandateWithNoSubscription))
+        }
+
+        val userId = s"user-${UUID.randomUUID}"
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
+        AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+
+        when(mockDelegationConnector.startDelegation(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(()))
+
+        val thrown = the[RuntimeException] thrownBy await(TestAgentSummaryController.doDelegation(service, "1").apply(SessionBuilder.buildRequestWithSession(userId)))
+        thrown.getMessage must include(s"[AgentSummaryController][doDelegation] Failed to doDelegation to for mandateId 1 for service $service")
       }
     }
 
@@ -210,9 +234,9 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
   val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty1), currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 1")
 
-  val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty), currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 2")
+  val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty), currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(Some(atedUtr.utr), Service("ated", "ATED")), clientDisplayName = "client display name 2")
 
-  val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty3), currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 3")
+  val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty3), currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(Some(atedUtr.utr), Service("ated", "ATED")), clientDisplayName = "client display name 3")
 
   val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty4), currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 4")
 
