@@ -66,12 +66,12 @@ GET     /agent/doDelegation/:service/:serviceId/:clientName  uk.gov.hmrc.agentcl
 GET     /agent/summary/:service/activate/:mandateId   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.activate(service: String, mandateId: String)
 
 GET     /agent/reject/:service/:id              uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.view(service: String, id: String)
-POST    /agent/reject/:service/:id/:clientName  uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.submit(service: String, id: String, clientName: String)
-GET     /agent/reject/confirmation/:service/:clientName  uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.confirmation(service: String, clientName: String)
+POST    /agent/reject/:service/:id              uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.submit(service: String, id: String)
+GET     /agent/reject/confirmation/:service/:id  uk.gov.hmrc.agentclientmandate.controllers.agent.RejectClientController.confirmation(service: String, id: String)
 
 GET     /agent/remove-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.view(service: String, mandateId: String)
-POST    /agent/remove-client/:service/:mandateId/:clientName          uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.confirm(service: String, mandateId: String, clientName: String)
-GET     /agent/remove-client/showConfirmation/:service/:clientName   uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.showConfirmation(service: String, clientName: String)
+POST    /agent/remove-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.confirm(service: String, mandateId: String)
+GET     /agent/remove-client/showConfirmation/:service/:mandateId   uk.gov.hmrc.agentclientmandate.controllers.agent.RemoveClientController.showConfirmation(service: String, mandateId: String)
 
 GET     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.view(service: String, mandateId: String)
 POST    /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.submit(service: String, mandateId: String)

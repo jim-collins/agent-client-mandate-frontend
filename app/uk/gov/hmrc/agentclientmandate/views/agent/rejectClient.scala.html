@@ -19,7 +19,7 @@
     @Messages("agent.reject-client.text")
     </p>
 
-    @form(action = routes.RejectClientController.submit(service, mandateId, clientName)) {
+    @form(action = routes.RejectClientController.submit(service, mandateId)) {
 
         <div class="form-group" id="rejectClient">
         @mandateInputRadioGroup(

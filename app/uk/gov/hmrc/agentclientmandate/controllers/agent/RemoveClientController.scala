@@ -39,26 +39,26 @@ trait RemoveClientController extends FrontendController with Actions {
   def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
 
-      acmService.fetchClientMandate(mandateId).map { response =>
-        response match {
-          case Some(mandate) => Ok(views.html.agent.removeClient(new YesNoQuestionForm("agent.remove-client.error").yesNoQuestionForm, service,
-            mandate.clientParty.get.name, mandateId))
-          case _ => throw new RuntimeException("No Mandate returned")
-        }
-      }
+      acmService.fetchClientMandateClientName(service, mandateId).map(
+        clientName => Ok(views.html.agent.removeClient(new YesNoQuestionForm("agent.remove-client.error").yesNoQuestionForm,
+          service, clientName, mandateId))
+      )
   }
 
-  def confirm(service: String, mandateId: String, clientName: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def confirm(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       val form = new YesNoQuestionForm("agent.remove-client.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.agent.removeClient(formWithError, service, clientName, mandateId))),
+        formWithError =>
+          acmService.fetchClientMandateClientName(service, mandateId).map(
+            clientName =>  BadRequest(views.html.agent.removeClient(formWithError, service, clientName, mandateId))
+          ),
         data => {
           val removeClient = data.yesNo.getOrElse(false)
           if (removeClient) {
             acmService.removeClient(mandateId).map { removedClient =>
               if (removedClient) {
-                Redirect(routes.RemoveClientController.showConfirmation(service, clientName))
+                Redirect(routes.RemoveClientController.showConfirmation(service, mandateId))
               }
               else {
                 throw new RuntimeException(s"Client removal Failed with id $mandateId for service $service")
@@ -72,9 +72,11 @@ trait RemoveClientController extends FrontendController with Actions {
       )
   }
 
-  def showConfirmation(service: String, clientName: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
+  def showConfirmation(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      Ok(views.html.agent.removeClientConfirmation(service, clientName))
+      acmService.fetchClientMandateClientName(service, mandateId).map(
+        clientName =>  Ok(views.html.agent.removeClientConfirmation(service, clientName))
+      )
     }
 }
 

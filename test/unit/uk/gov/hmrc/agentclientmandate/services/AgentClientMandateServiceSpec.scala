@@ -126,6 +126,27 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
     }
 
+    "fetch correct mandate client name" when {
+
+      "correct mandate id is passed" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.toJson(mandateNew)
+        when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+
+        val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId, "ATED")
+        await(response) must be(mandateNew.clientDisplayName)
+      }
+      "throws an exception when no Mandate found" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.parse("{}")
+        when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+
+        val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId, "ATED")
+        val thrown = the[RuntimeException] thrownBy await(response)
+        thrown.getMessage must include(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate returned with id $mandateId for service ATED")
+      }
+    }
+
     "fetch all mandates" when {
 
       "return no mandates when the list is empty" in {
