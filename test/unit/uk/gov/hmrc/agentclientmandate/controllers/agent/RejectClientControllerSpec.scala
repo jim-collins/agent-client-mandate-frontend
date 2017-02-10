@@ -76,7 +76,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "return 'reject client question' view for AUTHORISED agent" when {
 
       "agent requests(GET) for 'reject client question' view" in {
-        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful("ACME Limited"))
         viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
@@ -89,7 +89,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
     "returns BAD_REQUEST" when {
       "invalid form is submitted" in {
-        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful("ACME Limited"))
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "")
         submitWithAuthorisedAgent(fakeRequest) { result =>
@@ -105,7 +105,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       "submitted with false will redirect to agent summary" in {
         val hc = new HeaderCarrier()
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "false")
-        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful("ACME Limited"))
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
@@ -117,7 +117,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         when(mockAgentClientMandateService.rejectClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(true)
         val hc = new HeaderCarrier()
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
-        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful("ACME Limited"))
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
@@ -131,7 +131,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         implicit val hc: HeaderCarrier = HeaderCarrier()
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
-        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful("ACME Limited"))
         AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
         val thrown = the[RuntimeException] thrownBy await(TestRejectClientController.submit(service, "ABC123").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
@@ -145,7 +145,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       "agent requests(GET) for 'client rejection confirmation' view" in {
 
         val hc = new HeaderCarrier()
-        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful("ACME Limited"))
         confirmationWithAuthorisedAgent { result =>
           status(result) must be(OK)

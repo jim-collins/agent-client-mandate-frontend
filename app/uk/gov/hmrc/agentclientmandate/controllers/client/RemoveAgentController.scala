@@ -58,16 +58,20 @@ trait RemoveAgentController extends FrontendController with Actions {
       }
   }
 
-  def submit(service: String, mandateId: String, agentName: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
+  def submit(service: String, mandateId: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       val form = new YesNoQuestionForm("client.remove-agent.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.client.removeAgent(service, formWithError, agentName, mandateId))),
+        formWithError =>
+          acmService.fetchClientMandateAgentName(mandateId).map(
+            agentName =>
+              BadRequest(views.html.client.removeAgent(service, formWithError, agentName, mandateId))
+          ),
         data => {
           val removeAgent = data.yesNo.getOrElse(false)
           if (removeAgent) {
             acmService.removeAgent(mandateId).map { removedAgent =>
-              if (removedAgent) Redirect(routes.ChangeAgentController.view(service, agentName))
+              if (removedAgent) Redirect(routes.ChangeAgentController.view(service, mandateId))
               else throw new RuntimeException("Agent Removal Failed")
             }
           }
@@ -81,9 +85,13 @@ trait RemoveAgentController extends FrontendController with Actions {
       )
   }
 
-  def confirmation(service: String, agentName: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence) {
+  def confirmation(service: String, mandateId: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      Ok(views.html.client.removeAgentConfirmation(service, agentName))
+      acmService.fetchClientMandateAgentName(mandateId).map(
+        agentName =>
+          Ok(views.html.client.removeAgentConfirmation(service, agentName))
+      )
+
   }
 
   def returnToService = AuthorisedFor(ClientRegime(), GGConfidence).async {

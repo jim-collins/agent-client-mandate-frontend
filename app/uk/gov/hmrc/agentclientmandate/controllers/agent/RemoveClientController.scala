@@ -39,7 +39,7 @@ trait RemoveClientController extends FrontendController with Actions {
   def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
 
-      acmService.fetchClientMandateClientName(service, mandateId).map(
+      acmService.fetchClientMandateClientName(mandateId).map(
         clientName => Ok(views.html.agent.removeClient(new YesNoQuestionForm("agent.remove-client.error").yesNoQuestionForm,
           service, clientName, mandateId))
       )
@@ -50,7 +50,7 @@ trait RemoveClientController extends FrontendController with Actions {
       val form = new YesNoQuestionForm("agent.remove-client.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
         formWithError =>
-          acmService.fetchClientMandateClientName(service, mandateId).map(
+          acmService.fetchClientMandateClientName(mandateId).map(
             clientName =>  BadRequest(views.html.agent.removeClient(formWithError, service, clientName, mandateId))
           ),
         data => {
@@ -74,7 +74,7 @@ trait RemoveClientController extends FrontendController with Actions {
 
   def showConfirmation(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      acmService.fetchClientMandateClientName(service, mandateId).map(
+      acmService.fetchClientMandateClientName(mandateId).map(
         clientName =>  Ok(views.html.agent.removeClientConfirmation(service, clientName))
       )
     }

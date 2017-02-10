@@ -139,7 +139,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "agent requests(GET) for 'remove client question' view" in {
 
       val hc = new HeaderCarrier()
-      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful("ACME Limited"))
 
       viewWithAuthorisedAgent { result =>
@@ -157,7 +157,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   "returns BAD_REQUEST" when {
     "invalid form is submitted" in {
       val hc = new HeaderCarrier()
-      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful("ACME Limited"))
 
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "")
@@ -174,7 +174,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "submitted with false will redirect to agent summary" in {
       val hc = new HeaderCarrier()
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "false")
-      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful("ACME Limited"))
       submitWithAuthorisedAgent(fakeRequest) { result =>
         status(result) must be(SEE_OTHER)
@@ -186,7 +186,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       when(mockAgentClientMandateService.removeClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(true)
       val hc = new HeaderCarrier()
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
-      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful("ACME Limited"))
       submitWithAuthorisedAgent(fakeRequest) { result =>
         status(result) must be(SEE_OTHER)
@@ -202,7 +202,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
       AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
 
-      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful("ACME Limited"))
 
       val thrown = the[RuntimeException] thrownBy await(TestRemoveClientController.confirm(service, "ABC123").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
@@ -216,7 +216,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "agent requests(GET) for 'client remove confirmation' view" in {
 
       val hc = new HeaderCarrier()
-      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any(),Matchers.any())(Matchers.any(), Matchers.any()))
+      when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful("ACME Limited"))
 
       showConfirmationWithAuthorisedAgent { result =>
