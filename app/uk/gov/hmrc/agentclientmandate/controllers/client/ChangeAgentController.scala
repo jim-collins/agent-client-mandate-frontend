@@ -46,7 +46,7 @@ trait ChangeAgentController extends FrontendController with Actions{
     implicit authContext => implicit request =>
       acmService.fetchClientMandateAgentName(mandateId).map(
         agentName =>
-          Ok(views.html.client.changeAgent(service, new YesNoQuestionForm("client.agent-change.error").yesNoQuestionForm, agentName))
+          Ok(views.html.client.changeAgent(service, new YesNoQuestionForm("client.agent-change.error").yesNoQuestionForm, agentName, mandateId))
       )
   }
 
@@ -57,7 +57,7 @@ trait ChangeAgentController extends FrontendController with Actions{
         formWithError =>
           acmService.fetchClientMandateAgentName(mandateId).map(
             agentName =>
-              BadRequest(views.html.client.changeAgent(service, formWithError, agentName))
+              BadRequest(views.html.client.changeAgent(service, formWithError, agentName, mandateId))
           ),
         data => {
           val changeAgent = data.yesNo.getOrElse(false)
