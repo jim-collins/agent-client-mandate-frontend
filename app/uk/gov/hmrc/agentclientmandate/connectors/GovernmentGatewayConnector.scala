@@ -18,12 +18,14 @@ package uk.gov.hmrc.agentclientmandate.connectors
 
 import play.api.Logger
 import play.api.http.Status._
-import uk.gov.hmrc.agentclientmandate.config.WSHttp
+import uk.gov.hmrc.agentclientmandate.config.{FrontendAuditConnector, WSHttp}
 import uk.gov.hmrc.agentclientmandate.models.RetrieveClientAllocation
 import uk.gov.hmrc.agentclientmandate.utils.GovernmentGatewayConstants
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.audit.AuditExtensions
+import uk.gov.hmrc.play.config.{AppName, ServicesConfig}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
+import uk.gov.hmrc.play.audit.model.{Audit, DataEvent}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -32,32 +34,43 @@ trait GovernmentGatewayConnector extends ServicesConfig with RawResponseReads {
 
   def serviceUrl: String
   def http: HttpGet
+  def audit: Audit
 
-  private def getClientList(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+  def retrieveClientList(implicit hc: HeaderCarrier, ac: AuthContext): Future[List[RetrieveClientAllocation]] = {
     val agentLink = ac.principal.accounts.agent.map(_.link).getOrElse("")
     val atedService = GovernmentGatewayConstants.ClientListServiceName
     val atedAllocatedTo = GovernmentGatewayConstants.ClientListAllocatedToGroup
-    val postUrl = s"""$serviceUrl${agentLink}/client-list/$atedService/$atedAllocatedTo"""
-    http.GET[HttpResponse](postUrl)
-  }
-
-  def retrieveClientList(implicit hc: HeaderCarrier, ac: AuthContext): Future[List[RetrieveClientAllocation]] = {
-    getClientList map { response =>
+    val getUrl = s"""$serviceUrl${agentLink}/client-list/$atedService/$atedAllocatedTo"""
+    http.GET[HttpResponse](getUrl) map { response =>
       response.status match {
         case OK =>
           response.json.as[List[RetrieveClientAllocation]]
         case NOT_FOUND | NO_CONTENT =>
           List.empty[RetrieveClientAllocation]
         case BAD_REQUEST =>
-          Logger.warn(s"[GovernmentGatewayConnector] [retrieveClientList] BadRequestException body ${response.body}")
-          throw new BadRequestException(s"[GovernmentGatewayConnector] [retrievePendingClients] " +
-            s"Bad Request: Failed to retrieve ClientList, body ${response.body}")
+          Logger.warn(s"[GovernmentGatewayConnector] [retrieveClientList] BadRequestException")
+          doFailedAudit("retrieveClientListFailed", getUrl, response.body)
+          throw new BadRequestException(s"[GovernmentGatewayConnector] [retrievePendingClients] BadRequestException")
         case status =>
-          Logger.warn(s"[GovernmentGatewayConnector] [retrieveClientList] [status] = $status, [body] = ${response.body}")
-          throw new InternalServerException(s"[GovernmentGatewayConnector] [retrievePendingClients]" +
-            s"Internal Server error: Failed to retrieve ClientList[status] = $status, [body] = ${response.body}")
+          Logger.warn(s"[GovernmentGatewayConnector] [retrieveClientList] [status] = $status")
+          doFailedAudit("retrieveClientListFailed", getUrl, response.body)
+          throw new InternalServerException(s"[GovernmentGatewayConnector] [retrievePendingClients] Server Error - $status")
       }
     }
+  }
+
+  def doFailedAudit(auditType: String, request: String, response: String)(implicit hc:HeaderCarrier): Unit = {
+    val auditDetails = Map("request" -> request,
+      "response" -> response)
+
+    audit.sendDataEvent(
+      DataEvent(
+        "agent-client-mandate-frontend",
+        auditType = auditType,
+        tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(auditType, "N/A"),
+        detail = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails(auditDetails.toSeq: _*)
+      )
+    )
   }
 
 }
@@ -66,5 +79,6 @@ object GovernmentGatewayConnector extends GovernmentGatewayConnector {
   // $COVERAGE-OFF$
   val serviceUrl = baseUrl("government-gateway")
   val http = WSHttp
+  val audit = new Audit(AppName.appName, FrontendAuditConnector)
   // $COVERAGE-ON$
 }
