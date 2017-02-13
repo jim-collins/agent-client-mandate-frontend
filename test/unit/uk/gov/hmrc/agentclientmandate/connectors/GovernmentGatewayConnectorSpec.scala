@@ -31,6 +31,8 @@ import uk.gov.hmrc.agentclientmandate.utils.GovernmentGatewayConstants
 import uk.gov.hmrc.play.http.logging.SessionId
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.{WSGet, WSPost}
+import uk.gov.hmrc.play.audit.model.Audit
+import unit.uk.gov.hmrc.agentclientmandate.builders.TestAudit
 
 import scala.concurrent.Future
 
@@ -49,6 +51,7 @@ class GovernmentGatewayConnectorSpec extends PlaySpec with OneServerPerSuite wit
   object TestGovernmentGatewayConnector extends GovernmentGatewayConnector {
     override val serviceUrl = baseUrl("government-gateway")
     val http: HttpGet with HttpPost = mockWSHttp
+    override val audit: Audit = new TestAudit
   }
 
   "GovernmentGatewayConnector" must {
@@ -102,7 +105,7 @@ class GovernmentGatewayConnectorSpec extends PlaySpec with OneServerPerSuite wit
 
         val result = TestGovernmentGatewayConnector.retrieveClientList
         val thrown = the[BadRequestException] thrownBy await(result)
-        thrown.getMessage must include("Bad Request")
+        thrown.getMessage must include("BadRequestException")
       }
 
       "fail for an agent with an INTERNAL_SERVER_ERROR" in {
@@ -114,7 +117,7 @@ class GovernmentGatewayConnectorSpec extends PlaySpec with OneServerPerSuite wit
 
         val result = TestGovernmentGatewayConnector.retrieveClientList
         val thrown = the[InternalServerException] thrownBy await(result)
-        thrown.getMessage must include("Internal Server error")
+        thrown.getMessage must include("Server Error")
       }
     }
 
