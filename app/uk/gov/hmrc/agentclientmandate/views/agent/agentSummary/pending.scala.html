@@ -69,19 +69,17 @@
             </a>
           </td>
           }
-          @if(checkStatus(pending.currentStatus.status) == "Await") {
-          <td>@Messages("client.summary.client.pending-status")</td>
-          } @if(checkStatus(pending.currentStatus.status) == "Pending") {
-          <td>@Messages("client.summary.client-pending")</td>
-          } else {
-          <td id ="accept-client">
-            <a href="@routes.AgentSummaryController.activate(service, pending.id)" data-journey-click="agent-client-mandate:click:accept-client"
-               id="accept-@(index+1)"
-               class="button"
-               onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.activate(service, pending.id)")'>
-              @Messages("client.summary.client-accept") <span class="screen-reader-text">@pending.clientDisplayName</span>
-            </a>
-          </td>
+          @checkStatus(pending.currentStatus.status) match {
+            case "Await" => { <td>@Messages("client.summary.client.pending-status")</td> }
+            case "Pending" => { <td>@Messages("client.summary.client-pending")</td> }
+            case _ => { <td id ="accept-client">
+                          <a href="@routes.AgentSummaryController.activate(service, pending.id)" data-journey-click="agent-client-mandate:click:accept-client"
+                             id="accept-@(index+1)"
+                             class="button"
+                             onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.activate(service, pending.id)")'>
+                            @Messages("client.summary.client-accept") <span class="screen-reader-text">@pending.clientDisplayName</span>
+                          </a>
+                        </td> }
           }
         </tr>
         }
