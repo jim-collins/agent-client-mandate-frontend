@@ -41,24 +41,27 @@ trait RejectClientController extends FrontendController with Actions {
 
   def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      acmService.fetchClientMandate(mandateId).map {
-        case Some(mandate) => Ok(views.html.agent.rejectClient(service, new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm,
-          mandate.clientParty.get.name, mandateId))
-        case _ => throw new RuntimeException(s"No Mandate returned with id $mandateId for service $service")
-      }
+      acmService.fetchClientMandateClientName(mandateId).map(
+        clientName => Ok(views.html.agent.rejectClient(service,
+          new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm,
+          clientName, mandateId))
+      )
   }
 
-  def submit(service: String, mandateId: String, clientName: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def submit(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       val form = new YesNoQuestionForm("agent.reject-client.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.agent.rejectClient(service, formWithError, clientName, mandateId))),
+        formWithError =>
+          acmService.fetchClientMandateClientName(mandateId).map(
+            clientName => BadRequest(views.html.agent.rejectClient(service, formWithError, clientName, mandateId))
+          ),
         data => {
           val rejectClient = data.yesNo.getOrElse(false)
           if (rejectClient) {
             acmService.rejectClient(mandateId).map { rejectedClient =>
               if (rejectedClient) {
-                Redirect(routes.RejectClientController.confirmation(service, clientName))
+                Redirect(routes.RejectClientController.confirmation(service, mandateId))
               }
               else {
                 throw new RuntimeException(s"Client Rejection Failed with id $mandateId for service $service")
@@ -72,8 +75,11 @@ trait RejectClientController extends FrontendController with Actions {
       )
   }
 
-  def confirmation(service: String, clientName: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
+  def confirmation(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      Ok(views.html.agent.rejectClientConfirmation(service, clientName))
+      acmService.fetchClientMandateClientName(mandateId).map(
+        clientName => Ok(views.html.agent.rejectClientConfirmation(service, clientName))
+      )
+
   }
 }

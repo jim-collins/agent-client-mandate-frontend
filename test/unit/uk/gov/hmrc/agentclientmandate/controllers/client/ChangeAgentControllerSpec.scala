@@ -20,6 +20,7 @@ import java.util.UUID
 
 import org.joda.time.DateTime
 import org.jsoup.Jsoup
+import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
@@ -42,12 +43,12 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
   "ChangeAgentController" must {
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/change/agentName" in {
-        val result = route(FakeRequest(GET, "/mandate/client/change/ATED/ACME")).get
+        val result = route(FakeRequest(GET, "/mandate/client/change/ATED/1")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/client/change/agentName" in {
-        val result = route(FakeRequest(POST, s"/mandate/client/change/ATED/ACME")).get
+        val result = route(FakeRequest(POST, s"/mandate/client/change/ATED/1")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -76,6 +77,8 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         val hc = new HeaderCarrier()
         val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
         val request = FakeRequest().withJsonBody(Json.toJson("""{}"""))
+        when(mockAgentClientMandateService.fetchClientMandateAgentName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("Agent Limited"))
         viewAuthorisedClient(request, { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -92,6 +95,8 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
       "invalid form is submitted" in {
         val hc = new HeaderCarrier()
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "")
+        when(mockAgentClientMandateService.fetchClientMandateAgentName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("Agent Limited"))
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
@@ -112,9 +117,11 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
       "submitted with false will redirect to remove agent confirmation" in {
         val hc = new HeaderCarrier()
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "false")
+        when(mockAgentClientMandateService.fetchClientMandateAgentName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("Agent Limited"))
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/client/remove/confirmation")
+          redirectLocation(result).get must include("/client/remove/1/confirmation/ATED")
         }
       }
     }
@@ -136,7 +143,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     reset(mockDataCacheService)
   }
 
-  val agentName = "ACME Ltd"
+  val mandateId = "1"
   val service = "ATED"
 
 
@@ -144,7 +151,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view(service, agentName).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestChangeAgentController.view(service, mandateId).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -154,7 +161,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view(service, agentName).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestChangeAgentController.view(service, mandateId).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -163,7 +170,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestChangeAgentController.view(service, agentName).apply(SessionBuilder.updateRequestWithSession(request, userId))
+    val result = TestChangeAgentController.view(service, mandateId).apply(SessionBuilder.updateRequestWithSession(request, userId))
     test(result)
   }
 
@@ -173,7 +180,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
 
-    val result = TestChangeAgentController.submit(service, agentName).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestChangeAgentController.submit(service, mandateId).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

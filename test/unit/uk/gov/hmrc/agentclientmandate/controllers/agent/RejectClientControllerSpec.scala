@@ -76,7 +76,8 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "return 'reject client question' view for AUTHORISED agent" when {
 
       "agent requests(GET) for 'reject client question' view" in {
-        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("ACME Limited"))
         viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -84,21 +85,12 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("heading").text() must include("Are you sure you want to reject the request from ACME Limited?")
         }
       }
-
-      "service can't find mandate throw exception" in {
-        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
-        val userId = s"user-${UUID.randomUUID}"
-        implicit val hc: HeaderCarrier = HeaderCarrier()
-        implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
-        AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-        val thrown = the[RuntimeException] thrownBy await(TestRejectClientController.view(service, "1").apply(SessionBuilder.buildRequestWithSession(userId)))
-        thrown.getMessage must include("No Mandate returned")
-      }
     }
 
     "returns BAD_REQUEST" when {
       "invalid form is submitted" in {
-        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("ACME Limited"))
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
@@ -113,6 +105,8 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       "submitted with false will redirect to agent summary" in {
         val hc = new HeaderCarrier()
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "false")
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("ACME Limited"))
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include(s"/agent/summary/$service")
@@ -123,6 +117,8 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         when(mockAgentClientMandateService.rejectClient(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(true)
         val hc = new HeaderCarrier()
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("ACME Limited"))
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/agent/reject/confirmation")
@@ -135,8 +131,10 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         implicit val hc: HeaderCarrier = HeaderCarrier()
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("ACME Limited"))
         AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-        val thrown = the[RuntimeException] thrownBy await(TestRejectClientController.submit(service, "ABC123", "Acme Ltd").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
+        val thrown = the[RuntimeException] thrownBy await(TestRejectClientController.submit(service, "ABC123").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
 
         thrown.getMessage must include("Client Rejection Failed")
       }
@@ -147,7 +145,8 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       "agent requests(GET) for 'client rejection confirmation' view" in {
 
         val hc = new HeaderCarrier()
-
+        when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.successful("ACME Limited"))
         confirmationWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -217,7 +216,8 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestRejectClientController.submit(service, "1", "Acme Ltd").apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+
+    val result = TestRejectClientController.submit(service, "1").apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

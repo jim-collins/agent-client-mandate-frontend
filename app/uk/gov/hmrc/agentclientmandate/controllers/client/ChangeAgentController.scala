@@ -42,23 +42,30 @@ trait ChangeAgentController extends FrontendController with Actions{
   def acmService: AgentClientMandateService
   def dataCacheService: DataCacheService
 
-  def view(service: String, agentName: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence) {
+  def view(service: String, mandateId: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      Ok(views.html.client.changeAgent(service, new YesNoQuestionForm("client.agent-change.error").yesNoQuestionForm, agentName))
+      acmService.fetchClientMandateAgentName(mandateId).map(
+        agentName =>
+          Ok(views.html.client.changeAgent(service, new YesNoQuestionForm("client.agent-change.error").yesNoQuestionForm, agentName, mandateId))
+      )
   }
 
-  def submit(service: String, agentName: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
+  def submit(service: String, mandateId: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       val form = new YesNoQuestionForm("client.agent-change.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.client.changeAgent(service, formWithError, agentName))),
+        formWithError =>
+          acmService.fetchClientMandateAgentName(mandateId).map(
+            agentName =>
+              BadRequest(views.html.client.changeAgent(service, formWithError, agentName, mandateId))
+          ),
         data => {
           val changeAgent = data.yesNo.getOrElse(false)
           if (changeAgent) {
             Future.successful(Redirect(routes.CollectEmailController.view(service)))
           }
           else {
-            Future.successful(Redirect(routes.RemoveAgentController.confirmation(service, agentName)))
+            Future.successful(Redirect(routes.RemoveAgentController.confirmation(service, mandateId)))
           }
         }
       )

@@ -126,6 +126,48 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
     }
 
+    "fetch correct mandate client name" when {
+
+      "correct mandate id is passed" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.toJson(mandateNew)
+        when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+
+        val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId)
+        await(response) must be(mandateNew.clientParty.map(_.name).get)
+      }
+      "throws an exception when no Mandate found" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.parse("{}")
+        when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+
+        val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId)
+        val thrown = the[RuntimeException] thrownBy await(response)
+        thrown.getMessage must include(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate Client Name returned for id $mandateId")
+      }
+    }
+
+    "fetch correct mandate agent name" when {
+
+      "correct mandate id is passed" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.toJson(mandateNew)
+        when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+
+        val response = TestAgentClientMandateService.fetchClientMandateAgentName(mandateId)
+        await(response) must be(mandateNew.agentParty.name)
+      }
+      "throws an exception when no Mandate found" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.parse("{}")
+        when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+
+        val response = TestAgentClientMandateService.fetchClientMandateAgentName(mandateId)
+        val thrown = the[RuntimeException] thrownBy await(response)
+        thrown.getMessage must include(s"[AgentClientMandateService][fetchClientMandateAgentName] No Mandate Agent Name returned with id $mandateId")
+      }
+    }
+
     "fetch all mandates" when {
 
       "return no mandates when the list is empty" in {
@@ -373,9 +415,15 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   val userId = s"user-${UUID.randomUUID}"
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
+  val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None,
+    agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)),
+    clientParty = Some(Party("X0101000000101", "client name", PartyType.Organisation, ContactDetails("agent@agent.com", None))),
+    currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 
-  val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
+  val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None,
+    agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)),
+    clientParty = Some(Party("X0101000000101", "client name", PartyType.Organisation, ContactDetails("agent@agent.com", None))),
+    currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 
   val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 

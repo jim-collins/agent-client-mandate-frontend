@@ -15,7 +15,7 @@
 
     @mandateErrorSummary(removeAgentForm, "yes-no.error.general", Some("client.remove-agent.error"))
 
-    @form(action = routes.RemoveAgentController.submit(service, mandateId, agentName)) {
+    @form(action = routes.RemoveAgentController.submit(service, mandateId)) {
 
         <div class="form-group" id="removeAgent">
         @mandateInputRadioGroup(
