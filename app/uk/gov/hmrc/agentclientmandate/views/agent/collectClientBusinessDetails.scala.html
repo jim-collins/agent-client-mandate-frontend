@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 
-@(collectClientBusinessDetails: Form[CollectClientBusinessDetails], service: String)(implicit request: Request[_], messages: Messages)
+@(collectClientBusinessDetails: Form[CollectClientBusinessDetails], service: String, backLink:Option[String]=None)(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
@@ -10,8 +10,7 @@
 @implicitFormInstance = @{ Some(collectClientBusinessDetails) }
 
 @main_template(title = Messages("agent.enter-business-details.title"), delegatedService = Some(service)) {
-
-<div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
+@backLinkAndSubHeader(backLink, "pre-header", Messages("agent.add-a-client.sub-header"))
 <h1 class="heading-xlarge" id="header">
   @Messages("agent.enter-business-details.header")
 </h1>

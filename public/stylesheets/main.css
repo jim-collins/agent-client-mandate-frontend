@@ -56,6 +56,16 @@
     margin-bottom: 0.42105em;
 }
 
+.heading-sub-no-margin {
+    font-size: 27px;
+    line-height: 1.11111;
+    font-weight: 400;
+    text-transform: none;
+    display: block;
+    color: #6f777b;
+    margin-bottom: 0.42105em;
+}
+
 .sidebar {
     margin-top:50px;
 }
