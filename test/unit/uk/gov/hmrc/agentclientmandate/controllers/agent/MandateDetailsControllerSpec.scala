@@ -135,7 +135,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestMandateDetailsController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestMandateDetailsController.view(service, None).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -144,7 +144,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestMandateDetailsController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestMandateDetailsController.view(service, None).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

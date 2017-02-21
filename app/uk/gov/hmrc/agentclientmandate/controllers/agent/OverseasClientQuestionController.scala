@@ -37,19 +37,26 @@ trait OverseasClientQuestionController extends FrontendController with Actions {
 
   def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
-      Ok(views.html.agent.overseasClientQuestion(overseasClientQuestionForm, service))
+      Ok(views.html.agent.overseasClientQuestion(overseasClientQuestionForm, service, getBackLink(service)))
   }
 
   def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit authContext => implicit request =>
       overseasClientQuestionForm.bindFromRequest.fold(
-        formWithError => BadRequest(views.html.agent.overseasClientQuestion(formWithError, service)),
+        formWithError => BadRequest(views.html.agent.overseasClientQuestion(formWithError, service, getBackLink(service))),
         data => {
           val isOverSeas = data.isOverseas.getOrElse(false)
           if (isOverSeas) Redirect(routes.NRLQuestionController.view(service))
-          else Redirect(routes.MandateDetailsController.view(service))
+          else
+            Redirect(
+              routes.MandateDetailsController.view(service,
+              Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.OverseasClientQuestionController.view(service).url))
+            )
         }
       )
   }
 
+  private def getBackLink(service: String) = {
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.ClientDisplayNameController.view(service).url)
+  }
 }

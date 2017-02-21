@@ -148,7 +148,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestClientPermissionController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestClientPermissionController.view(service, None).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -157,7 +157,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestClientPermissionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientPermissionController.view(service, None).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -168,7 +168,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     when(mockBusinessCustomerConnector.clearCache(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(HttpResponse(200)))
     when(mockAtedSubscriptionConnector.clearCache(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(HttpResponse(200)))
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestClientPermissionController.view(serviceUsed).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientPermissionController.view(serviceUsed, None).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -177,7 +177,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestClientPermissionController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestClientPermissionController.submit(service, None).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

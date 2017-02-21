@@ -36,19 +36,26 @@ trait NRLQuestionController extends FrontendController with Actions {
 
   def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
-      Ok(views.html.agent.nrl_question(nrlQuestionForm, service))
+      Ok(views.html.agent.nrl_question(nrlQuestionForm, service, getBackLink(service)))
   }
 
 
   def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       nrlQuestionForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(views.html.agent.nrl_question(formWithErrors, service)),
+        formWithErrors => BadRequest(views.html.agent.nrl_question(formWithErrors, service, getBackLink(service))),
         data => {
-          if (data.nrl.getOrElse(false)) Redirect(routes.PaySAQuestionController.view(service))
-          else Redirect(routes.ClientPermissionController.view(service))
+          if (data.nrl.getOrElse(false))
+            Redirect(routes.PaySAQuestionController.view(service))
+          else
+            Redirect(routes.ClientPermissionController.view(service,
+              Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.NRLQuestionController.view(service).url))
+            )
         }
       )
   }
 
+  private def getBackLink(service: String) = {
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.OverseasClientQuestionController.view(service).url)
+  }
 }

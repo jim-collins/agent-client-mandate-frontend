@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(clientPermissionForm: Form[ClientPermission], service: String, backLink: Option[String]=None)(implicit request: Request[_], messages: Messages)
+@(clientPermissionForm: Form[ClientPermission], service: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
@@ -28,7 +28,7 @@
 </div>
 
 
-  @form(action = routes.ClientPermissionController.submit(service)) {
+  @form(action = routes.ClientPermissionController.submit(service, backLink)) {
 
     <div class="form-group" id="hasPermission">
       @mandateInputRadioGroup(

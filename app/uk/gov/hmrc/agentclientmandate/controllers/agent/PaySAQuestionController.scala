@@ -37,19 +37,29 @@ trait PaySAQuestionController extends FrontendController with Actions {
 
   def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
-      Ok(views.html.agent.paySAQuestion(paySAQuestionForm, service))
+      Ok(views.html.agent.paySAQuestion(paySAQuestionForm, service, getBackLink(service)))
   }
 
 
   def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       paySAQuestionForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(views.html.agent.paySAQuestion(formWithErrors, service)),
+        formWithErrors => BadRequest(views.html.agent.paySAQuestion(formWithErrors, service, getBackLink(service))),
         data => {
-          if (data.paySA.getOrElse(false)) Redirect(routes.MandateDetailsController.view(service))
-          else Redirect(routes.ClientPermissionController.view(service))
+          if (data.paySA.getOrElse(false))
+            Redirect(routes.MandateDetailsController.view(service,
+                Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.PaySAQuestionController.view(service).url))
+            )
+          else
+            Redirect(routes.ClientPermissionController.view(service,
+                Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.PaySAQuestionController.view(service).url))
+            )
         }
       )
   }
 
+
+  private def getBackLink(service: String) = {
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.NRLQuestionController.view(service).url)
+  }
 }

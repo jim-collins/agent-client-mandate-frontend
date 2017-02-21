@@ -44,7 +44,7 @@ trait ClientPermissionController extends FrontendController with Actions {
   def businessCustomerConnector: BusinessCustomerFrontendConnector
   def atedSubscriptionConnector: AtedSubscriptionFrontendConnector
 
-  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def view(service: String, backLinkUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
       for {
         clearBcResp <- businessCustomerConnector.clearCache(service)
@@ -52,14 +52,14 @@ trait ClientPermissionController extends FrontendController with Actions {
           if (service.toUpperCase == "ATED") atedSubscriptionConnector.clearCache(service)
           else Future.successful(HttpResponse(OK))
         }
-      } yield Ok(views.html.agent.clientPermission(clientPermissionForm, service))
+      } yield Ok(views.html.agent.clientPermission(clientPermissionForm, service, backLinkUrl))
   }
 
 
-  def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
+  def submit(service: String, backLinkUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       clientPermissionForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(views.html.agent.clientPermission(formWithErrors, service)),
+        formWithErrors => BadRequest(views.html.agent.clientPermission(formWithErrors, service, backLinkUrl)),
         data => {
           if (data.hasPermission.getOrElse(false)) Redirect(nonUkUri(service))
           else Redirect(routes.AgentSummaryController.view(service))
