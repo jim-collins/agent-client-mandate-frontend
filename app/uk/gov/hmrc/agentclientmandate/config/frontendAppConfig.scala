@@ -26,7 +26,8 @@ trait AppConfig {
   val analyticsHost: String
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
-  val betaFeedbackUrl: String
+  val defaultBetaFeedbackUrl: String
+  def betaFeedbackUrl(service: Option[String], returnUri: String): String
   val betaFeedbackUnauthenticatedUrl: String
   val logoutUrl: String
   val mandateFrontendHost: String
@@ -45,11 +46,22 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   private val contactHost = configuration.getString("contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "agent-client-mandate-frontend"
 
+
+  override lazy val defaultBetaFeedbackUrl = s"$contactHost/contact/beta-feedback"
+  override def betaFeedbackUrl(service: Option[String], returnUri: String) = {
+    val feedbackUrl = service match {
+      case Some(delegatedService) if (!delegatedService.isEmpty()) =>
+        configuration.getString(s"microservice.delegated-service.${delegatedService.toLowerCase}.beta-feedback-url").getOrElse(defaultBetaFeedbackUrl)
+      case _ => defaultBetaFeedbackUrl
+    }
+    feedbackUrl + "?return=" + returnUri
+  }
+
+
   override lazy val analyticsToken = loadConfig("google-analytics.token")
   override lazy val analyticsHost = loadConfig("google-analytics.host")
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  override lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback"
   override lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
   override lazy val logoutUrl = s"""${configuration.getString("microservice.logout.url").getOrElse("/gg/sign-out")}"""
   override lazy val timeoutCountdown: Int = loadConfig("timeoutCountdown").toInt
