@@ -124,7 +124,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementsByClass("error-list").text() must include("There is a problem with the email address question")
           document.getElementsByClass("error-notification").text() must include("You must answer the email address question.")
           verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
-          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(1)).fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
@@ -137,7 +138,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementsByClass("error-list").text() must include("There is a problem with the email address question")
           document.getElementsByClass("error-notification").text() must include("The email address cannot be more than 241 characters.")
           verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
-          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(1)).fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
@@ -150,7 +152,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("This email is invalid")
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
-          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(1)).fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
@@ -191,6 +194,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestCollectEmailController.backLinkId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("/api/anywhere"))
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some("/api/anywhere")))
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestCollectEmailController.view(service, mode).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
@@ -204,6 +209,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some("/api/anywhere")))
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     when(mockEmailService.validate(Matchers.any())(Matchers.any())).thenReturn(Future.successful(isValidEmail))
     when(mockDataCacheService.cacheFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId), Matchers.eq(returnCache))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(returnCache))
