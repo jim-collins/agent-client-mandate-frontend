@@ -55,8 +55,14 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   override lazy val timeoutCountdown: Int = loadConfig("timeoutCountdown").toInt
   override lazy val defaultTimeoutSeconds: Int = loadConfig("defaultTimeoutSeconds").toInt
 
-  override def nonUkUri(service: String): String = s"""${configuration.getString("microservice.services.business-customer-frontend.nonUK-uri").
-    getOrElse("")}/${service.toLowerCase}"""
+  override def nonUkUri(service: String): String = {
+    val forwardUrl = s"""${configuration.getString("microservice.services.business-customer-frontend.nonUK-uri").
+      getOrElse("")}/${service.toLowerCase}"""
+    val returnUrl = s"""${configuration.getString("microservice.services.business-customer-frontend.nonUK-return-uri").
+      getOrElse("")}/${service.toLowerCase}"""
+
+    forwardUrl + "?backLinkUrl=" + returnUrl
+  }
 
   override def serviceSignOutUrl(service: Option[String]): String = {
     service match {
