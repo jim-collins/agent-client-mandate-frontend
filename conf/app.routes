@@ -21,7 +21,6 @@ POST    /client/declaration/:service        uk.gov.hmrc.agentclientmandate.contr
 GET     /client/confirmation/:service     uk.gov.hmrc.agentclientmandate.controllers.client.MandateConfirmationController.view(service: String)
 
 GET     /client/remove/return-to-service           uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.returnToService
-GET     /client/remove/:id/:service/back           uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.back(service: String, id: String)
 GET     /client/remove/:id/:service                uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(service: String, id: String, returnUrl: String)
 POST    /client/remove/:id/:service                uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.submit(service: String, id: String)
 GET     /client/remove/:id/confirmation/:service   uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.confirmation(service: String, id: String)

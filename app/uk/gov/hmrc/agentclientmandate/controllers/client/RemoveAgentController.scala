@@ -42,13 +42,6 @@ trait RemoveAgentController extends FrontendController with Actions {
 
   def dataCacheService: DataCacheService
 
-  def back(service: String, mandateId: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
-    implicit authContext => implicit request =>
-
-      dataCacheService.fetchAndGetFormData[String]("RETURN_URL").flatMap { returnUrl =>
-        showView(service, mandateId, returnUrl)
-      }
-  }
 
   def view(service: String, mandateId: String, returnUrl: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
