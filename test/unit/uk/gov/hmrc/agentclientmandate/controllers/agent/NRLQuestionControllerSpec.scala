@@ -98,7 +98,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("nrl" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include(s"/mandate/agent/client-permission/$service")
+          redirectLocation(result).get must include(s"/mandate/agent/client-permission/nrl/$service")
         }
       }
     }
@@ -122,6 +122,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
 
   object TestNRLQuestionController extends NRLQuestionController {
     override val authConnector = mockAuthConnector
+    override val controllerId = "nrl"
   }
 
   override def beforeEach(): Unit = {

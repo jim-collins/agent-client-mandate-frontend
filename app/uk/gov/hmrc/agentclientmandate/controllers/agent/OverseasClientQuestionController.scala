@@ -30,10 +30,13 @@ import play.api.Play.current
 object OverseasClientQuestionController extends OverseasClientQuestionController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
+  val controllerId: String = "overseas"
   // $COVERAGE-ON$
 }
 
 trait OverseasClientQuestionController extends FrontendController with Actions {
+
+  val controllerId: String
 
   def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
@@ -48,10 +51,7 @@ trait OverseasClientQuestionController extends FrontendController with Actions {
           val isOverSeas = data.isOverseas.getOrElse(false)
           if (isOverSeas) Redirect(routes.NRLQuestionController.view(service))
           else
-            Redirect(
-              routes.MandateDetailsController.view(service,
-              Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.OverseasClientQuestionController.view(service).url))
-            )
+            Redirect(routes.MandateDetailsController.view(service, controllerId))
         }
       )
   }

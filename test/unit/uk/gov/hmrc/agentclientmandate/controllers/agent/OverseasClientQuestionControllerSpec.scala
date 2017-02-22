@@ -103,7 +103,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include(s"/mandate/agent/details/$service")
+          redirectLocation(result).get must include(s"/mandate/agent/details/overseas/$service")
         }
       }
     }
@@ -128,6 +128,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
 
   object TestOverseasClientQuestionController extends OverseasClientQuestionController {
     override val authConnector = mockAuthConnector
+    override val controllerId = "overseas"
   }
 
   override def beforeEach(): Unit = {

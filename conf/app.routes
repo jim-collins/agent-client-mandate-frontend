@@ -30,8 +30,8 @@ POST    /client/change/:service/:mandateId               uk.gov.hmrc.agentclient
 
 ## Agent URIs ##
 
-GET     /agent/details/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.view(service: String, backLinkUrl : Option[String] ?= None)
-POST    /agent/details/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.submit(service: String)
+GET     /agent/details/:callingPage/:service  uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.view(service: String, callingPage: String)
+POST    /agent/details/:service               uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.submit(service: String)
 
 GET     /agent/service             uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.view
 POST    /agent/service             uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.submit
@@ -53,8 +53,8 @@ POST    /agent/nrl-question/:service            uk.gov.hmrc.agentclientmandate.c
 GET     /agent/paySA-question/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.PaySAQuestionController.view(service: String)
 POST    /agent/paySA-question/:service            uk.gov.hmrc.agentclientmandate.controllers.agent.PaySAQuestionController.submit(service: String)
 
-GET     /agent/client-permission/:service       uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.view(service: String, backLinkUrl : Option[String] ?= None)
-POST    /agent/client-permission/:service       uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.submit(service: String, backLinkUrl : Option[String] ?= None)
+GET     /agent/client-permission/:callingPage/:service   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.view(service: String, callingPage: String)
+POST    /agent/client-permission/:callingPage/:service   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.submit(service: String, callingPage: String)
 
 GET     /agent/unique-reference/:service    uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 

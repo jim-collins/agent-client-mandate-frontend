@@ -29,10 +29,13 @@ import play.api.Play.current
 object NRLQuestionController extends NRLQuestionController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
+  val controllerId: String = "nrl"
   // $COVERAGE-ON$
 }
 
 trait NRLQuestionController extends FrontendController with Actions {
+
+  val controllerId: String
 
   def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
@@ -48,9 +51,7 @@ trait NRLQuestionController extends FrontendController with Actions {
           if (data.nrl.getOrElse(false))
             Redirect(routes.PaySAQuestionController.view(service))
           else
-            Redirect(routes.ClientPermissionController.view(service,
-              Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.NRLQuestionController.view(service).url))
-            )
+            Redirect(routes.ClientPermissionController.view(service, controllerId))
         }
       )
   }
