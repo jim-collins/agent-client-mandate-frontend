@@ -51,8 +51,8 @@ trait SearchMandateController extends FrontendController with Actions with Manda
 
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map { a =>
         a.flatMap(_.mandate) match {
-          case Some(x) => Ok(views.html.client.searchMandate(service, mandateRefForm.fill(MandateReference(x.id))))
-          case None => Ok(views.html.client.searchMandate(service, mandateRefForm))
+          case Some(x) => Ok(views.html.client.searchMandate(service, mandateRefForm.fill(MandateReference(x.id)), getBackLink(service)))
+          case None => Ok(views.html.client.searchMandate(service, mandateRefForm, getBackLink(service)))
         }
       }
   }
@@ -60,13 +60,13 @@ trait SearchMandateController extends FrontendController with Actions with Manda
   def submit(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       mandateRefForm.bindFromRequest.fold(
-        formWithErrors => Future.successful(BadRequest(views.html.client.searchMandate(service, formWithErrors))),
+        formWithErrors => Future.successful(BadRequest(views.html.client.searchMandate(service, formWithErrors, getBackLink(service)))),
         data => mandateService.fetchClientMandate(data.mandateRef) flatMap {
           case Some(x) => {
             if (x.currentStatus.status != uk.gov.hmrc.agentclientmandate.models.Status.New) {
               val errorMsg = Messages("client.search-mandate.error.mandateRef.already-used-by-mandate-service")
               val errorForm = mandateRefForm.withError(key = "mandateRef", message = errorMsg).fill(data)
-              Future.successful(BadRequest(views.html.client.searchMandate(service, errorForm)))
+              Future.successful(BadRequest(views.html.client.searchMandate(service, errorForm, getBackLink(service))))
             } else {
               dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
                 case Some(y) =>
@@ -92,10 +92,12 @@ trait SearchMandateController extends FrontendController with Actions with Manda
           case None =>
             val errorMsg = Messages("client.search-mandate.error.mandateRef.not-found-by-mandate-service")
             val errorForm = mandateRefForm.withError(key = "mandateRef", message = errorMsg).fill(data)
-            Future.successful(BadRequest(views.html.client.searchMandate(service, errorForm)))
+            Future.successful(BadRequest(views.html.client.searchMandate(service, errorForm, getBackLink(service))))
         }
       )
   }
 
-
+  private def getBackLink(service: String) = {
+    Some(routes.CollectEmailController.edit(service).url)
+  }
 }

@@ -22,7 +22,7 @@ import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
-import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
+import uk.gov.hmrc.agentclientmandate.utils.{DelegationUtils, MandateConstants}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{YesNoQuestionForm, ClientCache}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientEmailForm._
 import uk.gov.hmrc.agentclientmandate.views
@@ -49,14 +49,12 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
   val backLinkId = "CollectEmailController:BackLink"
   def edit(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      dataCacheService.cacheFormData[String](backLinkId, "").flatMap { cache =>
-        showView(service, Some("edit"))
-      }
+      showView(service, Some("edit"))
   }
 
-  def view(service: String, backLinkUrl: Option[String]) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
+  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      dataCacheService.cacheFormData[String](backLinkId, backLinkUrl.getOrElse("")).flatMap { cache =>
+      dataCacheService.cacheFormData[String](backLinkId, redirectUrl.getOrElse(DelegationUtils.getDelegatedServiceRedirectUrl(service))).flatMap { cache =>
         showView(service, None)
       }
   }
@@ -71,7 +69,7 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
         case Some(x) => clientEmailForm.fill(x)
         case None => clientEmailForm
       }
-      Ok(views.html.client.collectEmail(service, filledForm, None, backLink))
+      Ok(views.html.client.collectEmail(service, filledForm, mode, backLink))
     }
   }
 
@@ -115,15 +113,16 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
   }
 
   private def getBackLink(service: String, mode: Option[String])(implicit hc: HeaderCarrier, ac: AuthContext, request: Request[AnyContent]) :Future[Option[String]]= {
-    for {
-      backLink <- dataCacheService.fetchAndGetFormData[String](backLinkId)
-    } yield {
-      (backLink, mode) match {
-        case (Some(backLinkUrl), _) => backLink
-        case (_, Some("edit")) => Some(routes.ReviewMandateController.view(service).url)
-        case _ => None
+    mode match {
+      case Some("edit") => Future.successful(Some(routes.ReviewMandateController.view(service).url))
+      case _ => {
+        dataCacheService.fetchAndGetFormData[String](backLinkId).map(backLink =>
+          backLink match {
+            case Some(x) if (!x.trim.isEmpty) => backLink
+            case _ => None
+          }
+        )
       }
     }
-
   }
 }
