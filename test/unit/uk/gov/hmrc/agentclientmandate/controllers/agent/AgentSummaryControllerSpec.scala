@@ -30,7 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController
 import uk.gov.hmrc.agentclientmandate.models.{MandateStatus, Service, Status, Subscription, _}
-import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, Mandates}
+import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, Mandates}
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.play.frontend.auth.connectors.{AuthConnector, DelegationConnector}
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -159,12 +159,8 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       "agent selects and activates client" in {
         activateClientByAuthorisedAgent { result =>
 
-          status(result) must be(OK)
-          val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Your ATED clients")
-          document.getElementById("header").text must be("Your ATED clients")
-          document.getElementById("add-client-link").text() must be("Add a new client")
-          document.getElementById("yourClients-name").text() must be("Name")
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must include("/mandate/agent/summary/ATED")
         }
       }
 
@@ -205,17 +201,20 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   val mockAuthConnector = mock[AuthConnector]
   val mockAgentClientMandateService = mock[AgentClientMandateService]
   val mockDelegationConnector = mock[DelegationConnector]
+  val mockDataCacheService = mock[DataCacheService]
 
   object TestAgentSummaryController extends AgentSummaryController {
     override val authConnector = mockAuthConnector
     override val agentClientMandateService = mockAgentClientMandateService
     override val delegationConnector = mockDelegationConnector
+    override val dataCacheService = mockDataCacheService
   }
 
   override def beforeEach() = {
     reset(mockAuthConnector)
     reset(mockAgentClientMandateService)
     reset(mockDelegationConnector)
+    reset(mockDataCacheService)
   }
 
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
@@ -253,6 +252,9 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     }
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
 
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some("text"))
+    when(mockDataCacheService.cacheFormData[String](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful("text")
+
     val result = TestAgentSummaryController.view(service, tabName).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
@@ -273,6 +275,8 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       Future.successful(Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation))))
     }
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
+
+    when(mockDataCacheService.cacheFormData[String](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful("text")
 
     val result = TestAgentSummaryController.activate(service, "mandateId").apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)

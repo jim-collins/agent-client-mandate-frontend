@@ -21,7 +21,7 @@ import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.agentclientmandate.config.{FrontendAuthConnector, FrontendDelegationConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.models.AgentDetails
-import uk.gov.hmrc.agentclientmandate.service.{Mandates, AgentClientMandateService}
+import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, Mandates}
 import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
 import uk.gov.hmrc.agentclientmandate.utils.DelegationUtils._
 import uk.gov.hmrc.agentclientmandate.views
@@ -36,20 +36,25 @@ object AgentSummaryController extends AgentSummaryController {
   val authConnector = FrontendAuthConnector
   val agentClientMandateService = AgentClientMandateService
   val delegationConnector: DelegationConnector = FrontendDelegationConnector
+  val dataCacheService: DataCacheService = DataCacheService
 }
 
 trait AgentSummaryController extends FrontendController with Actions with Delegator {
 
   def agentClientMandateService: AgentClientMandateService
+  def dataCacheService: DataCacheService
+
+  val screenReaderTextId = "screenReaderTextId"
 
   def view(service: String, tabName: Option[String] = None) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      val arn = AuthUtils.getArn
       for {
-        mandates <- agentClientMandateService.fetchAllClientMandates(arn, service)
+        screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
+        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service)
         agentDetails <- agentClientMandateService.fetchAgentDetails()
+        _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
       } yield {
-        showView(service, mandates, agentDetails, "", tabName)
+        showView(service, mandates, agentDetails, screenReaderText.getOrElse(""), tabName)
       }
   }
 
@@ -63,8 +68,9 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
               for {
                 mandates <- agentClientMandateService.fetchAllClientMandates(arn, service)
                 agentDetails <- agentClientMandateService.fetchAgentDetails()
+                _ <- dataCacheService.cacheFormData[String](screenReaderTextId, Messages("client.summary.hidden.client_activated", x.clientDisplayName))
               } yield {
-                showView(service, mandates, agentDetails, Messages("client.summary.hidden.client_activated", x.clientParty.get.name))
+                Redirect(routes.AgentSummaryController.view(service))
               }
             case _ => throw new RuntimeException("Failed to fetch client")
           }
