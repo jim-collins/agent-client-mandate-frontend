@@ -41,7 +41,7 @@ trait RemoveClientController extends FrontendController with Actions {
 
       acmService.fetchClientMandateClientName(mandateId).map(
         clientName => Ok(views.html.agent.removeClient(new YesNoQuestionForm("agent.remove-client.error").yesNoQuestionForm,
-          service, clientName, mandateId))
+          service, clientName, mandateId, getBackLink(service)))
       )
   }
 
@@ -51,7 +51,7 @@ trait RemoveClientController extends FrontendController with Actions {
       form.yesNoQuestionForm.bindFromRequest.fold(
         formWithError =>
           acmService.fetchClientMandateClientName(mandateId).map(
-            clientName =>  BadRequest(views.html.agent.removeClient(formWithError, service, clientName, mandateId))
+            clientName =>  BadRequest(views.html.agent.removeClient(formWithError, service, clientName, mandateId, getBackLink(service)))
           ),
         data => {
           val removeClient = data.yesNo.getOrElse(false)
@@ -78,6 +78,10 @@ trait RemoveClientController extends FrontendController with Actions {
         clientName =>  Ok(views.html.agent.removeClientConfirmation(service, clientName))
       )
     }
+
+  private def getBackLink(service: String) = {
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)
+  }
 }
 
 

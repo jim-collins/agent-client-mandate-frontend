@@ -19,6 +19,7 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
+import uk.gov.hmrc.agentclientmandate.utils.DelegationUtils
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{YesNoQuestion, YesNoQuestionForm}
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
@@ -42,12 +43,11 @@ trait ChangeAgentController extends FrontendController with Actions{
   def acmService: AgentClientMandateService
   def dataCacheService: DataCacheService
 
-  def view(service: String, mandateId: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
+  def view(service: String, mandateId: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence) {
     implicit authContext => implicit request =>
-      acmService.fetchClientMandateAgentName(mandateId).map(
-        agentName =>
-          Ok(views.html.client.changeAgent(service, new YesNoQuestionForm("client.agent-change.error").yesNoQuestionForm, agentName, mandateId))
-      )
+      Ok(views.html.client.changeAgent(service, new YesNoQuestionForm("client.agent-change.error").yesNoQuestionForm,
+        mandateId,
+        Some(DelegationUtils.getDelegatedServiceRedirectUrl(service))))
   }
 
   def submit(service: String, mandateId: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
@@ -55,14 +55,15 @@ trait ChangeAgentController extends FrontendController with Actions{
       val form = new YesNoQuestionForm("client.agent-change.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
         formWithError =>
-          acmService.fetchClientMandateAgentName(mandateId).map(
-            agentName =>
-              BadRequest(views.html.client.changeAgent(service, formWithError, agentName, mandateId))
+            Future.successful(BadRequest(views.html.client.changeAgent(service, formWithError,
+              mandateId,
+              Some(DelegationUtils.getDelegatedServiceRedirectUrl(service))))
           ),
         data => {
           val changeAgent = data.yesNo.getOrElse(false)
           if (changeAgent) {
-            Future.successful(Redirect(routes.CollectEmailController.view(service)))
+            val backLink = routes.ChangeAgentController.view(service, mandateId).url
+            Future.successful(Redirect(routes.CollectEmailController.view(service, Some(backLink))))
           }
           else {
             Future.successful(Redirect(routes.RemoveAgentController.confirmation(service, mandateId)))

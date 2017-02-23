@@ -1,6 +1,6 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
-@(agentEmailForm: Form[AgentEmail], service: String, redirectUrl: Option[String])(implicit request: Request[_], messages: Messages)
+@(agentEmailForm: Form[AgentEmail], service: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
@@ -11,8 +11,7 @@
 @main_template(title = Messages("agent.enter-email.title"), delegatedService = Some(service)) {
 
 
-
-<div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
+@backLinkAndSubHeader(backLink, "pre-header", Messages("agent.add-a-client.sub-header"))
 <h1 class="heading-xlarge" id="header">
   @Messages("agent.enter-email.header")
 </h1>
@@ -25,7 +24,7 @@
     </span>
   </div>
 
-  @form(action = routes.CollectAgentEmailController.submit(service, redirectUrl)) {
+  @form(action = routes.CollectAgentEmailController.submit(service)) {
 
     <div id="agent-enter-email-form" class="form-group">
 

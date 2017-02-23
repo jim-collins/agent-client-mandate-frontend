@@ -44,7 +44,7 @@ trait RejectClientController extends FrontendController with Actions {
       acmService.fetchClientMandateClientName(mandateId).map(
         clientName => Ok(views.html.agent.rejectClient(service,
           new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm,
-          clientName, mandateId))
+          clientName, mandateId, getBackLink(service)))
       )
   }
 
@@ -54,7 +54,7 @@ trait RejectClientController extends FrontendController with Actions {
       form.yesNoQuestionForm.bindFromRequest.fold(
         formWithError =>
           acmService.fetchClientMandateClientName(mandateId).map(
-            clientName => BadRequest(views.html.agent.rejectClient(service, formWithError, clientName, mandateId))
+            clientName => BadRequest(views.html.agent.rejectClient(service, formWithError, clientName, mandateId, getBackLink(service)))
           ),
         data => {
           val rejectClient = data.yesNo.getOrElse(false)
@@ -81,5 +81,9 @@ trait RejectClientController extends FrontendController with Actions {
         clientName => Ok(views.html.agent.rejectClientConfirmation(service, clientName))
       )
 
+  }
+
+  private def getBackLink(service: String) = {
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)
   }
 }

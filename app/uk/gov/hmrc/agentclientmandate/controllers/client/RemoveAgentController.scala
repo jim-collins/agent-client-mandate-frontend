@@ -16,17 +16,17 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.client
 
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
+import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm
 import uk.gov.hmrc.agentclientmandate.views
-import uk.gov.hmrc.play.frontend.auth.Actions
+import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.BadRequestException
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
-import scala.concurrent.Future
 
 object RemoveAgentController extends RemoveAgentController {
   // $COVERAGE-OFF$
@@ -42,6 +42,7 @@ trait RemoveAgentController extends FrontendController with Actions {
 
   def dataCacheService: DataCacheService
 
+
   def view(service: String, mandateId: String, returnUrl: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
 
@@ -50,12 +51,23 @@ trait RemoveAgentController extends FrontendController with Actions {
       // $COVERAGE-ON$
 
       dataCacheService.cacheFormData[String]("RETURN_URL", returnUrl).flatMap { cache =>
-        acmService.fetchClientMandate(mandateId).map {
-          case Some(mandate) => Ok(views.html.client.removeAgent(service, new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm,
-            mandate.agentParty.name, mandateId))
-          case _ => throw new RuntimeException("No Mandate returned")
-        }
+        showView(service, mandateId, Some(returnUrl))
       }
+  }
+
+  private def showView(service: String,
+                       mandateId: String,
+                       backLink: Option[String])(implicit ac: AuthContext, request: Request[AnyContent]) = {
+
+    acmService.fetchClientMandate(mandateId).map {
+      case Some(mandate) => Ok(views.html.client.removeAgent(
+        service = service,
+        removeAgentForm = new YesNoQuestionForm("client.remove-agent.error").yesNoQuestionForm,
+        agentName = mandate.agentParty.name,
+        mandateId = mandateId,
+        backLink = backLink))
+      case _ => throw new RuntimeException("No Mandate returned")
+    }
   }
 
   def submit(service: String, mandateId: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
@@ -63,9 +75,11 @@ trait RemoveAgentController extends FrontendController with Actions {
       val form = new YesNoQuestionForm("client.remove-agent.error")
       form.yesNoQuestionForm.bindFromRequest.fold(
         formWithError =>
-          acmService.fetchClientMandateAgentName(mandateId).map(
+          acmService.fetchClientMandateAgentName(mandateId).flatMap(
             agentName =>
-              BadRequest(views.html.client.removeAgent(service, formWithError, agentName, mandateId))
+              dataCacheService.fetchAndGetFormData[String]("RETURN_URL").map { returnUrl =>
+                BadRequest(views.html.client.removeAgent(service, formWithError, agentName, mandateId, returnUrl))
+              }
           ),
         data => {
           val removeAgent = data.yesNo.getOrElse(false)
@@ -91,7 +105,6 @@ trait RemoveAgentController extends FrontendController with Actions {
         agentName =>
           Ok(views.html.client.removeAgentConfirmation(service, agentName))
       )
-
   }
 
   def returnToService = AuthorisedFor(ClientRegime(), GGConfidence).async {

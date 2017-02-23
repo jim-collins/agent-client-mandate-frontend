@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
+import uk.gov.hmrc.agentclientmandate.utils.{MandateFeatureSwitches, FeatureSwitch}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, ClientEmail}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -86,13 +87,60 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
     }
 
+    "return search mandate edit view for AUTHORISED client" when {
+
+      "client requests(GET) for collect email view and the data hasn't been cached" in {
+        editWithAuthorisedClient() { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What is your email address?")
+          document.getElementById("header").text() must include("What is your email address?")
+          document.getElementById("pre-heading").text() must include("Appoint an agent")
+          document.getElementById("email_field").text() must be("Email address")
+          document.getElementById("email").`val`() must be("")
+          document.getElementById("submit").text() must be("Continue")
+
+          document.getElementById("backLinkHref").text() must be("Back")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/client/review/ATED")
+        }
+
+      }
+
+      "client requests(GET) for collect email view pre-populated and the data and redirect have been cached" in {
+        val cached = ClientCache(email = Some(ClientEmail("aa@mail.com")))
+        viewWithAuthorisedClient(Some(cached), Some("/api/anywhere")) { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What is your email address?")
+          document.getElementById("email").`val`() must be("aa@mail.com")
+
+          document.getElementById("backLinkHref").text() must be("Back")
+          document.getElementById("backLinkHref").attr("href") must be("/api/anywhere")
+        }
+      }
+
+      "client requests(GET) for collect email view pre-populated and the data has been cached, but no redirect" in {
+
+        val cached = ClientCache(email = Some(ClientEmail("aa@mail.com")))
+        viewWithAuthorisedClient(Some(cached), None) { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What is your email address?")
+          document.getElementById("email").`val`() must be("aa@mail.com")
+
+          document.getElementById("backLinkHref") must be(null)
+        }
+
+      }
+    }
+
     "redirect to respective page " when {
 
       "valid form is submitted, while updating existing client cache object" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com")
         val cachedData = ClientCache()
         val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com")))
-        submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = Some(cachedData), returnCache = returnData, mode = Some("edit")) { result =>
+        submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = Some(cachedData), returnCache = returnData, redirectUrl = Some("edit")) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("/mandate/client/review/ATED"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
@@ -124,7 +172,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementsByClass("error-list").text() must include("There is a problem with the email address question")
           document.getElementsByClass("error-notification").text() must include("You must answer the email address question.")
           verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
-          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(1)).fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
@@ -137,7 +186,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementsByClass("error-list").text() must include("There is a problem with the email address question")
           document.getElementsByClass("error-notification").text() must include("The email address cannot be more than 241 characters.")
           verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
-          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(1)).fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
@@ -150,7 +200,8 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("This email is invalid")
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
-          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(1)).fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())
+          verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }
@@ -178,21 +229,35 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   val service = "ATED"
 
 
-  def viewWithUnAuthenticatedClient(mode: Option[String] = None)(test: Future[Result] => Any) {
+  def viewWithUnAuthenticatedClient(redirectUrl: Option[String] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestCollectEmailController.view(service, mode).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestCollectEmailController.view(service, redirectUrl).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def viewWithAuthorisedClient(cachedData: Option[ClientCache] = None, mode: Option[String] = None)(test: Future[Result] => Any) {
+  def editWithAuthorisedClient(cachedData: Option[ClientCache] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some("/api/anywhere")))
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
-    val result = TestCollectEmailController.view(service, mode).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestCollectEmailController.edit(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+  
+  def viewWithAuthorisedClient(cachedData: Option[ClientCache] = None, redirectUrl: Option[String] = None)(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestCollectEmailController.backLinkId),
+      Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(redirectUrl.getOrElse("")))
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(redirectUrl))
+    when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
+    val result = TestCollectEmailController.view(service, redirectUrl).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
@@ -200,14 +265,15 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
                                  cachedData: Option[ClientCache] = None,
                                  isValidEmail: Boolean = false,
                                  returnCache: ClientCache = ClientCache(),
-                                 mode: Option[String] = None)(test: Future[Result] => Any) {
+                                 redirectUrl: Option[String] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestCollectEmailController.backLinkId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some("/api/anywhere")))
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     when(mockEmailService.validate(Matchers.any())(Matchers.any())).thenReturn(Future.successful(isValidEmail))
     when(mockDataCacheService.cacheFormData[ClientCache](Matchers.eq(TestCollectEmailController.clientFormId), Matchers.eq(returnCache))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(returnCache))
-    val result = TestCollectEmailController.submit(service, mode).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestCollectEmailController.submit(service, redirectUrl).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

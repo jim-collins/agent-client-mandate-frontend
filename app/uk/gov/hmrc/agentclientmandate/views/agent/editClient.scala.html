@@ -5,11 +5,10 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.models._
 
-@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String)(implicit request: Request[_], messages: Messages)
+@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("agent.edit-mandate-details.title"), delegatedService = Some(service)) {
-
-  <div class="heading-sub" id="pre-header">@Messages("agent.edit-mandate-details.pre-header", service.toUpperCase)</div>
+  @backLinkAndSubHeader(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase))
   <h1 class="heading-xlarge" id="header">
     @Messages("agent.edit-mandate-details.header", service)
   </h1>

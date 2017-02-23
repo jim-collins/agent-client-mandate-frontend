@@ -49,8 +49,8 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
   def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) map {
-        case Some(clientDisplayname) => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm.fill(clientDisplayname), service, redirectUrl))
-        case None => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm, service, redirectUrl))
+        case Some(clientDisplayname) => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm.fill(clientDisplayname), service, redirectUrl, getBackLink(service, redirectUrl)))
+        case None => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm, service, redirectUrl, getBackLink(service, redirectUrl)))
       }
   }
 
@@ -58,7 +58,7 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
   def submit(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       clientDisplayNameForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.agent.clientDisplayName(formWithError, service, redirectUrl))),
+        formWithError => Future.successful(BadRequest(views.html.agent.clientDisplayName(formWithError, service, redirectUrl, getBackLink(service, redirectUrl)))),
         data =>
           dataCacheService.cacheFormData[ClientDisplayName](clientDisplayNameFormId, data) map { cachedData =>
             redirectUrl match {
@@ -74,5 +74,12 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
       dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId).map { displayName =>
           Ok(Json.toJson(displayName))
       }
+  }
+
+  private def getBackLink(service: String, redirectUrl: Option[String]):Option[String] = {
+    redirectUrl match {
+      case Some(x) => redirectUrl
+      case None => Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.CollectAgentEmailController.view(service).url)
+    }
   }
 }

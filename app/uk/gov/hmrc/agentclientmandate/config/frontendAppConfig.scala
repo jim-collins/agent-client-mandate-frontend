@@ -36,7 +36,7 @@ trait AppConfig {
   val servicesUsed: List[String]
 
   def serviceSignOutUrl(service: Option[String]): String
-  def nonUkUri(service: String): String
+  def nonUkUri(service: String, backLinkUrl: String): String
 }
 
 object FrontendAppConfig extends AppConfig with ServicesConfig {
@@ -67,8 +67,14 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   override lazy val timeoutCountdown: Int = loadConfig("timeoutCountdown").toInt
   override lazy val defaultTimeoutSeconds: Int = loadConfig("defaultTimeoutSeconds").toInt
 
-  override def nonUkUri(service: String): String = s"""${configuration.getString("microservice.services.business-customer-frontend.nonUK-uri").
-    getOrElse("")}/${service.toLowerCase}"""
+  override def nonUkUri(service: String, backLinkUrl: String): String = {
+    val forwardUrl = s"""${configuration.getString("microservice.services.business-customer-frontend.nonUK-uri").
+      getOrElse("")}/${service.toLowerCase}"""
+    val returnUrl = s"""${configuration.getString("microservice.services.business-customer-frontend.nonUK-return-uri").
+      getOrElse("")}/${service.toLowerCase}"""
+
+    forwardUrl + "?backLinkUrl=" + mandateFrontendHost + backLinkUrl
+  }
 
   override def serviceSignOutUrl(service: Option[String]): String = {
     service match {

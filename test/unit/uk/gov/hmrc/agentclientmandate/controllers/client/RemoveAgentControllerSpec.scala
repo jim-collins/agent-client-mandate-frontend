@@ -106,6 +106,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
       "invalid form is submitted" in {
         when(mockAgentClientMandateService.fetchClientMandateAgentName(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful("Agent Limited"))
+        when(mockDataCacheService.fetchAndGetFormData[String](Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some("/api/anywhere")))
 
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "")
         submitWithAuthorisedClient(fakeRequest) { result =>

@@ -28,7 +28,7 @@ import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.connectors.{AtedSubscriptionFrontendConnector, BusinessCustomerFrontendConnector}
-import uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController
+import uk.gov.hmrc.agentclientmandate.controllers.agent.{NRLQuestionController, PaySAQuestionController, ClientPermissionController}
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
@@ -43,12 +43,12 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/agent/client-permission/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/client-permission/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/client-permission/paySa/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/agent/client-permission/:service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/client-permission/$service")).get
+        val result = route(FakeRequest(POST, s"/mandate/agent/client-permission/nrl/$service")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -56,7 +56,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
 
     "redirect to login page for UNAUTHENTICATED agent" when {
       "agent requests(GET) for 'client permission' view" in {
-        viewWithUnAuthenticatedAgent { result =>
+        viewWithUnAuthenticatedAgent("") { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -65,7 +65,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
 
     "redirect to unauthorised page for UNAUTHORISED agent" when {
       "agent requests(GET) for 'client permission' view" in {
-        viewWithUnAuthorisedAgent { result =>
+        viewWithUnAuthorisedAgent("paySa") { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -73,8 +73,8 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     }
 
     "return 'nrl question' view for AUTHORISED agent" when {
-      "agent requests(GET) for 'client permission' view" in {
-        viewWithAuthorisedAgent() { result =>
+      "agent requests(GET) for 'client permission' view from PaySA" in {
+        viewWithAuthorisedAgent(service, PaySAQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Do you have permission to register on behalf of your client?")
@@ -82,10 +82,27 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("pre-header").text() must be("Add a client")
           document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
           document.getElementById("submit").text() must be("Continue")
+
+          document.getElementById("backLinkHref").text() must be("Back")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ATED")
+        }
+      }
+      "agent requests(GET) for 'client permission' view from nrl" in {
+        viewWithAuthorisedAgent(service, NRLQuestionController.controllerId) { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Do you have permission to register on behalf of your client?")
+          document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
+          document.getElementById("pre-header").text() must be("Add a client")
+          document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
+          document.getElementById("submit").text() must be("Continue")
+
+          document.getElementById("backLinkHref").text() must be("Back")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/nrl-question/ATED")
         }
       }
       "agent requests(GET) for 'client permission' view for other service - it doesn't clear session cache for ated-subscription" in {
-        viewWithAuthorisedAgent(serviceUsed = "otherService") { result =>
+        viewWithAuthorisedAgent(serviceUsed = "otherService", "") { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Do you have permission to register on behalf of your client?")
@@ -96,9 +113,9 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     "redirect agent to 'enter client non-uk details' page in business-customer-frontend application" when {
       "valid form is submitted and YES is selected" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "true")
-        submitWithAuthorisedAgent(fakeRequest) { result =>
+        submitWithAuthorisedAgent("", fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"http://localhost:9923/business-customer/agent/register/non-uk-client/${service.toLowerCase}"))
+          redirectLocation(result).get must include(s"http://localhost:9923/business-customer/agent/register/non-uk-client/${service.toLowerCase}")
         }
       }
     }
@@ -106,7 +123,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     "redirect agent to 'mandate summary' page" when {
       "valid form is submitted and NO" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "false")
-        submitWithAuthorisedAgent(fakeRequest) { result =>
+        submitWithAuthorisedAgent("", fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some(s"/mandate/agent/summary/$service"))
         }
@@ -116,7 +133,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     "returns BAD_REQUEST" when {
       "invalid form is submitted" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "")
-        submitWithAuthorisedAgent(fakeRequest) { result =>
+        submitWithAuthorisedAgent("", fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the client permission question.")
@@ -144,40 +161,40 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     reset(mockAtedSubscriptionConnector)
   }
 
-  def viewWithUnAuthenticatedAgent(test: Future[Result] => Any) {
+  def viewWithUnAuthenticatedAgent(callingPage: String)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestClientPermissionController.view(service).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestClientPermissionController.view(service, callingPage).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def viewWithUnAuthorisedAgent(test: Future[Result] => Any) {
+  def viewWithUnAuthorisedAgent(callingPage: String)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestClientPermissionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientPermissionController.view(service, callingPage).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def viewWithAuthorisedAgent(serviceUsed: String = service)(test: Future[Result] => Any) {
+  def viewWithAuthorisedAgent(serviceUsed: String = service, callingPage: String)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     when(mockBusinessCustomerConnector.clearCache(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(HttpResponse(200)))
     when(mockAtedSubscriptionConnector.clearCache(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(HttpResponse(200)))
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestClientPermissionController.view(serviceUsed).apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientPermissionController.view(serviceUsed, callingPage).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def submitWithAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded])(test: Future[Result] => Any) {
+  def submitWithAuthorisedAgent(callingPage: String, request: FakeRequest[AnyContentAsFormUrlEncoded])(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-    val result = TestClientPermissionController.submit(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestClientPermissionController.submit(service, callingPage).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

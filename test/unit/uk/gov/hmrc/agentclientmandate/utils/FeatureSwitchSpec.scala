@@ -62,6 +62,7 @@ class FeatureSwitchSpec extends PlaySpec with OneServerPerSuite with BeforeAndAf
 
     "AtedFeatureSwitches.byName should return Some(feature) or None" in {
       MandateFeatureSwitches.byName("single_service") must be(Some(MandateFeatureSwitches.singleService))
+      MandateFeatureSwitches.byName("back_links") must be(Some(MandateFeatureSwitches.backLinks))
       MandateFeatureSwitches.byName("xyz") must be(None)
     }
 

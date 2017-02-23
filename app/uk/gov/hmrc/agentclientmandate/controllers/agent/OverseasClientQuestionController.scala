@@ -30,26 +30,33 @@ import play.api.Play.current
 object OverseasClientQuestionController extends OverseasClientQuestionController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
+  val controllerId: String = "overseas"
   // $COVERAGE-ON$
 }
 
 trait OverseasClientQuestionController extends FrontendController with Actions {
 
+  val controllerId: String
+
   def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
-      Ok(views.html.agent.overseasClientQuestion(overseasClientQuestionForm, service))
+      Ok(views.html.agent.overseasClientQuestion(overseasClientQuestionForm, service, getBackLink(service)))
   }
 
   def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit authContext => implicit request =>
       overseasClientQuestionForm.bindFromRequest.fold(
-        formWithError => BadRequest(views.html.agent.overseasClientQuestion(formWithError, service)),
+        formWithError => BadRequest(views.html.agent.overseasClientQuestion(formWithError, service, getBackLink(service))),
         data => {
           val isOverSeas = data.isOverseas.getOrElse(false)
           if (isOverSeas) Redirect(routes.NRLQuestionController.view(service))
-          else Redirect(routes.MandateDetailsController.view(service))
+          else
+            Redirect(routes.MandateDetailsController.view(service, controllerId))
         }
       )
   }
 
+  private def getBackLink(service: String) = {
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.ClientDisplayNameController.view(service).url)
+  }
 }

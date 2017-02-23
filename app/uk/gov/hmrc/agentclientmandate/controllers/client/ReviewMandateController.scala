@@ -41,7 +41,7 @@ trait ReviewMandateController extends FrontendController with Actions with Manda
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map {
         _.flatMap(_.mandate) match {
-          case Some(x) => Ok(views.html.client.reviewMandate(service, x))
+          case Some(x) => Ok(views.html.client.reviewMandate(service, x, getBackLink(service)))
           case None => Redirect(routes.SearchMandateController.view(service))
         }
       }
@@ -52,4 +52,7 @@ trait ReviewMandateController extends FrontendController with Actions with Manda
       Redirect(routes.MandateDeclarationController.view(service))
   }
 
+  private def getBackLink(service: String) = {
+    Some(routes.SearchMandateController.view(service).url)
+  }
 }

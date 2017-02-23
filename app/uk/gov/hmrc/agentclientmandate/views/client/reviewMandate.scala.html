@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.agentclientmandate.models._
 
-@(service: String, mandate: Mandate)(implicit request: Request[_], messages: Messages)
+@(service: String, mandate: Mandate, backLink:Option[String])(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
@@ -10,8 +10,7 @@
 
 @main_template(title = Messages("client.review-agent.title"), delegatedService = Some(mandate.subscription.service.id)) {
 
-
-<div class="heading-sub" id="pre-heading">@Messages("client.review-agent.preheader")</div>
+@backLinkAndSubHeader(backLink, "pre-heading", Messages("client.review-agent.preheader"))
 <h1 class="heading-xlarge" id="header">
   @Messages("client.review-agent.header")
 </h1>
@@ -43,7 +42,7 @@
          <td>@clientParty.contactDetails.email</td>
          }
          <td>
-           <a href='@routes.CollectEmailController.view(service, Some("edit"))' id ="edit-agent-email" data-journey-click="agent-client-mandate:click:edit-agent-email ">@Messages("edit-link")
+           <a href='@routes.CollectEmailController.edit(service)' id ="edit-agent-email" data-journey-click="agent-client-mandate:click:edit-agent-email ">@Messages("edit-link")
              <span class="screen-reader-text">@Messages("client.review-agent.email")</span>
            </a>
          </td>

@@ -30,26 +30,36 @@ import play.api.Play.current
 object PaySAQuestionController extends PaySAQuestionController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
+  val controllerId: String = "paySA"
   // $COVERAGE-ON$
 }
 
 trait PaySAQuestionController extends FrontendController with Actions {
 
+  val controllerId: String
+
   def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
-      Ok(views.html.agent.paySAQuestion(paySAQuestionForm, service))
+      Ok(views.html.agent.paySAQuestion(paySAQuestionForm, service, getBackLink(service)))
   }
 
 
   def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       paySAQuestionForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(views.html.agent.paySAQuestion(formWithErrors, service)),
+        formWithErrors => BadRequest(views.html.agent.paySAQuestion(formWithErrors, service, getBackLink(service))),
         data => {
-          if (data.paySA.getOrElse(false)) Redirect(routes.MandateDetailsController.view(service))
-          else Redirect(routes.ClientPermissionController.view(service))
+          if (data.paySA.getOrElse(false))
+            Redirect(routes.MandateDetailsController.view(service, controllerId)
+            )
+          else
+            Redirect(routes.ClientPermissionController.view(service, controllerId))
         }
       )
   }
 
+
+  private def getBackLink(service: String) = {
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.NRLQuestionController.view(service).url)
+  }
 }

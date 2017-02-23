@@ -46,7 +46,7 @@ trait MandateDeclarationController extends FrontendController with Actions with 
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map {
         _.flatMap(_.mandate) match {
-          case Some(x) => Ok(views.html.client.mandateDeclaration(x, declarationForm))
+          case Some(x) => Ok(views.html.client.mandateDeclaration(x, declarationForm, getBackLink(service)))
           case None => Redirect(routes.ReviewMandateController.view(service))
         }
       }
@@ -58,7 +58,7 @@ trait MandateDeclarationController extends FrontendController with Actions with 
         _.flatMap(_.mandate) match {
           case Some(m) =>
             declarationForm.bindFromRequest.fold(
-              formWithErrors => Future.successful(BadRequest(views.html.client.mandateDeclaration(m, formWithErrors))),
+              formWithErrors => Future.successful(BadRequest(views.html.client.mandateDeclaration(m, formWithErrors, getBackLink(service)))),
               declaration => {
                 mandateService.approveMandate(m) flatMap {
                   case Some(n) => Future.successful(Redirect(routes.MandateConfirmationController.view(service)))
@@ -71,4 +71,7 @@ trait MandateDeclarationController extends FrontendController with Actions with 
       }
   }
 
+  private def getBackLink(service: String) = {
+    Some(routes.ReviewMandateController.view(service).url)
+  }
 }

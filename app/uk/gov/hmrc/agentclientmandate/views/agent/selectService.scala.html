@@ -1,7 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 
-@(selectServiceForm: Form[AgentSelectService])(implicit request: Request[_], messages: Messages)
+@(selectServiceForm: Form[AgentSelectService], backLink:Option[String]=None)(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
@@ -10,8 +10,7 @@
 @implicitFormInstance = @{ Some(selectServiceForm) }
 
 @main_template(title = Messages("agent.select-service.title")) {
-
-  <div class="heading-sub" id="pre-header">@Messages("agent.add-a-client.sub-header")</div>
+  @backLinkAndSubHeader(backLink, "pre-header", Messages("agent.add-a-client.sub-header"))
   <h1 class="heading-xlarge" id="header">
     @Messages("agent.select-service.header")
   </h1>
