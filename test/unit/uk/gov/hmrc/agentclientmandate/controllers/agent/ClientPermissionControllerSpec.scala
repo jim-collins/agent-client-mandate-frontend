@@ -84,6 +84,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
           document.getElementById("pre-header").text() must be("Add a client")
           document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
+          document.getElementById("permission-text").text() must be("Your client must complete an ATED 1, if you already have an ATED 1 for this client, don't complete another. You do not need to send your ATED 1 to HMRC, but you need to keep it for your records. Submission of form 64-8 does not cover ATED or ATED related CGT.")
           document.getElementById("submit").text() must be("Continue")
 
           document.getElementById("backLinkHref").text() must be("Back")
