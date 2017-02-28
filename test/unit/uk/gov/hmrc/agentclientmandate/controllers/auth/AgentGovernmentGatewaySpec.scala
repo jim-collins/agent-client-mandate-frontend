@@ -32,7 +32,7 @@ class AgentGovernmentGatewaySpec extends PlaySpec with OneServerPerSuite {
       }
 
       "overriding continueURL" in {
-        AgentGovernmentGateway(serviceName).continueURL must be("http://localhost:9959/mandate/agent/service/ATED")
+        AgentGovernmentGateway(serviceName).continueURL must be("http://localhost:9959/mandate/agent/summary/ATED")
       }
 
     }
