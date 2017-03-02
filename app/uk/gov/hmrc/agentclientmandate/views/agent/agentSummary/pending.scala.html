@@ -74,9 +74,7 @@
             case "Pending" => { <td>@Messages("client.summary.client-pending")</td> }
             case _ => { <td id ="accept-client">
                           <a href="@routes.AgentSummaryController.activate(service, pending.id)" data-journey-click="agent-client-mandate:click:accept-client"
-                             id="accept-@(index+1)"
-                             class="button"
-                             onkeyup='spaceBarHandler(event,"@routes.AgentSummaryController.activate(service, pending.id)")'>
+                             id="accept-@(index+1)">
                             @Messages("client.summary.client-accept") <span class="screen-reader-text">@pending.clientDisplayName</span>
                           </a>
                         </td> }
