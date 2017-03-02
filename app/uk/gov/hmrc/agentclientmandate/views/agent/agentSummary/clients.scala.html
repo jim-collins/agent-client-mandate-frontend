@@ -10,13 +10,10 @@
 
 @(service: String, mandates: Mandates, agentDetails: AgentDetails, screenReaderText: String)(implicit request: Request[_], messages: Messages)
 
-@pageScripts = {
-<script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/agent-summary.js")'></script>
-}
 
 <span class="screen-reader-text">@screenReaderText</span>
 
-@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), scriptElem = Some(pageScripts), delegatedService = Some(service)){
+@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), delegatedService = Some(service)){
 
   <div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
   <h1 class="heading-xlarge" id="header">
