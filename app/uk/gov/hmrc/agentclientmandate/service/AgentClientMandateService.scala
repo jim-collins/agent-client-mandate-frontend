@@ -166,7 +166,10 @@ trait AgentClientMandateService extends MandateConstants {
     agentClientMandateConnector.activateMandate(mandateId).map { response =>
       response.status match {
         case OK => true
-        case _ => false
+        case _ => {
+          Logger.warn("Status for activation not OK: " + response.status)
+          false
+        }
       }
     }
   }
