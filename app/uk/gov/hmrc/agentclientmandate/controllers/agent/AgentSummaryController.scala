@@ -79,6 +79,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
       }
   }
 
+
   def doDelegation(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       agentClientMandateService.fetchClientMandate(mandateId).flatMap{

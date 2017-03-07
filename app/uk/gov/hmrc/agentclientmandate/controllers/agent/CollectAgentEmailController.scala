@@ -48,28 +48,38 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
 
   def emailService: EmailService
 
-  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def addClient(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
-      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) map {
-        case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(agentEmail), service, getBackLink(service)))
-        case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service, getBackLink(service)))
+      dataCacheService.clearCache().map { res =>
+        Ok(views.html.agent.agentEnterEmail(agentEmailForm, service, None, getBackLink(service, None)))
       }
   }
 
-  def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+    implicit user => implicit request =>
+      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) map {
+        case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(agentEmail), service, redirectUrl, getBackLink(service, redirectUrl)))
+        case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service, redirectUrl, getBackLink(service, redirectUrl)))
+      }
+  }
+
+  def submit(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       agentEmailForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service, getBackLink(service)))),
+        formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service, redirectUrl, getBackLink(service, redirectUrl)))),
         data => {
           emailService.validate(data.email) flatMap { isValidEmail =>
             if (isValidEmail) {
               dataCacheService.cacheFormData[AgentEmail](agentEmailFormId, data) flatMap { cachedData =>
-                  Future.successful(Redirect(routes.ClientDisplayNameController.view(service)))
+                redirectUrl match {
+                  case Some(redirect) => Future.successful(Redirect(redirect))
+                  case None => Future.successful(Redirect(routes.ClientDisplayNameController.view(service)))
+                }
               }
             } else {
               val errorMsg = Messages("agent.enter-email.error.email.invalid-by-email-service")
               val errorForm = agentEmailForm.withError(key = "agent-enter-email-form", message = errorMsg).fill(data)
-              Future.successful(BadRequest(views.html.agent.agentEnterEmail(errorForm, service, getBackLink(service))))
+              Future.successful(BadRequest(views.html.agent.agentEnterEmail(errorForm, service, redirectUrl, getBackLink(service, redirectUrl))))
             }
           }
         }
@@ -83,7 +93,11 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
       }
   }
 
-  private def getBackLink(service: String):Option[String] = {
-    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)
+  private def getBackLink(service: String, redirectUrl: Option[String]):Option[String] = {
+    redirectUrl match {
+      case Some(x) => redirectUrl
+      case None => Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)
+    }
   }
+
 }
