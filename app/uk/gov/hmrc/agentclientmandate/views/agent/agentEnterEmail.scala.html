@@ -1,6 +1,6 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
-@(agentEmailForm: Form[AgentEmail], service: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
+@(agentEmailForm: Form[AgentEmail], service: String, redirectUrl: Option[String], backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
@@ -24,7 +24,7 @@
     </span>
   </div>
 
-  @form(action = routes.CollectAgentEmailController.submit(service)) {
+  @form(action = routes.CollectAgentEmailController.submit(service, redirectUrl)) {
 
     <div id="agent-enter-email-form" class="form-group">
 
