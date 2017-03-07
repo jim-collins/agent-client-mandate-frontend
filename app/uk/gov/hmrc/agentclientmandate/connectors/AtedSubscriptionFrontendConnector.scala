@@ -31,10 +31,11 @@ trait AtedSubscriptionFrontendConnector extends ServicesConfig with RawResponseR
 
   def serviceUrl: String = baseUrl("ated-subscription-frontend")
   def http: HttpGet
+  val atedSubscriptionUri = "ated-subscription"
   val clearCacheUri = "clear-cache"
 
   def clearCache(service: String)(implicit request: Request[_], ac: AuthContext): Future[HttpResponse] = {
-    val getUrl = s"$serviceUrl/$clearCacheUri/$service"
+    val getUrl = s"$serviceUrl/$atedSubscriptionUri/$clearCacheUri"
     http.GET[HttpResponse](getUrl)
   }
 
