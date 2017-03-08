@@ -13,7 +13,13 @@
 
 <span class="screen-reader-text">@screenReaderText</span>
 
-@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), delegatedService = Some(service)){
+@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks =
+if(agentDetails.addressDetails.countryCode == "GB") {
+  None
+}
+else {
+  Some(_agentSummary_sidebar(agentDetails))
+}, delegatedService = Some(service)){
 
   <div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
   <h1 class="heading-xlarge" id="header">
@@ -40,13 +46,6 @@
 
     <div class="form-group">
       <table>
-        <thead>
-        <tr>
-          <th id="yourClients-name">@Messages("client.summary.client-name.title")</th>
-          <th id="yourClients-action">@Messages("client.summary.client-action.title")</th>
-          <td id="noHeader" colspan="2">  </td>
-        </tr>
-        </thead>
         <tbody>
         @for((active, index) <- mandates.activeMandates.zipWithIndex) {
         <tr>

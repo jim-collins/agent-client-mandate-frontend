@@ -243,3 +243,8 @@ html.noScroll {
         border: 1px solid #AAA;
     }
 }
+
+
+table td {
+    font-size:100%
+}

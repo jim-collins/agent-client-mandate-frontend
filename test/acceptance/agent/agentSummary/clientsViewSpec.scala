@@ -96,17 +96,10 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       Then("The title should match - Your ATED clients")
       assert(document.title() === "Your ATED clients")
 
-      Then("The sidebar has the correct agent name - ABC Ltd.")
-      assert(document.getElementById("sidebar.agentname").text() === "ABC Ltd.")
-
       And("The Clients tab - should exist and have 1 item")
       assert(document.getElementById("clients").text === "Current (1)")
       And("The Pending Clients tab - should not exist")
       assert(document.getElementById("pending-clients") === null)
-
-      And("The Clients table - should have a name and action")
-      assert(document.getElementById("yourClients-name").text === "Name")
-      assert(document.getElementById("yourClients-action").text === "Action")
 
       And("The Clients table - has the correct data and View link")
       assert(document.getElementById("remove-client-link-0").text === "Remove client display name 2")
