@@ -14,8 +14,10 @@
   </h1>
 
   @mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")
+  <div class="form-field">
+    <span class="heading-medium" id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</span>
+  </div>
 
-  <h2 id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</h2>
 
   @form(action = routes.EditMandateDetailsController.submit(service, mandateId)) {
   <div class="form-group">
