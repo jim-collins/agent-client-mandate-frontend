@@ -222,7 +222,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       showConfirmationWithAuthorisedAgent { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
-        document.title() must be("Client remove Confirmed")
+        document.title() must be("You have removed your client")
       }
     }
   }

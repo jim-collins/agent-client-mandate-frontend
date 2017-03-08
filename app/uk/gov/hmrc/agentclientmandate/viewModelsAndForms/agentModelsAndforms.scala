@@ -49,7 +49,6 @@ object AgentEmailForm {
     Form(
       mapping(
         "email" -> text
-          .verifying(Messages("agent.enter-email.error.email"), email => email.nonEmpty)
           .verifying(Messages("agent.enter-email.error.email"), x => x.trim.length > lengthZero)
       )(AgentEmail.apply)(AgentEmail.unapply)
     )
