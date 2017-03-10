@@ -98,6 +98,6 @@ trait SearchMandateController extends FrontendController with Actions with Manda
   }
 
   private def getBackLink(service: String) = {
-    Some(routes.CollectEmailController.edit(service).url)
+    Some(routes.CollectEmailController.back(service).url)
   }
 }

@@ -46,17 +46,21 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
 
   def emailService: EmailService
 
-  val backLinkId = "CollectEmailController:BackLink"
+  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
+    implicit authContext => implicit request =>
+      saveBackLink(service, redirectUrl).flatMap { cache =>
+        showView(service, None)
+      }
+  }
+
   def edit(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       showView(service, Some("edit"))
   }
 
-  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
+  def back(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      dataCacheService.cacheFormData[String](backLinkId, redirectUrl.getOrElse(DelegationUtils.getDelegatedServiceRedirectUrl(service))).flatMap { cache =>
-        showView(service, None)
-      }
+      showView(service, None)
   }
 
   private def showView(service: String, mode: Option[String])(implicit ac: AuthContext, request: Request[AnyContent]) = {
@@ -110,6 +114,11 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
       case Some("edit") => Redirect(routes.ReviewMandateController.view(service))
       case _ => Redirect(routes.SearchMandateController.view(service))
     }
+  }
+
+  val backLinkId = "CollectEmailController:BackLink"
+  private def saveBackLink(service: String, redirectUrl: Option[String])(implicit hc: uk.gov.hmrc.play.http.HeaderCarrier) = {
+    dataCacheService.cacheFormData[String](backLinkId, redirectUrl.getOrElse(DelegationUtils.getDelegatedServiceRedirectUrl(service)))
   }
 
   private def getBackLink(service: String, mode: Option[String])(implicit hc: HeaderCarrier, ac: AuthContext, request: Request[AnyContent]) :Future[Option[String]]= {
