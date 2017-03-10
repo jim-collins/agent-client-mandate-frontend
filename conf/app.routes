@@ -6,6 +6,7 @@ GET     /keep-alive                     uk.gov.hmrc.agentclientmandate.controlle
 ## Client URIs ##
 
 GET     /client/email/:service          uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.view(service: String, returnUrl: Option[String] ?= None)
+GET     /client/email/:service/back     uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.back(service: String)
 GET     /client/email/:service/edit     uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.edit(service: String)
 POST    /client/email/:service          uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.submit(service: String, mode: Option[String] ?= None)
 
