@@ -197,7 +197,15 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       val response = TestAgentClientMandateConnector.fetchMandateByClient("clientId", "service")
       await(response).status must be(OK)
+    }
 
+    "does an agent have a missing email" in {
+      when(mockWSHttp.GET[HttpResponse]
+        (Matchers.any())
+        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200)))
+
+      val response = TestAgentClientMandateConnector.doesAgentHaveMissingEmail()
+      await(response).status must be(OK)
     }
 
   }
