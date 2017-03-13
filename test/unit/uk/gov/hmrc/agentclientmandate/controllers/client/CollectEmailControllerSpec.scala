@@ -90,9 +90,6 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "return search mandate edit view for AUTHORISED client" when {
 
       "client requests(GET) for collect email view and the data hasn't been cached" in {
-        val isBackLinkEnable = MandateFeatureSwitches.backLinks.enabled
-        FeatureSwitch.enable(MandateFeatureSwitches.backLinks)
-
         editWithAuthorisedClient() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -106,12 +103,11 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("/mandate/client/review/ATED")
         }
-        FeatureSwitch.setProp(MandateFeatureSwitches.backLinks.name, isBackLinkEnable)
+
       }
 
       "client requests(GET) for collect email view pre-populated and the data and redirect have been cached" in {
-        val isBackLinkEnable = MandateFeatureSwitches.backLinks.enabled
-        FeatureSwitch.enable(MandateFeatureSwitches.backLinks)
+
         val cached = ClientCache(email = Some(ClientEmail("aa@mail.com")))
         viewWithAuthorisedClient(Some(cached), Some("/api/anywhere")) { result =>
           status(result) must be(OK)
@@ -122,12 +118,9 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("/api/anywhere")
         }
-        FeatureSwitch.setProp(MandateFeatureSwitches.backLinks.name, isBackLinkEnable)
       }
 
       "client requests(GET) for collect email view pre-populated and the data has been cached, but no redirect" in {
-        val isBackLinkEnable = MandateFeatureSwitches.backLinks.enabled
-        FeatureSwitch.enable(MandateFeatureSwitches.backLinks)
 
         val cached = ClientCache(email = Some(ClientEmail("aa@mail.com")))
         viewWithAuthorisedClient(Some(cached), None) { result =>
@@ -138,15 +131,12 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           document.getElementById("backLinkHref") must be(null)
         }
-        FeatureSwitch.setProp(MandateFeatureSwitches.backLinks.name, isBackLinkEnable)
       }
     }
 
     "back shows cached backlink for AUTHORISED client" when {
 
       "client requests(GET) for collect email view and the data hasn't been cached" in {
-        val isBackLinkEnable = MandateFeatureSwitches.backLinks.enabled
-        FeatureSwitch.enable(MandateFeatureSwitches.backLinks)
 
         val cached = ClientCache(email = Some(ClientEmail("aa@mail.com")))
         backWithAuthorisedClient(Some(cached), Some("http://backlink")) { result =>
@@ -157,7 +147,6 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("http://backlink")
         }
-        FeatureSwitch.setProp(MandateFeatureSwitches.backLinks.name, isBackLinkEnable)
       }
     }
 

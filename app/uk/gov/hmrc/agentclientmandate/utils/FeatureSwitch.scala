@@ -58,11 +58,9 @@ object FeatureSwitch {
 object MandateFeatureSwitches {
 
   def singleService = FeatureSwitch.forName("single_service")
-  def backLinks = FeatureSwitch.forName("back_links")
 
   def byName(name: String): Option[FeatureSwitch] = name match {
     case "single_service" => Some(singleService)
-    case "back_links" => Some(backLinks)
     case _ => None
   }
 

@@ -75,8 +75,6 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
 
     "return 'nrl question' view for AUTHORISED agent" when {
       "agent requests(GET) for 'client permission' view from PaySA" in {
-        val isBackLinkEnable = MandateFeatureSwitches.backLinks.enabled
-        FeatureSwitch.enable(MandateFeatureSwitches.backLinks)
         viewWithAuthorisedAgent(service, PaySAQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -90,11 +88,8 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ATED")
         }
-        FeatureSwitch.setProp(MandateFeatureSwitches.backLinks.name, isBackLinkEnable)
       }
       "agent requests(GET) for 'client permission' view from nrl" in {
-        val isBackLinkEnable = MandateFeatureSwitches.backLinks.enabled
-        FeatureSwitch.enable(MandateFeatureSwitches.backLinks)
         viewWithAuthorisedAgent(service, NRLQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -107,7 +102,6 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/nrl-question/ATED")
         }
-        FeatureSwitch.setProp(MandateFeatureSwitches.backLinks.name, isBackLinkEnable)
       }
       "agent requests(GET) for 'client permission' view for other service - it doesn't clear session cache for ated-subscription" in {
         viewWithAuthorisedAgent(serviceUsed = "otherService", "") { result =>
