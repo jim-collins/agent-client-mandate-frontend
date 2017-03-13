@@ -53,8 +53,6 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
     "return 'mandate details' view for AUTHORISED agent" when {
 
       "agent requests(GET) for check client details view and email has been cached previously and it's from PaySA" in {
-        val isBackLinkEnable = MandateFeatureSwitches.backLinks.enabled
-        FeatureSwitch.enable(MandateFeatureSwitches.backLinks)
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail(""))))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientDisplayName("client display name"))))
         viewWithAuthorisedAgent(PaySAQuestionController.controllerId) { result =>
@@ -69,12 +67,9 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ated")
         }
-        FeatureSwitch.setProp(MandateFeatureSwitches.backLinks.name, isBackLinkEnable)
       }
 
       "agent requests(GET) for check client details view and email has been cached previously and it's from Overseas" in {
-        val isBackLinkEnable = MandateFeatureSwitches.backLinks.enabled
-        FeatureSwitch.enable(MandateFeatureSwitches.backLinks)
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail(""))))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientDisplayName("client display name"))))
         viewWithAuthorisedAgent(OverseasClientQuestionController.controllerId) { result =>
@@ -89,7 +84,6 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/overseas-client-question/ated")
         }
-        FeatureSwitch.setProp(MandateFeatureSwitches.backLinks.name, isBackLinkEnable)
       }
     }
 
