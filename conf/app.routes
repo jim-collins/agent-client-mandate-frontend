@@ -77,5 +77,6 @@ GET     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclie
 POST    /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.submit(service: String, mandateId: String)
 
 GET     /agent/missing-email/:service                   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentMissingEmailController.view(service: String)
+POST    /agent/missing-email/:service                   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentMissingEmailController.submit(service: String)
 
 GET     /client/partial-banner/:clientId/:service                uk.gov.hmrc.agentclientmandate.controllers.client.ClientBannerPartialController.getBanner(clientId: String, service: String, returnUrl: String)

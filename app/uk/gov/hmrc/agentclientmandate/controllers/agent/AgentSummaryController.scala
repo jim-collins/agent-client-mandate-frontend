@@ -50,8 +50,20 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
 
   def view(service: String, tabName: Option[String] = None) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
+      for {
+        screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
+        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service)
+        agentDetails <- agentClientMandateService.fetchAgentDetails()
+        _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
+      } yield {
+        showView(service, mandates, agentDetails, screenReaderText.getOrElse(""), tabName)
+      }
+  }
 
-      agentClientMandateService.doesAgentHaveMissingEmail().flatMap { agentHasMissingEmail =>
+  def viewWithEmailCheck(service: String, tabName: Option[String] = None) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+    implicit authContext => implicit request =>
+
+      agentClientMandateService.doesAgentHaveMissingEmail(service, AuthUtils.getArn).flatMap { agentHasMissingEmail =>
         if (agentHasMissingEmail) {
           Future.successful(Redirect(routes.AgentMissingEmailController.view(service)))
         }

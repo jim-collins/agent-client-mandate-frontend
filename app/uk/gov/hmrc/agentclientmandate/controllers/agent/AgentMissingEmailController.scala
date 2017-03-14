@@ -26,6 +26,9 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import play.api.i18n.Messages
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
+
 import scala.concurrent.Future
 
 trait AgentMissingEmailController extends FrontendController with Actions {
@@ -36,6 +39,18 @@ trait AgentMissingEmailController extends FrontendController with Actions {
   def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
       Future.successful(Ok(views.html.agent.agentMissingEmail(agentEmailForm, service)))
+  }
+
+  def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+    implicit authContext => implicit request =>
+      agentEmailForm.bindFromRequest.fold(
+        formWithError => Future.successful(BadRequest(views.html.agent.agentMissingEmail(agentEmailForm, service))),
+        data => {
+          emailService.validate(data.email) flatMap { isValidEmail =>
+              ???
+          }
+        }
+      )
   }
 
 }

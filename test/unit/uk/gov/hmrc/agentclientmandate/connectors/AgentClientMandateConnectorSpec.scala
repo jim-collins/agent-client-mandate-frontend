@@ -204,7 +204,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
         (Matchers.any())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200)))
 
-      val response = TestAgentClientMandateConnector.doesAgentHaveMissingEmail()
+      val response = TestAgentClientMandateConnector.doesAgentHaveMissingEmail("ated", "arn")
       await(response).status must be(OK)
     }
 
@@ -213,7 +213,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
         (Matchers.any(), Matchers.any(), Matchers.any())
         (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
-      val response = await(TestAgentClientMandateConnector.updateAgentMissingEmail("test@mail.com"))
+      val response = await(TestAgentClientMandateConnector.updateAgentMissingEmail("test@mail.com", "ated"))
       response.status must be(OK)
     }
   }

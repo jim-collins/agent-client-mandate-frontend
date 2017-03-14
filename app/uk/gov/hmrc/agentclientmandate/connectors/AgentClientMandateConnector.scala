@@ -112,16 +112,16 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     http.GET[HttpResponse](getUrl)
   }
 
-  def doesAgentHaveMissingEmail()(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+  def doesAgentHaveMissingEmail(service: String, arn: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
-    val getUrl = s"$serviceUrl$authLink/$mandateUri/isAgentMissingEmail"
+    val getUrl = s"$serviceUrl$authLink/$mandateUri/isAgentMissingEmail/$arn/$service"
     http.GET[HttpResponse](getUrl)
   }
 
-  def updateAgentMissingEmail(emailAddress: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+  def updateAgentMissingEmail(emailAddress: String, service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
     val jsonData = Json.toJson(emailAddress)
-    val postUrl = s"$serviceUrl$authLink/$mandateUri/updateAgentEmail"
+    val postUrl = s"$serviceUrl$authLink/$mandateUri/updateAgentEmail/$service"
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 

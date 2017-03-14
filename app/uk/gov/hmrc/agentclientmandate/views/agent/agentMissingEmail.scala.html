@@ -6,11 +6,15 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
+@pageScripts = {
+<script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/agentMissingEmail.js")'></script>
+}
+
 @implicitFormInstance = @{ Some(agentEmailForm) }
 
-@main_template(title = Messages("agent.missing-email.title"), delegatedService = Some(service)) {
+@main_template(title = Messages("agent.missing-email.title"), scriptElem = Some(pageScripts), delegatedService = Some(service)) {
 
-    @backLinkAndSubHeader(None, "pre-header", Messages("agent.add-a-client.sub-header"))
+    @backLinkAndSubHeader(None, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase))
     <h1 class="heading-xlarge" id="header">
         @Messages("agent.missing-email.header")
     </h1>
@@ -23,9 +27,45 @@
         </span>
     </div>
 
+    <div class="form-group" id="useEmailAddress">
+        <legend class="form-group lede"  id="email_selection_legend"></legend>
+        <fieldset class="inline">
+            <label for="useEmailAddress-true" class="block-label">
+                <input type="radio" id="useEmailAddress-true" name="useEmailAddress" value="true" data-journey-click="agent-client-mandate-frontend:click:useEmailAddress-true"/>
+                <span id="useEmailAddress-true_field">Yes</span>
+            </label>
+            <label for="useEmailAddress-false" class="block-label">
+                <input type="radio" id="useEmailAddress-false" name="useEmailAddress" value="false" data-journey-click="agent-client-mandate-frontend:click:useEmailAddress-false"/>
+                <span id="useEmailAddress-false_field">No</span>
+            </label>
+        </fieldset>
+    </div>
+
+    @form(action=routes.AgentMissingEmailController.submit(service)) {
+        <div class="form-group">
+            <div id="hidden-email-details-yes" class="indent">
+                <div id="email-address" class="form-field">
+                    @mandateInput(agentEmailForm("email"),
+                    '_label -> Messages("agent-missing-email.email_address"),
+                    '_showConstraints -> false)
+                </div>
+            </div>
+
+            <div id="hidden-email-details-no" class="indent">
+                <span id="text_no" class="lede">
+                  @Html(Messages("agent.missing-email.answer-no", routes.AgentSummaryController.view(service), service.toUpperCase))
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+        </div>
+    }
+
     <div class="form-group">
-        <span id="skip_question" class="lede">
-          <a href="">@Messages("missing-email.trapdoor")</a>
+        <span id="skip_question">
+          <a href="@routes.AgentSummaryController.view(service)">@Messages("agent.missing-email.trapdoor")</a>
         </span>
     </div>
 }

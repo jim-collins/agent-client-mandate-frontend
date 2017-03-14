@@ -287,3 +287,4 @@ agent.missing-email.text = We can send you a notification when a client accepts 
 agent.missing-email.question = Do you want to use the same email address for all your clients?
 agent.missing-email.answer-no = You can enter a separate email address for each of your clients using the edit links on <a href="{0}">your {1} clients</a> page.
 agent.missing-email.trapdoor = Enter my email at a later date
+agent-missing-email.email_address = Your email address

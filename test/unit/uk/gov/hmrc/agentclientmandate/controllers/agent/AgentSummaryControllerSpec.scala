@@ -52,7 +52,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "return check client details view for agent when they have no data" when {
       "client requests(GET) for check client details view" in {
         val mockMandates = Some(Mandates(activeMandates = Nil, pendingMandates = Nil))
-        viewAuthorisedAgent(mockMandates, agentMissingEmail = false) { result =>
+        viewAuthorisedAgent(mockMandates) { result =>
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -70,7 +70,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "return check client details view for agent" when {
       "client requests(GET) for check client details view" in {
         val mockMandates = Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)))
-        viewAuthorisedAgent(mockMandates, agentMissingEmail = false) { result =>
+        viewAuthorisedAgent(mockMandates) { result =>
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -88,7 +88,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       "client requests(GET) for check client details view" in {
         val mockMandates = Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)))
 
-        viewAuthorisedAgent(mockMandates, Some("pending-clients"), agentMissingEmail = false) { result =>
+        viewAuthorisedAgent(mockMandates, Some("pending-clients")) { result =>
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -105,7 +105,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       "client requests(GET) for check client details view" in {
         val mockMandates = Some(Mandates(activeMandates = Nil, pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)))
 
-        viewAuthorisedAgent(mockMandates, agentMissingEmail = false) { result =>
+        viewAuthorisedAgent(mockMandates) { result =>
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -114,17 +114,6 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("add-client-link").text() must be("Add a new client")
           document.getElementById("view-pending-clients") must be(null)
           document.getElementById("view-clients") must be(null)
-        }
-      }
-    }
-
-    "redirect to missing email page" when {
-      "agent is missing emails from mandates" in {
-
-        viewAuthorisedAgent(None, agentMissingEmail = true) { result =>
-
-          status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/mandate/agent/missing-email/ATED")
         }
       }
     }
@@ -252,7 +241,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
   val mandatePendingActivation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123451", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty2), currentStatus = MandateStatus(Status.PendingActivation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 5")
 
-  def viewAuthorisedAgent(mockMandates: Option[Mandates], tabName: Option[String] = None, agentMissingEmail: Boolean)(test: Future[Result] => Any) {
+  def viewAuthorisedAgent(mockMandates: Option[Mandates], tabName: Option[String] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
@@ -262,7 +251,6 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       Future.successful(mockMandates)
     }
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
-    when(mockAgentClientMandateService.doesAgentHaveMissingEmail()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentMissingEmail)
     when(mockDataCacheService.fetchAndGetFormData[String](Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some("text"))
     when(mockDataCacheService.cacheFormData[String](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful("text")
 
