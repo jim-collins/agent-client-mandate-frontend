@@ -12,7 +12,7 @@ mandate.checkbox-i-agree.confirm.error = Please confirm that you want to submit 
 mandate.agent.delegation.url.text = Change client
 
 
-agent-client-mandate.error.summaryHeader = There is a problem with the form
+agent-client-mandate.error.summaryHeader = There is a problem with this page
 agent.add-a-client.sub-header = Add a client
 
 mandate.main-title = Submit and view your {0} returns
