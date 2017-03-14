@@ -32,6 +32,8 @@ import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
 
+import scala.concurrent.Future
+
 object AgentSummaryController extends AgentSummaryController {
   val authConnector = FrontendAuthConnector
   val agentClientMandateService = AgentClientMandateService
@@ -48,13 +50,21 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
 
   def view(service: String, tabName: Option[String] = None) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      for {
-        screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
-        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service)
-        agentDetails <- agentClientMandateService.fetchAgentDetails()
-        _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
-      } yield {
-        showView(service, mandates, agentDetails, screenReaderText.getOrElse(""), tabName)
+
+      agentClientMandateService.doesAgentHaveMissingEmail().flatMap { agentHasMissingEmail =>
+        if (agentHasMissingEmail) {
+          Future.successful(Redirect(routes.AgentMissingEmailController.view(service)))
+        }
+        else {
+          for {
+            screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
+            mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service)
+            agentDetails <- agentClientMandateService.fetchAgentDetails()
+            _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
+          } yield {
+            showView(service, mandates, agentDetails, screenReaderText.getOrElse(""), tabName)
+          }
+        }
       }
   }
 
