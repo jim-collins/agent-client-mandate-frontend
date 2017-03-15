@@ -174,7 +174,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the unique authorisation number question")
-          document.getElementsByClass("error-notification").text() must include("A unique authorisation number cannot be more than 8 characters.")
+          document.getElementsByClass("error-notification").text() must include("A unique authorisation number cannot be more than 8 characters")
           verify(mockMandateService, times(0)).fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())

@@ -109,8 +109,8 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the non-resident landlord question.")
-          document.getElementsByClass("error-notification").text() must include("You must answer the non-resident landlord question.")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the non-resident landlord question")
+          document.getElementsByClass("error-notification").text() must include("You must answer the non-resident landlord question")
         }
       }
     }
