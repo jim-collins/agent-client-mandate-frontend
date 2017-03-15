@@ -128,7 +128,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
         submitWithAuthorisedClient(fakeRequest, cacheReturn) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the checkbox.")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the checkbox")
           document.getElementsByClass("error-notification").text() must include("Please confirm that you want to submit this")
         }
       }
