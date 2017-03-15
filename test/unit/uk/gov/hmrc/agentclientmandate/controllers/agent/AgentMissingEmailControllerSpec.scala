@@ -93,15 +93,15 @@ class AgentMissingEmailControllerSpec  extends PlaySpec with OneServerPerSuite w
         submitEmailAuthorisedAgent(fakeRequest, true) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the email address question")
-          document.getElementsByClass("error-notification").text() must include("You must answer the email address question.")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the question")
+          document.getElementsByClass("error-notification").text() must include("You must answer the question")
           verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
         }
       }
 
 
-      "invalid email id is passed" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@invalid.com")
+      "invalid email is passed" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@invalid.com", "useEmailAddress" -> "true")
         submitEmailAuthorisedAgent(fakeRequest, isValidEmail = false) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
@@ -113,7 +113,7 @@ class AgentMissingEmailControllerSpec  extends PlaySpec with OneServerPerSuite w
 
     "returns OK and redirects" when {
       "valid form is submitted" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@invalid.com")
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@invalid.com", "useEmailAddress" -> "true")
         submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("summary")
