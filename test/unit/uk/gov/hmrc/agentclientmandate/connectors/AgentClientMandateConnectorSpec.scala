@@ -213,7 +213,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
         (Matchers.any(), Matchers.any(), Matchers.any())
         (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
-      val response = await(TestAgentClientMandateConnector.updateAgentMissingEmail("test@mail.com", "ated"))
+      val response = await(TestAgentClientMandateConnector.updateAgentMissingEmail("test@mail.com", "arn", "ated"))
       response.status must be(OK)
     }
   }

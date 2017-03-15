@@ -17,10 +17,11 @@
 package uk.gov.hmrc.agentclientmandate.viewModelsAndForms
 
 import play.api.data.Forms._
-import play.api.data.{Form, FormError}
+import play.api.data.{Form, FormError, Mapping}
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.libs.json.Json
 import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils._
 
@@ -52,19 +53,29 @@ object AgentEmailForm {
           .verifying(Messages("agent.enter-email.error.email"), x => x.trim.length > lengthZero)
       )(AgentEmail.apply)(AgentEmail.unapply)
     )
+}
 
-  def validateConfirmEmail(emailForm: Form[AgentEmail]): Form[AgentEmail] = {
-    def validate = {
-      val email = emailForm.data.get("email").map(_.trim)
-      val confirmEmail = emailForm.data.get("confirmEmail").map(_.trim)
-      (email, confirmEmail) match {
-        case (Some(e1), Some(e2)) if e1 == e2 => Seq()
-        case (Some(e1), Some(e2)) => Seq(Some(FormError("confirmEmail", Messages("agent.enter-email.error.confirm-email.not-equal"))))
-        case _ => Seq()
-      }
-    }
-    addErrorsToForm(emailForm, validate.flatten)
+case class AgentMissingEmail(useEmailAddress: Option[Boolean] = None, email: Option[String] = None)
+
+object AgentMissingEmail {
+  implicit val formats = Json.format[AgentMissingEmail]
+}
+
+object AgentMissingEmailForm {
+
+  def validateAgentMissingEmail(f: Form[AgentMissingEmail]): Form[AgentMissingEmail] = {
+    if (!f.hasErrors && f.get.useEmailAddress == Some(true) && f.get.email.isEmpty) {
+      f.withError(FormError("email", Messages("agent.enter-email.error.email")))
+    } else f
   }
+
+  val agentMissingEmailForm =
+    Form(
+      mapping(
+        "useEmailAddress" -> optional(boolean).verifying(Messages("agent.missing-email.must_answer"), x => x.isDefined),
+        "email" ->  optional(text)
+      )(AgentMissingEmail.apply)(AgentMissingEmail.unapply)
+    )
 
   private def addErrorsToForm[A](form: Form[A], formErrors: Seq[FormError]): Form[A] = {
     @tailrec
@@ -74,7 +85,6 @@ object AgentEmailForm {
     }
     y(form, formErrors)
   }
-
 }
 
 case class OverseasClientQuestion(isOverseas: Option[Boolean] = None)

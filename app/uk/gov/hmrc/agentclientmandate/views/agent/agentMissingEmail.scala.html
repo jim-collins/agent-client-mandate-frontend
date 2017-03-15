@@ -1,6 +1,6 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
-@(agentEmailForm: Form[AgentEmail], service: String)(implicit request: Request[_], messages: Messages)
+@(agentMissingEmailForm: Form[AgentMissingEmail], service: String)(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
@@ -10,7 +10,7 @@
 <script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/agentMissingEmail.js")'></script>
 }
 
-@implicitFormInstance = @{ Some(agentEmailForm) }
+@implicitFormInstance = @{ Some(agentMissingEmailForm) }
 
 @main_template(title = Messages("agent.missing-email.title"), scriptElem = Some(pageScripts), delegatedService = Some(service)) {
 
@@ -19,7 +19,7 @@
         @Messages("agent.missing-email.header")
     </h1>
 
-    @mandateErrorSummary(agentEmailForm, "agent.enter-email.error.general")
+    @mandateErrorSummary(agentMissingEmailForm, "agent.enter-email.error.general")
 
     <div class="form-group">
         <span id="info" class="lede">
@@ -27,26 +27,27 @@
         </span>
     </div>
 
-    <div class="form-group" id="useEmailAddress">
-        <legend class="form-group lede"  id="email_selection_legend"></legend>
-        <fieldset class="inline">
-            <label for="useEmailAddress-true" class="block-label">
-                <input type="radio" id="useEmailAddress-true" name="useEmailAddress" value="true" data-journey-click="agent-client-mandate-frontend:click:useEmailAddress-true"/>
-                <span id="useEmailAddress-true_field">Yes</span>
-            </label>
-            <label for="useEmailAddress-false" class="block-label">
-                <input type="radio" id="useEmailAddress-false" name="useEmailAddress" value="false" data-journey-click="agent-client-mandate-frontend:click:useEmailAddress-false"/>
-                <span id="useEmailAddress-false_field">No</span>
-            </label>
-        </fieldset>
-    </div>
-
     @form(action=routes.AgentMissingEmailController.submit(service)) {
+
+        <div class="form-group" id="useEmailAddress">
+            @mandateInputRadioGroup(
+            agentMissingEmailForm("useEmailAddress"),
+            Seq("true" -> Messages("radio-yes"),
+            "false" -> Messages("radio-no")),
+            '_groupClass -> "inline",
+            '_legend -> Messages("agent.missing-email.header"),
+            '_legendClass -> "screen-reader-text",
+            '_labelClass -> "block-label",
+            '_labelAfter -> true,
+            '_trackGA -> true
+            )
+        </div>
+
         <div class="form-group">
             <div id="hidden-email-details-yes" class="indent">
                 <div id="email-address" class="form-field">
-                    @mandateInput(agentEmailForm("email"),
-                    '_label -> Messages("agent-missing-email.email_address"),
+                    @mandateInput(agentMissingEmailForm("email"),
+                    '_label -> Messages("agent.missing-email.email_address"),
                     '_showConstraints -> false)
                 </div>
             </div>
@@ -58,8 +59,11 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+        <div class="form-group" id="hidden-submit-button">
+            <button class="button" id="submit_button" type="submit">@Messages("continue-button")</button>
+        </div>
+        <div class="form-group" id="hidden-submit-link">
+            <a class="button" id="submit_link" href="@routes.AgentSummaryController.view(service)">@Messages("continue-button")</a>
         </div>
     }
 

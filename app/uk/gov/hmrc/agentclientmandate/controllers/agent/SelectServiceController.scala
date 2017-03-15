@@ -26,25 +26,51 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.agentclientmandate.utils.MandateFeatureSwitches._
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
+import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
+
+import scala.concurrent.Future
 
 object SelectServiceController extends SelectServiceController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
+  val agentClientMandateService = AgentClientMandateService
   // $COVERAGE-ON$
 }
 
 trait SelectServiceController extends FrontendController with Actions {
 
-  def view = AuthorisedFor(AgentRegime(), GGConfidence) {
+  def agentClientMandateService: AgentClientMandateService
+
+  def view = AuthorisedFor(AgentRegime(), GGConfidence).async {
     implicit authContext => implicit request =>
-      if(singleService.enabled) Redirect(routes.AgentSummaryController.view("ated"))
-      else Ok(views.html.agent.selectService(selectServiceForm))
+      if(singleService.enabled) {
+        agentClientMandateService.doesAgentHaveMissingEmail("ated", AuthUtils.getArn).map { agentHasMissingEmail =>
+            if (agentHasMissingEmail) {
+              Redirect(routes.AgentMissingEmailController.view("ated"))
+            }
+            else {
+              Redirect(routes.AgentSummaryController.view("ated"))
+            }
+        }
+      }
+      else Future.successful(Ok(views.html.agent.selectService(selectServiceForm)))
   }
 
-  def submit = AuthorisedFor(AgentRegime(), GGConfidence) {
+  def submit = AuthorisedFor(AgentRegime(), GGConfidence).async {
     implicit authContext => implicit request => selectServiceForm.bindFromRequest.fold(
-      formWithError => BadRequest(views.html.agent.selectService(formWithError)),
-      selectedService => Redirect(routes.AgentSummaryController.view(selectedService.service.getOrElse("")))
+      formWithError => Future.successful(BadRequest(views.html.agent.selectService(formWithError))),
+      selectedService => {
+        val service = selectedService.service.get
+        agentClientMandateService.doesAgentHaveMissingEmail(service, AuthUtils.getArn).map { agentHasMissingEmail =>
+          if (agentHasMissingEmail) {
+            Redirect(routes.AgentMissingEmailController.view(service))
+          }
+          else {
+            Redirect(routes.AgentSummaryController.view(service))
+          }
+        }
+      }
     )
   }
 
