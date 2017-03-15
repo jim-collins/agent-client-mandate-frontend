@@ -1,26 +1,19 @@
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
 @import uk.gov.hmrc.agentclientmandate.models._
 
-@(mandate: Mandate, declarationForm: Form[Declaration], backLink:Option[String])(implicit request: Request[_], messages: Messages)
+@(mandate: Mandate, backLink:Option[String])(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.controllers.client.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@pageScripts = {
-<script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/declaration.js")'></script>
-}
 
-@implicitFormInstance = @{ Some(declarationForm) }
-
-@main_template(title = Messages("Declaration and consent"), scriptElem = Some(pageScripts), delegatedService = Some(mandate.subscription.service.id)) {
-@backLinkAndSubHeader(backLink, "pre-heading", Messages("client.agent-declaration.pre-heading"))
-<h1 class="heading-xlarge" id="header">
-  @Messages("client.agent-declaration.header")
-</h1>
-
-@mandateErrorSummary(declarationForm, "client.declaration.error.general")
+@main_template(title = Messages("Declaration and consent"), delegatedService = Some(mandate.subscription.service.id)) {
+  @backLinkAndSubHeader(backLink, "pre-heading", Messages("client.agent-declaration.pre-heading"))
+  <h1 class="heading-xlarge" id="header">
+    @Messages("client.agent-declaration.header")
+  </h1>
 
   <p id="declaration-info">
     @Html(Messages("client.agent-declaration.declaration-info", mandate.subscription.service.name.toUpperCase))
@@ -36,11 +29,6 @@
   </ul>
 
   @form(action = routes.MandateDeclarationController.submit(mandate.subscription.service.id)) {
-    <div class="form-group">
-      @mandateSingleCheckBox(declarationForm("agree"),
-      '_label -> Messages("i-agree"),
-      '_labelClass -> "block-label")
-    </div>
     <div class="form-group">
       <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
     </div>
