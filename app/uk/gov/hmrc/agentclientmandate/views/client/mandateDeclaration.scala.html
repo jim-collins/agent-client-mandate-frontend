@@ -26,9 +26,9 @@
     @Html(Messages("client.agent-declaration.declaration-info", mandate.subscription.service.name.toUpperCase))
   </p>
 
-  <h2 id="declare-title">
+  <span class="heading-medium" id="declare-title">
     @Messages("client.agent-declaration.declare-header")
-  </h2>
+  </span>
 
   <ul class="bullets">
     <li id="agent-name">@Messages("client.agent-declaration.agent-name", mandate.agentParty.name, mandate.subscription.service.name.toUpperCase)</li>
@@ -42,7 +42,7 @@
       '_labelClass -> "block-label")
     </div>
     <div class="form-group">
-      <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+      <button class="button" id="submit" type="submit">@Messages("agree-submit")</button>
     </div>
 
   }
