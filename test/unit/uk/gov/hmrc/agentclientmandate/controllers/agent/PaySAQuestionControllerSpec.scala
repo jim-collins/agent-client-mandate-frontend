@@ -109,7 +109,7 @@ class PaySAQuestionControllerSpec extends PlaySpec with OneServerPerSuite with B
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the do you pay self assessment question.")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the do you pay self assessment question")
           document.getElementsByClass("error-notification").text() must include("You must answer the self assessment question")
         }
       }

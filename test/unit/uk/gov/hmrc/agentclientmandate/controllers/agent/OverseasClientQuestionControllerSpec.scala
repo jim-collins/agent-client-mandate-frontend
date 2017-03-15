@@ -115,7 +115,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the overseas client question")
-          document.getElementsByClass("error-notification").text() must include("You must answer the overseas client question.")
+          document.getElementsByClass("error-notification").text() must include("You must answer the overseas client question")
         }
       }
     }

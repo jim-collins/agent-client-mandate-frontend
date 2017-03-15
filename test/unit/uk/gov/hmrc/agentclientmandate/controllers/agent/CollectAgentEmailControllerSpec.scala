@@ -163,7 +163,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-list").text() must include("There is a problem with the email address question")
-          document.getElementsByClass("error-notification").text() must include("You must answer the email address question.")
+          document.getElementsByClass("error-notification").text() must include("You must answer the email address question")
           verify(mockEmailService, times(0)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(0)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
