@@ -393,6 +393,29 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       }
     }
 
+    "check for agent missing email" must {
+      "return false if agent is missing email" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        when(mockAgentClientMandateConnector.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(NO_CONTENT))
+        val response = TestAgentClientMandateService.doesAgentHaveMissingEmail("ated", "arn")
+        await(response) must be(false)
+      }
+
+      "return true if agent is missing email" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        when(mockAgentClientMandateConnector.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
+        val response = TestAgentClientMandateService.doesAgentHaveMissingEmail("ated", "arn")
+        await(response) must be(true)
+      }
+    }
+
+    "update agent email" must {
+      "update an agents missing email address" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        TestAgentClientMandateService.updateAgentMissingEmail("test@mail.com", "arn", "ated")
+      }
+    }
+
   }
 
 

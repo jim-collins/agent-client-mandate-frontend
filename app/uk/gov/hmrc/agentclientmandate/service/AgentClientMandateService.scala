@@ -205,6 +205,19 @@ trait AgentClientMandateService extends MandateConstants {
       }
     }
   }
+
+  def doesAgentHaveMissingEmail(service: String, arn: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Boolean] = {
+    agentClientMandateConnector.doesAgentHaveMissingEmail(service, arn).map { response =>
+      response.status match {
+        case OK => true
+        case _ => false
+      }
+    }
+  }
+
+  def updateAgentMissingEmail(emailAddress: String, arn: String, service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Unit = {
+    agentClientMandateConnector.updateAgentMissingEmail(emailAddress, arn, service)
+  }
 }
 
 object AgentClientMandateService extends AgentClientMandateService {
