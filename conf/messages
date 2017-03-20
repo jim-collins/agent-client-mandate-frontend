@@ -280,3 +280,14 @@ client.banner.text.rejected = <span class="heading-small">{0}</span> has rejecte
 client.banner.text.cancelled = The {1} agent can no longer act for the client
 client.banner.link-text.approved_active = Cancel
 client.banner.link-text.cancelled_rejected = Appoint an agent
+
+# agent missing email
+agent.missing-email.title = Receive email notifications from your clients
+agent.missing-email.header = Receive email notifications from your clients
+agent.missing-email.text = We can send you a notification when a client accepts or rejects your requests in the {0} service. You can use a group email address and change it later.
+agent.missing-email.question = Do you want to use the same email address for all your clients?
+agent.missing-email.answer-no = You can enter a separate email address for each of your clients using the edit links on <a href="{0}">your {1} clients</a> page.
+agent.missing-email.trapdoor = Enter my email at a later date
+agent.missing-email.email_address = Your email address
+agent.missing-email.must_answer = You must answer the question
+agent.enter-email.error.general.useEmailAddress = There is a problem with the question

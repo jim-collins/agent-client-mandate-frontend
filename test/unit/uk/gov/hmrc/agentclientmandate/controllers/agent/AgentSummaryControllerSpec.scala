@@ -251,7 +251,6 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       Future.successful(mockMandates)
     }
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
-
     when(mockDataCacheService.fetchAndGetFormData[String](Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some("text"))
     when(mockDataCacheService.cacheFormData[String](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful("text")
 
