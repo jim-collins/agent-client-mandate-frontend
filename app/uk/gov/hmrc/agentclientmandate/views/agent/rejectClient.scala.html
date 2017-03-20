@@ -7,12 +7,13 @@
 @(service: String, rejectClientForm: Form[YesNoQuestion], clientName: String, mandateId: String, backLink:Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("agent.reject-client.title", clientName), delegatedService = Some(service)) {
-  @backLinkAndSubHeader(backLink, "pre-heading", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase))
+  @pageHeadersAndError(backLink, "pre-heading", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase),
+        Some(mandateErrorSummary(rejectClientForm, "yes-no.error.general", Some("agent.reject-client.error"))))
   <h1 class="heading-xlarge" id="heading">
     @Messages("agent.reject-client.header", clientName)
   </h1>
 
-    @mandateErrorSummary(rejectClientForm, "yes-no.error.general", Some("agent.reject-client.error"))
+
 
     <p id="reject-text">
     @Messages("agent.reject-client.text")

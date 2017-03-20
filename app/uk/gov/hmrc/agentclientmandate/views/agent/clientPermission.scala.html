@@ -14,12 +14,13 @@
 }
 
 @main_template(title = Messages("agent.client-permission.title"), scriptElem = Some(pageScripts), delegatedService = Some(service)) {
-  @backLinkAndSubHeader(backLink, "pre-header", Messages("agent.add-a-client.sub-header"))
+  @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"),
+    Some(mandateErrorSummary(clientPermissionForm, "agent.client-permission.error.general")))
   <h1 class="heading-xlarge" id="header">
     @Messages("agent.client-permission.header")
   </h1>
 
-  @mandateErrorSummary(clientPermissionForm, "agent.client-permission.error.general")
+
 
 <div class="form-group">
   <span class="paragraph" id="permission-text">
