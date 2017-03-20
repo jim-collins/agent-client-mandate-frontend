@@ -22,7 +22,7 @@
     @mandateErrorSummary(agentMissingEmailForm, "agent.enter-email.error.general")
 
     <div class="form-group">
-        <span id="info" class="lede">
+        <span id="info" class="paragraph">
           @Messages("agent.missing-email.text", service.toUpperCase)
         </span>
     </div>
@@ -53,7 +53,7 @@
             </div>
 
             <div id="hidden-email-details-no" class="indent">
-                <span id="text_no" class="lede">
+                <span id="text_no" class="paragraph">
                   @Html(Messages("agent.missing-email.answer-no", routes.AgentSummaryController.view(service), service.toUpperCase))
                 </span>
             </div>
