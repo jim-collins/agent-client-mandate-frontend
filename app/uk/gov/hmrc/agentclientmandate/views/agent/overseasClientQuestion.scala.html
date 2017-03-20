@@ -10,12 +10,13 @@
 @implicitFormInstance = @{ Some(overseasClientQuestionForm) }
 
 @main_template(title = Messages("agent.overseas-client-question.title"), delegatedService = Some(service)) {
-  @backLinkAndSubHeader(backLink, "pre-header", Messages("agent.add-a-client.sub-header"))
+  @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"),
+    Some(mandateErrorSummary(overseasClientQuestionForm, "agent.overseas-client-question.error.general")))
   <h1 class="heading-xlarge" id="header">
     @Messages("agent.overseas-client-question.header")
   </h1>
 
-  @mandateErrorSummary(overseasClientQuestionForm, "agent.overseas-client-question.error.general")
+
 
   @form(action = routes.OverseasClientQuestionController.submit(service)) {
 
