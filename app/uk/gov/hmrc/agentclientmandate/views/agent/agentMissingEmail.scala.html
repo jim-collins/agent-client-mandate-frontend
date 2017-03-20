@@ -14,12 +14,13 @@
 
 @main_template(title = Messages("agent.missing-email.title"), scriptElem = Some(pageScripts), delegatedService = Some(service)) {
 
-    @backLinkAndSubHeader(None, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase))
+    @pageHeadersAndError(None, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase),
+        Some(mandateErrorSummary(agentMissingEmailForm, "agent.enter-email.error.general")))
     <h1 class="heading-xlarge" id="header">
         @Messages("agent.missing-email.header")
     </h1>
 
-    @mandateErrorSummary(agentMissingEmailForm, "agent.enter-email.error.general")
+    
 
     <div class="form-group">
         <span id="info" class="paragraph">
