@@ -11,12 +11,13 @@
 @main_template(title = Messages("agent.enter-email.title"), delegatedService = Some(service)) {
 
 
-@backLinkAndSubHeader(backLink, "pre-header", Messages("agent.add-a-client.sub-header"))
-<h1 class="heading-xlarge" id="header">
-  @Messages("agent.enter-email.header")
-</h1>
+  @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"),
+    Some(mandateErrorSummary(agentEmailForm, "agent.enter-email.error.general")))
+  <h1 class="heading-xlarge" id="header">
+    @Messages("agent.enter-email.header")
+  </h1>
 
-@mandateErrorSummary(agentEmailForm, "agent.enter-email.error.general")
+
 
   <div class="form-group">
     <span id="info" class="paragraph">
