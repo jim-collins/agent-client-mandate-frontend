@@ -4,6 +4,7 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.models._
+@import uk.gov.hmrc.agentclientmandate.service._
 
 @(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
@@ -36,6 +37,11 @@
     '_showConstraints -> false)
     </div>
 
+  <div class="form-field">
+    <a id="remove-client-link" href="@routes.RemoveClientController.view(service, mandateId)" data-journey-click="agent-client-mandate:click:remove-client-link">
+      @Messages("client.summary.client-remove")
+    </a>
+  </div>
     <button class="button" id="submit" type="submit">@Messages("agent.edit-mandate-details.submit")</button>
 
   </div>
