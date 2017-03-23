@@ -329,6 +329,11 @@ html.noScroll {
   margin-top: -6px;
 }
 
+.form-label-bold {
+    font-size: 19px;
+    line-height: 1.3157894737;
+}
+
 
 @media (max-width: 640px) {
     .ated-tabs li {
