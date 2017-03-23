@@ -334,6 +334,9 @@ html.noScroll {
     line-height: 1.3157894737;
 }
 
+.form-field--error .error-notification {
+   font-size: 19px;
+}
 
 @media (max-width: 640px) {
     .ated-tabs li {
