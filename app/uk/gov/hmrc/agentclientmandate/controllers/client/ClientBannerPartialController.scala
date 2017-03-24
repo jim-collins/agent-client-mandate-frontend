@@ -29,7 +29,7 @@ import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
 
-trait ClientBannerPartialController extends FrontendController with Actions with ServicesConfig {
+trait ClientBannerPartialController extends FrontendController with Actions {
 
   def mandateService: AgentClientMandateService
 

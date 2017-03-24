@@ -218,6 +218,10 @@ trait AgentClientMandateService extends MandateConstants {
   def updateAgentMissingEmail(emailAddress: String, arn: String, service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Unit = {
     agentClientMandateConnector.updateAgentMissingEmail(emailAddress, arn, service)
   }
+
+  def updateClientEmail(emailAddress: String, clientId: String, service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Unit = {
+    agentClientMandateConnector.updateAgentMissingEmail(emailAddress, clientId, service)
+  }
 }
 
 object AgentClientMandateService extends AgentClientMandateService {
