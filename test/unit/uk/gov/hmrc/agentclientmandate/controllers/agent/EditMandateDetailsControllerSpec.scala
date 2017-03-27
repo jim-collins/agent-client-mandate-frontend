@@ -77,7 +77,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     "returns BAD_REQUEST" when {
       "invalid form is submitted" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "", "email" -> "")
-        submitEditMandateDetails(fakeRequest, false) { result =>
+        submitEditMandateDetails(fakeRequest, false, getMandate = Some(mandate)) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-notification").text() must include("You must answer the client display name question You must answer the email address question")
@@ -95,9 +95,19 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     }
 
     "throw No Mandate Found! exception" when {
+      "invalid form is submitted and no valid mandate is fetched for the mandate id" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "disp-name", "email" -> "")
+        submitEditMandateDetails(fakeRequest, true, None) { result =>
+          val thrown = the[RuntimeException] thrownBy await(result)
+          thrown.getMessage must include("No Mandate returned with id AS123456 for service ATED")
+        }
+      }
+    }
+
+    "valid form is submitted throw No Mandate Found! exception" when {
       "valid form is submitted but no valid mandate is fetched for the mandate id" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "disp-name", "email" -> "aa@mail.com")
-        submitEditMandateDetails(fakeRequest, true) { result =>
+        submitEditMandateDetails(fakeRequest, true, None) { result =>
           val thrown = the[RuntimeException] thrownBy await(result)
           thrown.getMessage must include("No Mandate Found with id AS123456 for service ATED")
         }
@@ -120,6 +130,15 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         submitEditMandateDetails(fakeRequest, true, getMandate = Some(mandate)) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some(s"/mandate/agent/edit-client/ATED/AS123456"))
+        }
+      }
+    }
+    "return back to edit-client page with exception" when {
+      "valid form is submitted with valid email but mandate is NOT edited" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "disp-name", "email" -> "aa@mail.com")
+        submitEditMandateDetails(fakeRequest, false, None) { result =>
+          val thrown = the[RuntimeException] thrownBy await(result)
+          thrown.getMessage must include("No Mandate returned with id AS123456 for service ATED")
         }
       }
     }
@@ -163,7 +182,8 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     test(result)
   }
 
-  def submitEditMandateDetails(request: FakeRequest[AnyContentAsFormUrlEncoded], emailValid: Boolean,
+  def submitEditMandateDetails(request: FakeRequest[AnyContentAsFormUrlEncoded],
+                               emailValid: Boolean,
                                getMandate: Option[Mandate] = None,
                                editMandate: Option[Mandate] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
@@ -173,7 +193,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     when(mockEmailService.validate(Matchers.any())(Matchers.any())).thenReturn(Future.successful(emailValid))
     when(mockAcmService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(getMandate))
     when(mockAcmService.editMandate(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(editMandate))
-    val result = TestEditMandateController.submit(service, mandateId, clientDisplayName).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestEditMandateController.submit(service, mandateId).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 
