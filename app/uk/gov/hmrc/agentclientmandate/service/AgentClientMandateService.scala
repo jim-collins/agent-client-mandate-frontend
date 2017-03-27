@@ -220,7 +220,6 @@ trait AgentClientMandateService extends MandateConstants {
   }
 
   def updateClientEmail(emailAddress: String, mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Unit = {
-    Logger.debug("XXXXXXXXXX")
     agentClientMandateConnector.updateClientEmail(emailAddress, mandateId)
   }
 }

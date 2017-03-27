@@ -52,7 +52,6 @@ trait EditEmailController extends FrontendController with Actions with MandateCo
   def dataCacheService: DataCacheService
   def mandateService: AgentClientMandateService
 
-
   def getClientMandateDetails(clientId: String, service: String, returnUrl: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request => {
 
