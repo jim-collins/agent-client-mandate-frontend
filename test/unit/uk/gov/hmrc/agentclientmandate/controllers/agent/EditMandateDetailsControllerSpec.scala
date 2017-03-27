@@ -54,8 +54,8 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         viewWithAuthorisedAgent(Some(mandate)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Edit ACME Limited")
-          document.getElementById("header").text() must include("Edit ACME Limited")
+          document.title() must be(s"Edit $clientDisplayName")
+          document.getElementById("header").text() must include(s"Edit $clientDisplayName")
           document.getElementById("pre-header").text() must include("Manage your ATED service")
           document.getElementById("sub-heading").text() must be("Unique authorisation number AS123456")
           document.getElementById("displayName_field").text() must include("Display name")
@@ -131,20 +131,21 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
   val mockAcmService = mock[AgentClientMandateService]
   val service = "ATED"
   val mandateId = "AS123456"
+  val clientDisplayName = "ACME Limited"
 
   val mandate: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation,
     ContactDetails("agent@agent.com", None)), clientParty = Some(Party("12345671", "test client4", PartyType.Individual, ContactDetails("aa.aa@a.com", None))),
     currentStatus = MandateStatus(Status.Approved, DateTime.now(), "credId"),
     statusHistory = Seq(MandateStatus(Status.New, DateTime.now(), "credId")),
     Subscription(None, Service("ated", "ATED")),
-    clientDisplayName = "client display name")
+    clientDisplayName = s"$clientDisplayName")
 
   val mandate1: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation,
     ContactDetails("agent@agent.com", None)), clientParty = None,
     currentStatus = MandateStatus(Status.Approved, DateTime.now(), "credId"),
     statusHistory = Seq(MandateStatus(Status.New, DateTime.now(), "credId")),
     Subscription(None, Service("ated", "ATED")),
-    clientDisplayName = "client display name")
+    clientDisplayName = s"$clientDisplayName")
 
   object TestEditMandateController extends EditMandateDetailsController {
     override val authConnector = mockAuthConnector
@@ -172,7 +173,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     when(mockEmailService.validate(Matchers.any())(Matchers.any())).thenReturn(Future.successful(emailValid))
     when(mockAcmService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(getMandate))
     when(mockAcmService.editMandate(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(editMandate))
-    val result = TestEditMandateController.submit(service, mandateId).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
+    val result = TestEditMandateController.submit(service, mandateId, clientDisplayName).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)
   }
 

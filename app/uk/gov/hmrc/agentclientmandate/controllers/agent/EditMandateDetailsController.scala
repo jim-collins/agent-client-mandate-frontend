@@ -42,14 +42,14 @@ trait EditMandateDetailsController extends FrontendController with Actions {
         case Some(mandate) =>
           val editMandateDetails = EditMandateDetails(displayName = mandate.clientDisplayName,
             email = mandate.agentParty.contactDetails.email)
-          Ok(views.html.agent.editClient(editMandateDetailsForm.fill(editMandateDetails), service, mandateId, getBackLink(service)))
+          Ok(views.html.agent.editClient(editMandateDetailsForm.fill(editMandateDetails), service, mandateId, mandate.clientDisplayName, getBackLink(service)))
         case _ => throw new RuntimeException(s"No Mandate returned with id $mandateId for service $service")
       }
   }
 
-  def submit(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def submit(service: String, mandateId: String, clientDisplayName: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request => editMandateDetailsForm.bindFromRequest.fold(
-      formWithError => Future.successful(BadRequest(views.html.agent.editClient(formWithError, service, mandateId, getBackLink(service)))),
+      formWithError => Future.successful(BadRequest(views.html.agent.editClient(formWithError, service, mandateId, clientDisplayName, getBackLink(service)))),
       editMandate => {
         emailService.validate(editMandate.email) flatMap { isValidEmail =>
           if (isValidEmail) {
@@ -67,7 +67,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
           } else {
             val errorMsg = Messages("agent.enter-email.error.email.invalid-by-email-service")
             val errorForm = editMandateDetailsForm.withError(key = "agent-enter-email-form", message = errorMsg).fill(editMandate)
-            Future.successful(BadRequest(views.html.agent.editClient(errorForm, service, mandateId, getBackLink(service))))
+            Future.successful(BadRequest(views.html.agent.editClient(errorForm, service, mandateId, clientDisplayName, getBackLink(service))))
           }
         }
       }
