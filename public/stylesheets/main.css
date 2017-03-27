@@ -354,12 +354,10 @@ html.noScroll {
     }
 }
 
-
 table td {
     font-size:100%
 }
 
-.form-control {
+.form-control-indent {
     max-width:60%;
 }
-
