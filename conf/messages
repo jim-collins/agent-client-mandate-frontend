@@ -49,11 +49,22 @@ client.collect-email.error.general.email = There is a problem with the email add
 client.collect-email.error.general.confirmEmail = There is a problem with the confirm email address question
 client.collect-email.error.email = You must answer the email address question.
 client.collect-email.error.email.length = The email address cannot be more than 241 characters.
-client.collect-email.error.confirmEmail = You must answer confirm the email address question.
-client.collect-email.error.confirmEmail.length = Confirm email address cannot be more than 241 characters.
-client.collect-email.error.confirm-email.not-equal = The email address and confirm email address must match.
 client.collect-email.error.email.invalid-by-email-service = This email is invalid
 client.collect-email.error.general.client-collect-email-form = This email is invalid
+
+#client edit email
+client.edit-email.title = What is your email address?
+client.edit-email.preheader = Appoint an agent
+client.edit-email.header = What is your email address?
+client.edit-email.lede = We need this email to send you notifications. For example, when an agent accepts a request to act for you. No confidential information will be sent via email. You should enter your email address, not your agent''s.
+client.edit-email.email = Email address
+client.edit-email.confirm-email = Confirm email address
+client.edit-email.error.general.email = There is a problem with the email address question
+client.edit-email.error.general.confirmEmail = There is a problem with the confirm email address question
+client.edit-email.error.email = You must answer the email address question.
+client.edit-email.error.email.length = The email address cannot be more than 241 characters.
+client.edit-email.error.email.invalid-by-email-service = This email is invalid
+client.edit-email.error.general.client-edit-email-form = This email is invalid
 
 #client search mandate
 client.search-mandate.title =  What is your unique authorisation number?

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.client
 
+import play.api.Logger
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, Request}
@@ -62,7 +63,7 @@ trait EditEmailController extends FrontendController with Actions with MandateCo
       mandateService.fetchClientMandateByClient(clientId, service).map {
         case Some(mandate) => mandate.currentStatus.status match {
           case uk.gov.hmrc.agentclientmandate.models.Status.Active =>
-            val clientDetails = ClientDetails(mandate.agentParty.name, mandateFrontendHost + routes.RemoveAgentController.view(service, mandate.id, returnUrl).url, mandate.clientParty.get.contactDetails.email, mandateFrontendHost + routes.EditEmailController.view(clientId, service, returnUrl).url)
+            val clientDetails = ClientDetails(mandate.agentParty.name, mandateFrontendHost + routes.RemoveAgentController.view(service, mandate.id, returnUrl).url, mandate.clientParty.get.contactDetails.email, mandateFrontendHost + routes.EditEmailController.view(mandate.id, service, returnUrl).url)
             Ok(Json.toJson(clientDetails))
           case _ => NotFound
         }
@@ -72,13 +73,13 @@ trait EditEmailController extends FrontendController with Actions with MandateCo
   }
 
 
-  def view(clientId: String, service: String, returnUrl: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
+  def view(mandateId: String, service: String, returnUrl: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       saveBackLink(returnUrl).flatMap { cache =>
         for {
-          _ <- dataCacheService.cacheFormData("CLIENT_ID", clientId)
+          _ <- dataCacheService.cacheFormData("MANDATE_ID", mandateId)
         } yield {
-          Ok(views.html.client.collectEmail(service, clientEmailForm, None, Some(returnUrl)))
+          Ok(views.html.client.editEmail(service, clientEmailForm, Some(returnUrl)))
         }
       }
   }
@@ -89,26 +90,26 @@ trait EditEmailController extends FrontendController with Actions with MandateCo
         formWithError =>
           getBackLink().map{
             backLink =>
-              BadRequest(views.html.client.collectEmail(service, formWithError, None, backLink))
+              BadRequest(views.html.client.editEmail(service, formWithError, backLink))
           },
         data => {
           emailService.validate(data.email) flatMap { isValidEmail =>
             if (isValidEmail) {
               for {
-                cachedClientId <- dataCacheService.fetchAndGetFormData[String]("CLIENT_ID")
+                cachedMandateId <- dataCacheService.fetchAndGetFormData[String]("MANDATE_ID")
               } yield {
-                mandateService.updateClientEmail(data.email, cachedClientId.get, service)
+                mandateService.updateClientEmail(data.email, cachedMandateId.get)
               }
               getBackLink().map {
                 backLink =>
                   Redirect(backLink.get)
               }
             } else {
-              val errorMsg = Messages("client.collect-email.error.email.invalid-by-email-service")
-              val errorForm = clientEmailForm.withError(key = "client-collect-email-form", message = errorMsg).fill(data)
+              val errorMsg = Messages("client.edit-email.error.email.invalid-by-email-service")
+              val errorForm = clientEmailForm.withError(key = "client-edit-email-form", message = errorMsg).fill(data)
               getBackLink().map{
                 backLink =>
-                  BadRequest(views.html.client.collectEmail(service, errorForm, None, backLink))
+                  BadRequest(views.html.client.editEmail(service, errorForm, backLink))
               }
             }
           }
