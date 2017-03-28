@@ -41,22 +41,10 @@ object ClientEmailForm {
     Form(
       mapping(
         "email" -> text
-          .verifying(Messages("client.collect-email.error.email"), email => email.nonEmpty)
           .verifying(Messages("client.collect-email.error.email"), x => x.trim.length > lengthZero)
           .verifying(Messages("client.collect-email.error.email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
-      )
-      (ClientEmail.apply)(ClientEmail.unapply)
+      )(ClientEmail.apply)(ClientEmail.unapply)
     )
-
-  private def addErrorsToForm[A](form: Form[A], formErrors: Seq[FormError]): Form[A] = {
-    @tailrec
-    def y(f: Form[A], fe: Seq[FormError]): Form[A] = {
-      if (fe.isEmpty) f
-      else y(f.withError(fe.head), fe.tail)
-    }
-    y(form, formErrors)
-  }
-
 }
 
 case class MandateReference(mandateRef: String)
@@ -68,8 +56,6 @@ object MandateReference {
 object MandateReferenceForm {
 
   val mandateRefLength = 8
-
-  //private val validFormat = "^[\\d|A-Z]{8}$"
 
   val mandateRefForm =
     Form(
@@ -90,3 +76,4 @@ case class ClientCache(
 object ClientCache {
   implicit val formats = Json.format[ClientCache]
 }
+

@@ -416,6 +416,13 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       }
     }
 
+    "update client email" must {
+      "update a clients email address" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "client")
+        TestAgentClientMandateService.updateClientEmail("test@mail.com", "mandateId")
+      }
+    }
+
   }
 
 
