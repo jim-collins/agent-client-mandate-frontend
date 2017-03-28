@@ -216,8 +216,8 @@ agent.check-client-details.utr = Unique Taxpayer Reference
 agent.check-client-details.confirm = Confirm and add client
 
 # agent edit mandate details
-agent.edit-mandate-details.title = Edit ACME Limited
-agent.edit-mandate-details.header = Edit ACME Limited
+agent.edit-mandate-details.title = Edit {0}
+agent.edit-mandate-details.header = Edit {0}
 agent.edit-mandate-details.pre-header = Manage your {0} service
 agent.edit-mandate-details.sub-heading = Unique authorisation number {0}
 agent.edit-mandate-details.displayName = Display name

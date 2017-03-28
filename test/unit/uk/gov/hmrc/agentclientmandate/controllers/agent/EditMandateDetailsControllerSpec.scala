@@ -54,8 +54,8 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         viewWithAuthorisedAgent(Some(mandate)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Edit ACME Limited")
-          document.getElementById("header").text() must include("Edit ACME Limited")
+          document.title() must be(s"Edit $clientDisplayName")
+          document.getElementById("header").text() must include(s"Edit $clientDisplayName")
           document.getElementById("pre-header").text() must include("Manage your ATED service")
           document.getElementById("sub-heading").text() must be("Unique authorisation number AS123456")
           document.getElementById("displayName_field").text() must include("Display name")
@@ -77,7 +77,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     "returns BAD_REQUEST" when {
       "invalid form is submitted" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "", "email" -> "")
-        submitEditMandateDetails(fakeRequest, false) { result =>
+        submitEditMandateDetails(fakeRequest, false, getMandate = Some(mandate)) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.getElementsByClass("error-notification").text() must include("You must answer the client display name question You must answer the email address question")
@@ -95,9 +95,19 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     }
 
     "throw No Mandate Found! exception" when {
+      "invalid form is submitted and no valid mandate is fetched for the mandate id" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "disp-name", "email" -> "")
+        submitEditMandateDetails(fakeRequest, true, None) { result =>
+          val thrown = the[RuntimeException] thrownBy await(result)
+          thrown.getMessage must include("No Mandate returned with id AS123456 for service ATED")
+        }
+      }
+    }
+
+    "valid form is submitted throw No Mandate Found! exception" when {
       "valid form is submitted but no valid mandate is fetched for the mandate id" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "disp-name", "email" -> "aa@mail.com")
-        submitEditMandateDetails(fakeRequest, true) { result =>
+        submitEditMandateDetails(fakeRequest, true, None) { result =>
           val thrown = the[RuntimeException] thrownBy await(result)
           thrown.getMessage must include("No Mandate Found with id AS123456 for service ATED")
         }
@@ -123,6 +133,15 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         }
       }
     }
+    "return back to edit-client page with exception" when {
+      "valid form is submitted with valid email but mandate is NOT edited" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "disp-name", "email" -> "aa@mail.com")
+        submitEditMandateDetails(fakeRequest, false, None) { result =>
+          val thrown = the[RuntimeException] thrownBy await(result)
+          thrown.getMessage must include("No Mandate returned with id AS123456 for service ATED")
+        }
+      }
+    }
 
   }
 
@@ -131,20 +150,21 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
   val mockAcmService = mock[AgentClientMandateService]
   val service = "ATED"
   val mandateId = "AS123456"
+  val clientDisplayName = "ACME Limited"
 
   val mandate: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation,
     ContactDetails("agent@agent.com", None)), clientParty = Some(Party("12345671", "test client4", PartyType.Individual, ContactDetails("aa.aa@a.com", None))),
     currentStatus = MandateStatus(Status.Approved, DateTime.now(), "credId"),
     statusHistory = Seq(MandateStatus(Status.New, DateTime.now(), "credId")),
     Subscription(None, Service("ated", "ATED")),
-    clientDisplayName = "client display name")
+    clientDisplayName = s"$clientDisplayName")
 
   val mandate1: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation,
     ContactDetails("agent@agent.com", None)), clientParty = None,
     currentStatus = MandateStatus(Status.Approved, DateTime.now(), "credId"),
     statusHistory = Seq(MandateStatus(Status.New, DateTime.now(), "credId")),
     Subscription(None, Service("ated", "ATED")),
-    clientDisplayName = "client display name")
+    clientDisplayName = s"$clientDisplayName")
 
   object TestEditMandateController extends EditMandateDetailsController {
     override val authConnector = mockAuthConnector
@@ -162,7 +182,8 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
     test(result)
   }
 
-  def submitEditMandateDetails(request: FakeRequest[AnyContentAsFormUrlEncoded], emailValid: Boolean,
+  def submitEditMandateDetails(request: FakeRequest[AnyContentAsFormUrlEncoded],
+                               emailValid: Boolean,
                                getMandate: Option[Mandate] = None,
                                editMandate: Option[Mandate] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"

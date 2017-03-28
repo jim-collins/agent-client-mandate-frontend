@@ -6,13 +6,13 @@
 @import uk.gov.hmrc.agentclientmandate.models._
 @import uk.gov.hmrc.agentclientmandate.service._
 
-@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
+@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, clientDisplayName: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Messages("agent.edit-mandate-details.title"), delegatedService = Some(service)) {
+@main_template(title = Messages("agent.edit-mandate-details.title", clientDisplayName), delegatedService = Some(service)) {
   @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase),
     Some(mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")))
   <h1 class="heading-xlarge" id="header">
-    @Messages("agent.edit-mandate-details.header", service)
+    @Messages("agent.edit-mandate-details.header", clientDisplayName)
   </h1>
 
 
