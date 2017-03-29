@@ -142,9 +142,9 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         val respJson = Json.parse("{}")
         when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
 
-        val response = TestAgentClientMandateService.fetchClientMandateAgentName(mandateId)
+        val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId)
         val thrown = the[RuntimeException] thrownBy await(response)
-        thrown.getMessage must include(s"[AgentClientMandateService][fetchClientMandateAgentName] No Mandate Agent Name returned with id $mandateId")
+        thrown.getMessage must include(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate returned for id $mandateId")
       }
     }
 
