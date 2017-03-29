@@ -134,17 +134,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
 
         val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId)
-        await(response) must be(mandateNew.clientParty.map(_.name).get)
-      }
-
-      "throw exception when there is a mandate but no client party" in {
-        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        val respJson = Json.toJson(mandateNew.copy(clientParty = None))
-        when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
-
-        val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId)
-        val thrown = the[RuntimeException] thrownBy await(response)
-        thrown.getMessage must include(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate Client Name returned for id $mandateId")
+        await(response) must be(mandateNew.clientDisplayName)
       }
 
       "throws an exception when no Mandate found" in {
@@ -152,9 +142,9 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         val respJson = Json.parse("{}")
         when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
 
-        val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId)
+        val response = TestAgentClientMandateService.fetchClientMandateAgentName(mandateId)
         val thrown = the[RuntimeException] thrownBy await(response)
-        thrown.getMessage must include(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate returned for id $mandateId")
+        thrown.getMessage must include(s"[AgentClientMandateService][fetchClientMandateAgentName] No Mandate Agent Name returned with id $mandateId")
       }
     }
 

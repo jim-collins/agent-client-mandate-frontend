@@ -65,25 +65,8 @@ trait AgentClientMandateService extends MandateConstants {
 
   def fetchClientMandateClientName(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[String] = {
     fetchClientMandate(mandateId).map {
-      case Some(mandate) => {
-        if (mandate.clientParty.isDefined) {
-          mandate.clientParty.get.name
-        } else {
-          val agentPartyCopy = mandate.agentParty
-          val subscriptionCopy = mandate.subscription
-          val createdByCopy = mandate.createdBy
-
-          val mandateCopy = mandate.copy(
-            agentParty = agentPartyCopy.copy(id="", name="", contactDetails=ContactDetails("", None)),
-            subscription = subscriptionCopy.copy(referenceNumber = None),
-            createdBy = createdByCopy.copy(credId="", name="", groupId=None)
-          )
-          Logger.error("MandateError: " + mandateCopy)
-          throw new RuntimeException(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate Client Name returned for id $mandateId")
-        }
-      }
+      case Some(mandate) => mandate.clientDisplayName
       case _ => throw new RuntimeException(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate returned for id $mandateId")
-
     }
   }
 
