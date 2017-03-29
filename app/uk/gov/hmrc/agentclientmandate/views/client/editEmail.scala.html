@@ -7,7 +7,7 @@
 @(service: String, addEmailForm: Form[ClientEmail], backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("client.edit-email.title"), delegatedService = Some(service)) {
-@pageHeadersAndError(backLink, "pre-heading", Messages("client.edit-email.preheader"),
+@pageHeadersAndError(backLink, "pre-heading", Messages("client.edit-email.preheader", service),
 Some(mandateErrorSummary(addEmailForm, "client.edit-email.error.general")))
 <h1 class="heading-xlarge" id="header">
     @Messages("client.edit-email.header")
@@ -31,7 +31,7 @@ Some(mandateErrorSummary(addEmailForm, "client.edit-email.error.general")))
 </div>
 
 <div class="form-group">
-    <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+    <button class="button" id="submit" type="submit">@Messages("agent.edit-mandate-details.submit")</button>
 </div>
 
 }

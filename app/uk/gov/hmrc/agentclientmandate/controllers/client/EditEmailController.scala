@@ -21,7 +21,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
-import uk.gov.hmrc.agentclientmandate.models.ClientDetails
+import uk.gov.hmrc.agentclientmandate.models.{ClientDetails, Mandate}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientEmailForm._
@@ -33,6 +33,7 @@ import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
 import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientEmail
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 
 import scala.concurrent.Future
@@ -77,8 +78,10 @@ trait EditEmailController extends FrontendController with Actions with MandateCo
       saveBackLink(returnUrl).flatMap { cache =>
         for {
           _ <- dataCacheService.cacheFormData("MANDATE_ID", mandateId)
+          mandate <- mandateService.fetchClientMandate(mandateId)
         } yield {
-          Ok(views.html.client.editEmail(service, clientEmailForm, Some(returnUrl)))
+          val clientForm = ClientEmail(mandate.get.clientParty.get.contactDetails.email)
+          Ok(views.html.client.editEmail(service, clientEmailForm.fill(clientForm), Some(returnUrl)))
         }
       }
   }

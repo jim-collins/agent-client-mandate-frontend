@@ -63,8 +63,8 @@ class EditEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mocki
       viewWithAuthorisedClient() { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
-        document.title() must be("What is your email address?")
-        //document.getElementById("email").`val`() must be("aa@mail.com")
+        document.title() must be("Edit your email address")
+        document.getElementById("email").`val`() must be("client@client.com")
 
         document.getElementById("backLinkHref").text() must be("Back")
         document.getElementById("backLinkHref").attr("href") must be("/api/anywhere")
@@ -185,6 +185,8 @@ class EditEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mocki
 
   val service = "ATED"
 
+  val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
+
   def viewWithUnAuthenticatedClient(redirectUrl: Option[String] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -212,6 +214,7 @@ class EditEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mocki
       Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("/api/anywhere"))
     when(mockDataCacheService.cacheFormData[String](Matchers.eq("MANDATE_ID"),
       Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("mandateId"))
+    when(mockMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
     val result = TestEditEmailController.view("mandateId", service, "/api/anywhere").apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
