@@ -53,9 +53,9 @@ client.collect-email.error.email.invalid-by-email-service = This email is invali
 client.collect-email.error.general.client-collect-email-form = This email is invalid
 
 #client edit email
-client.edit-email.title = What is your email address?
-client.edit-email.preheader = Appoint an agent
-client.edit-email.header = What is your email address?
+client.edit-email.title = Edit your email address
+client.edit-email.preheader = Manage your {0} service
+client.edit-email.header = Edit your email address
 client.edit-email.lede = We need this email to send you notifications. For example, when an agent accepts a request to act for you. No confidential information will be sent via email. You should enter your email address, not your agent''s.
 client.edit-email.email = Email address
 client.edit-email.confirm-email = Confirm email address
