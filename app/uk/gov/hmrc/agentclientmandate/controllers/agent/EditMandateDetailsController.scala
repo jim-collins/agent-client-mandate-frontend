@@ -21,12 +21,13 @@ import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.models.ContactDetails
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, EmailService}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.EditMandateDetails
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{EditMandateDetails, EditMandateDetailsForm}
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.EditMandateDetailsForm._
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+
 import scala.concurrent.Future
 import uk.gov.hmrc.play.frontend.auth.{Actions, Delegator}
 
@@ -48,7 +49,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
   }
 
   def submit(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
-    implicit authContext => implicit request => editMandateDetailsForm.bindFromRequest.fold(
+    implicit authContext => implicit request => EditMandateDetailsForm.validateEditEmail(editMandateDetailsForm.bindFromRequest).fold(
       formWithError => {
         acmService.fetchClientMandate(mandateId) map {
           case Some(mandate) =>

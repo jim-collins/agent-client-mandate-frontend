@@ -33,6 +33,7 @@ import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
 import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientEmailForm
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 
 import scala.concurrent.Future
@@ -85,7 +86,7 @@ trait EditEmailController extends FrontendController with Actions with MandateCo
 
   def submit(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      clientEmailForm.bindFromRequest.fold(
+      ClientEmailForm.validateEditEmail(clientEmailForm.bindFromRequest).fold(
         formWithError =>
           getBackLink().map{
             backLink =>

@@ -143,6 +143,7 @@ agent.enter-email.header = What email address do you want to use for this client
 agent.enter-email.error.general.email = There is a problem with the email address question
 agent.enter-email.error.general.confirmEmail = There is a problem with the confirm email address question
 agent.enter-email.error.email = You must answer the email address question
+client.enter-email.error.email = You must answer the email address question
 agent.enter-email.error.confirmEmail = You must answer the confirm email address question
 agent.enter-email.info.text = We will use this email address to send you notifications about this client. We won’t send confidential information by email. You can use a group email address and change it.
 
@@ -150,7 +151,10 @@ agent.enter-email.field.email.label = Email address
 agent.enter-email.field.confirmEmail.label = Confirm email address
 agent.enter-email.error.email.invalid-by-email-service = This email is invalid
 agent.enter-email.error.general.agent-enter-email-form = This email is invalid
+client.enter-email.error.general.agent-enter-email-form = This email is invalid
 agent.enter-email.error.confirm-email.not-equal = The email address and confirm email address must match.
+agent.enter-email.error.email.max.length = The email address can not be more than 241 characters
+client.enter-email.error.email.max.length = The email address can not be more than 241 characters
 
 # agent - is client overseas question
 agent.overseas-client-question.title = Does your client have an overseas company without a UK Unique Taxpayer Reference?
