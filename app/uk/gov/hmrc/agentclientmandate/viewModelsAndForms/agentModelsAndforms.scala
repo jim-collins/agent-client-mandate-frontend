@@ -62,12 +62,44 @@ object AgentMissingEmail {
 }
 
 object AgentMissingEmailForm {
+  val maxlength = 241
+  val lengthZero = 0
+  val emailRegex =
+    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$""".r
+
 
   def validateAgentMissingEmail(f: Form[AgentMissingEmail]): Form[AgentMissingEmail] = {
-    if (!f.hasErrors && f.get.useEmailAddress == Some(true) && f.get.email.isEmpty) {
-      f.withError(FormError("email", Messages("agent.enter-email.error.email")))
+    if (!f.hasErrors) {
+      val emailConsent = f.data.get("useEmailAddress")
+      val formErrors = emailConsent match {
+        case Some("true") => {
+          val email = f.data.get("email").getOrElse("")
+          if (email.trim.length == lengthZero){
+            Seq(FormError("email", Messages("agent.enter-email.error.email")))
+          }
+          else if (email.length > lengthZero && email.length > maxlength){
+            Seq(FormError("email", Messages("agent.enter-email.error.email.max.length")))
+          } else {
+            val x = emailRegex.findFirstMatchIn(email).exists(_ => true)
+            val y = email.length == lengthZero
+            val z = email.length > maxlength
+            if (x || y || z) {
+              Nil
+            } else {
+              Seq(FormError("email", Messages("agent.enter-email.error.general.agent-enter-email-form")))
+            }
+          }
+        }
+        case _ => Nil
+      }
+      addErrorsToForm(f, formErrors)
     } else f
   }
+
+
+
+
+
 
   val agentMissingEmailForm =
     Form(
@@ -134,6 +166,35 @@ object EditMandateDetailsForm {
   val length0 = 0
   val length105 = 105
   val length99 = 99
+  val emailLength = 241
+  val emailRegex =
+    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$""".r
+
+  def validateEditEmail(f: Form[EditMandateDetails]): Form[EditMandateDetails] = {
+    def validateEmailRegex(email: String) = {
+      val x = emailRegex.findFirstMatchIn(email).exists(_ => true)
+      val y = email.length == length0
+      val z = email.length > emailLength
+      if (x || y || z) {
+        f
+      } else {
+        f.withError((FormError("email", Messages("agent.enter-email.error.general.agent-enter-email-form"))))
+      }
+    }
+
+    if (!f.hasErrors) {
+      val email = f.data.get("email").getOrElse("")
+      if (email.trim.length == length0) {
+        f.withError(FormError("email", Messages("agent.enter-email.error.email")))
+      }
+      else if (email.length > length0 && email.length > emailLength) {
+        f.withError((FormError("email", Messages("agent.enter-email.error.email.max.length"))))
+      } else {
+        validateEmailRegex(email)
+      }
+    } else f
+  }
+
 
   val editMandateDetailsForm = Form(mapping(
   "displayName" -> text
