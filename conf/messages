@@ -29,7 +29,7 @@ client.summary.client-name.title = Name
 client.summary.client-action.title = Action
 client.summary.client-reject = Reject
 client.summary.client-edit = Edit
-client.summary.client-remove = Remove
+client.summary.client-remove = Remove this client
 client.summary.client-view = View
 client.summary.client-pending.title = Requests ({0})
 client.summary.client-active.title = Current ({0})
@@ -51,11 +51,22 @@ client.collect-email.error.general.email = There is a problem with the email add
 client.collect-email.error.general.confirmEmail = There is a problem with the confirm email address question
 client.collect-email.error.email = You must answer the email address question.
 client.collect-email.error.email.length = The email address cannot be more than 241 characters.
-client.collect-email.error.confirmEmail = You must answer confirm the email address question.
-client.collect-email.error.confirmEmail.length = Confirm email address cannot be more than 241 characters.
-client.collect-email.error.confirm-email.not-equal = The email address and confirm email address must match.
 client.collect-email.error.email.invalid-by-email-service = This email is invalid
 client.collect-email.error.general.client-collect-email-form = This email is invalid
+
+#client edit email
+client.edit-email.title = Edit your email address
+client.edit-email.preheader = Manage your {0} service
+client.edit-email.header = Edit your email address
+client.edit-email.lede = We need this email to send you notifications. For example, when an agent accepts a request to act for you. No confidential information will be sent via email. You should enter your email address, not your agent''s.
+client.edit-email.email = Email address
+client.edit-email.confirm-email = Confirm email address
+client.edit-email.error.general.email = There is a problem with the email address question
+client.edit-email.error.general.confirmEmail = There is a problem with the confirm email address question
+client.edit-email.error.email = You must answer the email address question.
+client.edit-email.error.email.length = The email address cannot be more than 241 characters.
+client.edit-email.error.email.invalid-by-email-service = This email is invalid
+client.edit-email.error.general.client-edit-email-form = This email is invalid
 
 #client search mandate
 client.search-mandate.title =  What is your unique authorisation number?
@@ -134,6 +145,7 @@ agent.enter-email.header = What email address do you want to use for this client
 agent.enter-email.error.general.email = There is a problem with the email address question
 agent.enter-email.error.general.confirmEmail = There is a problem with the confirm email address question
 agent.enter-email.error.email = You must answer the email address question
+client.enter-email.error.email = You must answer the email address question
 agent.enter-email.error.confirmEmail = You must answer the confirm email address question
 agent.enter-email.info.text = We will use this email address to send you notifications about this client. We won’t send confidential information by email. You can use a group email address and change it.
 
@@ -141,7 +153,10 @@ agent.enter-email.field.email.label = Email address
 agent.enter-email.field.confirmEmail.label = Confirm email address
 agent.enter-email.error.email.invalid-by-email-service = This email is invalid
 agent.enter-email.error.general.agent-enter-email-form = This email is invalid
+client.enter-email.error.general.agent-enter-email-form = This email is invalid
 agent.enter-email.error.confirm-email.not-equal = The email address and confirm email address must match.
+agent.enter-email.error.email.max.length = The email address can not be more than 241 characters
+client.enter-email.error.email.max.length = The email address can not be more than 241 characters
 
 # agent - is client overseas question
 agent.overseas-client-question.title = Does your client have an overseas company without a UK Unique Taxpayer Reference?
@@ -218,8 +233,8 @@ agent.check-client-details.utr = Unique Taxpayer Reference
 agent.check-client-details.confirm = Confirm and add client
 
 # agent edit mandate details
-agent.edit-mandate-details.title = Edit ACME Limited
-agent.edit-mandate-details.header = Edit ACME Limited
+agent.edit-mandate-details.title = Edit {0}
+agent.edit-mandate-details.header = Edit {0}
 agent.edit-mandate-details.pre-header = Manage your {0} service
 agent.edit-mandate-details.sub-heading = Unique authorisation number {0}
 agent.edit-mandate-details.displayName = Display name
@@ -282,6 +297,17 @@ client.banner.text.rejected = <span class="heading-small">{0}</span> has rejecte
 client.banner.text.cancelled = The {1} agent can no longer act for the client
 client.banner.link-text.approved_active = Cancel
 client.banner.link-text.cancelled_rejected = Appoint an agent
+
+# agent missing email
+agent.missing-email.title = Receive email notifications from your clients
+agent.missing-email.header = Receive email notifications from your clients
+agent.missing-email.text = We can send you a notification when a client accepts or rejects your requests in the {0} service. You can use a group email address and change it later.
+agent.missing-email.question = Do you want to use the same email address for all your clients?
+agent.missing-email.answer-no = You can enter a separate email address for each of your clients using the edit links on <a href="{0}">your {1} clients</a> page.
+agent.missing-email.trapdoor = Enter my email at a later date
+agent.missing-email.email_address = Your email address
+agent.missing-email.must_answer = You must answer the question
+agent.enter-email.error.general.useEmailAddress = There is a problem with the question
 
 #edit agent details
 agent.edit-details.title = Your details

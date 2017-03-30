@@ -103,3 +103,9 @@ case class Mandate(id: String,
 object Mandate {
   implicit val formats = Json.format[Mandate]
 }
+
+case class ClientDetails(agentName: String, changeAgentLink: String, email: String, changeEmailLink: String)
+
+object ClientDetails {
+  implicit val formats = Json.format[ClientDetails]
+}

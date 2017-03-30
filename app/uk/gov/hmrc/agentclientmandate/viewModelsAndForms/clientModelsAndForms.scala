@@ -36,57 +36,72 @@ object ClientEmailForm {
 
   val emailLength = 241
   val lengthZero = 0
+  val emailRegex =
+    """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$""".r
+
+  def validateEditEmail(f: Form[ClientEmail]): Form[ClientEmail] = {
+    def validateEmailRegex(email: String) = {
+      val x = emailRegex.findFirstMatchIn(email).exists(_ => true)
+      val y = email.length == lengthZero
+      val z = email.length > emailLength
+      if (x || y || z) {
+        f
+      } else {
+        f.withError((FormError("email", Messages("client.enter-email.error.general.agent-enter-email-form"))))
+      }
+    }
+
+    if (!f.hasErrors) {
+      val email = f.data.get("email").getOrElse("")
+      if (email.trim.length == lengthZero) {
+        f.withError(FormError("email", Messages("client.enter-email.error.email")))
+      }
+      else if (email.length > lengthZero && email.length > emailLength) {
+        f.withError((FormError("email", Messages("client.enter-email.error.email.max.length"))))
+      } else {
+        validateEmailRegex(email)
+      }
+    } else f
+  }
+
 
   val clientEmailForm =
     Form(
       mapping(
         "email" -> text
-          .verifying(Messages("client.collect-email.error.email"), email => email.nonEmpty)
           .verifying(Messages("client.collect-email.error.email"), x => x.trim.length > lengthZero)
           .verifying(Messages("client.collect-email.error.email.length"), x => x.isEmpty || (x.nonEmpty && x.length <= emailLength))
-      )
-      (ClientEmail.apply)(ClientEmail.unapply)
+      )(ClientEmail.apply)(ClientEmail.unapply)
     )
 
-  private def addErrorsToForm[A](form: Form[A], formErrors: Seq[FormError]): Form[A] = {
-    @tailrec
-    def y(f: Form[A], fe: Seq[FormError]): Form[A] = {
-      if (fe.isEmpty) f
-      else y(f.withError(fe.head), fe.tail)
+}
+    case class MandateReference(mandateRef: String)
+
+    object MandateReference {
+      implicit val formats = Json.format[MandateReference]
     }
-    y(form, formErrors)
-  }
 
-}
+    object MandateReferenceForm {
 
-case class MandateReference(mandateRef: String)
+      val mandateRefLength = 8
 
-object MandateReference {
-  implicit val formats = Json.format[MandateReference]
-}
+      val mandateRefForm =
+        Form(
+          mapping(
+            "mandateRef" -> text.transform[String](a => a.trim.replaceAll("\\s+", ""), a => a.trim.replaceAll("\\s+", "").toUpperCase)
+              .verifying(Messages("client.search-mandate.error.mandateRef"), x => x.nonEmpty)
+              .verifying(Messages("client.search-mandate.error.mandateRef.length"), x => x.isEmpty || (x.nonEmpty && x.length <= mandateRefLength))
+          )
+          (MandateReference.apply)(MandateReference.unapply)
+        )
+    }
 
-object MandateReferenceForm {
+    case class ClientCache(
+                            email: Option[ClientEmail] = None,
+                            mandate: Option[Mandate] = None
+                          )
 
-  val mandateRefLength = 8
+    object ClientCache {
+      implicit val formats = Json.format[ClientCache]
+      }
 
-  //private val validFormat = "^[\\d|A-Z]{8}$"
-
-  val mandateRefForm =
-    Form(
-      mapping(
-        "mandateRef" -> text.transform[String](a => a.trim.replaceAll("\\s+", ""), a => a.trim.replaceAll("\\s+", "").toUpperCase)
-          .verifying(Messages("client.search-mandate.error.mandateRef"), x => x.nonEmpty)
-          .verifying(Messages("client.search-mandate.error.mandateRef.length"), x => x.isEmpty || (x.nonEmpty && x.length <= mandateRefLength))
-      )
-      (MandateReference.apply)(MandateReference.unapply)
-    )
-}
-
-case class ClientCache(
-                        email: Option[ClientEmail] = None,
-                        mandate: Option[Mandate] = None
-                      )
-
-object ClientCache {
-  implicit val formats = Json.format[ClientCache]
-}

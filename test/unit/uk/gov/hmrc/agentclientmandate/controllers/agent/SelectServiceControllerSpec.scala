@@ -19,6 +19,7 @@ package unit.uk.gov.hmrc.agentclientmandate.controllers.agent
 import java.util.UUID
 
 import org.jsoup.Jsoup
+import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
@@ -27,6 +28,7 @@ import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController
+import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 import uk.gov.hmrc.agentclientmandate.utils.{FeatureSwitch, MandateFeatureSwitches}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -75,7 +77,6 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
     }
 
     "return 'select service question' view for AUTHORISED agent" when {
-
       "agent requests(GET) for 'select service question' view and single service feature is disabled" in {
         FeatureSwitch.disable(MandateFeatureSwitches.singleService)
         viewWithAuthorisedAgent { result =>
@@ -91,23 +92,40 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     }
 
-    "redirect to 'summary page for ated' view for AUTHORISED agent" when {
-
-      "agent requests(GET) for 'select service question' view and single service feature is enabled" in {
+    "agent requests(GET) for 'select service question' view and single service feature is enabled" when {
+      "redirect to 'summary page for ated' view for AUTHORISED agent" in {
+        when(mockAgentClientMandateService.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(false))
         viewWithAuthorisedAgent { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("/mandate/agent/summary/ated"))
         }
       }
 
+      "redirect to 'missing email' view for AUTHORISED agent" in {
+        when(mockAgentClientMandateService.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(true))
+        viewWithAuthorisedAgent { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/agent/missing-email/ated"))
+        }
+      }
     }
 
-    "redirect to 'agent summary page for service' Page" when {
-      "valid form is submitted" in {
+    "valid form is submitted" when {
+      "redirect to 'agent summary page for service' Page" in {
+        when(mockAgentClientMandateService.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(false))
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("service" -> "ated")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("/mandate/agent/summary/ated"))
+        }
+      }
+
+      "redirect to 'missing email' Page" in {
+        when(mockAgentClientMandateService.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(true))
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("service" -> "ated")
+        submitWithAuthorisedAgent(fakeRequest) { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/agent/missing-email/ated"))
         }
       }
     }
@@ -124,16 +142,30 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
       }
     }
 
+
+//    "redirect to missing email page" when {
+//      "agent is missing emails from mandates" in {
+//
+//        viewAuthorisedAgent(None, agentMissingEmail = true) { result =>
+//
+//          status(result) must be(SEE_OTHER)
+//          redirectLocation(result).get must include("/mandate/agent/missing-email/ATED")
+//        }
+//      }
+//    }
   }
 
   val mockAuthConnector = mock[AuthConnector]
+  val mockAgentClientMandateService = mock[AgentClientMandateService]
 
   object TestSelectServiceController extends SelectServiceController {
     override val authConnector = mockAuthConnector
+    override val agentClientMandateService = mockAgentClientMandateService
   }
 
   override def beforeEach(): Unit = {
     reset(mockAuthConnector)
+    reset(mockAgentClientMandateService)
     FeatureSwitch.enable(MandateFeatureSwitches.singleService)
   }
 

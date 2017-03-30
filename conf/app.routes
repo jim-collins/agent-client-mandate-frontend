@@ -76,8 +76,14 @@ GET     /agent/remove-client/showConfirmation/:service/:mandateId   uk.gov.hmrc.
 GET     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.view(service: String, mandateId: String)
 POST    /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.submit(service: String, mandateId: String)
 
-GET     /client/partial-banner/:clientId/:service                uk.gov.hmrc.agentclientmandate.controllers.client.ClientBannerPartialController.getBanner(clientId: String, service: String, returnUrl: String)
+GET     /agent/missing-email/:service                   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentMissingEmailController.view(service: String)
+POST    /agent/missing-email/:service                   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentMissingEmailController.submit(service: String)
 
+GET     /client/partial-banner/:clientId/:service       uk.gov.hmrc.agentclientmandate.controllers.client.ClientBannerPartialController.getBanner(clientId: String, service: String, returnUrl: String)
+
+GET     /client/details/:clientId/:service              uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.getClientMandateDetails(clientId: String, service: String, returnUrl: String)
+GET     /client/update-email/:clientId/:service         uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.view(clientId: String, service: String, returnUrl: String)
+POST    /client/update-email/:service                   uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.submit(service: String)
 GET     /agent/details/:service                                   uk.gov.hmrc.agentclientmandate.controllers.agent.AgencyDetailsController.view(service: String)
 
 GET     /agent/details/edit/:service/businessDetails        uk.gov.hmrc.agentclientmandate.controllers.agent.UpdateAddressDetailsController.view(service: String)

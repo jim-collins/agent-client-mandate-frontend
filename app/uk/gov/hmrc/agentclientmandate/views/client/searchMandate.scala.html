@@ -8,15 +8,16 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 
 @main_template(title = Messages("client.search-mandate.title"), delegatedService = Some(service)) {
-  @backLinkAndSubHeader(backLink, "pre-heading", Messages("client.search-mandate.preheader"))
+  @pageHeadersAndError(backLink, "pre-heading", Messages("client.search-mandate.preheader"),
+    Some(mandateErrorSummary(mandateRefForm, "client.search-mandate.error.general")))
   <h1 class="heading-xlarge" id="header">
     @Messages("client.search-mandate.header")
   </h1>
 
-  @mandateErrorSummary(mandateRefForm, "client.search-mandate.error.general")
+
 
     <div class="form-group">
-        <span class="lede" id="client.search-mandate.help">
+        <span class="paragraph" id="client.search-mandate.help">
           @Messages("client.search-mandate.lede")
         </span>
     </div>

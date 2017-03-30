@@ -4,16 +4,18 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.models._
+@import uk.gov.hmrc.agentclientmandate.service._
 
-@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
+@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, clientDisplayName: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Messages("agent.edit-mandate-details.title"), delegatedService = Some(service)) {
-  @backLinkAndSubHeader(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase))
+@main_template(title = Messages("agent.edit-mandate-details.title", clientDisplayName), delegatedService = Some(service)) {
+  @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase),
+    Some(mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")))
   <h1 class="heading-xlarge" id="header">
-    @Messages("agent.edit-mandate-details.header", service)
+    @Messages("agent.edit-mandate-details.header", clientDisplayName)
   </h1>
 
-  @mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")
+
   <div class="form-field">
     <span class="heading-medium" id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</span>
   </div>
@@ -25,6 +27,7 @@
     <div class="form-field">
     @mandateInput(editMandateDetailsForm("displayName"),
     '_label -> Messages("agent.edit-mandate-details.displayName"),
+    '_labelClass -> "form-label-bold",
     '_hintText -> Messages("agent.edit-mandate-details.hint"),
     '_showConstraints -> false)
     </div>
@@ -32,9 +35,15 @@
     <div class="form-field">
     @mandateInput(editMandateDetailsForm("email"),
     '_label -> Messages("agent.edit-mandate-details.email"),
+    '_labelClass -> "form-label-bold",
     '_showConstraints -> false)
     </div>
 
+  <div class="form-field">
+    <a id="remove-client-link" href="@routes.RemoveClientController.view(service, mandateId)" data-journey-click="agent-client-mandate:click:remove-client-link">
+      @Messages("client.summary.client-remove")
+    </a>
+  </div>
     <button class="button" id="submit" type="submit">@Messages("agent.edit-mandate-details.submit")</button>
 
   </div>

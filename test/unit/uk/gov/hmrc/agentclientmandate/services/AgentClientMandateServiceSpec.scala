@@ -134,8 +134,9 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
 
         val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId)
-        await(response) must be(mandateNew.clientParty.map(_.name).get)
+        await(response) must be(mandateNew.clientDisplayName)
       }
+
       "throws an exception when no Mandate found" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         val respJson = Json.parse("{}")
@@ -143,7 +144,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
         val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId)
         val thrown = the[RuntimeException] thrownBy await(response)
-        thrown.getMessage must include(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate Client Name returned for id $mandateId")
+        thrown.getMessage must include(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate returned for id $mandateId")
       }
     }
 
@@ -390,6 +391,36 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
           .thenReturn(Future.successful(HttpResponse(NOT_FOUND)))
         val response = TestAgentClientMandateService.fetchClientMandateByClient("clientId", "service")
         await(response) must be(None)
+      }
+    }
+
+    "check for agent missing email" must {
+      "return false if agent is missing email" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        when(mockAgentClientMandateConnector.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(NO_CONTENT))
+        val response = TestAgentClientMandateService.doesAgentHaveMissingEmail("ated", "arn")
+        await(response) must be(false)
+      }
+
+      "return true if agent is missing email" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        when(mockAgentClientMandateConnector.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
+        val response = TestAgentClientMandateService.doesAgentHaveMissingEmail("ated", "arn")
+        await(response) must be(true)
+      }
+    }
+
+    "update agent email" must {
+      "update an agents missing email address" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        TestAgentClientMandateService.updateAgentMissingEmail("test@mail.com", "arn", "ated")
+      }
+    }
+
+    "update client email" must {
+      "update a clients email address" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "client")
+        TestAgentClientMandateService.updateClientEmail("test@mail.com", "mandateId")
       }
     }
 
