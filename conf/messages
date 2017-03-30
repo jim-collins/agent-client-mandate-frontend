@@ -8,6 +8,8 @@ edit-link = Edit
 confirm-button = Confirm
 mandate.back = Back
 agent.all-my-clients.button = View all my clients
+mandate.agent.change.details = Change Details
+save-button = Save
 
 mandate.checkbox-i-agree.confirm.error = Please confirm that you want to submit this
 mandate.agent.delegation.url.text = Change client
@@ -280,3 +282,42 @@ client.banner.text.rejected = <span class="heading-small">{0}</span> has rejecte
 client.banner.text.cancelled = The {1} agent can no longer act for the client
 client.banner.link-text.approved_active = Cancel
 client.banner.link-text.cancelled_rejected = Appoint an agent
+
+#edit agent details
+agent.edit-details.title = Your details
+agent.edit-details.header = Your details
+agent.edit-details.sub-header = Edit details
+agent.edit-details.agency.name = Business Name
+agent.edit-details.registered.address = Address
+agent.edit-details.ocr.details = Overseas Company Registration Details
+
+agent.edit-details-error.general.agentName = There is a problem with the business name
+agent.edit-details-error.general.addressDetails.addressLine1 = There is a problem with the address line 1
+agent.edit-details-error.general.addressDetails.addressLine2 = There is a problem with the address line 2
+agent.edit-details-error.general.addressDetails.addressLine3 = There is a problem with the address line 3
+agent.edit-details-error.general.addressDetails.addressLine4= There is a problem with the address line 4
+agent.edit-details-error.general.addressDetails.countryCode = There is a problem with the country field
+agent.edit-details-error.general.addressDetails.postalCode = There is a problem with the postal code
+
+agent.edit-details.error.no-registration-details = No Registration Details found
+
+agent.edit-mandate-details.agentName = Business Name
+agent.edit-mandate-details.address = Address
+agent.edit-mandate-details.line_2 = Address line 2
+agent.edit-mandate-details.line_3 = Address line 3
+agent.edit-mandate-details.line_4 = Address line 4
+agent.edit-mandate-details.country = Country
+agent.edit-mandate-detail.country.select = please select one country
+
+agent.edit-mandate-details-error.general.agentName = There is a problem with the business name
+agent.edit-mandate-details-error.general.address.addressLine1 = There is a problem with the address line 1
+agent.edit-mandate-details-error.general.address.addressLine2 = There is a problem with the address line 2
+agent.edit-mandate-details-error.general.address.addressLine3 = There is a problem with the address line 3
+agent.edit-mandate-details-error.general.address.addressLine4 = There is a problem with the address line 4
+agent.edit-mandate-details-error.general.address.countryCode = There is a problem with the country field
+
+agent.edit-mandate-detail.save.error = Failed to update
+
+agent.edit-mandate-details.idNumber = Overseas company registration number
+agent.edit-mandate-details.issuingCountry = Country that issued the number
+agent.edit-mandate-details.issuingIntitution = Institution that issued the number

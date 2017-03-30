@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package acceptance.agent.agentSummary
+package views.agent.agentSummary
 
 import org.joda.time.DateTime
 import org.jsoup.Jsoup
@@ -27,7 +27,7 @@ import uk.gov.hmrc.agentclientmandate.service.Mandates
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.domain.Generator
 
-class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach with GivenWhenThen{
+class pendingViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach with GivenWhenThen{
 
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
   val agentDetails = AgentDetails("ABC Ltd.", registeredAddressDetails)
@@ -43,7 +43,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
   val clientParty3 = Party("12345671", "test client3", PartyType.Individual, ContactDetails("aa.aa@a.com", None))
   val clientParty4 = Party("12345671", "test client4", PartyType.Individual, ContactDetails("aa.aa@a.com", None))
 
-  val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty1), currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 1")
+  val mandateNew: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = None, currentStatus = MandateStatus(Status.New, time1, "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 1")
   val mandateActive: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty), currentStatus = MandateStatus(Status.Active, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 2")
   val mandateApproved: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty3), currentStatus = MandateStatus(Status.Approved, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 3")
   val mandatePendingCancellation: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123458", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(clientParty4), currentStatus = MandateStatus(Status.PendingCancellation, time1, "credId"), statusHistory = Seq(MandateStatus(Status.New, time1, "credId")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name 4")
@@ -52,59 +52,46 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
   implicit val request = FakeRequest()
   implicit val messages : play.api.i18n.Messages = play.api.i18n.Messages.Implicits.applicationMessages
 
-  feature("The agent can view the agent summary page when they have both clients and pending clients") {
+  feature("The agent can view the agent summary page when they only have pending clients") {
 
     info("as an agent I want to view the correct page content")
 
-    scenario("agent has visited the page and has both clients and pending clients") {
+    scenario("agent has visited the page and has no clients but has pending clients") {
 
-      Given("An agent visits the page and has both clients and pending clients")
+      Given("An agent visits the page and has no clients but has pending clients")
       When("The agent views the mandates")
       implicit val request = FakeRequest()
 
-      val activeMandates = Seq(mandateActive)
-      val pendingMandates = Seq(mandateNew)
+      val pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)
 
-      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, pendingMandates), agentDetails, "")
+      val html = views.html.agent.agentSummary.pending("ATED", Mandates(Nil, pendingMandates), agentDetails, "")
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Your ATED clients")
       assert(document.title() === "Your ATED clients")
-
-      And("The Clients tab - should exist and have 1 item")
-      assert(document.getElementById("clients").text === "Current (1)")
+      
       And("The Pending Clients tab - should not exist")
-      assert(document.getElementById("pending-clients").text === "Requests (1)")
+      assert(document.getElementById("pending-clients").text === "Requests (4)")
 
-      And("The Add Client Button - should not exist")
-      assert(document.getElementById("add-client-btn") === null)
-      And("The Add Client Link - should exist")
-      assert(document.getElementById("add-client-link").text() === "Add a new client")
-    }
+      And("The Pending Clients table - should have a name and action")
+      assert(document.getElementById("client-name").text === "Name")
+      assert(document.getElementById("client-action").text === "Action")
 
-    scenario("agent has visited the page and has clients but no pending clients") {
+      And("The Pending Clients table - has the correct data and Accept link")
 
-      Given("An agent visits the page and has clients but no pending clients")
-      When("The agent views the mandates")
-      implicit val request = FakeRequest()
+      assert(document.getElementById("pending-client-data-0").child(0).text() === "client display name 1")
+      assert(document.getElementById("pending-client-data-0").child(2).text() === "Awaiting client")
+      assert(document.getElementById("reject-client-link-0") === null)
+      assert(document.getElementById("pending-client-data-1").child(0).text() === "client display name 5")
+      assert(document.getElementById("pending-client-data-1").child(2).text() === "Pending")
+      assert(document.getElementById("reject-client-link-1") === null)
+      assert(document.getElementById("pending-client-data-2").child(0).text() === "client display name 3")
+      assert(document.getElementById("pending-client-data-2").child(2).text() === "Accept client display name 3")
+      assert(document.getElementById("reject-client-link-2").text() === "Reject client display name 3")
+      assert(document.getElementById("pending-client-data-3").child(0).text() === "client display name 4")
+      assert(document.getElementById("pending-client-data-3").child(2).text() === "Pending")
+      assert(document.getElementById("reject-client-link-3") === null)
 
-      val activeMandates = Seq(mandateActive)
-
-      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, "")
-
-      val document = Jsoup.parse(html.toString())
-      Then("The title should match - Your ATED clients")
-      assert(document.title() === "Your ATED clients")
-
-      And("The Clients tab - should exist and have 1 item")
-      assert(document.getElementById("clients").text === "Current (1)")
-      And("The Pending Clients tab - should not exist")
-      assert(document.getElementById("pending-clients") === null)
-
-      And("The Clients table - has the correct data and View link")
-      assert(document.getElementById("remove-client-link-0").text === "Remove client display name 2")
-      assert(document.getElementById("client-name-0").text === "client display name 2")
-      assert(document.getElementById("client-link-0").text === "View details for client display name 2")
 
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)

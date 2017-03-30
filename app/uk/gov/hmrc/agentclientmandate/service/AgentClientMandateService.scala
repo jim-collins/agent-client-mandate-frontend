@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.agentclientmandate.service
 
+import models._
 import play.api.Logger
 import play.api.http.Status._
-import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, GovernmentGatewayConnector}
+import play.mvc.Http.Status.OK
+import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, BusinessCustomerConnector, GovernmentGatewayConnector}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.utils.{AgentClientMandateUtils, MandateConstants}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayDetails, ClientDisplayName}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayDetails, ClientDisplayName, EditAgentAddressDetails}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -38,6 +40,8 @@ trait AgentClientMandateService extends MandateConstants {
 
   def ggConnector: GovernmentGatewayConnector
 
+  def businessCustomerConnector: BusinessCustomerConnector
+
   def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[String] = {
     dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) flatMap {
       case Some(cachedEmail) =>
@@ -45,17 +49,18 @@ trait AgentClientMandateService extends MandateConstants {
           case Some(displayName) =>
             val mandateDto = CreateMandateDto(cachedEmail.email, service, displayName.name)
             agentClientMandateConnector.createMandate(mandateDto) flatMap {
-              response => response.status match {
-                case CREATED =>
-                  val mandateId = (response.json \ "mandateId").as[String]
-                  dataCacheService.clearCache() flatMap { clearCacheResponse =>
-                    val clientDetails = ClientDisplayDetails(displayName.name, mandateId)
-                    dataCacheService.cacheFormData[ClientDisplayDetails](agentRefCacheId, clientDetails) flatMap { cachingResponse =>
-                      Future.successful(mandateId)
+              response =>
+                response.status match {
+                  case CREATED =>
+                    val mandateId = (response.json \ "mandateId").as[String]
+                    dataCacheService.clearCache() flatMap { clearCacheResponse =>
+                      val clientDetails = ClientDisplayDetails(displayName.name, mandateId)
+                      dataCacheService.cacheFormData[ClientDisplayDetails](agentRefCacheId, clientDetails) flatMap { cachingResponse =>
+                        Future.successful(mandateId)
+                      }
                     }
-                  }
-                case status => throw new RuntimeException(s"Mandate not created for $service")
-              }
+                  case status => throw new RuntimeException(s"Mandate not created for $service")
+                }
             }
           case None => throw new RuntimeException(s"Client Display Name not found in cache for $service")
         }
@@ -67,8 +72,8 @@ trait AgentClientMandateService extends MandateConstants {
     fetchClientMandate(mandateId).map(
       mandate =>
         mandate.flatMap(_.clientParty.map(_.name))).map {
-          case Some(mandateName) => mandateName
-          case _ => throw new RuntimeException(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate Client Name returned for id $mandateId")
+      case Some(mandateName) => mandateName
+      case _ => throw new RuntimeException(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate Client Name returned for id $mandateId")
     }
   }
 
@@ -82,19 +87,21 @@ trait AgentClientMandateService extends MandateConstants {
 
   def fetchClientMandate(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandate]] = {
     agentClientMandateConnector.fetchMandate(mandateId) map {
-      response => response.status match {
-        case OK => response.json.asOpt[Mandate]
-        case status => None
-      }
+      response =>
+        response.status match {
+          case OK => response.json.asOpt[Mandate]
+          case status => None
+        }
     }
   }
 
   def fetchClientMandateByClient(clientId: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandate]] = {
     agentClientMandateConnector.fetchMandateByClient(clientId, serviceName) map {
-      response => response.status match {
-        case OK => response.json.asOpt[Mandate]
-        case status => None
-      }
+      response =>
+        response.status match {
+          case OK => response.json.asOpt[Mandate]
+          case status => None
+        }
     }
   }
 
@@ -115,41 +122,42 @@ trait AgentClientMandateService extends MandateConstants {
 
   def fetchAllClientMandates(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandates]] = {
     agentClientMandateConnector.fetchAllMandates(arn, serviceName) flatMap {
-      response => response.status match {
-        case OK =>
-          val mandates = response.json.asOpt[Seq[Mandate]]
-          mandates match {
-            case Some(x) =>
-              val pendingMandates = x.filter(a => AgentClientMandateUtils.isPendingStatus(a.currentStatus.status))
-              val activeMandates = x.filter(a => a.currentStatus.status == Status.Active)
-              Future.successful(Some(Mandates(activeMandates, pendingMandates)))
-            case None => Future.successful(None)
-          }
-        case NOT_FOUND =>
-          ggConnector.retrieveClientList flatMap { clientList =>
-            val ggRelationshipDtoList = clientList flatMap (_.identifiersForDisplay.headOption) map { x =>
-              GGRelationshipDto(serviceName = serviceName,
-                agentPartyId = arn,
-                credId = ac.user.userId,
-                clientSubscriptionId = x.value)
+      response =>
+        response.status match {
+          case OK =>
+            val mandates = response.json.asOpt[Seq[Mandate]]
+            mandates match {
+              case Some(x) =>
+                val pendingMandates = x.filter(a => AgentClientMandateUtils.isPendingStatus(a.currentStatus.status))
+                val activeMandates = x.filter(a => a.currentStatus.status == Status.Active)
+                Future.successful(Some(Mandates(activeMandates, pendingMandates)))
+              case None => Future.successful(None)
             }
-            if (ggRelationshipDtoList.size > 0) {
-              agentClientMandateConnector.importExistingRelationships(ggRelationshipDtoList) flatMap { resp =>
-                resp.status match {
-                  case OK =>
-                    Future.successful(None)
-                  case status =>
-                    Logger.warn(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import failed for $arn - status - $status")
-                    Future.successful(None)
+          case NOT_FOUND =>
+            ggConnector.retrieveClientList flatMap { clientList =>
+              val ggRelationshipDtoList = clientList flatMap (_.identifiersForDisplay.headOption) map { x =>
+                GGRelationshipDto(serviceName = serviceName,
+                  agentPartyId = arn,
+                  credId = ac.user.userId,
+                  clientSubscriptionId = x.value)
+              }
+              if (ggRelationshipDtoList.size > 0) {
+                agentClientMandateConnector.importExistingRelationships(ggRelationshipDtoList) flatMap { resp =>
+                  resp.status match {
+                    case OK =>
+                      Future.successful(None)
+                    case status =>
+                      Logger.warn(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import failed for $arn - status - $status")
+                      Future.successful(None)
+                  }
                 }
               }
+              else {
+                Future.successful(None)
+              }
             }
-            else {
-              Future.successful(None)
-            }
-          }
-        case _ => Future.successful(None)
-      }
+          case _ => Future.successful(None)
+        }
     }
   }
 
@@ -205,10 +213,88 @@ trait AgentClientMandateService extends MandateConstants {
       }
     }
   }
+
+  def updateRegisteredDetails(editAgentDetails: Option[EditAgentAddressDetails] = None,
+                              editNonUKIdDetails: Option[Identification] = None)
+                             (implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[UpdateRegistrationDetailsRequest]] = {
+    val cachedRespData = dataCacheService.fetchAndGetFormData[AgentDetails](agentDetailsFormId)
+    for {
+      cachedData <- cachedRespData
+      updatedDataResponse <- {
+        cachedData match {
+          case Some(oldData) =>
+            editAgentDetails match {
+              case Some(editBusinessDetails) => updateBusinessDetails(oldData, editBusinessDetails)
+              case None =>
+                editNonUKIdDetails match {
+                  case Some(editNonUkIdDetail) => updateOcrDetails(oldData, editNonUkIdDetail)
+                  case None => Future.successful(None)
+                }
+            }
+          case None => Future.successful(None)
+        }
+      }
+      _ <- updatedDataResponse match {
+        case Some(x) => dataCacheService.clearCache().flatMap(r => Future.successful(r))
+        case None => Future.successful(None)
+      }
+    } yield {
+      updatedDataResponse
+    }
+
+  }
+
+  private def updateBusinessDetails(cachedData: AgentDetails, editAgentDetails: EditAgentAddressDetails)(implicit hc: HeaderCarrier, ac: AuthContext) = {
+    val updateData = UpdateRegistrationDetailsRequest(isAnIndividual = false,
+      individual = None,
+      organisation = Some(Organisation(organisationName = editAgentDetails.agentName,
+        isAGroup = cachedData.organisation.flatMap(_.isAGroup),
+        organisationType = cachedData.organisation.flatMap(_.organisationType))),
+      address = editAgentDetails.address,
+      contactDetails = cachedData.contactDetails,
+      isAnAgent = true,
+      isAGroup = cachedData.organisation.flatMap(_.isAGroup).getOrElse(false))
+
+    businessCustomerConnector.updateRegistrationDetails(cachedData.safeId, updateData).map {
+      response =>
+        response.status match {
+          case OK => Some(updateData)
+          case status =>
+            Logger.warn(s"[AgentClientMandateService] [updateBusinessDetails] [status] = ${status} && [response.body] = ${response.body}")
+            None
+        }
+    }
+  }
+
+  private def updateOcrDetails(cachedData: AgentDetails, nonUkId: Identification)(implicit hc: HeaderCarrier, ac: AuthContext) = {
+    println("*******************************************")
+    val updateData = UpdateRegistrationDetailsRequest(isAnIndividual = false,
+      individual = None,
+      organisation = Some(Organisation(organisationName = cachedData.agentName,
+        isAGroup = cachedData.organisation.flatMap(_.isAGroup),
+        organisationType = cachedData.organisation.flatMap(_.organisationType))),
+      address = cachedData.addressDetails,
+      contactDetails = cachedData.contactDetails,
+      isAnAgent = true,
+      isAGroup = cachedData.organisation.flatMap(_.isAGroup).getOrElse(false),
+      identification = Some(nonUkId))
+
+    businessCustomerConnector.updateRegistrationDetails(cachedData.safeId, updateData).map {
+      response =>
+        response.status match {
+          case OK => Some(updateData)
+          case status =>
+            Logger.warn(s"[AgentClientMandateService] [updateOcrDetails] [status] = ${status} && [response.body] = ${response.body}")
+            None
+        }
+    }
+  }
+
 }
 
 object AgentClientMandateService extends AgentClientMandateService {
   val dataCacheService = DataCacheService
   val agentClientMandateConnector = AgentClientMandateConnector
   val ggConnector = GovernmentGatewayConnector
+  val businessCustomerConnector: BusinessCustomerConnector = BusinessCustomerConnector
 }

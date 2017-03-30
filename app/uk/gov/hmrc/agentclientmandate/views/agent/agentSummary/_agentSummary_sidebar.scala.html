@@ -2,7 +2,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.models.AgentDetails
 
-@(agentDetails: AgentDetails)(implicit request: Request[_], messages: Messages)
+@(agentDetails: AgentDetails, service: String)(implicit request: Request[_], messages: Messages)
 
 <section class="section section--blue-top">
 
@@ -16,6 +16,9 @@
          <li class="font-xsmall" id="sidebar.addressLine4">@agentDetails.addressDetails.addressLine4</li>
          <li class="font-xsmall" id="sidebar.postcode">@agentDetails.addressDetails.postalCode</li>
          <li class="font-xsmall" id="sidebar.countrycode">@agentDetails.addressDetails.countryCode</li>
+
+         <li class="font-xsmall"><a href="@uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgencyDetailsController.view(service)" id="change-details-link">Hello</a></li>
+
       </ul>
    </div>
 

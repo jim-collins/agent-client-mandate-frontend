@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package acceptance.agent.agentSummary
+package views.agent.agentSummary
 
 import org.joda.time.DateTime
 import org.jsoup.Jsoup
@@ -23,7 +23,6 @@ import org.scalatest.{BeforeAndAfterEach, FeatureSpec, GivenWhenThen}
 import org.scalatestplus.play.OneServerPerSuite
 import play.api.test.FakeRequest
 import uk.gov.hmrc.agentclientmandate.models._
-import uk.gov.hmrc.agentclientmandate.service.Mandates
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.domain.Generator
 

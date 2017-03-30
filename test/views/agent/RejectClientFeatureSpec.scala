@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package acceptance.agent
+package views.agent
 
 import org.jsoup.Jsoup
 import org.scalatest.mock.MockitoSugar

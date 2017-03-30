@@ -77,3 +77,11 @@ GET     /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclie
 POST    /agent/edit-client/:service/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.submit(service: String, mandateId: String)
 
 GET     /client/partial-banner/:clientId/:service                uk.gov.hmrc.agentclientmandate.controllers.client.ClientBannerPartialController.getBanner(clientId: String, service: String, returnUrl: String)
+
+GET     /agent/details/:service                                   uk.gov.hmrc.agentclientmandate.controllers.agent.AgencyDetailsController.view(service: String)
+
+GET     /agent/details/edit/:service/businessDetails        uk.gov.hmrc.agentclientmandate.controllers.agent.UpdateAddressDetailsController.view(service: String)
+POST    /agent/details/edit/:service/businessDetails        uk.gov.hmrc.agentclientmandate.controllers.agent.UpdateAddressDetailsController.submit(service: String)
+
+GET     /agent/details/edit/:service/ocrDetails        uk.gov.hmrc.agentclientmandate.controllers.agent.UpdateOcrDetailsController.view(service: String)
+POST    /agent/details/edit/:service/ocrDetails        uk.gov.hmrc.agentclientmandate.controllers.agent.UpdateOcrDetailsController.submit(service: String)
