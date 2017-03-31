@@ -43,7 +43,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
         case Some(mandate) =>
           val editMandateDetails = EditMandateDetails(displayName = mandate.clientDisplayName,
             email = mandate.agentParty.contactDetails.email)
-          Ok(views.html.agent.editClient(editMandateDetailsForm.fill(editMandateDetails), service, mandateId, mandate.clientDisplayName, getBackLink(service)))
+          Ok(views.html.agent.editClient(editMandateDetailsForm.fill(editMandateDetails), service, mandateId, mandate.clientDisplayName, mandate.clientParty.get.name, getBackLink(service)))
         case _ => throw new RuntimeException(s"No Mandate returned with id $mandateId for service $service")
       }
   }
@@ -53,7 +53,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
       formWithError => {
         acmService.fetchClientMandate(mandateId) map {
           case Some(mandate) =>
-            BadRequest(views.html.agent.editClient(formWithError, service, mandateId, mandate.clientDisplayName, getBackLink(service)))
+            BadRequest(views.html.agent.editClient(formWithError, service, mandateId, mandate.clientDisplayName,mandate.clientParty.get.name, getBackLink(service)))
           case _ => throw new RuntimeException(s"No Mandate returned with id $mandateId for service $service")
         }
       },
@@ -76,7 +76,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
             val errorForm = editMandateDetailsForm.withError(key = "agent-enter-email-form", message = errorMsg).fill(editMandate)
             acmService.fetchClientMandate(mandateId) map {
               case Some(mandate) =>
-                BadRequest(views.html.agent.editClient(errorForm, service, mandateId, mandate.clientDisplayName, getBackLink(service)))
+                BadRequest(views.html.agent.editClient(errorForm, service, mandateId, mandate.clientDisplayName, mandate.clientParty.get.name,getBackLink(service)))
               case _ => throw new RuntimeException(s"No Mandate returned with id $mandateId for service $service")
             }
 
