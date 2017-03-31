@@ -6,7 +6,7 @@
 @import uk.gov.hmrc.agentclientmandate.models._
 @import uk.gov.hmrc.agentclientmandate.service._
 
-@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, clientDisplayName: String, clientParty: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
+@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, clientDisplayName: String, clientParty: Option[String], backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("agent.edit-mandate-details.title", clientDisplayName, clientParty), delegatedService = Some(service)) {
   @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase),
@@ -17,13 +17,14 @@
 
 
   <div class="form-field">
-    <span class="heading-medium" id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId, clientParty)</span>
+    <span class="heading-medium" id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</span>
   </div>
 
+  @if(clientParty.isDefined){
   <div class="form-field">
     <paragraph id="sub-heading-client-name">@Messages("agent.edit-mandate-details.sub-heading-client-name", clientParty)</paragraph>
   </div>
-
+  }
 
   @form(action = routes.EditMandateDetailsController.submit(service, mandateId)) {
   <div class="form-group">
