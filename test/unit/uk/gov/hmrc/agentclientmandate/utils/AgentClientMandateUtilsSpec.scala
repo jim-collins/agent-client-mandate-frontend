@@ -57,4 +57,13 @@ class AgentClientMandateUtilsSpec extends PlaySpec with OneServerPerSuite {
   }
 
 
+    "getIsoCodeTupleList" must {
+      "bring the correct country from the file" in {
+        AgentClientMandateUtils.getIsoCodeTupleList must contain(("US", "USA :United States of America"))
+        AgentClientMandateUtils.getIsoCodeTupleList must contain(("GB", "United Kingdom :UK, GB, Great Britain"))
+        AgentClientMandateUtils.getIsoCodeTupleList must contain(("GB", "United Kingdom :UK, GB, Great Britain"))
+      }
+    }
+
+
 }

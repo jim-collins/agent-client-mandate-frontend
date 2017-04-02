@@ -39,11 +39,7 @@ trait BusinessCustomerConnector extends ServicesConfig with RawResponseReads {
 
   def baseUri: String
 
-  def registerUri: String
-
   def updateRegistrationDetailsURI: String
-
-  def knownFactsUri: String
 
   def http: HttpGet with HttpPost
 
@@ -55,15 +51,9 @@ trait BusinessCustomerConnector extends ServicesConfig with RawResponseReads {
     http.POST(postUrl, jsonData) map { response =>
       response.status match {
         case OK => response
-        case NOT_FOUND =>
-          Logger.warn(s"[BusinessCustomerConnector][updateRegistrationDetails] - Not Found Exception ${updateRegistrationDetails.organisation.map(_.organisationName)}")
-          throw new InternalServerException(s"${Messages("bc.connector.error.not-found")}  Exception ${response.body}")
-        case SERVICE_UNAVAILABLE =>
-          Logger.warn(s"[BusinessCustomerConnector][updateRegistrationDetails] - Service Unavailable Exception ${updateRegistrationDetails.organisation.map(_.organisationName)}")
-          throw new ServiceUnavailableException(s"${Messages("bc.connector.error.service-unavailable")}  Exception ${response.body}")
         case status =>
-          Logger.warn(s"[BusinessCustomerConnector][updateRegistrationDetails] - $status Exception ${updateRegistrationDetails.organisation.map(_.organisationName)}")
-          throw new InternalServerException(s"${Messages("bc.connector.error.unknown-response", status)}  Exception ${response.body}")
+          Logger.warn(s"[BusinessCustomerConnector][updateRegistrationDetails] - STATUS - $status ")
+          response
       }
     }
   }
@@ -74,8 +64,6 @@ object BusinessCustomerConnector extends BusinessCustomerConnector {
   // $COVERAGE-OFF$
   val serviceUrl = baseUrl("business-customer")
   val baseUri = "business-customer"
-  val registerUri = "register"
-  val knownFactsUri = "known-facts"
   val updateRegistrationDetailsURI = "update"
   val http: HttpGet with HttpPost = WSHttp
   // $COVERAGE-ON$

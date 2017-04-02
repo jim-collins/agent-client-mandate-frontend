@@ -26,11 +26,12 @@ import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.Mandates
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.domain.Generator
+import unit.uk.gov.hmrc.agentclientmandate.builders.AgentBuilder
 
 class pendingViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach with GivenWhenThen{
 
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
-  val agentDetails = AgentDetails("ABC Ltd.", registeredAddressDetails)
+  val agentDetails = AgentBuilder.buildAgentDetails
 
   val mandateId = "12345678"
   val time1 = DateTime.now()

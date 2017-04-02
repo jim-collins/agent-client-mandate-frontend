@@ -326,7 +326,7 @@ agent.edit-details-error.general.addressDetails.countryCode = There is a problem
 agent.edit-details-error.general.addressDetails.postalCode = There is a problem with the postal code
 
 agent.edit-details.error.no-registration-details = No Registration Details found
-
+agent.edit-mandate-details.address.header = Edit business details
 agent.edit-mandate-details.agentName = Business Name
 agent.edit-mandate-details.address = Address
 agent.edit-mandate-details.line_2 = Address line 2
@@ -343,7 +343,28 @@ agent.edit-mandate-details-error.general.address.addressLine4 = There is a probl
 agent.edit-mandate-details-error.general.address.countryCode = There is a problem with the country field
 
 agent.edit-mandate-detail.save.error = Failed to update
-
+agent.edit-mandate-details.ocr.header = Edit overseas company registration details
 agent.edit-mandate-details.idNumber = Overseas company registration number
 agent.edit-mandate-details.issuingCountry = Country that issued the number
 agent.edit-mandate-details.issuingIntitution = Institution that issued the number
+
+agent.edit-details-error.businessName = You must enter a business name
+agent.edit-details-error.line_1 = You must enter an address into Address line 1
+agent.edit-details-error.line_2 = You must enter an address into Address line 2
+agent.edit-details-error.country = You must enter a country
+agent.edit-details-error.businessName.length = The business name cannot be more than {0} characters
+agent.edit-details-error.line_1.length = Address line 1 cannot be more than {0} characters
+agent.edit-details-error.line_2.length = Address line 2 cannot be more than {0} characters
+agent.edit-details-error.line_3.length = Address line 3 cannot be more than {0} characters
+agent.edit-details-error.line_3.length = Address line 3 cannot be more than {0} characters
+agent.edit-details-error.line_4.length = Address line 4 cannot be more than {0} characters
+agent.edit-details-error.postcode.length = The postcode cannot be more than {0} characters
+agent.edit-details-error.businessUniqueId.length = The overseas company registration number cannot be more than {0} characters
+agent.edit-details-error.utr.length = The Unique Taxpayer Reference cannot be more than {0} characters
+agent.edit-details-error.issuingInstitution.length = The institution that issued the overseas company registration number cannot be more than {0} characters
+agent.edit-details-error.summaryHeader = There is a problem with this page
+agent.edit-details-error.non-uk = You cannot select United Kingdom when entering an overseas address
+
+agent.edit-details-error.businessUniqueId.length = The overseas company registration number cannot be more than {0} characters
+agent.edit-details-error.issuingInstitution.length = The institution that issued the overseas company registration number cannot be more than {0} characters
+agent.edit-details-error.country = You must enter a country

@@ -17,7 +17,7 @@
 
 <span class="screen-reader-text">@screenReaderText</span>
 
-@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails)), scriptElem = Some(pageScripts), delegatedService = Some(service)){
+@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = Some(_agentSummary_sidebar(agentDetails, service)), scriptElem = Some(pageScripts), delegatedService = Some(service)){
 
   <div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
   <h1 class="heading-xlarge" id="header">

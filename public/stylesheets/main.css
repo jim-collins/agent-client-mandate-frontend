@@ -361,3 +361,11 @@ table td {
 .form-control-indent {
     max-width:60%;
 }
+
+.text-bold {
+  font-weight: bold;
+}
+
+.td-top {
+    vertical-align: top;
+}

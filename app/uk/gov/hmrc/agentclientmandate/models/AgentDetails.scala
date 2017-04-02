@@ -67,9 +67,11 @@ case class AgentDetails(safeId: String,
                         addressDetails: RegisteredAddressDetails,
                         contactDetails: EtmpContactDetails,
                         identification: Option[Identification]) {
+  // $COVERAGE-OFF$
   def agentName: String = {
     if (isAnIndividual) s"${individual.map(_.firstName).getOrElse("")} ${individual.map(_.lastName).getOrElse("")}"
     else organisation.map(_.organisationName).getOrElse("")
+    // $COVERAGE-ON$
   }
 }
 

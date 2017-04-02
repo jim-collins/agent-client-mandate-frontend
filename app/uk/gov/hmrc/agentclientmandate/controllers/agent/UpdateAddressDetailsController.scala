@@ -60,7 +60,9 @@ trait UpdateAddressDetailsController extends FrontendController with Actions wit
   def submit(service: String) = AuthorisedFor(AgentRegime(), GGConfidence).async {
     implicit user => implicit request =>
       editAgentAddressDetailsForm.bindFromRequest.fold(
-        formWithErrors => Future.successful(BadRequest(views.html.agent.editDetails.update_address_details(formWithErrors, service, displayDetails(service), getBackLink(service)))),
+        formWithErrors =>
+          Future.successful(BadRequest(views.html.agent.editDetails.update_address_details(formWithErrors,
+            service, displayDetails(service), getBackLink(service)))),
         updateDetails => {
           for {
             updatedDetails <- agentClientMandateService.updateRegisteredDetails(editAgentDetails = Some(updateDetails))
@@ -92,8 +94,9 @@ trait UpdateAddressDetailsController extends FrontendController with Actions wit
 }
 
 object UpdateAddressDetailsController extends UpdateAddressDetailsController {
+  // $COVERAGE-OFF$
   val dataCacheService: DataCacheService = DataCacheService
   val authConnector: AuthConnector = FrontendAuthConnector
   val agentClientMandateService: AgentClientMandateService = AgentClientMandateService
-
+  // $COVERAGE-ON$
 }

@@ -29,9 +29,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.frontend.auth.connectors.{AuthConnector, DelegationConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.agent.AgencyDetailsController
-import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, RegisteredAddressDetails}
-import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
-import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.models.AgentDetails
+import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
+import unit.uk.gov.hmrc.agentclientmandate.builders.{AgentBuilder, AuthBuilder, SessionBuilder}
 
 import scala.concurrent.Future
 
@@ -40,8 +40,8 @@ class AgencyDetailsControllerSpec extends PlaySpec with OneServerPerSuite with M
    "AgencyDetailsController" should {
 
      "not respond with NOT_FOUND status" when {
-       "GET /mandate/agent/details is invoked" in {
-         val result = route(FakeRequest(GET, s"/mandate/agent/details")).get
+       "GET /mandate/agent/details/edit/abc is invoked" in {
+         val result = route(FakeRequest(GET, "/mandate/agent/details/edit/abc")).get
          status(result) mustNot be(NOT_FOUND)
        }
      }
@@ -66,18 +66,21 @@ class AgencyDetailsControllerSpec extends PlaySpec with OneServerPerSuite with M
 
    }
 
-  val agentDetails = AgentDetails("Agent Name", RegisteredAddressDetails("address line 1", "address line 2",countryCode = "FR"))
+  val agentDetails = AgentBuilder.buildAgentDetails
 
   val mockAuthConnector = mock[AuthConnector]
   val mockAgentClientMandateService = mock[AgentClientMandateService]
+  val mockDataCacheService = mock[DataCacheService]
 
   object TestAgencyDetailsController extends AgencyDetailsController {
     override val authConnector = mockAuthConnector
+    override val dataCacheService: DataCacheService = mockDataCacheService
     override val agentClientMandateService: AgentClientMandateService = mockAgentClientMandateService
   }
 
   override def beforeEach() = {
     reset(mockAuthConnector)
+    reset(mockDataCacheService)
   }
 
   def getWithUnAuthorisedUser(service: String)(test: Future[Result] => Any) {
@@ -90,6 +93,8 @@ class AgencyDetailsControllerSpec extends PlaySpec with OneServerPerSuite with M
   def getWithAuthorisedUser(agentDetails: AgentDetails, service: String)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    val cachedData = AgentBuilder.buildAgentDetails
+    when(mockDataCacheService.cacheFormData[AgentDetails](Matchers.eq(TestAgencyDetailsController.agentDetailsFormId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn(Future.successful(agentDetails))
     val result = TestAgencyDetailsController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)

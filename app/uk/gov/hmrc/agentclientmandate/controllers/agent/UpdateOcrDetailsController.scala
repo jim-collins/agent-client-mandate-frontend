@@ -60,23 +60,24 @@ trait UpdateOcrDetailsController extends FrontendController with Actions with Ma
   }
 
   def submit(service: String) = AuthorisedFor(AgentRegime(), GGConfidence).async {
-    implicit user => implicit request =>
-      nonUkIdentificationForm.bindFromRequest.fold(
-        formWithErrors => Future.successful(BadRequest(views.html.agent.editDetails.update_ocr_details(formWithErrors, service, displayDetails(service), getBackLink(service)))),
-        updateDetails => {
-          for {
-            updatedDetails <- agentClientMandateService.updateRegisteredDetails(editNonUKIdDetails = Some(updateDetails))
-          } yield {
-            updatedDetails match {
-              case Some(x) => Redirect(routes.AgencyDetailsController.view(service))
-              case None =>
-                val errorMsg = Messages("agent.edit-mandate-detail.save.error")
-                val errorForm = nonUkIdentificationForm.withError(key = "addressType", message = errorMsg).fill(updateDetails)
-                BadRequest(views.html.agent.editDetails.update_ocr_details(errorForm, service, displayDetails(service), getBackLink(service)))
+    implicit user =>
+      implicit request =>
+        nonUkIdentificationForm.bindFromRequest.fold(
+          formWithErrors => Future.successful(BadRequest(views.html.agent.editDetails.update_ocr_details(formWithErrors, service, displayDetails(service), getBackLink(service)))),
+          updateDetails => {
+            for {
+              updatedDetails <- agentClientMandateService.updateRegisteredDetails(editNonUKIdDetails = Some(updateDetails))
+            } yield {
+              updatedDetails match {
+                case Some(x) => Redirect(routes.AgencyDetailsController.view(service))
+                case None =>
+                  val errorMsg = Messages("agent.edit-mandate-detail.save.error")
+                  val errorForm = nonUkIdentificationForm.withError(key = "addressType", message = errorMsg).fill(updateDetails)
+                  BadRequest(views.html.agent.editDetails.update_ocr_details(errorForm, service, displayDetails(service), getBackLink(service)))
+              }
             }
           }
-        }
-      )
+        )
   }
 
   private def getBackLink(service: String) = {
@@ -94,8 +95,9 @@ trait UpdateOcrDetailsController extends FrontendController with Actions with Ma
 }
 
 object UpdateOcrDetailsController extends UpdateOcrDetailsController {
+  // $COVERAGE-OFF$
   val dataCacheService: DataCacheService = DataCacheService
   val authConnector: AuthConnector = FrontendAuthConnector
   val agentClientMandateService: AgentClientMandateService = AgentClientMandateService
-
+  // $COVERAGE-ON$
 }

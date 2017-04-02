@@ -50,8 +50,9 @@ trait AgencyDetailsController extends FrontendController with Actions with Manda
 }
 
 object AgencyDetailsController extends AgencyDetailsController {
+  // $COVERAGE-OFF$
   val dataCacheService: DataCacheService = DataCacheService
   val authConnector: AuthConnector = FrontendAuthConnector
   val agentClientMandateService: AgentClientMandateService = AgentClientMandateService
-
+  // $COVERAGE-ON$
 }

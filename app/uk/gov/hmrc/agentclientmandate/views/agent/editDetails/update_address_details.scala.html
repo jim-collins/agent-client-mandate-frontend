@@ -8,13 +8,29 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.controllers.auth.ExternalUrls
 
+@pageScripts = {
+<script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/mandate-country-auto-complete.js")'></script>
+<script>
+        $(document).ready(function() {
+            countryCodeAutoComplete("#registered-country")
+            var classOfSelect = $('#registered-country_').attr('class');
+            $("#registered-country").addClass(classOfSelect)
+            var labelText = $("#registered-country_field").text();
+            var divId = "registered-country_div"
+            var fieldId = "registered-country_"
+            createLabelForHiddenSelect(divId, fieldId, labelText);
+        });
+    </script>
+}
+
+
 @implicitFormInstance = @{ Some(agentDetailsForm) }
 
-@main_template(title = Messages("agent.edit-details.title"), delegatedService = Some(service)) {
+@main_template(title = Messages("agent.edit-details.title"), scriptElem = Some(pageScripts), delegatedService = Some(service)) {
 
-@backLinkAndSubHeader(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase))
+@pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase))
 <h1 class="heading-xlarge" id="header">
-    @Messages("agent.edit-mandate-details.header", service)
+    @Messages("agent.edit-mandate-details.address.header")
 </h1>
 
 @mandateErrorSummary(agentDetailsForm, "agent.edit-mandate-details-error.general")
@@ -55,7 +71,7 @@
     '_id -> "businessAddress.line_4",
     '_showConstraints -> false)
 
-    @mandateDropdown(agentDetailsForm("address.countryCode"),
+    @mandateNewDropdown(agentDetailsForm("address.countryCode"),
     elementOptions = displayDetails.listOfIsoCode,
     displayEmptyValue = true,
     '_id -> "businessAddress.country",
