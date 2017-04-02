@@ -84,10 +84,11 @@ trait UpdateOcrDetailsController extends FrontendController with Actions with Ma
     Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgencyDetailsController.view(service).url)
   }
 
+
   private def displayDetails(service: String) = {
     BusinessRegistrationDisplayDetails("NUK",
-      Messages("bc.business-registration.agent.non-uk.header"),
-      Messages("bc.business-registration.text.agent", service),
+      Messages("agent.edit-details.agent.non-uk.header"),
+      Messages("agent.edit-details.text.agent", service),
       None,
       AgentClientMandateUtils.getIsoCodeTupleList)
   }

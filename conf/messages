@@ -368,3 +368,6 @@ agent.edit-details-error.non-uk = You cannot select United Kingdom when entering
 agent.edit-details-error.businessUniqueId.length = The overseas company registration number cannot be more than {0} characters
 agent.edit-details-error.issuingInstitution.length = The institution that issued the overseas company registration number cannot be more than {0} characters
 agent.edit-details-error.country = You must enter a country
+
+agent.edit-details.agent.non-uk.header = What is the registered business name and address of your overseas agency?
+agent.edit-details.text.agent= {0} agency set up
