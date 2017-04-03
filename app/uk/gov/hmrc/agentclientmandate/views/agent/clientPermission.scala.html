@@ -20,8 +20,6 @@
     @Messages("agent.client-permission.header")
   </h1>
 
-
-
 <div class="form-group">
   <span class="paragraph" id="permission-text">
     @Html(Messages("agent.client-permission.hasPermission.selected.ated.yes.notice"))
@@ -49,21 +47,15 @@
       @if(service.toUpperCase == "ATED") {
       <div id="client-permission-false-hidden">
 
-        <div class="form-group">
-          <div class="important-notice">@Html(Messages("agent.client-permission.hasPermission.selected.ated.no.notice"))</div>
-        </div>
-
-
+        <div class="important-notice">@Html(Messages("agent.client-permission.hasPermission.selected.ated.no.notice"))</div>
 
       </div>
       }
     </div>
 
-    <div class="form-group">
-      <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
-    </div>
+    <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
 
-    <div class="form-group" id="view-all-clients-div">
+    <div id="view-all-clients-div">
       <a class="button" id="submit" class="view-all-clients" href="@routes.AgentSummaryController.view(service)" data-journey-click="agent-client-mandate:click:view-all-clients">@Messages("agent.all-my-clients.button")</a>
     </div>
 
