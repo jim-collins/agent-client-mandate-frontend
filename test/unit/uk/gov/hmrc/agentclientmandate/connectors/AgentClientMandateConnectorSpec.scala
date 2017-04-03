@@ -29,7 +29,7 @@ import uk.gov.hmrc.agentclientmandate.models.{CreateMandateDto, _}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
-import unit.uk.gov.hmrc.agentclientmandate.builders.AgentBusinessUtrGenerator
+import unit.uk.gov.hmrc.agentclientmandate.builders.{AgentBuilder, AgentBusinessUtrGenerator}
 import unit.uk.gov.hmrc.agentclientmandate.builders.AuthBuilder._
 
 import scala.concurrent.Future
@@ -72,8 +72,8 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       clientDisplayName = "client display name"
     )
 
-  val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
-  val agentDetails = AgentDetails("Agent Ltd.", registeredAddressDetails)
+  //val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
+  val agentDetails = AgentBuilder.buildAgentDetails
 
   "AgentClientMandateConnector" must {
 
@@ -138,7 +138,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(agentDetails))
 
       val response = await(TestAgentClientMandateConnector.fetchAgentDetails())
-      response.agentName must be("Agent Ltd.")
+      response.agentName must be("Org Name")
     }
 
     "activate a client" in {

@@ -34,7 +34,7 @@ import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCa
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.play.frontend.auth.connectors.{AuthConnector, DelegationConnector}
 import uk.gov.hmrc.play.http.HeaderCarrier
-import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import unit.uk.gov.hmrc.agentclientmandate.builders.{AgentBuilder, AuthBuilder, SessionBuilder}
 
 import scala.concurrent.Future
 
@@ -218,7 +218,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   }
 
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
-  val agentDetails = AgentDetails("ABC Ltd.", registeredAddressDetails)
+  val agentDetails = AgentBuilder.buildAgentDetails
 
   val mandateId = "12345678"
   val time1 = DateTime.now()

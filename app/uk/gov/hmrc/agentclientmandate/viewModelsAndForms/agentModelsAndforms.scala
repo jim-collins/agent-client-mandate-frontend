@@ -23,6 +23,7 @@ import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.libs.json.Json
+import uk.gov.hmrc.agentclientmandate.models.{Identification, RegisteredAddressDetails}
 import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils._
 
 import scala.annotation.tailrec
@@ -74,10 +75,10 @@ object AgentMissingEmailForm {
       val formErrors = emailConsent match {
         case Some("true") => {
           val email = f.data.get("email").getOrElse("")
-          if (email.trim.length == lengthZero){
+          if (email.trim.length == lengthZero) {
             Seq(FormError("email", Messages("agent.enter-email.error.email")))
           }
-          else if (email.length > lengthZero && email.length > maxlength){
+          else if (email.length > lengthZero && email.length > maxlength) {
             Seq(FormError("email", Messages("agent.enter-email.error.email.max.length")))
           } else {
             val x = emailRegex.findFirstMatchIn(email).exists(_ => true)
@@ -97,15 +98,11 @@ object AgentMissingEmailForm {
   }
 
 
-
-
-
-
   val agentMissingEmailForm =
     Form(
       mapping(
         "useEmailAddress" -> optional(boolean).verifying(Messages("agent.missing-email.must_answer"), x => x.isDefined),
-        "email" ->  optional(text)
+        "email" -> optional(text)
       )(AgentMissingEmail.apply)(AgentMissingEmail.unapply)
     )
 
@@ -115,6 +112,7 @@ object AgentMissingEmailForm {
       if (fe.isEmpty) f
       else y(f.withError(fe.head), fe.tail)
     }
+
     y(form, formErrors)
   }
 }
@@ -158,7 +156,7 @@ object CollectClientBusinessDetailsForm {
   )(CollectClientBusinessDetails.apply)(CollectClientBusinessDetails.unapply))
 }
 
-case class EditMandateDetails( displayName: String, email: String)
+case class EditMandateDetails(displayName: String, email: String)
 
 object EditMandateDetailsForm {
 
@@ -197,11 +195,11 @@ object EditMandateDetailsForm {
 
 
   val editMandateDetailsForm = Form(mapping(
-  "displayName" -> text
-    .verifying(Messages("agent.edit-client.error.dispName"), x => x.length > length0)
-    .verifying(Messages("agent.edit-client.error.dispName.length"), x => x.isEmpty || (x.nonEmpty && x.length <= length99)),
+    "displayName" -> text
+      .verifying(Messages("agent.edit-client.error.dispName"), x => x.length > length0)
+      .verifying(Messages("agent.edit-client.error.dispName.length"), x => x.isEmpty || (x.nonEmpty && x.length <= length99)),
 
-   "email" -> text.verifying(Messages("agent.edit-client.error.email"), email => email.nonEmpty)
+    "email" -> text.verifying(Messages("agent.edit-client.error.email"), email => email.nonEmpty)
   )(EditMandateDetails.apply)(EditMandateDetails.unapply))
 }
 
@@ -265,4 +263,80 @@ object ClientDisplayNameForm {
     )(ClientDisplayName.apply)(ClientDisplayName.unapply)
   )
 
+}
+
+case class EditAgentAddressDetails(agentName: String, address: RegisteredAddressDetails)
+
+object EditAgentAddressDetails {
+  implicit val formats = Json.format[EditAgentAddressDetails]
+}
+
+object EditAgentAddressDetailsForm {
+
+  val postcodeLength = 10
+  val length40 = 40
+  val length35 = 35
+  val length0 = 0
+  val length2 = 2
+  val length60 = 60
+  val length105 = 105
+
+  val countryUK = "GB"
+
+  val editAgentAddressDetailsForm = Form(
+    mapping(
+      "agentName" -> text.
+        verifying(Messages("agent.edit-details-error.businessName"), x => x.trim.length > length0)
+        .verifying(Messages("agent.edit-details-error.businessName.length", length105), x => x.isEmpty || (x.nonEmpty && x.length <= length105)),
+      "address" -> mapping(
+        "addressLine1" -> text.
+          verifying(Messages("agent.edit-details-error.line_1"), x => x.trim.length > length0)
+          .verifying(Messages("agent.edit-details-error.line_1.length", length35), x => x.isEmpty || (x.nonEmpty && x.length <= length35)),
+        "addressLine2" -> text.
+          verifying(Messages("agent.edit-details-error.line_2"), x => x.trim.length > length0)
+          .verifying(Messages("agent.edit-details-error.line_2.length", length35), x => x.isEmpty || (x.nonEmpty && x.length <= length35)),
+        "addressLine3" -> optional(text)
+          .verifying(Messages("agent.edit-details-error.line_3.length", length35), x => x.isEmpty || (x.nonEmpty && x.get.length <= length35)),
+        "addressLine4" -> optional(text)
+          .verifying(Messages("agent.edit-details-error.line_4.length", length35), x => x.isEmpty || (x.nonEmpty && x.get.length <= length35)),
+        "postalCode" -> optional(text)
+          .verifying(Messages("agent.edit-details-error.postcode.length", postcodeLength),
+            x => x.isEmpty || (x.nonEmpty && x.get.length <= postcodeLength)),
+        "countryCode" -> text.
+          verifying(Messages("agent.edit-details-error.country"), x => x.length > length0)
+      )(RegisteredAddressDetails.apply)(RegisteredAddressDetails.unapply)
+    )(EditAgentAddressDetails.apply)(EditAgentAddressDetails.unapply)
+  )
+
+  def validateCountryNonUKAndPostcode(agentData: Form[EditAgentAddressDetails]) = {
+    val country = agentData.data.get("businessAddress.country") map {
+      _.trim
+    } filterNot {
+      _.isEmpty
+    }
+    val countryForm = {
+      if (country.fold("")(x => x).matches(countryUK)) {
+        agentData.withError(key = "businessAddress.country", message = Messages("agent.edit-details-error.non-uk"))
+      } else {
+        agentData
+      }
+    }
+  }
+}
+
+object NonUkIdentificationForm {
+  val length40 = 40
+  val length60 = 60
+  val length0 = 0
+
+  val nonUkIdentificationForm = Form(
+    mapping(
+      "idNumber" -> text
+        .verifying(Messages("agent.edit-details-error.businessUniqueId.length", length60), x => x.isEmpty || (x.nonEmpty && x.length <= length60)),
+      "issuingInstitution" -> text
+        .verifying(Messages("agent.edit-details-error.issuingInstitution.length", length40), x => x.isEmpty || (x.nonEmpty && x.length <= length40)),
+      "issuingCountryCode" -> text.
+        verifying(Messages("agent.edit-details-error.country"), x => x.length > length0)
+    )(Identification.apply)(Identification.unapply)
+  )
 }

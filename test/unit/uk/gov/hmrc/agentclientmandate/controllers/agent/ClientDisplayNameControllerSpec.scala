@@ -29,7 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayName
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector

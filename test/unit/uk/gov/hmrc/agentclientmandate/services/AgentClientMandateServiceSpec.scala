@@ -26,12 +26,12 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, GovernmentGatewayConnector}
+import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, BusinessCustomerConnector, GovernmentGatewayConnector}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, Mandates}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayDetails, ClientDisplayName}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayDetails, ClientDisplayName, EditAgentAddressDetails}
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
-import unit.uk.gov.hmrc.agentclientmandate.builders.{AgentBusinessUtrGenerator, AuthBuilder}
+import unit.uk.gov.hmrc.agentclientmandate.builders.{AgentBuilder, AgentBusinessUtrGenerator, AuthBuilder}
 
 import scala.concurrent.Future
 
@@ -92,7 +92,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestAgentClientMandateService.clientDisplayNameFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(displayName))
         when(mockAgentClientMandateConnector.createMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(CREATED, Some(respJson)))
         when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
-        when(mockDataCacheService.cacheFormData[ClientDisplayDetails](Matchers.eq(TestAgentClientMandateService.agentRefCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(ClientDisplayDetails("test name","AS12345678")))
+        when(mockDataCacheService.cacheFormData[ClientDisplayDetails](Matchers.eq(TestAgentClientMandateService.agentRefCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(ClientDisplayDetails("test name", "AS12345678")))
 
         val response = TestAgentClientMandateService.createMandate(service)
         await(response) must be("AS12345678")
@@ -424,11 +424,82 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       }
     }
 
+    "update the agent business details" when {
+      "business details are changed and saved" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val editAgentAddress = EditAgentAddressDetails("Org name", RegisteredAddressDetails("address1", "address2", countryCode = "FR"))
+        val cachedData = Some(AgentBuilder.buildAgentDetails)
+        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false, None, Some(Organisation("Org name", Some(true), Some("org_type"))), RegisteredAddressDetails("address1", "address2", None, None, None, "FR"), EtmpContactDetails(None, None, None, None), true, true, None))
+        when(mockDataCacheService.fetchAndGetFormData[AgentDetails](Matchers.eq(TestAgentClientMandateService.agentDetailsFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(cachedData)
+        when(mockBusinessCustomerConnector.updateRegistrationDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
+        when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
+        val response = TestAgentClientMandateService.updateRegisteredDetails(editAgentDetails = Some(editAgentAddress))
+        await(response) must be(updateRegDetails)
+      }
+
+      "ocr details are changed and saved" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val nonUkiOcrChanges = Identification("idnumber", "FR", "issuingInstitution")
+        val cachedData = Some(AgentBuilder.buildAgentDetails)
+        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false, None, Some(Organisation("Org Name", Some(true), Some("org_type"))), RegisteredAddressDetails("address1", "address2", None, None, None, "FR"), EtmpContactDetails(None, None, None, None), true, true, Some(Identification("idnumber", "FR", "issuingInstitution"))))
+        when(mockDataCacheService.fetchAndGetFormData[AgentDetails](Matchers.eq(TestAgentClientMandateService.agentDetailsFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(cachedData)
+        when(mockBusinessCustomerConnector.updateRegistrationDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
+        when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
+        val response = TestAgentClientMandateService.updateRegisteredDetails(editNonUKIdDetails = Some(nonUkiOcrChanges))
+        await(response) must be(updateRegDetails)
+      }
+    }
+
+    "fail to update the agent business details" when {
+      "none of the inputs are passed" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val cachedData = Some(AgentBuilder.buildAgentDetails)
+        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false, None, Some(Organisation("Org Name", Some(true), Some("org_type"))), RegisteredAddressDetails("address1", "address2", None, None, None, "FR"), EtmpContactDetails(None, None, None, None), true, true, None))
+        when(mockDataCacheService.fetchAndGetFormData[AgentDetails](Matchers.eq(TestAgentClientMandateService.agentDetailsFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(cachedData)
+        when(mockBusinessCustomerConnector.updateRegistrationDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
+        when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
+        val response = TestAgentClientMandateService.updateRegisteredDetails()
+        await(response) must be(updateRegDetails)
+      }
+
+      "no data found in cache" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val nonUkiOcrChanges = Identification("idnumber", "FR", "issuingInstitution")
+        val cachedData = Some(AgentBuilder.buildAgentDetails)
+        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false, None, Some(Organisation("Org Name", Some(true), Some("org_type"))), RegisteredAddressDetails("address1", "address2", None, None, None, "FR"), EtmpContactDetails(None, None, None, None), true, true, Some(Identification("idnumber", "FR", "issuingInstitution"))))
+        when(mockDataCacheService.fetchAndGetFormData[AgentDetails](Matchers.eq(TestAgentClientMandateService.agentDetailsFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
+        when(mockBusinessCustomerConnector.updateRegistrationDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
+        when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
+        val response = TestAgentClientMandateService.updateRegisteredDetails(editNonUKIdDetails = Some(nonUkiOcrChanges))
+        await(response) must be(None)
+      }
+
+      "ETMP update for business details failed" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val editAgentAddress = EditAgentAddressDetails("Org name", RegisteredAddressDetails("address1", "address2", countryCode = "FR"))
+        val cachedData = Some(AgentBuilder.buildAgentDetails)
+        when(mockDataCacheService.fetchAndGetFormData[AgentDetails](Matchers.eq(TestAgentClientMandateService.agentDetailsFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(cachedData)
+        when(mockBusinessCustomerConnector.updateRegistrationDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(INTERNAL_SERVER_ERROR))
+        when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
+        val response = TestAgentClientMandateService.updateRegisteredDetails(editAgentDetails = Some(editAgentAddress))
+        await(response) must be(None)
+      }
+
+      "ETMP update for ocr details failed" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val nonUkiOcrChanges = Identification("idnumber", "FR", "issuingInstitution")
+        val cachedData = Some(AgentBuilder.buildAgentDetails)
+        when(mockDataCacheService.fetchAndGetFormData[AgentDetails](Matchers.eq(TestAgentClientMandateService.agentDetailsFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
+        when(mockBusinessCustomerConnector.updateRegistrationDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(INTERNAL_SERVER_ERROR))
+        when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
+        val response = TestAgentClientMandateService.updateRegisteredDetails(editNonUKIdDetails = Some(nonUkiOcrChanges), editAgentDetails = None)
+        await(response) must be(None)
+      }
+    }
   }
 
-
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
-  val agentDetails = AgentDetails("Agent Ltd.", registeredAddressDetails)
+  val agentDetails = AgentBuilder.buildAgentDetails
 
   val mandateDto: CreateMandateDto = CreateMandateDto("test@test.com", "ATED", "client display name")
   val time1 = DateTime.now()
@@ -436,6 +507,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   val mockAgentClientMandateConnector = mock[AgentClientMandateConnector]
   val mockDataCacheService = mock[DataCacheService]
   val mockGovernmentGatewayConnector = mock[GovernmentGatewayConnector]
+  val mockBusinessCustomerConnector = mock[BusinessCustomerConnector]
   val arn = new AgentBusinessUtrGenerator().nextAgentBusinessUtr
 
   val validFormId: String = "some-from-id"
@@ -465,6 +537,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
     override val dataCacheService = mockDataCacheService
     override val agentClientMandateConnector = mockAgentClientMandateConnector
     override val ggConnector = mockGovernmentGatewayConnector
+    override val businessCustomerConnector: BusinessCustomerConnector = mockBusinessCustomerConnector
   }
 
   override def beforeEach = {

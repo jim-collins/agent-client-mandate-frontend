@@ -16,11 +16,16 @@
 
 package uk.gov.hmrc.agentclientmandate.utils
 
-import uk.gov.hmrc.agentclientmandate.models.Status
+import java.util.Properties
+
+import play.api.Play
+import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, Status}
 import uk.gov.hmrc.agentclientmandate.models.Status.Status
+import uk.gov.hmrc.agentclientmandate.views.html.agent.agentSummary._agentSummary_sidebar
+
+import scala.io.Source
 
 object AgentClientMandateUtils {
-
 
   private val ZERO = 0
   private val ONE = 1
@@ -72,5 +77,20 @@ object AgentClientMandateUtils {
     }
   }
 
+  lazy val p = new Properties
+  p.load(Source.fromInputStream(Play.classloader(Play.current).getResourceAsStream("country-code.properties"), "UTF-8").bufferedReader())
+
+
+  def getIsoCodeTupleList: List[(String, String)] = {
+    val keys = p.propertyNames()
+    val listOfCountryCodes: scala.collection.mutable.MutableList[(String, String)] = scala.collection.mutable.MutableList()
+    while (keys.hasMoreElements) {
+      val key = keys.nextElement().toString
+      listOfCountryCodes.+=:((key, p.getProperty(key)))
+    }
+    listOfCountryCodes.toList.sortBy(_._2)
+  }
+
+  def isUkAgent(agentDetails: AgentDetails) = agentDetails.addressDetails.countryCode == "GB"
 
 }

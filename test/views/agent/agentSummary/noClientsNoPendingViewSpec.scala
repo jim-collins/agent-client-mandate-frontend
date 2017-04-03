@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package acceptance.agent.agentSummary
+package views.agent.agentSummary
 
 import org.joda.time.DateTime
 import org.jsoup.Jsoup
@@ -23,14 +23,14 @@ import org.scalatest.{BeforeAndAfterEach, FeatureSpec, GivenWhenThen}
 import org.scalatestplus.play.OneServerPerSuite
 import play.api.test.FakeRequest
 import uk.gov.hmrc.agentclientmandate.models._
-import uk.gov.hmrc.agentclientmandate.service.Mandates
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.domain.Generator
+import unit.uk.gov.hmrc.agentclientmandate.builders.AgentBuilder
 
 class noClientsNoPendingViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach with GivenWhenThen{
 
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
-  val agentDetails = AgentDetails("ABC Ltd.", registeredAddressDetails)
+  val agentDetails = AgentBuilder.buildAgentDetails
 
   val mandateId = "12345678"
   val time1 = DateTime.now()
@@ -56,7 +56,7 @@ class noClientsNoPendingViewSpec extends FeatureSpec with OneServerPerSuite with
       assert(document.title() === "Your ATED clients")
 
       And("The Pre Header should be the agents name - ABC Ltd.")
-      assert(document.getElementById("pre-header").text() === "ABC Ltd.")
+      assert(document.getElementById("pre-header").text() === "Org Name")
 
       And("The Add Client Button - should exist")
       assert(document.getElementById("add-client-btn").text() === "Add a new client")

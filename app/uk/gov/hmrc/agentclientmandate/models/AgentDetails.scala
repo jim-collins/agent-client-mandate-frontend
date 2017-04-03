@@ -16,10 +16,78 @@
 
 package uk.gov.hmrc.agentclientmandate.models
 
+
+import org.joda.time.LocalDate
 import play.api.libs.json.Json
 
-case class AgentDetails(agentName: String, addressDetails: RegisteredAddressDetails)
+case class EtmpContactDetails(phoneNumber: Option[String] = None,
+                              mobileNumber: Option[String] = None,
+                              faxNumber: Option[String] = None,
+                              emailAddress: Option[String] = None)
+
+object EtmpContactDetails {
+  implicit val formats = Json.format[EtmpContactDetails]
+}
+
+case class Individual(firstName: String,
+                      middleName: Option[String] = None,
+                      lastName: String,
+                      dateOfBirth: LocalDate)
+
+object Individual {
+  implicit val formats = Json.format[Individual]
+}
+
+case class Organisation(organisationName: String,
+                        isAGroup: Option[Boolean] = None,
+                        organisationType: Option[String] = None)
+
+object Organisation {
+  implicit val formats = Json.format[Organisation]
+}
+
+
+case class BusinessRegistrationDisplayDetails(businessType: String,
+                                              businessRegHeader: String,
+                                              businessRegSubHeader: String,
+                                              businessRegLede: Option[String],
+                                              listOfIsoCode: List[(String, String)])
+
+case class Identification(idNumber: String, issuingInstitution: String, issuingCountryCode: String)
+
+object Identification {
+  implicit val formats = Json.format[Identification]
+}
+
+
+case class AgentDetails(safeId: String,
+                        isAnIndividual: Boolean,
+                        individual: Option[Individual],
+                        organisation: Option[Organisation],
+                        addressDetails: RegisteredAddressDetails,
+                        contactDetails: EtmpContactDetails,
+                        identification: Option[Identification]) {
+  // $COVERAGE-OFF$
+  def agentName: String = {
+    if (isAnIndividual) s"${individual.map(_.firstName).getOrElse("")} ${individual.map(_.lastName).getOrElse("")}"
+    else organisation.map(_.organisationName).getOrElse("")
+    // $COVERAGE-ON$
+  }
+}
 
 object AgentDetails {
   implicit val formats = Json.format[AgentDetails]
+}
+
+case class UpdateRegistrationDetailsRequest(isAnIndividual: Boolean,
+                                            individual: Option[Individual],
+                                            organisation: Option[Organisation],
+                                            address: RegisteredAddressDetails,
+                                            contactDetails: EtmpContactDetails,
+                                            isAnAgent: Boolean,
+                                            isAGroup: Boolean,
+                                            identification: Option[Identification] = None)
+
+object UpdateRegistrationDetailsRequest {
+  implicit val formats = Json.format[UpdateRegistrationDetailsRequest]
 }

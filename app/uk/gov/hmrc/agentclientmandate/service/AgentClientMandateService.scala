@@ -18,10 +18,10 @@ package uk.gov.hmrc.agentclientmandate.service
 
 import play.api.Logger
 import play.api.http.Status._
-import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, GovernmentGatewayConnector}
+import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, BusinessCustomerConnector, GovernmentGatewayConnector}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.utils.{AgentClientMandateUtils, MandateConstants}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayDetails, ClientDisplayName}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayDetails, ClientDisplayName, EditAgentAddressDetails}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -37,6 +37,8 @@ trait AgentClientMandateService extends MandateConstants {
   def agentClientMandateConnector: AgentClientMandateConnector
 
   def ggConnector: GovernmentGatewayConnector
+
+  def businessCustomerConnector: BusinessCustomerConnector
 
   def createMandate(service: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[String] = {
     dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) flatMap {
@@ -220,10 +222,59 @@ trait AgentClientMandateService extends MandateConstants {
   def updateClientEmail(emailAddress: String, mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Unit = {
     agentClientMandateConnector.updateClientEmail(emailAddress, mandateId)
   }
+
+  def updateRegisteredDetails(editAgentDetails: Option[EditAgentAddressDetails] = None,
+                              editNonUKIdDetails: Option[Identification] = None)
+                             (implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[UpdateRegistrationDetailsRequest]] = {
+    val cachedRespData = dataCacheService.fetchAndGetFormData[AgentDetails](agentDetailsFormId)
+    for {
+      cachedData <- cachedRespData
+      updatedDataResponse <- {
+        cachedData match {
+          case Some(oldData) => updateDetails(oldData, editAgentDetails, editNonUKIdDetails)
+          case None => Future.successful(None)
+        }
+      }
+      _ <- updatedDataResponse match {
+        case Some(x) => dataCacheService.clearCache().flatMap(r => Future.successful(r))
+        case None => Future.successful(None)
+      }
+    } yield {
+      updatedDataResponse
+    }
+
+  }
+
+  private def updateDetails(cachedData: AgentDetails,
+                                    editAgentDetails: Option[EditAgentAddressDetails],
+                                    nonUkiChangeDetails: Option[Identification])(implicit hc: HeaderCarrier, ac: AuthContext) = {
+    val updateData = UpdateRegistrationDetailsRequest(isAnIndividual = false,
+      individual = None,
+      organisation = Some(Organisation(organisationName = editAgentDetails.map(_.agentName).getOrElse(cachedData.organisation.map(_.organisationName).getOrElse("")),
+        isAGroup = cachedData.organisation.flatMap(_.isAGroup),
+        organisationType = cachedData.organisation.flatMap(_.organisationType))),
+      address = editAgentDetails.map(_.address).getOrElse(cachedData.addressDetails),
+      contactDetails = cachedData.contactDetails,
+      isAnAgent = true,
+      isAGroup = cachedData.organisation.flatMap(_.isAGroup).getOrElse(false),
+      identification = nonUkiChangeDetails)
+
+    businessCustomerConnector.updateRegistrationDetails(cachedData.safeId, updateData).map {
+      response =>
+        response.status match {
+          case OK => Some(updateData)
+          case status =>
+            Logger.warn(s"[AgentClientMandateService] [updateBusinessDetails] [status] = ${status} && [response.body] = ${response.body}")
+            None
+        }
+    }
+  }
+
 }
 
 object AgentClientMandateService extends AgentClientMandateService {
   val dataCacheService = DataCacheService
   val agentClientMandateConnector = AgentClientMandateConnector
   val ggConnector = GovernmentGatewayConnector
+  val businessCustomerConnector = BusinessCustomerConnector
 }

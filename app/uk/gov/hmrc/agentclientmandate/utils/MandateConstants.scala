@@ -25,4 +25,5 @@ trait MandateConstants {
   val clientEditEmailId: String = "client-edit-email-form-id"
   val clientApprovedMandateId = "client-approved"
   val clientDisplayNameFormId = "client-display-name-form-id"
+  val agentDetailsFormId = "agent-details"
 }
