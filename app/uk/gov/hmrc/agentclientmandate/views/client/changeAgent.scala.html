@@ -13,8 +13,6 @@
         @Messages("client.change-agent.header")
     </h1>
 
-
-
     @form(action = routes.ChangeAgentController.submit(service, mandateId)) {
 
         <div class="form-group" id="removeAgent">
@@ -31,9 +29,7 @@
         )
         </div>
 
-        <div class="form-group">
-            <button class="button" id="submit" type="submit">@Messages("confirm-button")</button>
-        </div>
+        <button class="button" id="submit" type="submit">@Messages("confirm-button")</button>
 
     }
 

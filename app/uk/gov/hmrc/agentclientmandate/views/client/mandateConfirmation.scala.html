@@ -20,6 +20,7 @@
       @Messages("client.agent-confirmation.banner-confirmation.submitted.date", DateTimeFormat.forPattern("dd MMM yyyy").print(new LocalDate()))
     </span>
 </div>
+
 <div class="form-group">
     <span id="notification" class="heading-small">@Messages("client.agent-confirmation.notification")</span>
 </div>
@@ -36,11 +37,11 @@
     </ul>
 </div>
 
-<div class="form-group">
-    <form action="@FrontendAppConfig.serviceSignOutUrl(Some(service))">
-        <button class="button" id="finish_btn" type="submit">@Messages("client.agent-confirmation.finish-signout")
-        </button>
-    </form>
-</div>
+
+<form action="@FrontendAppConfig.serviceSignOutUrl(Some(service))">
+    <button class="button" id="finish_btn" type="submit">@Messages("client.agent-confirmation.finish-signout")
+    </button>
+</form>
+
 
 }

@@ -16,8 +16,6 @@
     @Messages("agent.overseas-client-question.header")
   </h1>
 
-
-
   @form(action = routes.OverseasClientQuestionController.submit(service)) {
 
     <div class="form-group" id="isOverseas">
@@ -34,9 +32,8 @@
       )
     </div>
 
-    <div class="form-group">
-      <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
-    </div>
+    <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+
 
   }
 

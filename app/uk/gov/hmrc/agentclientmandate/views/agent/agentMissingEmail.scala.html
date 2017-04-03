@@ -20,8 +20,6 @@
         @Messages("agent.missing-email.header")
     </h1>
 
-    
-
     <div class="form-group">
         <span id="info" class="paragraph">
           @Messages("agent.missing-email.text", service.toUpperCase)
@@ -46,7 +44,7 @@
 
         <div class="form-group">
             <div id="hidden-email-details-yes" class="panel-indent">
-                <div id="email-address" class="form-field">
+                <div id="email-address">
                     @mandateInput(agentMissingEmailForm("email"),
                     '_label -> Messages("agent.missing-email.email_address"),
                     '_labelClass -> "form-label-bold",
@@ -70,9 +68,8 @@
         </div>
     }
 
-    <div class="form-group">
         <span id="skip_question">
           <a href="@routes.AgentSummaryController.view(service)">@Messages("agent.missing-email.trapdoor")</a>
         </span>
-    </div>
+
 }
