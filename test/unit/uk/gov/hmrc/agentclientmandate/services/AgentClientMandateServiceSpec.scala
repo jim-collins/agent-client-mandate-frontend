@@ -92,7 +92,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestAgentClientMandateService.clientDisplayNameFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(displayName))
         when(mockAgentClientMandateConnector.createMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(CREATED, Some(respJson)))
         when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
-        when(mockDataCacheService.cacheFormData[ClientDisplayDetails](Matchers.eq(TestAgentClientMandateService.agentRefCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(ClientDisplayDetails("test name","AS12345678")))
+        when(mockDataCacheService.cacheFormData[ClientDisplayDetails](Matchers.eq(TestAgentClientMandateService.agentRefCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(ClientDisplayDetails("test name", "AS12345678")))
 
         val response = TestAgentClientMandateService.createMandate(service)
         await(response) must be("AS12345678")
@@ -429,7 +429,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         val editAgentAddress = EditAgentAddressDetails("Org name", RegisteredAddressDetails("address1", "address2", countryCode = "FR"))
         val cachedData = Some(AgentBuilder.buildAgentDetails)
-        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false,None,Some(Organisation("Org name",Some(true),Some("org_type"))),RegisteredAddressDetails("address1","address2",None,None,None,"FR"),EtmpContactDetails(None,None,None,None),true,true,None))
+        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false, None, Some(Organisation("Org name", Some(true), Some("org_type"))), RegisteredAddressDetails("address1", "address2", None, None, None, "FR"), EtmpContactDetails(None, None, None, None), true, true, None))
         when(mockDataCacheService.fetchAndGetFormData[AgentDetails](Matchers.eq(TestAgentClientMandateService.agentDetailsFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(cachedData)
         when(mockBusinessCustomerConnector.updateRegistrationDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
         when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
@@ -437,12 +437,11 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         await(response) must be(updateRegDetails)
       }
 
-
       "ocr details are changed and saved" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         val nonUkiOcrChanges = Identification("idnumber", "FR", "issuingInstitution")
         val cachedData = Some(AgentBuilder.buildAgentDetails)
-        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false,None,Some(Organisation("",Some(true),Some("org_type"))),RegisteredAddressDetails("address1","address2",None,None,None,"FR"),EtmpContactDetails(None,None,None,None),true,true,Some(Identification("idnumber","FR","issuingInstitution"))))
+        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false, None, Some(Organisation("Org Name", Some(true), Some("org_type"))), RegisteredAddressDetails("address1", "address2", None, None, None, "FR"), EtmpContactDetails(None, None, None, None), true, true, Some(Identification("idnumber", "FR", "issuingInstitution"))))
         when(mockDataCacheService.fetchAndGetFormData[AgentDetails](Matchers.eq(TestAgentClientMandateService.agentDetailsFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(cachedData)
         when(mockBusinessCustomerConnector.updateRegistrationDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
         when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
@@ -455,7 +454,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       "none of the inputs are passed" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         val cachedData = Some(AgentBuilder.buildAgentDetails)
-        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false,None,Some(Organisation("",Some(true),Some("org_type"))),RegisteredAddressDetails("address1","address2",None,None,None,"FR"),EtmpContactDetails(None,None,None,None),true,true,None))
+        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false, None, Some(Organisation("Org Name", Some(true), Some("org_type"))), RegisteredAddressDetails("address1", "address2", None, None, None, "FR"), EtmpContactDetails(None, None, None, None), true, true, None))
         when(mockDataCacheService.fetchAndGetFormData[AgentDetails](Matchers.eq(TestAgentClientMandateService.agentDetailsFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(cachedData)
         when(mockBusinessCustomerConnector.updateRegistrationDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
         when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
@@ -467,7 +466,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         val nonUkiOcrChanges = Identification("idnumber", "FR", "issuingInstitution")
         val cachedData = Some(AgentBuilder.buildAgentDetails)
-        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false,None,Some(Organisation("Org Name",Some(true),Some("org_type"))),RegisteredAddressDetails("address1","address2",None,None,None,"FR"),EtmpContactDetails(None,None,None,None),true,true,Some(Identification("idnumber","FR","issuingInstitution"))))
+        val updateRegDetails = Some(UpdateRegistrationDetailsRequest(false, None, Some(Organisation("Org Name", Some(true), Some("org_type"))), RegisteredAddressDetails("address1", "address2", None, None, None, "FR"), EtmpContactDetails(None, None, None, None), true, true, Some(Identification("idnumber", "FR", "issuingInstitution"))))
         when(mockDataCacheService.fetchAndGetFormData[AgentDetails](Matchers.eq(TestAgentClientMandateService.agentDetailsFormId))(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
         when(mockBusinessCustomerConnector.updateRegistrationDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
         when(mockDataCacheService.clearCache()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
@@ -498,7 +497,6 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       }
     }
   }
-
 
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")
   val agentDetails = AgentBuilder.buildAgentDetails

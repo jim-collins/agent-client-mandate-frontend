@@ -250,7 +250,7 @@ trait AgentClientMandateService extends MandateConstants {
                                     nonUkiChangeDetails: Option[Identification])(implicit hc: HeaderCarrier, ac: AuthContext) = {
     val updateData = UpdateRegistrationDetailsRequest(isAnIndividual = false,
       individual = None,
-      organisation = Some(Organisation(organisationName = editAgentDetails.map(_.agentName).getOrElse(""),
+      organisation = Some(Organisation(organisationName = editAgentDetails.map(_.agentName).getOrElse(cachedData.organisation.map(_.organisationName).getOrElse("")),
         isAGroup = cachedData.organisation.flatMap(_.isAGroup),
         organisationType = cachedData.organisation.flatMap(_.organisationType))),
       address = editAgentDetails.map(_.address).getOrElse(cachedData.addressDetails),
