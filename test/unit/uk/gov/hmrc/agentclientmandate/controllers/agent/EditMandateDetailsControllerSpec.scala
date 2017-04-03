@@ -58,6 +58,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
           document.getElementById("header").text() must include(s"Edit $clientDisplayName")
           document.getElementById("pre-header").text() must include("Manage your ATED service")
           document.getElementById("sub-heading").text() must be("Unique authorisation number AS123456")
+          document.getElementById("sub-heading-client-name").text() must be("These are the details for Some(test client4)")
           document.getElementById("displayName_field").text() must include("Display name")
           document.getElementById("displayName_hint").text() must include("This does not change the official company name.")
           document.getElementById("submit").text() must be("Save changes")
@@ -151,6 +152,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
   val service = "ATED"
   val mandateId = "AS123456"
   val clientDisplayName = "ACME Limited"
+
 
   val mandate: Mandate = Mandate(id = mandateId, createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123457", "agency name", PartyType.Organisation,
     ContactDetails("agent@agent.com", None)), clientParty = Some(Party("12345671", "test client4", PartyType.Individual, ContactDetails("aa.aa@a.com", None))),
