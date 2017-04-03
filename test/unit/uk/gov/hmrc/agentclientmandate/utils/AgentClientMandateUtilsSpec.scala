@@ -20,6 +20,7 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils
 import uk.gov.hmrc.agentclientmandate.models.Status
 import uk.gov.hmrc.agentclientmandate.models.Status.Status
+import unit.uk.gov.hmrc.agentclientmandate.builders.AgentBuilder
 
 class AgentClientMandateUtilsSpec extends PlaySpec with OneServerPerSuite {
 
@@ -55,8 +56,6 @@ class AgentClientMandateUtilsSpec extends PlaySpec with OneServerPerSuite {
       }
     }
   }
-
-
     "getIsoCodeTupleList" must {
       "bring the correct country from the file" in {
         AgentClientMandateUtils.getIsoCodeTupleList must contain(("US", "USA :United States of America"))
@@ -64,6 +63,18 @@ class AgentClientMandateUtilsSpec extends PlaySpec with OneServerPerSuite {
         AgentClientMandateUtils.getIsoCodeTupleList must contain(("GB", "United Kingdom :UK, GB, Great Britain"))
       }
     }
+
+    "isUkAgent" must {
+      "return false, when agent country is not UK" in {
+        AgentClientMandateUtils.isUkAgent(AgentBuilder.buildAgentDetails) must be(false)
+      }
+
+      "return true, when agent country is UK" in {
+        AgentClientMandateUtils.isUkAgent(AgentBuilder.buildUkAgentDetails) must be(true)
+      }
+    }
+
+
 
 
 }

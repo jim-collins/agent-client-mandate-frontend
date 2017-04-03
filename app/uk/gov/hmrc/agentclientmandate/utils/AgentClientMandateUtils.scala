@@ -19,8 +19,9 @@ package uk.gov.hmrc.agentclientmandate.utils
 import java.util.Properties
 
 import play.api.Play
-import uk.gov.hmrc.agentclientmandate.models.Status
+import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, Status}
 import uk.gov.hmrc.agentclientmandate.models.Status.Status
+import uk.gov.hmrc.agentclientmandate.views.html.agent.agentSummary._agentSummary_sidebar
 
 import scala.io.Source
 
@@ -90,5 +91,6 @@ object AgentClientMandateUtils {
     listOfCountryCodes.toList.sortBy(_._2)
   }
 
+  def isUkAgent(agentDetails: AgentDetails) = agentDetails.addressDetails.countryCode == "GB"
 
 }

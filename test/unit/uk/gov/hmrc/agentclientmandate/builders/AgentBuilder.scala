@@ -28,4 +28,12 @@ object AgentBuilder {
       registeredAddressDetails, contactDetails, None)
   }
 
+  def buildUkAgentDetails = {
+    val registeredAddressDetails = RegisteredAddressDetails("address1", "address2", None, None, None, "GB")
+    val contactDetails = EtmpContactDetails()
+    AgentDetails("safeId", false, None,
+      Some(Organisation("Org Name", Some(true), Some("org_type"))),
+      registeredAddressDetails, contactDetails, None)
+  }
+
 }
