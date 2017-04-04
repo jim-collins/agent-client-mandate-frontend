@@ -41,7 +41,7 @@ class AgencyDetailsControllerSpec extends PlaySpec with OneServerPerSuite with M
 
      "not respond with NOT_FOUND status" when {
        "GET /mandate/agent/details/edit/abc is invoked" in {
-         val result = route(FakeRequest(GET, "/mandate/agent/details/edit/abc")).get
+         val result = route(FakeRequest(GET, "/mandate/agent/edit/abc")).get
          status(result) mustNot be(NOT_FOUND)
        }
      }
