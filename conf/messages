@@ -343,6 +343,14 @@ agent.edit-mandate-details-error.general.address.addressLine3 = There is a probl
 agent.edit-mandate-details-error.general.address.addressLine4 = There is a problem with the address line 4
 agent.edit-mandate-details-error.general.address.countryCode = There is a problem with the country field
 
+agent.edit-mandate-details-error.general.idNumber = There is a problem with the Overseas company registration number
+agent.edit-mandate-details-error.general.issuingCountryCode = There is a problem with the Country that issued the number
+agent.edit-mandate-details-error.general.issuingInstitution = There is a problem with the Institution that issued the number
+agent.edit-mandate-details-error.businessUniqueId.select = You must enter an overseas company registration number
+agent.edit-mandate-details-error.issuingInstitution.select = You must enter an institution that issued the overseas company registration number
+agent.edit-mandate-details-error.issuingCountry.select = You must enter a country that issued the overseas company registration number
+agent.edit-mandate-details-error.non-uk = You cannot select United Kingdom when entering an overseas address
+
 agent.edit-mandate-detail.save.error = Failed to update
 agent.edit-mandate-details.ocr.header = Edit overseas company registration details
 agent.edit-mandate-details.idNumber = Overseas company registration number
@@ -363,8 +371,8 @@ agent.edit-details-error.postcode.length = The postcode cannot be more than {0} 
 agent.edit-details-error.businessUniqueId.length = The overseas company registration number cannot be more than {0} characters
 agent.edit-details-error.utr.length = The Unique Taxpayer Reference cannot be more than {0} characters
 agent.edit-details-error.issuingInstitution.length = The institution that issued the overseas company registration number cannot be more than {0} characters
-agent.edit-details-error.summaryHeader = There is a problem with this page
 agent.edit-details-error.non-uk = You cannot select United Kingdom when entering an overseas address
+agent.edit-details-error.hasBusinessUniqueId.not-selected = You must select one option
 
 agent.edit-details-error.businessUniqueId.length = The overseas company registration number cannot be more than {0} characters
 agent.edit-details-error.issuingInstitution.length = The institution that issued the overseas company registration number cannot be more than {0} characters

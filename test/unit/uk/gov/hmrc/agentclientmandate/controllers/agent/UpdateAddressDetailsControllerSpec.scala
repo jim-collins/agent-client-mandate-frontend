@@ -89,7 +89,7 @@ class UpdateAddressDetailsControllerSpec extends PlaySpec with OneServerPerSuite
         val fakeRequest = FakeRequest().withJsonBody(inputJson)
         saveWithAuthorisedUser(updateRegDetails, "abc")(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/mandate/agent/details/edit/abc")
+          redirectLocation(result).get must include("/mandate/agent/edit/abc")
         }
       }
     }

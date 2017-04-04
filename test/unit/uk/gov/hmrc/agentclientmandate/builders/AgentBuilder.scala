@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.agentclientmandate.builders
 
-import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, EtmpContactDetails, Organisation, RegisteredAddressDetails}
+import uk.gov.hmrc.agentclientmandate.models._
 
 object AgentBuilder {
 
@@ -25,7 +25,7 @@ object AgentBuilder {
     val contactDetails = EtmpContactDetails()
     AgentDetails("safeId", false, None,
       Some(Organisation("Org Name", Some(true), Some("org_type"))),
-      registeredAddressDetails, contactDetails, None)
+      registeredAddressDetails, contactDetails, Some(Identification("IdNumber", "issuingCountry", "FR")))
   }
 
   def buildUkAgentDetails = {
