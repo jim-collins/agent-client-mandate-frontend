@@ -22,7 +22,7 @@
 
   @if(clientParty.isDefined){
   <div class="form-field">
-    <paragraph id="sub-heading-client-name">@Messages("agent.edit-mandate-details.sub-heading-client-name", clientParty)</paragraph>
+    <paragraph id="sub-heading-client-name">@Messages("agent.edit-mandate-details.sub-heading-client-name", clientParty.get)</paragraph>
   </div>
   }
 
