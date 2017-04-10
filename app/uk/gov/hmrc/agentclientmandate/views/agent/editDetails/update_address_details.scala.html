@@ -11,16 +11,16 @@
 @pageScripts = {
 <script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/mandate-country-auto-complete.js")'></script>
 <script>
-        $(document).ready(function() {
-            countryCodeAutoComplete("#registered-country")
-            var classOfSelect = $('#registered-country_').attr('class');
-            $("#registered-country").addClass(classOfSelect)
-            var labelText = $("#registered-country_field").text();
-            var divId = "registered-country_div"
-            var fieldId = "registered-country_"
-            createLabelForHiddenSelect(divId, fieldId, labelText);
-        });
-    </script>
+    $(document).ready(function() {
+      countryCodeAutoComplete("#businessAddress\\.country")
+      var classOfSelect1 = $('#businessAddress\\.country_').attr('class');
+      $("#businessAddress\\.country").addClass(classOfSelect1)
+      var labelText1 = $("#businessAddress\\.country_field").text();
+      var divId1 = "businessAddress\\.country_div"
+      var fieldId1 = "businessAddress.country_"
+      createLabelForHiddenSelect(divId1, fieldId1, labelText1);
+    });
+</script>
 }
 
 
@@ -45,12 +45,14 @@
     @mandateInput(agentDetailsForm("agentName"),
     '_label ->  Html(Messages("agent.edit-mandate-details.agentName")),
     '_labelClass -> "form-label",
+    '_labelClass -> "form-label-bold",
     '_id -> "businessName",
     '_showConstraints -> false)
 
     @mandateInput(agentDetailsForm("address.addressLine1"),
     '_label ->  Html(Messages("agent.edit-mandate-details.address")),
     '_id -> "businessAddress.line_1",
+    '_labelClass -> "form-label-bold",
     '_showConstraints -> false)
 
     @mandateInput(agentDetailsForm("address.addressLine2"),
@@ -76,6 +78,7 @@
     displayEmptyValue = true,
     '_id -> "businessAddress.country",
     '_emptyValueText -> Messages("agent.edit-mandate-detail.country.select"),
+    '_labelClass -> "form-label-bold",
     '_label -> Html(Messages("agent.edit-mandate-details.country")))
 
 

@@ -58,7 +58,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
           document.getElementById("header").text() must include(s"Edit $clientDisplayName")
           document.getElementById("pre-header").text() must include("Manage your ATED service")
           document.getElementById("sub-heading").text() must be("Unique authorisation number AS123456")
-          document.getElementById("sub-heading-client-name").text() must be("These are the details for Some(test client4)")
+          document.getElementById("sub-heading-client-name").text() must be("These are the details for test client4")
           document.getElementById("displayName_field").text() must include("Display name")
           document.getElementById("displayName_hint").text() must include("This does not change the official company name.")
           document.getElementById("submit").text() must be("Save changes")
