@@ -136,6 +136,23 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         redirectLocation(result) must be(Some("http://localhost:9916/ated/account-summary"))
       }
 
+      "agent selects and begins delegation but client does not exist" in {
+
+        when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+          Future.successful(Some(mandateActive.copy(clientParty = None)))
+        }
+
+        val userId = s"user-${UUID.randomUUID}"
+        implicit val hc: HeaderCarrier = HeaderCarrier()
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
+        AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+
+        when(mockDelegationConnector.startDelegation(Matchers.any(), Matchers.any())(Matchers.any())).thenReturn(Future.successful(()))
+        val result = TestAgentSummaryController.doDelegation(service, "1").apply(SessionBuilder.buildRequestWithSession(userId))
+        status(result) must be(SEE_OTHER)
+        redirectLocation(result) must be(Some("http://localhost:9916/ated/account-summary"))
+      }
+
       "agent selects client but it fails as we have no serviceId" in {
 
         val mandateWithNoSubscription = mandateActive.copy(subscription = mandateActive.subscription.copy(referenceNumber = None))
