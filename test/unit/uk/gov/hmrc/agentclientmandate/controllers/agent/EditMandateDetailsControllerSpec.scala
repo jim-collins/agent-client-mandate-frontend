@@ -31,7 +31,6 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController
 import uk.gov.hmrc.agentclientmandate.models.{MandateStatus, Service, Status, Subscription, _}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, EmailService}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
@@ -54,11 +53,10 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         viewWithAuthorisedAgent(Some(mandate)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be(s"Edit $clientDisplayName")
-          document.getElementById("header").text() must include(s"Edit $clientDisplayName")
+          document.title() must be(s"Edit ${mandate.clientParty.get.name}")
+          document.getElementById("header").text() must include(s"Edit ${mandate.clientParty.get.name}")
           document.getElementById("pre-header").text() must include("Manage your ATED service")
           document.getElementById("sub-heading").text() must be("Unique authorisation number AS123456")
-          document.getElementById("sub-heading-client-name").text() must be("These are the details for Some(test client4)")
           document.getElementById("displayName_field").text() must include("Display name")
           document.getElementById("displayName_hint").text() must include("This does not change the official company name.")
           document.getElementById("submit").text() must be("Save changes")

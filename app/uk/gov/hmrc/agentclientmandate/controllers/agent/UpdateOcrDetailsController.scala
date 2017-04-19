@@ -29,7 +29,7 @@ import play.api.Play.current
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, BusinessRegistrationDisplayDetails, Identification}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.NonUkIdentificationForm
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{NonUkIdentificationForm, OverseasCompany}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.NonUkIdentificationForm._
 
 import scala.concurrent.Future
@@ -48,9 +48,10 @@ trait UpdateOcrDetailsController extends FrontendController with Actions with Ma
         } yield {
           agentDetails match {
             case Some(agentDetail) =>
-              val nonUkId = Identification(agentDetail.identification.map(_.idNumber).getOrElse(""),
-                agentDetail.identification.map(_.issuingInstitution).getOrElse(""),
-                agentDetail.identification.map(_.issuingCountryCode).getOrElse(""))
+              val nonUkId = OverseasCompany(Some(true),
+                idNumber = agentDetail.identification.map(_.idNumber),
+                issuingInstitution = agentDetail.identification.map(_.issuingInstitution),
+                issuingCountryCode = agentDetail.identification.map(_.issuingCountryCode))
               Ok(views.html.agent.editDetails.update_ocr_details(nonUkIdentificationForm.fill(nonUkId), service, displayDetails(service), getBackLink(service)))
             case None =>
               Logger.warn(s"[UpdateOcrDetailsController][view] - No business details found to edit")
@@ -62,11 +63,12 @@ trait UpdateOcrDetailsController extends FrontendController with Actions with Ma
   def submit(service: String) = AuthorisedFor(AgentRegime(), GGConfidence).async {
     implicit user =>
       implicit request =>
-        nonUkIdentificationForm.bindFromRequest.fold(
+        NonUkIdentificationForm.validateNonUK(nonUkIdentificationForm.bindFromRequest).fold(
           formWithErrors => Future.successful(BadRequest(views.html.agent.editDetails.update_ocr_details(formWithErrors, service, displayDetails(service), getBackLink(service)))),
           updateDetails => {
             for {
-              updatedDetails <- agentClientMandateService.updateRegisteredDetails(editNonUKIdDetails = Some(updateDetails))
+              updatedDetails <- agentClientMandateService.updateRegisteredDetails(editNonUKIdDetails = Some(Identification(updateDetails.idNumber.getOrElse(""),
+                updateDetails.issuingInstitution.getOrElse(""), updateDetails.issuingCountryCode.getOrElse(""))))
             } yield {
               updatedDetails match {
                 case Some(x) => Redirect(routes.AgencyDetailsController.view(service))
@@ -83,7 +85,6 @@ trait UpdateOcrDetailsController extends FrontendController with Actions with Ma
   private def getBackLink(service: String) = {
     Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgencyDetailsController.view(service).url)
   }
-
 
   private def displayDetails(service: String) = {
     BusinessRegistrationDisplayDetails("NUK",

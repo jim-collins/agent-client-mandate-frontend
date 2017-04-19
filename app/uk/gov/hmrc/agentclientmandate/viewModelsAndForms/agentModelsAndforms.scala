@@ -324,19 +324,101 @@ object EditAgentAddressDetailsForm {
   }
 }
 
+case class OverseasCompany(hasBusinessUniqueId: Option[Boolean] = Some(false),
+                           idNumber: Option[String] = None,
+                           issuingInstitution: Option[String] = None,
+                           issuingCountryCode: Option[String] = None)
+
+object OverseasCompany {
+  implicit val formats = Json.format[OverseasCompany]
+}
+
 object NonUkIdentificationForm {
   val length40 = 40
   val length60 = 60
   val length0 = 0
 
+  val countryUK = "GB"
+
   val nonUkIdentificationForm = Form(
     mapping(
-      "idNumber" -> text
-        .verifying(Messages("agent.edit-details-error.businessUniqueId.length", length60), x => x.isEmpty || (x.nonEmpty && x.length <= length60)),
-      "issuingInstitution" -> text
-        .verifying(Messages("agent.edit-details-error.issuingInstitution.length", length40), x => x.isEmpty || (x.nonEmpty && x.length <= length40)),
-      "issuingCountryCode" -> text.
-        verifying(Messages("agent.edit-details-error.country"), x => x.length > length0)
-    )(Identification.apply)(Identification.unapply)
+      "hasBusinessUniqueId" -> optional(boolean).verifying(Messages("agent.edit-details-error.hasBusinessUniqueId.not-selected"), x => x.isDefined),
+      "idNumber" -> optional(text)
+        .verifying(Messages("agent.edit-details-error.businessUniqueId.length", length60), x => x.isEmpty || (x.nonEmpty && x.get.length <= length60)),
+      "issuingInstitution" -> optional(text)
+        .verifying(Messages("agent.edit-details-error.issuingInstitution.length", length40), x => x.isEmpty || (x.nonEmpty && x.get.length <= length40)),
+      "issuingCountryCode" -> optional(text)
+    )(OverseasCompany.apply)(OverseasCompany.unapply)
   )
+
+  def validateNonUK(registrationData: Form[OverseasCompany]): Form[OverseasCompany] = {
+    validateNonUkIdentifiers(registrationData)
+  }
+
+  def validateNonUkIdentifiers(registrationData: Form[OverseasCompany]): Form[OverseasCompany] = {
+    validateNonUkIdentifiersInstitution(validateNonUkIdentifiersCountry(validateNonUkIdentifiersId(registrationData)))
+  }
+
+  def validateNonUkIdentifiersInstitution(registrationData: Form[OverseasCompany]) = {
+    val hasBusinessUniqueId = registrationData.data.get("hasBusinessUniqueId") map {
+      _.trim
+    } filterNot {
+      _.isEmpty
+    } map {
+      _.toBoolean
+    }
+    val issuingInstitution = registrationData.data.get("issuingInstitution") map {
+      _.trim
+    } filterNot {
+      _.isEmpty
+    }
+    hasBusinessUniqueId match {
+      case Some(true) if issuingInstitution.isEmpty =>
+        registrationData.withError(key = "issuingInstitution", message = Messages("agent.edit-mandate-details-error.issuingInstitution.select"))
+      case _ => registrationData
+    }
+  }
+
+  def validateNonUkIdentifiersCountry(registrationData: Form[OverseasCompany]) = {
+    val hasBusinessUniqueId = registrationData.data.get("hasBusinessUniqueId") map {
+      _.trim
+    } filterNot {
+      _.isEmpty
+    } map {
+      _.toBoolean
+    }
+    val issuingCountry = registrationData.data.get("issuingCountryCode") map {
+      _.trim
+    } filterNot {
+      _.isEmpty
+    }
+    hasBusinessUniqueId match {
+      case Some(true) if issuingCountry.isEmpty =>
+        registrationData.withError(key = "issuingCountryCode", message = Messages("agent.edit-mandate-details-error.issuingCountry.select"))
+      case Some(true) if issuingCountry.isDefined && issuingCountry.fold("")(x => x).matches(countryUK) =>
+        registrationData.withError(key = "issuingCountryCode", message = Messages("agent.edit-mandate-details-error.non-uk"))
+      case _ => registrationData
+    }
+  }
+
+  def validateNonUkIdentifiersId(registrationData: Form[OverseasCompany]) = {
+    val hasBusinessUniqueId = registrationData.data.get("hasBusinessUniqueId") map {
+      _.trim
+    } filterNot {
+      _.isEmpty
+    } map {
+      _.toBoolean
+    }
+    val businessUniqueId = registrationData.data.get("idNumber") map {
+      _.trim
+    } filterNot {
+      _.isEmpty
+    }
+    hasBusinessUniqueId match {
+      case Some(true) if businessUniqueId.isEmpty =>
+        registrationData.withError(key = "idNumber", message = Messages("agent.edit-mandate-details-error.businessUniqueId.select"))
+      case _ => registrationData
+    }
+  }
+
 }

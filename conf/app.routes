@@ -84,7 +84,8 @@ GET     /client/partial-banner/:clientId/:service       uk.gov.hmrc.agentclientm
 GET     /client/details/:clientId/:service              uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.getClientMandateDetails(clientId: String, service: String, returnUrl: String)
 GET     /client/update-email/:clientId/:service         uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.view(clientId: String, service: String, returnUrl: String)
 POST    /client/update-email/:service                   uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.submit(service: String)
-GET     /agent/details/edit/:service                  uk.gov.hmrc.agentclientmandate.controllers.agent.AgencyDetailsController.view(service: String)
+
+GET     /agent/edit/:service                    uk.gov.hmrc.agentclientmandate.controllers.agent.AgencyDetailsController.view(service: String)
 
 GET     /agent/details/edit/:service/businessDetails        uk.gov.hmrc.agentclientmandate.controllers.agent.UpdateAddressDetailsController.view(service: String)
 POST    /agent/details/edit/:service/businessDetails        uk.gov.hmrc.agentclientmandate.controllers.agent.UpdateAddressDetailsController.submit(service: String)

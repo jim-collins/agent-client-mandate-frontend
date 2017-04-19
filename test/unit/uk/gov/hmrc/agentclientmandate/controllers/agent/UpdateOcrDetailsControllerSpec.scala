@@ -30,6 +30,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.UpdateOcrDetailsController
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.OverseasCompany
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AgentBuilder, AuthBuilder, SessionBuilder}
@@ -85,19 +86,19 @@ class UpdateOcrDetailsControllerSpec extends PlaySpec with OneServerPerSuite wit
 
     "submit the input ocr details" when {
       "AUTHORISED user tries to submit" in {
-        val x = Identification("IdNumber", "issuingCountry", "FR")
+        val x = OverseasCompany(Some(true), Some("IdNumber"), Some("issuingCountry"), Some("FR"))
         val inputJson = Json.toJson(x)
         val fakeRequest = FakeRequest().withJsonBody(inputJson)
         saveWithAuthorisedUser(updateRegDetails, "abc")(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/mandate/agent/details/edit/abc")
+          redirectLocation(result).get must include("/mandate/agent/edit/abc")
         }
       }
     }
 
     "fail to submit the input ocr details" when {
       "AUTHORISED user tries to submit but fails due to form eror" in {
-        val x = Identification("IdNumber", "issuingCountry", "")
+        val x = OverseasCompany(Some(true), Some("IdNumber"), Some("issuingCountry"), Some(""))
         val inputJson = Json.toJson(x)
         val fakeRequest = FakeRequest().withJsonBody(inputJson)
         saveWithAuthorisedUser(None, "abc")(fakeRequest) { result =>
@@ -106,7 +107,7 @@ class UpdateOcrDetailsControllerSpec extends PlaySpec with OneServerPerSuite wit
       }
 
       "AUTHORISED user tries to submit but ETMP update fails" in {
-        val x = Identification("IdNumber", "issuingCountry", "FR")
+        val x = OverseasCompany(Some(true), Some("IdNumber"), Some("issuingCountry"), Some("FR"))
         val inputJson = Json.toJson(x)
         val fakeRequest = FakeRequest().withJsonBody(inputJson)
         saveWithAuthorisedUser(None, "abc")(fakeRequest) { result =>
