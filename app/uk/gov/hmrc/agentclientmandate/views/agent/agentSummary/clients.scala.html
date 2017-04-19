@@ -13,7 +13,11 @@
 
 <span class="screen-reader-text">@screenReaderText</span>
 
+<<<<<<< Updated upstream
 @main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = if(isUkAgent(agentDetails)) None else Some(_agentSummary_sidebar(agentDetails, service)) , delegatedService = Some(service)){
+=======
+@main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = if(isUkAgent(agentDetails)) None else Some(_agentSummary_sidebar(agentDetails, service)), delegatedService = Some(service)){
+>>>>>>> Stashed changes
 
   <div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
   <h1 class="heading-xlarge" id="header">
