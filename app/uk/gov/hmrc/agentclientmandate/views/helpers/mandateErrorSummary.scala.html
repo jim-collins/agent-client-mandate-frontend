@@ -4,7 +4,7 @@
 
 @if(form.hasGlobalErrors || form.hasErrors) {
   <div id="errors" tabindex="-1" role="group" aria-labelledby="form-error-heading" class="validation-summary">
-    <h1 class="heading-medium error-summary-heading" id="errorMessageHeadingText">@Messages("agent-client-mandate.error.summaryHeader")</h1>
+    <h1 class="heading-medium error-summary-heading" id="form-error-heading">@Messages("agent-client-mandate.error.summaryHeader")</h1>
     <ul class="error-summary-list">
       @form.errors.zipWithIndex.map { case (error, i) =>
         @defining(
@@ -19,10 +19,7 @@
           }
         ) { anchor :String =>
             @if(i+1 <= maxErrorsToShow) {
-              <li class="validation-summary-message"
-                  role="tooltip"
-                  data-journey="search-page:error:@error.key" id='@anchor.replaceAll("""[\.\[\]]""", "-")-error'
-              >
+              <li class="validation-summary-message" role="tooltip" data-journey="search-page:error:@error.key" id='@anchor.replaceAll("""[\.\[\]]""", "-")-error'>
                 <a href="#@anchor" class="error-list" data-focuses="@error.key">
                   @{
                      formErrorMessageParam match {
