@@ -400,3 +400,9 @@ table td {
 .td-top {
     vertical-align: top;
 }
+
+.filterbox {
+    background-color: #F8F8F8;
+    padding:14px;
+    box-sizing:border-box;
+}

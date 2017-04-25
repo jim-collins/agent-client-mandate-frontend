@@ -17,7 +17,7 @@
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import play.api.Logger
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Request, Result}
 import uk.gov.hmrc.agentclientmandate.config.{FrontendAuthConnector, FrontendDelegationConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.models.AgentDetails
@@ -31,6 +31,9 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import play.api.data.Form
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClients
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClientsForm._
 
 import scala.concurrent.Future
 
@@ -52,7 +55,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
     implicit authContext => implicit request =>
       for {
         screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
-        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service)
+        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, None, None)
         agentDetails <- agentClientMandateService.fetchAgentDetails()
         _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
       } yield {
@@ -68,7 +71,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
             case Some(x) =>
               val arn = AuthUtils.getArn
               for {
-                mandates <- agentClientMandateService.fetchAllClientMandates(arn, service)
+                mandates <- agentClientMandateService.fetchAllClientMandates(arn, service, None, None)
                 agentDetails <- agentClientMandateService.fetchAgentDetails()
                 _ <- dataCacheService.cacheFormData[String](screenReaderTextId, Messages("client.summary.hidden.client_activated", x.clientDisplayName))
               } yield {
@@ -106,11 +109,39 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
       case Some(x) if (x.pendingMandates.size > 0 && tabName.equals(Some("pending-clients"))) =>
         Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, screenReaderText))
       case Some(x) if (x.activeMandates.size > 0) =>
-        Ok(views.html.agent.agentSummary.clients(service, x, agentDetails, screenReaderText))
+        Ok(views.html.agent.agentSummary.clients(service, x, agentDetails, screenReaderText,filterClientsForm))
       case Some(x) if (x.pendingMandates.size > 0) =>
         Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, screenReaderText))
       case _ =>
         Ok(views.html.agent.agentSummary.noClientsNoPending(service, agentDetails))
     }
+  }
+
+  def update(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async{
+     implicit authContext => implicit request =>
+
+     filterClientsForm.bindFromRequest.fold(
+       formWithError => {
+         for {
+           screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
+           mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, None, None)
+           agentDetails <- agentClientMandateService.fetchAgentDetails()
+           _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
+         } yield {
+          BadRequest(views.html.agent.agentSummary.noClientsNoPending(service, agentDetails))
+         }
+
+      },
+      data => {
+        for {
+        screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
+        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, Some(data.showAllClients), Some(authContext.user.userId))
+        agentDetails <- agentClientMandateService.fetchAgentDetails()
+        _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
+        } yield {
+          showView(service, mandates, agentDetails, screenReaderText.getOrElse(""))
+        }
+      }
+    )
   }
 }

@@ -62,7 +62,7 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 
-  def fetchAllMandates(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+  def fetchAllMandates(arn: String, serviceName: String, allClients: Option[Boolean], credId: Option[String])(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
     val getUrl = s"$serviceUrl$authLink/$mandateUri/service/$arn/$serviceName"
     http.GET[HttpResponse](getUrl)

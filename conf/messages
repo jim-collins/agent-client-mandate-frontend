@@ -40,6 +40,12 @@ client.summary.client.pending-status = Awaiting client
 client.summary.no-clients = You have no clients
 client.summary.hidden.client_activated = Client {0} has been activated
 
+client.summary.filter-clients = Filter clients
+client.summary.filter-show-all-clients = Show all clients
+client.summary.filter-show-only-my-clients = Show only my clients
+client.summary.filter-hint = Display name (optional)
+client.summary.filter-update = update
+
 #client collect email
 client.collect-email.title = What is your email address?
 client.collect-email.preheader = Appoint an agent
