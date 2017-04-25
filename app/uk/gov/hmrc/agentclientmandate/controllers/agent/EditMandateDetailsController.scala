@@ -16,20 +16,18 @@
 
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
+import play.api.Play.current
 import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
-import uk.gov.hmrc.agentclientmandate.models.ContactDetails
+import uk.gov.hmrc.agentclientmandate.models.{ContactDetails, Mandate}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, EmailService}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.EditMandateDetailsForm._
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{EditMandateDetails, EditMandateDetailsForm}
 import uk.gov.hmrc.agentclientmandate.views
+import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.EditMandateDetailsForm._
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
-
-import scala.concurrent.Future
-import uk.gov.hmrc.play.frontend.auth.{Actions, Delegator}
 
 trait EditMandateDetailsController extends FrontendController with Actions {
 
@@ -43,7 +41,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
         case Some(mandate) =>
           val editMandateDetails = EditMandateDetails(displayName = mandate.clientDisplayName,
             email = mandate.agentParty.contactDetails.email)
-          Ok(views.html.agent.editClient(editMandateDetailsForm.fill(editMandateDetails), service, mandateId, mandate.clientDisplayName, mandate.clientParty.map(_.name), getBackLink(service)))
+          Ok(views.html.agent.editClient(editMandateDetailsForm.fill(editMandateDetails), service, mandateId, mandate.clientDisplayName, mandate.clientParty.map(_.name), getBackLink(service), showRemoveLink(mandate)))
         case _ => throw new RuntimeException(s"No Mandate returned with id $mandateId for service $service")
       }
   }
@@ -53,7 +51,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
       formWithError => {
         acmService.fetchClientMandate(mandateId) map {
           case Some(mandate) =>
-            BadRequest(views.html.agent.editClient(formWithError, service, mandateId, mandate.clientDisplayName,mandate.clientParty.map(_.name), getBackLink(service)))
+            BadRequest(views.html.agent.editClient(formWithError, service, mandateId, mandate.clientDisplayName,mandate.clientParty.map(_.name), getBackLink(service), showRemoveLink(mandate)))
           case _ => throw new RuntimeException(s"No Mandate returned with id $mandateId for service $service")
         }
       },
@@ -76,7 +74,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
             val errorForm = editMandateDetailsForm.withError(key = "agent-enter-email-form", message = errorMsg).fill(editMandate)
             acmService.fetchClientMandate(mandateId) map {
               case Some(mandate) =>
-                BadRequest(views.html.agent.editClient(errorForm, service, mandateId, mandate.clientDisplayName, mandate.clientParty.map(_.name),getBackLink(service)))
+                BadRequest(views.html.agent.editClient(errorForm, service, mandateId, mandate.clientDisplayName, mandate.clientParty.map(_.name),getBackLink(service), showRemoveLink(mandate)))
               case _ => throw new RuntimeException(s"No Mandate returned with id $mandateId for service $service")
             }
 
@@ -84,6 +82,11 @@ trait EditMandateDetailsController extends FrontendController with Actions {
         }
       }
     )
+  }
+
+  private def showRemoveLink(mandate: Mandate) = {
+    mandate.currentStatus.status != uk.gov.hmrc.agentclientmandate.models.Status.PendingActivation &&
+    mandate.currentStatus.status != uk.gov.hmrc.agentclientmandate.models.Status.PendingCancellation
   }
 
   private def getBackLink(service: String) = {

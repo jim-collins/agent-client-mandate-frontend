@@ -6,7 +6,7 @@
 @import uk.gov.hmrc.agentclientmandate.models._
 @import uk.gov.hmrc.agentclientmandate.service._
 
-@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, clientDisplayName: String, clientParty: Option[String], backLink: Option[String])(implicit request: Request[_], messages: Messages)
+@(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, clientDisplayName: String, clientParty: Option[String], backLink: Option[String], showRemoveClient: Boolean)(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("agent.edit-mandate-details.title", if(clientParty.isDefined) clientParty.get else ""), delegatedService = Some(service)) {
   @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase),
@@ -37,11 +37,13 @@
     '_showConstraints -> false)
     </div>
 
-  <div class="form-field">
-    <a id="remove-client-link" href="@routes.RemoveClientController.view(service, mandateId)" data-journey-click="agent-client-mandate:click:remove-client-link">
-      @Messages("client.summary.client-remove")
-    </a>
-  </div>
+    @if(showRemoveClient){
+      <div class="form-field">
+        <a id="remove-client-link" href="@routes.RemoveClientController.view(service, mandateId)" data-journey-click="agent-client-mandate:click:remove-client-link">
+          @Messages("client.summary.client-remove")
+        </a>
+      </div>
+    }
 
     <button class="button" id="submit" type="submit">@Messages("agent.edit-mandate-details.submit")</button>
 
