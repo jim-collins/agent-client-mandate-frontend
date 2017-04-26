@@ -61,7 +61,7 @@ trait SearchMandateController extends FrontendController with Actions with Manda
     implicit authContext => implicit request =>
       mandateRefForm.bindFromRequest.fold(
         formWithErrors => Future.successful(BadRequest(views.html.client.searchMandate(service, formWithErrors, getBackLink(service)))),
-        data => mandateService.fetchClientMandate(data.mandateRef) flatMap {
+        data => mandateService.fetchClientMandate(data.mandateRef.toUpperCase) flatMap {
           case Some(x) => {
             if (x.currentStatus.status != uk.gov.hmrc.agentclientmandate.models.Status.New) {
               val errorMsg = Messages("client.search-mandate.error.mandateRef.already-used-by-mandate-service")
