@@ -113,8 +113,8 @@ trait AgentClientMandateService extends MandateConstants {
     }
   }
 
-  def fetchAllClientMandates(arn: String, serviceName: String, allClients: Option[Boolean], credId: Option[String])(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandates]] = {
-    agentClientMandateConnector.fetchAllMandates(arn, serviceName, allClients, credId) flatMap {
+  def fetchAllClientMandates(arn: String, serviceName: String, allClients: Option[Boolean] = None, displayName: Option[String] = None)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandates]] = {
+    agentClientMandateConnector.fetchAllMandates(arn, serviceName, allClients.contains(true), displayName) flatMap {
       response => response.status match {
         case OK =>
           val mandates = response.json.asOpt[Seq[Mandate]]

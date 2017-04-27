@@ -60,7 +60,9 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("header").text must be("Your ATED clients")
           document.getElementById("add-client-btn").text() must be("Add a new client")
           document.getElementById("add-client-link") must be(null)
-
+          document.getElementById("filter-clients").text() must be("Filter clients")
+          document.getElementById("form-hint").text() must be("Display name (optional)")
+          document.getElementById("filterClients-btn").text() must be("Update")
           document.getElementById("view-pending-clients") must be(null)
           document.getElementById("view-clients") must be(null)
         }
@@ -77,6 +79,9 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.title() must be("Your ATED clients")
           document.getElementById("header").text must be("Your ATED clients")
           document.getElementById("add-client-link").text() must be("Add a new client")
+          document.getElementById("filter-clients").text() must be("Filter clients")
+          document.getElementById("form-hint").text() must be("Display name (optional)")
+          document.getElementById("filterClients-btn").text() must be("Update")
           document.getElementById("add-client-btn") must be(null)
           document.getElementById("view-pending-clients").attr("href") must be("/mandate/agent/summary/ATED?tabName=pending-clients")
           document.getElementById("view-clients") must be(null)

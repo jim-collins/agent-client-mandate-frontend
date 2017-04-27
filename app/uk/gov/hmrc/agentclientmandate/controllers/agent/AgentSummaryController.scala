@@ -55,7 +55,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
     implicit authContext => implicit request =>
       for {
         screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
-        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, None, None)
+        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service)
         agentDetails <- agentClientMandateService.fetchAgentDetails()
         _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
       } yield {
@@ -71,7 +71,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
             case Some(x) =>
               val arn = AuthUtils.getArn
               for {
-                mandates <- agentClientMandateService.fetchAllClientMandates(arn, service, None, None)
+                mandates <- agentClientMandateService.fetchAllClientMandates(arn, service)
                 agentDetails <- agentClientMandateService.fetchAgentDetails()
                 _ <- dataCacheService.cacheFormData[String](screenReaderTextId, Messages("client.summary.hidden.client_activated", x.clientDisplayName))
               } yield {
@@ -124,7 +124,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
        formWithError => {
          for {
            screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
-           mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, None, None)
+           mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service)
            agentDetails <- agentClientMandateService.fetchAgentDetails()
            _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
          } yield {
@@ -135,7 +135,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
       data => {
         for {
         screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
-        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, Some(data.showAllClients), Some(authContext.user.userId))
+        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, data.showAllClients, data.displayName)
         agentDetails <- agentClientMandateService.fetchAgentDetails()
         _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
         } yield {

@@ -44,7 +44,7 @@ client.summary.filter-clients = Filter clients
 client.summary.filter-show-all-clients = Show all clients
 client.summary.filter-show-only-my-clients = Show only my clients
 client.summary.filter-hint = Display name (optional)
-client.summary.filter-update = update
+client.summary.filter-update = Update
 
 #client collect email
 client.collect-email.title = What is your email address?
