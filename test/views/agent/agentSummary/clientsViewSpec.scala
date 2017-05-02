@@ -21,11 +21,11 @@ import org.jsoup.Jsoup
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, FeatureSpec, GivenWhenThen}
 import org.scalatestplus.play.OneServerPerSuite
-import play.api.data.Form
 import play.api.test.FakeRequest
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.Mandates
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{FilterClients, FilterClientsForm}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClients
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClientsForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.domain.Generator
 import unit.uk.gov.hmrc.agentclientmandate.builders.AgentBuilder
@@ -68,7 +68,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       val activeMandates = Seq(mandateActive)
       val pendingMandates = Seq(mandateNew)
 
-      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, pendingMandates), agentDetails, "")
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, pendingMandates), agentDetails, "", filterClientsForm)
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Your ATED clients")
@@ -92,9 +92,8 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       implicit val request = FakeRequest()
 
       val activeMandates = Seq(mandateActive)
-      val filterClients = FilterClients(None, None)
 
-      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, "", new Form(filterClients))
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, "", filterClientsForm)
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - Your ATED clients")

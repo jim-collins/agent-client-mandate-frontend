@@ -130,14 +130,13 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
          } yield {
           BadRequest(views.html.agent.agentSummary.noClientsNoPending(service, agentDetails))
          }
-
       },
       data => {
         for {
-        screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
-        mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, data.showAllClients, data.displayName)
-        agentDetails <- agentClientMandateService.fetchAgentDetails()
-        _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
+          screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
+          mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, data.showAllClients, data.displayName)
+          agentDetails <- agentClientMandateService.fetchAgentDetails()
+          _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
         } yield {
           showView(service, mandates, agentDetails, screenReaderText.getOrElse(""))
         }

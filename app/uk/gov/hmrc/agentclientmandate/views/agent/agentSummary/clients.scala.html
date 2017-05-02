@@ -38,45 +38,46 @@
   </ul>
 </div>
 
-<div class="form-group">
-  <details>
-    <summary>
-          <span id="filter-clients" class="summary">
-            @Messages("client.summary.filter-clients")
-          </span>
-    </summary>
+@if(mandates.activeMandates.size >= 15) {
+  <div class="form-group">
+    <details>
+      <summary>
+            <span id="filter-clients" class="summary">
+              @Messages("client.summary.filter-clients")
+            </span>
+      </summary>
 
-    <div class="filterbox">
-      @form(action = routes.AgentSummaryController.update(service)) {
+      <div class="filterbox">
+        @form(action = routes.AgentSummaryController.update(service)) {
 
-      <div class="form-field">
-        @mandateInput(filterClientsForm("displayName"),
-        '_label -> Messages(""),
-        '_labelClass -> "form-label-bold",
-        '_hintText -> Messages("client.summary.filter-hint"),
-        '_showConstraints -> false)
+        <div class="form-field">
+          @mandateInput(filterClientsForm("displayName"),
+          '_label -> Messages("client.summary.filter-display_name"),
+          '_labelClass -> "form-label-bold",
+          '_showConstraints -> false)
+        </div>
+
+        <div class="form-field">
+          @mandateInputRadioGroup(filterClientsForm("displayName"),
+          Seq("true" -> Messages("client.summary.filter-show-all-clients"),
+              "false" -> Messages("client.summary.filter-show-only-my-clients")),
+          '_groupClass -> "",
+          '_legend -> Messages("agent.overseas-client-question.header"),
+          '_legendClass -> "screen-reader-text",
+          '_labelClass -> "block-label",
+          '_labelAfter -> true,
+          '_trackGA -> true
+          )
+        </div>
+
+        <button id="filterClients-btn" name="filterClients" class="button" id="submit" type="submit">@Messages("client.summary.filter-update")</button>
+
+        }
+
       </div>
-
-      <div class="form-field">
-        @mandateInputRadioGroup(filterClientsForm("displayName"),
-        Seq("true" -> Messages("client.summary.filter-show-all-clients"),
-            "false" -> Messages("client.summary.filter-show-only-my-clients")),
-        '_groupClass -> "",
-        '_legend -> Messages("agent.overseas-client-question.header"),
-        '_legendClass -> "screen-reader-text",
-        '_labelClass -> "block-label",
-        '_labelAfter -> true,
-        '_trackGA -> true
-        )
-      </div>
-
-      <button id="filterClients-btn" name="filterClients" class="button" id="submit" type="submit">@Messages("client.summary.filter-update")</button>
-
-      }
-
-    </div>
-  </details>
-</div>
+    </details>
+  </div>
+}
 
 
 <div class="form-group">
