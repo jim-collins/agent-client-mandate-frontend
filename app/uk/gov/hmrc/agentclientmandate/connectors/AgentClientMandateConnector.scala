@@ -70,7 +70,7 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
       s"$serviceUrl$authLink/$mandateUri/service/$arn/$serviceName?name=$name"
     } else {
       val credId = ac.user.userId
-      s"$serviceUrl$authLink/$mandateUri/service/$arn/$serviceName?credId=$credId&name=$name"
+      s"$serviceUrl$authLink/$mandateUri/service/$arn/$serviceName?credId=$credId&displayName=$name"
     }
     http.GET[HttpResponse](getUrl)
   }
