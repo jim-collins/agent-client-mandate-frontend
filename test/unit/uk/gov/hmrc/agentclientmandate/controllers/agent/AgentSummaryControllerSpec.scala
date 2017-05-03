@@ -302,7 +302,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
 
-    when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+    when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
       Future.successful(mockMandates)
     }
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
@@ -325,7 +325,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
       Future.successful(Some(mandateActive))
     }
-    when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+    when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
       Future.successful(Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation))))
     }
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
@@ -342,7 +342,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
 
-    when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
+    when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
       Future.successful(mockMandates)
     }
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
