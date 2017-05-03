@@ -56,8 +56,8 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Your ATED clients")
-          document.getElementById("header").text must be("Your ATED clients")
+          document.title() must be("ATED clients")
+          document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-btn").text() must be("Add a new client")
           document.getElementById("add-client-link") must be(null)
           document.getElementById("view-pending-clients") must be(null)
@@ -71,8 +71,8 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Your ATED clients")
-          document.getElementById("header").text must be("Your ATED clients")
+          document.title() must be("ATED clients")
+          document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-link").text() must be("Add a new client")
           document.getElementById("filter-clients") must be(null)
           document.getElementById("displayName_field") must be(null)
@@ -88,8 +88,8 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Your ATED clients")
-          document.getElementById("header").text must be("Your ATED clients")
+          document.title() must be("ATED clients")
+          document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-link").text() must be("Add a new client")
           document.getElementById("filter-clients").text() must be("Filter clients")
           document.getElementById("displayName_field").text() must be("Display name (optional)")
@@ -108,8 +108,8 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Your ATED clients")
-          document.getElementById("header").text must be("Your ATED clients")
+          document.title() must be("ATED clients")
+          document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-link").text() must be("Add a new client")
           document.getElementById("view-pending-clients") must be(null)
           document.getElementById("view-clients").attr("href") must be("/mandate/agent/summary/ATED")
@@ -125,8 +125,8 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Your ATED clients")
-          document.getElementById("header").text must be("Your ATED clients")
+          document.title() must be("ATED clients")
+          document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-link").text() must be("Add a new client")
           document.getElementById("view-pending-clients") must be(null)
           document.getElementById("view-clients") must be(null)
@@ -231,15 +231,22 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
     "update view" when {
       "user updates filters" in {
-        val fakeRequest = FakeRequest().withFormUrlEncodedBody("allClients" -> "true")
-        updateAuthorisedAgent(fakeRequest) { result =>
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("showAllClients" -> "allClients")
+        updateAuthorisedAgent(fakeRequest, Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)))) { result =>
+          status(result) must be(OK)
+        }
+      }
+
+      "user updates filters but there areno mandates" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("showAllClients" -> "allClients")
+        updateAuthorisedAgent(fakeRequest, None) { result =>
           status(result) must be(OK)
         }
       }
 
       "user submits bad data" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("allClients" -> "client display name")
-        updateAuthorisedAgent(fakeRequest) { result =>
+        updateAuthorisedAgent(fakeRequest, Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)))) { result =>
           status(result) must be(BAD_REQUEST)
         }
       }
@@ -329,13 +336,11 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     test(result)
   }
 
-  def updateAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded])(test: Future[Result] => Any) {
+  def updateAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded], mockMandates: Option[Mandates])(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
-
-    val mockMandates = Some(Mandates(activeMandates = Seq(mandateActive), pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)))
 
     when(mockAgentClientMandateService.fetchAllClientMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn {
       Future.successful(mockMandates)

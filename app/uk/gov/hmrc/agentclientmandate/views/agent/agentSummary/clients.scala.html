@@ -8,7 +8,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 
 
-@(service: String, mandates: Mandates, agentDetails: AgentDetails, screenReaderText: String, filterClientsForm: Form[FilterClients])(implicit request: Request[_], messages: Messages)
+@(service: String, mandates: Mandates, agentDetails: AgentDetails, screenReaderText: String, filterClientsForm: Form[FilterClients], isUpdate: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @implicitFormInstance = @{ Some(filterClientsForm) }
 
@@ -38,9 +38,13 @@
   </ul>
 </div>
 
-@if(mandates.activeMandates.size >= 15) {
+@if(mandates.activeMandates.size >= 15 || isUpdate) {
   <div class="form-group">
-    <details>
+    @if(isUpdate) {
+      <details open>
+    } else {
+      <details>
+    }
       <summary>
             <span id="filter-clients" class="summary">
               @Messages("client.summary.filter-clients")
@@ -58,9 +62,9 @@
         </div>
 
         <div class="form-field">
-          @mandateInputRadioGroup(filterClientsForm("displayName"),
-          Seq("true" -> Messages("client.summary.filter-show-all-clients"),
-              "false" -> Messages("client.summary.filter-show-only-my-clients")),
+          @mandateInputRadioGroup(filterClientsForm("showAllClients"),
+          Seq("allClients" -> Messages("client.summary.filter-show-all-clients"),
+              "myClients" -> Messages("client.summary.filter-show-only-my-clients")),
           '_groupClass -> "",
           '_legend -> Messages("agent.overseas-client-question.header"),
           '_legendClass -> "screen-reader-text",
@@ -73,8 +77,8 @@
         <button id="filterClients-btn" name="filterClients" class="button" id="submit" type="submit">@Messages("client.summary.filter-update")</button>
 
         }
-
       </div>
+      <hr>
     </details>
   </div>
 }
@@ -83,22 +87,26 @@
 <div class="form-group">
   <table>
     <tbody>
-    @for((active, index) <- mandates.activeMandates.zipWithIndex) {
-    <tr>
-      <td id="client-name-@index">@active.clientDisplayName</td>
-      <td>
-        <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)" data-journey-click="agent-client-mandate:click:edit-client-link">
-          @Messages("Edit") <span class="screen-reader-text">@active.clientDisplayName</span>
-        </a>
-      </td>
-      <td class="tdRight">
-        <a id="client-link-@index"
-           href='@routes.AgentSummaryController.doDelegation(service, active.id)' data-journey-click="agent-client-mandate:click:client-link">@Messages("client.summary.client-view")
-          <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
-        </a>
-      </td>
-    </tr>
-    }
+      @if(mandates.activeMandates.size > 0) {
+        @for((active, index) <- mandates.activeMandates.zipWithIndex) {
+          <tr>
+            <td id="client-name-@index">@active.clientDisplayName</td>
+            <td>
+              <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)" data-journey-click="agent-client-mandate:click:edit-client-link">
+                @Messages("Edit") <span class="screen-reader-text">@active.clientDisplayName</span>
+              </a>
+            </td>
+            <td class="tdRight">
+              <a id="client-link-@index"
+                 href='@routes.AgentSummaryController.doDelegation(service, active.id)' data-journey-click="agent-client-mandate:click:client-link">@Messages("client.summary.client-view")
+                <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
+              </a>
+            </td>
+          </tr>
+        }
+      } else {
+        <span id="filter-no-results" class="heading-medium">@Messages("client.summary.no_clients_found")</span>
+      }
     </tbody>
   </table>
 </div>

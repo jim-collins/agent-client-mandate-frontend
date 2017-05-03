@@ -22,8 +22,8 @@ mandate.main-title = Submit and view your {0} returns
 mandate.sign-out = Sign out
 
 #agent client summary
-client.summary.title = Your {0} clients
-client.summary.header = Your {0} clients
+client.summary.title = {0} clients
+client.summary.header = {0} clients
 client.summary.add-client = Add a new client
 client.summary.client-name.title = Name
 client.summary.client-action.title = Action
@@ -45,6 +45,7 @@ client.summary.filter-show-all-clients = Show all clients
 client.summary.filter-show-only-my-clients = Show only my clients
 client.summary.filter-display_name = Display name (optional)
 client.summary.filter-update = Update
+client.summary.no_clients_found = No clients found
 
 #client collect email
 client.collect-email.title = What is your email address?

@@ -17,25 +17,22 @@
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import play.api.Logger
-import play.api.mvc.{AnyContent, Request, Result}
+import play.api.Play.current
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
+import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.agentclientmandate.config.{FrontendAuthConnector, FrontendDelegationConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.models.AgentDetails
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, Mandates}
 import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
 import uk.gov.hmrc.agentclientmandate.utils.DelegationUtils._
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClients
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClientsForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.connectors.DelegationConnector
 import uk.gov.hmrc.play.frontend.auth.{Actions, Delegator}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import play.api.i18n.Messages
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
-import play.api.data.Form
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClients
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClientsForm._
-
-import scala.concurrent.Future
 
 object AgentSummaryController extends AgentSummaryController {
   val authConnector = FrontendAuthConnector
@@ -109,7 +106,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
       case Some(x) if (x.pendingMandates.size > 0 && tabName.equals(Some("pending-clients"))) =>
         Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, screenReaderText))
       case Some(x) if (x.activeMandates.size > 0) =>
-        Ok(views.html.agent.agentSummary.clients(service, x, agentDetails, screenReaderText,filterClientsForm))
+        Ok(views.html.agent.agentSummary.clients(service, x, agentDetails, screenReaderText,filterClientsForm.fill(FilterClients(None, "allClients"))))
       case Some(x) if (x.pendingMandates.size > 0) =>
         Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, screenReaderText))
       case _ =>
@@ -134,11 +131,11 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
       data => {
         for {
           screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
-          mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, data.showAllClients, data.displayName)
+          mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, data.showAllClients == "allClients", data.displayName, true)
           agentDetails <- agentClientMandateService.fetchAgentDetails()
           _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
         } yield {
-          showView(service, mandates, agentDetails, screenReaderText.getOrElse(""))
+          Ok(views.html.agent.agentSummary.clients(service, mandates.getOrElse(Mandates(Seq(), Seq())), agentDetails, "", filterClientsForm.fill(data), true))
         }
       }
     )
