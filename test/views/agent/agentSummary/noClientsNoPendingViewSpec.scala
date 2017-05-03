@@ -52,8 +52,8 @@ class noClientsNoPendingViewSpec extends FeatureSpec with OneServerPerSuite with
       val html = views.html.agent.agentSummary.noClientsNoPending("ATED", agentDetails)
 
       val document = Jsoup.parse(html.toString())
-      Then("The title should match - Your ATED clients")
-      assert(document.title() === "Your ATED clients")
+      Then("The title should match - ATED clients")
+      assert(document.title() === "ATED clients")
 
       And("The Pre Header should be the agents name - ABC Ltd.")
       assert(document.getElementById("pre-header").text() === "Org Name")

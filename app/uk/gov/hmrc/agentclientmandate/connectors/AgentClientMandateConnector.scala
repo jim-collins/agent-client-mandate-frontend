@@ -21,6 +21,7 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.agentclientmandate.config.WSHttp
 import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, CreateMandateDto, GGRelationshipDto, Mandate}
 import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayName
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
@@ -62,9 +63,15 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
 
-  def fetchAllMandates(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+  def fetchAllMandates(arn: String, serviceName: String, allClients: Boolean, displayName: Option[String])(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val authLink = AuthUtils.getAuthLink
-    val getUrl = s"$serviceUrl$authLink/$mandateUri/service/$arn/$serviceName"
+    val name = displayName.map {x => "displayName=" + x} getOrElse ""
+    val getUrl = if (allClients) {
+      s"$serviceUrl$authLink/$mandateUri/service/$arn/$serviceName?$name"
+    } else {
+      val credId = ac.user.userId
+      s"$serviceUrl$authLink/$mandateUri/service/$arn/$serviceName?credId=$credId&$name"
+    }
     http.GET[HttpResponse](getUrl)
   }
 

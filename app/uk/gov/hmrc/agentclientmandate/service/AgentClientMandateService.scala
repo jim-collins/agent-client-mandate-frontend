@@ -113,8 +113,12 @@ trait AgentClientMandateService extends MandateConstants {
     }
   }
 
-  def fetchAllClientMandates(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandates]] = {
-    agentClientMandateConnector.fetchAllMandates(arn, serviceName) flatMap {
+  def fetchAllClientMandates(arn: String,
+                             serviceName: String,
+                             allClients: Boolean = true,
+                             displayName: Option[String] = None,
+                             update: Boolean = false)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandates]] = {
+    agentClientMandateConnector.fetchAllMandates(arn, serviceName, allClients, displayName) flatMap {
       response => response.status match {
         case OK =>
           val mandates = response.json.asOpt[Seq[Mandate]]
@@ -125,7 +129,7 @@ trait AgentClientMandateService extends MandateConstants {
               Future.successful(Some(Mandates(activeMandates, pendingMandates)))
             case None => Future.successful(None)
           }
-        case NOT_FOUND =>
+        case NOT_FOUND if !update =>
           ggConnector.retrieveClientList flatMap { clientList =>
             val ggRelationshipDtoList = clientList flatMap (_.identifiersForDisplay.headOption) map { x =>
               GGRelationshipDto(serviceName = serviceName,

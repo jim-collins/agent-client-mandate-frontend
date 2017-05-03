@@ -119,7 +119,18 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
         (Matchers.any())
         (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
-      val response = TestAgentClientMandateConnector.fetchAllMandates(arn.utr, serviceName)
+      val response = TestAgentClientMandateConnector.fetchAllMandates(arn.utr, serviceName, true, None)
+      await(response).status must be(OK)
+    }
+
+    "fetch all valid mandates for only users clients" in {
+      val successResponse = Json.toJson(mandateDto)
+
+      when(mockWSHttp.GET[HttpResponse]
+        (Matchers.any())
+        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+
+      val response = TestAgentClientMandateConnector.fetchAllMandates(arn.utr, serviceName, false, None)
       await(response).status must be(OK)
     }
 

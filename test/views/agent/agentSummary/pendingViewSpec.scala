@@ -68,8 +68,8 @@ class pendingViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       val html = views.html.agent.agentSummary.pending("ATED", Mandates(Nil, pendingMandates), agentDetails, "")
 
       val document = Jsoup.parse(html.toString())
-      Then("The title should match - Your ATED clients")
-      assert(document.title() === "Your ATED clients")
+      Then("The title should match - ATED clients")
+      assert(document.title() === "ATED clients")
       
       And("The Pending Clients tab - should not exist")
       assert(document.getElementById("pending-clients").text === "Requests (4)")

@@ -39,6 +39,22 @@ object AgentSelectServiceForm {
     )
 }
 
+case class FilterClients(displayName: Option[String], showAllClients: String)
+
+object FilterClients {
+  implicit val formats = Json.format[FilterClients]
+}
+
+object FilterClientsForm {
+ val filterClientsForm = Form(
+    mapping(
+       "displayName" -> optional(text),
+       "showAllClients" -> text
+  )(FilterClients.apply)(FilterClients.unapply)
+  )
+}
+
+
 case class AgentEmail(email: String)
 
 object AgentEmail {

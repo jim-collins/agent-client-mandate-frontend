@@ -24,6 +24,8 @@ import org.scalatestplus.play.OneServerPerSuite
 import play.api.test.FakeRequest
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.Mandates
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClients
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClientsForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.domain.Generator
 import unit.uk.gov.hmrc.agentclientmandate.builders.AgentBuilder
@@ -66,11 +68,11 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       val activeMandates = Seq(mandateActive)
       val pendingMandates = Seq(mandateNew)
 
-      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, pendingMandates), agentDetails, "")
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, pendingMandates), agentDetails, "", filterClientsForm)
 
       val document = Jsoup.parse(html.toString())
-      Then("The title should match - Your ATED clients")
-      assert(document.title() === "Your ATED clients")
+      Then("The title should match - ATED clients")
+      assert(document.title() === "ATED clients")
 
       And("The Clients tab - should exist and have 1 item")
       assert(document.getElementById("clients").text === "Current (1)")
@@ -91,11 +93,11 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
 
       val activeMandates = Seq(mandateActive)
 
-      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, "")
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, "", filterClientsForm)
 
       val document = Jsoup.parse(html.toString())
-      Then("The title should match - Your ATED clients")
-      assert(document.title() === "Your ATED clients")
+      Then("The title should match - ATED clients")
+      assert(document.title() === "ATED clients")
 
       And("The Clients tab - should exist and have 1 item")
       assert(document.getElementById("clients").text === "Current (1)")
@@ -110,6 +112,62 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       assert(document.getElementById("add-client-btn") === null)
       And("The Add Client Link - should exist")
       assert(document.getElementById("add-client-link").text() === "Add a new client")
+
+      And("The filter box should not exist")
+      assert(document.getElementById("filterbox") == null)
+    }
+
+    scenario("agent has visited the page and will filter clients") {
+
+      Given("An agent visits the page and has clients but no pending clients")
+      When("The agent views the mandates")
+      implicit val request = FakeRequest()
+
+      val activeMandates = Seq(mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive)
+
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, "", filterClientsForm)
+
+      val document = Jsoup.parse(html.toString())
+
+      And("The Clients tab - should exist and have 15 items")
+      assert(document.getElementById("clients").text === "Current (15)")
+
+      And("The Clients table - has the correct data and View link")
+      assert(document.getElementById("client-name-0").text === "client display name 2")
+      assert(document.getElementById("client-link-0").text === "View details for client display name 2")
+
+      And("The Add Client Button - should not exist")
+      assert(document.getElementById("add-client-btn") === null)
+      And("The Add Client Link - should exist")
+      assert(document.getElementById("add-client-link").text() === "Add a new client")
+
+      And("The filter box should exist")
+      assert(document.getElementById("filter-clients").text === "Filter clients")
+    }
+
+    scenario("agent has visited the page and has filtered clients but there no results") {
+
+      Given("An agent visits the page and has clients but no pending clients")
+      When("The agent views the mandates")
+      implicit val request = FakeRequest()
+
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(Nil, Nil), agentDetails, "", filterClientsForm, true)
+
+      val document = Jsoup.parse(html.toString())
+
+      And("The Clients tab - should exist and have 0 items")
+      assert(document.getElementById("clients").text === "Current (0)")
+
+      And("The Add Client Button - should not exist")
+      assert(document.getElementById("add-client-btn") === null)
+      And("The Add Client Link - should exist")
+      assert(document.getElementById("add-client-link").text() === "Add a new client")
+
+      And("The filter box should exist")
+      assert(document.getElementById("filter-clients").text === "Filter clients")
+
+      And("The text for no results should exist")
+      assert(document.getElementById("filter-no-results").text === "No clients found")
     }
   }
 }

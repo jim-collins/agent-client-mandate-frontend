@@ -8,56 +8,107 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 
 
-@(service: String, mandates: Mandates, agentDetails: AgentDetails, screenReaderText: String)(implicit request: Request[_], messages: Messages)
+@(service: String, mandates: Mandates, agentDetails: AgentDetails, screenReaderText: String, filterClientsForm: Form[FilterClients], isUpdate: Boolean = false)(implicit request: Request[_], messages: Messages)
 
+@implicitFormInstance = @{ Some(filterClientsForm) }
 
 <span class="screen-reader-text">@screenReaderText</span>
 
 @main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = if(isUkAgent(agentDetails)) None else Some(_agentSummary_sidebar(agentDetails, service)), delegatedService = Some(service)){
 
-  <div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
-  <h1 class="heading-xlarge" id="header">
-    @Messages("client.summary.title", service.toUpperCase)
-  </h1>
+<div class="heading-sub" id="pre-header">@agentDetails.agentName</div>
+<h1 class="heading-xlarge" id="header">
+  @Messages("client.summary.title", service.toUpperCase)
+</h1>
 
+<div class="form-group">
+  <a href="@routes.CollectAgentEmailController.addClient(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
+</div>
+
+<div class="form-group">
+  <ul class="ated-tabs">
+    <li id="clients" class="selected heading-small">
+      @Messages("client.summary.client-active.title", mandates.activeMandates.size)
+    </li>
+    @if(!mandates.pendingMandates.isEmpty){
+    <li id="pending-clients" class="heading-small">
+      <a href="@routes.AgentSummaryController.view(service, Some("pending-clients"))" id="view-pending-clients" data-journey-click="agent-client-mandate:click:view-pending-clients">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)</a>
+    </li>
+    }
+  </ul>
+</div>
+
+@if(mandates.activeMandates.size >= 15 || isUpdate) {
   <div class="form-group">
-    <a href="@routes.CollectAgentEmailController.addClient(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
-  </div>
+    @if(isUpdate) {
+      <details open>
+    } else {
+      <details>
+    }
+      <summary>
+            <span id="filter-clients" class="summary">
+              @Messages("client.summary.filter-clients")
+            </span>
+      </summary>
 
-  <div class="form-group">
-    <ul class="ated-tabs">
-      <li id="clients" class="selected heading-small">
-          @Messages("client.summary.client-active.title", mandates.activeMandates.size)
-      </li>
-      @if(!mandates.pendingMandates.isEmpty){
-      <li id="pending-clients" class="heading-small">
-        <a href="@routes.AgentSummaryController.view(service, Some("pending-clients"))" id="view-pending-clients" data-journey-click="agent-client-mandate:click:view-pending-clients">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)</a>
-      </li>
-      }
-    </ul>
-  </div>
+      <div class="filterbox">
+        @form(action = routes.AgentSummaryController.update(service)) {
 
-    <div class="form-group">
-      <table>
-        <tbody>
-        @for((active, index) <- mandates.activeMandates.zipWithIndex) {
-        <tr>
-          <td id="client-name-@index">@active.clientDisplayName</td>
-          <td>
-            <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)" data-journey-click="agent-client-mandate:click:edit-client-link">
-              @Messages("Edit") <span class="screen-reader-text">@active.clientDisplayName</span>
-            </a>
-          </td>
-          <td class="tdRight">
-            <a id="client-link-@index"
-               href='@routes.AgentSummaryController.doDelegation(service, active.id)' data-journey-click="agent-client-mandate:click:client-link">@Messages("client.summary.client-view")
-              <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
-            </a>
-          </td>
-        </tr>
+        <div class="form-field">
+          @mandateInput(filterClientsForm("displayName"),
+          '_label -> Messages("client.summary.filter-display_name"),
+          '_labelClass -> "form-label-bold",
+          '_showConstraints -> false)
+        </div>
+
+        <div class="form-field">
+          @mandateInputRadioGroup(filterClientsForm("showAllClients"),
+          Seq("allClients" -> Messages("client.summary.filter-show-all-clients"),
+              "myClients" -> Messages("client.summary.filter-show-only-my-clients")),
+          '_groupClass -> "",
+          '_legend -> Messages("agent.overseas-client-question.header"),
+          '_legendClass -> "screen-reader-text",
+          '_labelClass -> "block-label",
+          '_labelAfter -> true,
+          '_trackGA -> true
+          )
+        </div>
+
+        <button id="filterClients-btn" name="filterClients" class="button" id="submit" type="submit">@Messages("client.summary.filter-update")</button>
+
         }
-        </tbody>
-      </table>
-    </div>
+      </div>
+      <hr>
+    </details>
+  </div>
+}
+
+
+<div class="form-group">
+  <table>
+    <tbody>
+      @if(mandates.activeMandates.size > 0) {
+        @for((active, index) <- mandates.activeMandates.zipWithIndex) {
+          <tr>
+            <td id="client-name-@index">@active.clientDisplayName</td>
+            <td>
+              <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)" data-journey-click="agent-client-mandate:click:edit-client-link">
+                @Messages("Edit") <span class="screen-reader-text">@active.clientDisplayName</span>
+              </a>
+            </td>
+            <td class="tdRight">
+              <a id="client-link-@index"
+                 href='@routes.AgentSummaryController.doDelegation(service, active.id)' data-journey-click="agent-client-mandate:click:client-link">@Messages("client.summary.client-view")
+                <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
+              </a>
+            </td>
+          </tr>
+        }
+      } else {
+        <span id="filter-no-results" class="heading-medium">@Messages("client.summary.no_clients_found")</span>
+      }
+    </tbody>
+  </table>
+</div>
 
 }

@@ -17,6 +17,9 @@
 package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import play.api.Logger
+import play.api.Play.current
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.agentclientmandate.config.{FrontendAuthConnector, FrontendDelegationConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
@@ -24,15 +27,12 @@ import uk.gov.hmrc.agentclientmandate.models.AgentDetails
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, Mandates}
 import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
 import uk.gov.hmrc.agentclientmandate.utils.DelegationUtils._
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClients
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClientsForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.connectors.DelegationConnector
 import uk.gov.hmrc.play.frontend.auth.{Actions, Delegator}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import play.api.i18n.Messages
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
-
-import scala.concurrent.Future
 
 object AgentSummaryController extends AgentSummaryController {
   val authConnector = FrontendAuthConnector
@@ -106,11 +106,38 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
       case Some(x) if (x.pendingMandates.size > 0 && tabName.equals(Some("pending-clients"))) =>
         Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, screenReaderText))
       case Some(x) if (x.activeMandates.size > 0) =>
-        Ok(views.html.agent.agentSummary.clients(service, x, agentDetails, screenReaderText))
+        Ok(views.html.agent.agentSummary.clients(service, x, agentDetails, screenReaderText,filterClientsForm.fill(FilterClients(None, "allClients"))))
       case Some(x) if (x.pendingMandates.size > 0) =>
         Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, screenReaderText))
       case _ =>
         Ok(views.html.agent.agentSummary.noClientsNoPending(service, agentDetails))
     }
+  }
+
+  def update(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async{
+     implicit authContext => implicit request =>
+
+     filterClientsForm.bindFromRequest.fold(
+       formWithError => {
+         for {
+           screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
+           mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service)
+           agentDetails <- agentClientMandateService.fetchAgentDetails()
+           _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
+         } yield {
+          BadRequest(views.html.agent.agentSummary.noClientsNoPending(service, agentDetails))
+         }
+      },
+      data => {
+        for {
+          screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
+          mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, data.showAllClients == "allClients", data.displayName, true)
+          agentDetails <- agentClientMandateService.fetchAgentDetails()
+          _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
+        } yield {
+          Ok(views.html.agent.agentSummary.clients(service, mandates.getOrElse(Mandates(Seq(), Seq())), agentDetails, "", filterClientsForm.fill(data), true))
+        }
+      }
+    )
   }
 }
