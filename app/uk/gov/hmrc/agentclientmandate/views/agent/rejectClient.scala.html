@@ -19,7 +19,7 @@
 
     @form(action = routes.RejectClientController.submit(service, mandateId)) {
 
-        <div class="form-group" id="rejectClient">
+        <div class="form-group" id="yesNo">
         @mandateInputRadioGroup(
             rejectClientForm("yesNo"),
             Seq("true" -> Messages("radio-yes"),
