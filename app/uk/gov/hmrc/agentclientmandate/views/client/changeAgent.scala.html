@@ -15,7 +15,7 @@
 
     @form(action = routes.ChangeAgentController.submit(service, mandateId)) {
 
-        <div class="form-group" id="removeAgent">
+        <div class="form-group" id="yesNo">
         @mandateInputRadioGroup(
             changeAgentForm("yesNo"),
             Seq("true" -> Messages("radio-yes"),
