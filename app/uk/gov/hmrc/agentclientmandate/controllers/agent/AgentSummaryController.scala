@@ -88,7 +88,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
         mandate =>
           mandate.flatMap(_.subscription.referenceNumber) match {
             case Some(serviceId) =>
-              val clientName = mandate.flatMap(_.clientParty.map(_.name)).getOrElse("") + "|" + mandate.map(_.clientDisplayName).getOrElse("")
+              val clientName = mandate.map(_.clientDisplayName).getOrElse("")
               startDelegationAndRedirect(createDelegationContext(service, serviceId, clientName), getDelegatedServiceRedirectUrl(service))
             case None =>
               throw new RuntimeException(s"[AgentSummaryController][doDelegation] Failed to doDelegation to for mandateId $mandateId for service $service")
