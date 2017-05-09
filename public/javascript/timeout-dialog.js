@@ -64,7 +64,7 @@ String.prototype.format = function() {
   $.timeoutDialog = function(options) {
 
     var settings = {
-      timeout: 15,
+      timeout: 30,
       countdown: 1,
       time : 'minutes',
       title : 'You’re about to be signed out',
@@ -74,7 +74,7 @@ String.prototype.format = function() {
       logout_url: '/sign-out',
       logout_redirect_url: '/',
       restart_on_yes: true,
-      dialog_width: 340,
+      dialog_width: 340,:
       close_on_escape: false,
       background_no_scroll: false
     }
