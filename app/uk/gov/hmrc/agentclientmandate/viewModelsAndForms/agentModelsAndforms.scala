@@ -262,10 +262,10 @@ object ClientDisplayName {
 }
 
 
-case class ClientDisplayDetails(name: String, mandateId: String)
+case class ClientMandateDisplayDetails(name: String, mandateId: String, agentLastUsedEmail: String)
 
-object ClientDisplayDetails {
-  implicit val formats = Json.format[ClientDisplayDetails]
+object ClientMandateDisplayDetails {
+  implicit val formats = Json.format[ClientMandateDisplayDetails]
 }
 
 object ClientDisplayNameForm {

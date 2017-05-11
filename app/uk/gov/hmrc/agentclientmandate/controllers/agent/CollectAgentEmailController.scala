@@ -23,7 +23,7 @@ import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmail
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientMandateDisplayDetails}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.AgentEmailForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
@@ -50,8 +50,9 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
 
   def addClient(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
-      dataCacheService.clearCache().map { res =>
-        Ok(views.html.agent.agentEnterEmail(agentEmailForm, service, None, getBackLink(service, None)))
+      dataCacheService.fetchAndGetFormData[ClientMandateDisplayDetails](agentRefCacheId) map {
+        case Some(clientMandateDisplayDetails) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(AgentEmail(clientMandateDisplayDetails.agentLastUsedEmail)), service, None, getBackLink(service, None)))
+        case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service,  None, getBackLink(service, None)))
       }
   }
 
