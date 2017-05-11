@@ -52,7 +52,7 @@ trait MandateDetailsController extends FrontendController with Actions with Mand
             case Some(x) => Ok(views.html.agent.mandateDetails(agentEmail.email, service, x.name, getBackLink(service, callingPage)))
             case _ => Redirect(routes.ClientDisplayNameController.view(service))
           }
-        case _ => Future.successful(Redirect(routes.CollectAgentEmailController.view(service)))
+        case _ => Future.successful(Redirect(routes.CollectAgentEmailController.addClient(service)))
       }
   }
 
