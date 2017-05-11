@@ -21,7 +21,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, FeatureSpec, GivenWhenThen}
 import org.scalatestplus.play.OneServerPerSuite
 import play.api.test.FakeRequest
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayDetails
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientMandateDisplayDetails
 import uk.gov.hmrc.agentclientmandate.views
 
 
@@ -40,7 +40,8 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
       When("The user views the page from ated")
 
       val mandateId = "ABC123"
-      val clientDisplayDetails = ClientDisplayDetails("test name", mandateId)
+      val agentLastUsedEmail = "a.b@mail.com"
+      val clientDisplayDetails = ClientMandateDisplayDetails("test name", mandateId,agentLastUsedEmail)
       val html = views.html.agent.uniqueAgentReference(clientDisplayDetails,  "ated")
 
       val document = Jsoup.parse(html.toString())

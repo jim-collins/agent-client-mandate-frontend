@@ -93,7 +93,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
         viewWithAuthorisedAgent("") { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/email/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/add-client/$service"))
         }
       }
     }
