@@ -118,12 +118,16 @@ trait AgentClientMandateService extends MandateConstants {
                              update: Boolean = false)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandates]] = {
     agentClientMandateConnector.fetchAllMandates(arn, serviceName, allClients, displayName) map {
       response =>
-        response.json.asOpt[Seq[Mandate]] match {
-          case Some(x) =>
-            val pendingMandates = x.filter(a => AgentClientMandateUtils.isPendingStatus(a.currentStatus.status))
-            val activeMandates = x.filter(a => a.currentStatus.status == Status.Active)
-            Some(Mandates(activeMandates, pendingMandates))
-          case None => None
+        response.status match {
+          case OK =>
+            response.json.asOpt[Seq[Mandate]] match {
+            case Some (x) =>
+              val pendingMandates = x.filter (a => AgentClientMandateUtils.isPendingStatus (a.currentStatus.status) )
+              val activeMandates = x.filter (a => a.currentStatus.status == Status.Active)
+              Some (Mandates (activeMandates, pendingMandates) )
+            case None => None
+          }
+          case NOT_FOUND => None
         }
     }
   }

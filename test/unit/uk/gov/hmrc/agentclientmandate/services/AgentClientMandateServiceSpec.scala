@@ -191,6 +191,15 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         await(response) must be(None)
       }
 
+      "return none when no mandates found" in {
+        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
+        val respJson = Json.obj("Wrong" -> "format")
+        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(NOT_FOUND, None))
+
+        val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
+        await(response) must be(None)
+      }
+
     }
 
     "send approved mandate to backend and caches the response in keystore" when {
