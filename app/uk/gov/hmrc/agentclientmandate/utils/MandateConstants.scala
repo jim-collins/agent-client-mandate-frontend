@@ -26,4 +26,7 @@ trait MandateConstants {
   val clientApprovedMandateId = "client-approved"
   val clientDisplayNameFormId = "client-display-name-form-id"
   val agentDetailsFormId = "agent-details"
+  val overseasTaxRefFormId = "overseas-tax-ref"
+  val nrlFormId = "nrl-form-if"
+  val clientPermissionFormId = "client-permission-form-id"
 }

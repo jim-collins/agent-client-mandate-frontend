@@ -19,6 +19,7 @@ package unit.uk.gov.hmrc.agentclientmandate.controllers.agent
 import java.util.UUID
 
 import org.jsoup.Jsoup
+import org.mockito.Matchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
@@ -27,6 +28,8 @@ import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.NRLQuestionController
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.NRLQuestion
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
@@ -81,6 +84,20 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
           document.getElementById("submit").text() must be("Continue")
         }
       }
+
+      "agent requests(GET) for 'nrl question' view with some data saved" in {
+        viewWithAuthorisedAgentWithSomeData { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Is your client a non-resident landlord?")
+          document.getElementById("header").text() must include("Is your client a non-resident landlord?")
+          document.getElementById("pre-header").text() must be("Add a client")
+          document.getElementById("nrl_legend").text() must be("Is your client a non-resident landlord?")
+          document.getElementById("nrl-true").attr("checked") must be("checked")
+          document.getElementById("submit").text() must be("Continue")
+        }
+      }
+
     }
 
     "redirect agent to 'mandate details' page" when {
@@ -119,10 +136,12 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
 
   val mockAuthConnector = mock[AuthConnector]
   val service = "ATED"
+  val mockDataCacheService = mock[DataCacheService]
 
   object TestNRLQuestionController extends NRLQuestionController {
     override val authConnector = mockAuthConnector
     override val controllerId = "nrl"
+    override val dataCacheService = mockDataCacheService
   }
 
   override def beforeEach(): Unit = {
@@ -151,6 +170,19 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.any())
+      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+    val result = TestNRLQuestionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def viewWithAuthorisedAgentWithSomeData(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[NRLQuestion](Matchers.any())
+      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(NRLQuestion(Some(true)))))
     val result = TestNRLQuestionController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }

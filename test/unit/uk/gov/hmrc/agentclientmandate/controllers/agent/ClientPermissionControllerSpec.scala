@@ -28,12 +28,14 @@ import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.connectors.{AtedSubscriptionFrontendConnector, BusinessCustomerFrontendConnector}
-import uk.gov.hmrc.agentclientmandate.controllers.agent.{NRLQuestionController, PaySAQuestionController, ClientPermissionController}
+import uk.gov.hmrc.agentclientmandate.controllers.agent.{ClientPermissionController, NRLQuestionController, PaySAQuestionController}
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.agentclientmandate.utils.{FeatureSwitch, MandateFeatureSwitches}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientPermission
 
 import scala.concurrent.Future
 
@@ -89,6 +91,24 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ATED")
         }
       }
+
+      "agent requests(GET) for 'client permission' view from PaySA With saved data" in {
+        viewWithAuthorisedAgentWithSomeData(service, PaySAQuestionController.controllerId) { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("Do you have permission to register on behalf of your client?")
+          document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
+          document.getElementById("pre-header").text() must be("Add a client")
+          document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
+          document.getElementById("permission-text").text() must be("Your client must complete an ATED 1, if you already have an ATED 1 for this client, don't complete another. You do not need to send your ATED 1 to HMRC, but you need to keep it for your records. Submission of form 64-8 does not cover ATED or ATED related CGT.")
+          document.getElementById("hasPermission-true").attr("checked") must be("checked")
+          document.getElementById("submit").text() must be("Continue")
+
+          document.getElementById("backLinkHref").text() must be("Back")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ATED")
+        }
+      }
+
       "agent requests(GET) for 'client permission' view from nrl" in {
         viewWithAuthorisedAgent(service, NRLQuestionController.controllerId) { result =>
           status(result) must be(OK)
@@ -150,11 +170,13 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
   val mockBusinessCustomerConnector = mock[BusinessCustomerFrontendConnector]
   val mockAtedSubscriptionConnector = mock[AtedSubscriptionFrontendConnector]
   val service = "ATED"
+  val mockDataCacheService = mock[DataCacheService]
 
   object TestClientPermissionController extends ClientPermissionController {
     override val authConnector = mockAuthConnector
     override val businessCustomerConnector = mockBusinessCustomerConnector
     override val atedSubscriptionConnector = mockAtedSubscriptionConnector
+    override val dataCacheService = mockDataCacheService
   }
 
   override def beforeEach(): Unit = {
@@ -187,6 +209,21 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     when(mockBusinessCustomerConnector.clearCache(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(HttpResponse(200)))
     when(mockAtedSubscriptionConnector.clearCache(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(HttpResponse(200)))
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.any())
+      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+    val result = TestClientPermissionController.view(serviceUsed, callingPage).apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def viewWithAuthorisedAgentWithSomeData(serviceUsed: String = service, callingPage: String)(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    when(mockBusinessCustomerConnector.clearCache(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(HttpResponse(200)))
+    when(mockAtedSubscriptionConnector.clearCache(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(HttpResponse(200)))
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[ClientPermission](Matchers.any())
+      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientPermission(Some(true)))))
     val result = TestClientPermissionController.view(serviceUsed, callingPage).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
