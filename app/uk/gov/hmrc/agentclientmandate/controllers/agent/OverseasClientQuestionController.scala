@@ -26,21 +26,28 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.OverseasClientQuestion
+import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 
 object OverseasClientQuestionController extends OverseasClientQuestionController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
   val controllerId: String = "overseas"
+  val dataCacheService: DataCacheService = DataCacheService
   // $COVERAGE-ON$
 }
 
-trait OverseasClientQuestionController extends FrontendController with Actions {
-
+trait OverseasClientQuestionController extends FrontendController with Actions with MandateConstants{
+  def dataCacheService: DataCacheService
   val controllerId: String
 
-  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
+  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
-      Ok(views.html.agent.overseasClientQuestion(overseasClientQuestionForm, service, getBackLink(service)))
+      dataCacheService.fetchAndGetFormData[OverseasClientQuestion](overseasTaxRefFormId) map {
+        case Some(data) => Ok(views.html.agent.overseasClientQuestion(overseasClientQuestionForm.fill(data), service, getBackLink(service)))
+        case _ => Ok(views.html.agent.overseasClientQuestion(overseasClientQuestionForm, service, getBackLink(service)))
+      }
   }
 
   def submit(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
@@ -48,6 +55,7 @@ trait OverseasClientQuestionController extends FrontendController with Actions {
       overseasClientQuestionForm.bindFromRequest.fold(
         formWithError => BadRequest(views.html.agent.overseasClientQuestion(formWithError, service, getBackLink(service))),
         data => {
+          dataCacheService.cacheFormData[OverseasClientQuestion](overseasTaxRefFormId, data)
           val isOverSeas = data.isOverseas.getOrElse(false)
           if (isOverSeas) Redirect(routes.NRLQuestionController.view(service))
           else

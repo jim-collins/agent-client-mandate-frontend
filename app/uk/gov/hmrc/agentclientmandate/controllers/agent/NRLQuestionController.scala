@@ -21,25 +21,33 @@ import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.NRLQuestionForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
+import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.NRLQuestion
 
 object NRLQuestionController extends NRLQuestionController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
   val controllerId: String = "nrl"
+  val dataCacheService: DataCacheService = DataCacheService
   // $COVERAGE-ON$
 }
 
-trait NRLQuestionController extends FrontendController with Actions {
+trait NRLQuestionController extends FrontendController with Actions with MandateConstants {
+  def dataCacheService: DataCacheService
 
   val controllerId: String
 
-  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
+  def view(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
-      Ok(views.html.agent.nrl_question(nrlQuestionForm, service, getBackLink(service)))
+      dataCacheService.fetchAndGetFormData[NRLQuestion](nrlFormId) map {
+        case Some(data) => Ok(views.html.agent.nrl_question(nrlQuestionForm.fill(data), service, getBackLink(service)))
+        case _=> Ok(views.html.agent.nrl_question(nrlQuestionForm, service, getBackLink(service)))
+      }
   }
 
 
@@ -48,6 +56,7 @@ trait NRLQuestionController extends FrontendController with Actions {
       nrlQuestionForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.agent.nrl_question(formWithErrors, service, getBackLink(service))),
         data => {
+          dataCacheService.cacheFormData[NRLQuestion](nrlFormId, data)
           if (data.nrl.getOrElse(false))
             Redirect(routes.PaySAQuestionController.view(service))
           else

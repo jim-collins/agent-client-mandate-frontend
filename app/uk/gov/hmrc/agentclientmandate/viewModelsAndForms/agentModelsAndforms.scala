@@ -222,6 +222,7 @@ object EditMandateDetailsForm {
 case class NRLQuestion(nrl: Option[Boolean] = None)
 
 object NRLQuestionForm {
+  implicit val formats = Json.format[NRLQuestion]
 
   val nrlQuestionForm = Form(
     mapping(
@@ -246,6 +247,7 @@ object PaySAQuestion {
 case class ClientPermission(hasPermission: Option[Boolean] = None)
 
 object ClientPermissionForm {
+  implicit val formats = Json.format[ClientPermission]
 
   val clientPermissionForm = Form(
     mapping(
