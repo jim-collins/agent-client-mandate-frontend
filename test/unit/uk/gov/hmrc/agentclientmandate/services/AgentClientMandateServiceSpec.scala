@@ -26,7 +26,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, BusinessCustomerConnector, GovernmentGatewayConnector}
+import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, BusinessCustomerConnector}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, Mandates}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientMandateDisplayDetails, ClientDisplayName, EditAgentAddressDetails}
@@ -171,16 +171,6 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
     "fetch all mandates" when {
 
-      "return no mandates when the list is empty" in {
-
-        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(SERVICE_UNAVAILABLE, None))
-
-        val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
-        await(response) must be(None)
-
-      }
-
       "filter mandates when status is checked" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         val respJson = Json.toJson(Seq(mandateNew, mandateActive, mandatePendingCancellation, mandateApproved))
@@ -201,44 +191,13 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         await(response) must be(None)
       }
 
-      "return no mandate list when agent logs in for first time and import process return OK" in {
+      "return none when no mandates found" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        val respJson = Json.parse("""{}""")
-        val identifierForDispList = List(IdentifierForDisplay("type", "X12345678"))
-        val clientList = List(RetrieveClientAllocation("friendlyName", identifierForDispList))
-        val ggDtoList = List(GGRelationshipDto(serviceName, arn.utr, "credId", "X12345678"))
+        val respJson = Json.obj("Wrong" -> "format")
         when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(NOT_FOUND, None))
-        when(mockGovernmentGatewayConnector.retrieveClientList(Matchers.any(), Matchers.any())) thenReturn Future.successful(clientList)
-        when(mockAgentClientMandateConnector.importExistingRelationships(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
 
         val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
         await(response) must be(None)
-
-      }
-
-      "return no mandate list when agent logs in for first time and import process return any other Status" in {
-        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        val respJson = Json.parse("""{}""")
-        val identifierForDispList = List(IdentifierForDisplay("type", "X12345678"))
-        val clientList = List(RetrieveClientAllocation("friendlyName", identifierForDispList))
-        val ggDtoList = List(GGRelationshipDto(serviceName, arn.utr, "credId", "X12345678"))
-        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(NOT_FOUND, None))
-        when(mockGovernmentGatewayConnector.retrieveClientList(Matchers.any(), Matchers.any())) thenReturn Future.successful(clientList)
-        when(mockAgentClientMandateConnector.importExistingRelationships(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(INTERNAL_SERVER_ERROR, None))
-
-        val response = TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName)
-        await(response) must be(None)
-
-      }
-
-      "don't try and import any clients if there are none to import" in {
-        implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
-        val clientList = List()
-        when(mockAgentClientMandateConnector.fetchAllMandates(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(NOT_FOUND, None))
-        when(mockGovernmentGatewayConnector.retrieveClientList(Matchers.any(), Matchers.any())) thenReturn Future.successful(clientList)
-
-        await(TestAgentClientMandateService.fetchAllClientMandates(arn.utr, serviceName))
-        verify(mockAgentClientMandateConnector, times(0)).importExistingRelationships(Matchers.any())(Matchers.any(), Matchers.any())
       }
 
     }
@@ -398,6 +357,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       "return false if agent is missing email" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         when(mockAgentClientMandateConnector.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(NO_CONTENT))
+        when(mockAgentClientMandateConnector.updateAgentCredId(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
         val response = TestAgentClientMandateService.doesAgentHaveMissingEmail("ated", "arn")
         await(response) must be(false)
       }
@@ -405,6 +365,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
       "return true if agent is missing email" in {
         implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "agent")
         when(mockAgentClientMandateConnector.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
+        when(mockAgentClientMandateConnector.updateAgentCredId(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK))
         val response = TestAgentClientMandateService.doesAgentHaveMissingEmail("ated", "arn")
         await(response) must be(true)
       }
@@ -506,7 +467,6 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
 
   val mockAgentClientMandateConnector = mock[AgentClientMandateConnector]
   val mockDataCacheService = mock[DataCacheService]
-  val mockGovernmentGatewayConnector = mock[GovernmentGatewayConnector]
   val mockBusinessCustomerConnector = mock[BusinessCustomerConnector]
   val arn = new AgentBusinessUtrGenerator().nextAgentBusinessUtr
 
@@ -537,14 +497,12 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
   object TestAgentClientMandateService extends AgentClientMandateService {
     override val dataCacheService = mockDataCacheService
     override val agentClientMandateConnector = mockAgentClientMandateConnector
-    override val ggConnector = mockGovernmentGatewayConnector
     override val businessCustomerConnector: BusinessCustomerConnector = mockBusinessCustomerConnector
   }
 
   override def beforeEach = {
     reset(mockDataCacheService)
     reset(mockAgentClientMandateConnector)
-    reset(mockGovernmentGatewayConnector)
   }
 
 }

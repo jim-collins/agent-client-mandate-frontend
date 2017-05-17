@@ -18,7 +18,7 @@ package uk.gov.hmrc.agentclientmandate.service
 
 import play.api.Logger
 import play.api.http.Status._
-import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, BusinessCustomerConnector, GovernmentGatewayConnector}
+import uk.gov.hmrc.agentclientmandate.connectors.{AgentClientMandateConnector, BusinessCustomerConnector}
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.utils.{AgentClientMandateUtils, MandateConstants}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
@@ -35,8 +35,6 @@ trait AgentClientMandateService extends MandateConstants {
   def dataCacheService: DataCacheService
 
   def agentClientMandateConnector: AgentClientMandateConnector
-
-  def ggConnector: GovernmentGatewayConnector
 
   def businessCustomerConnector: BusinessCustomerConnector
 
@@ -118,42 +116,19 @@ trait AgentClientMandateService extends MandateConstants {
                              allClients: Boolean = true,
                              displayName: Option[String] = None,
                              update: Boolean = false)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Mandates]] = {
-    agentClientMandateConnector.fetchAllMandates(arn, serviceName, allClients, displayName) flatMap {
-      response => response.status match {
-        case OK =>
-          val mandates = response.json.asOpt[Seq[Mandate]]
-          mandates match {
-            case Some(x) =>
-              val pendingMandates = x.filter(a => AgentClientMandateUtils.isPendingStatus(a.currentStatus.status))
-              val activeMandates = x.filter(a => a.currentStatus.status == Status.Active)
-              Future.successful(Some(Mandates(activeMandates, pendingMandates)))
-            case None => Future.successful(None)
+    agentClientMandateConnector.fetchAllMandates(arn, serviceName, allClients, displayName) map {
+      response =>
+        response.status match {
+          case OK =>
+            response.json.asOpt[Seq[Mandate]] match {
+            case Some (x) =>
+              val pendingMandates = x.filter (a => AgentClientMandateUtils.isPendingStatus (a.currentStatus.status) )
+              val activeMandates = x.filter (a => a.currentStatus.status == Status.Active)
+              Some (Mandates (activeMandates, pendingMandates) )
+            case None => None
           }
-        case NOT_FOUND if !update =>
-          ggConnector.retrieveClientList flatMap { clientList =>
-            val ggRelationshipDtoList = clientList flatMap (_.identifiersForDisplay.headOption) map { x =>
-              GGRelationshipDto(serviceName = serviceName,
-                agentPartyId = arn,
-                credId = ac.user.userId,
-                clientSubscriptionId = x.value)
-            }
-            if (ggRelationshipDtoList.size > 0) {
-              agentClientMandateConnector.importExistingRelationships(ggRelationshipDtoList) flatMap { resp =>
-                resp.status match {
-                  case OK =>
-                    Future.successful(None)
-                  case status =>
-                    Logger.warn(s"[AgentClientMandateService] [fetchAllClientMandates] - client list import failed for $arn - status - $status")
-                    Future.successful(None)
-                }
-              }
-            }
-            else {
-              Future.successful(None)
-            }
-          }
-        case _ => Future.successful(None)
-      }
+          case NOT_FOUND => None
+        }
     }
   }
 
@@ -211,7 +186,10 @@ trait AgentClientMandateService extends MandateConstants {
   }
 
   def doesAgentHaveMissingEmail(service: String, arn: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Boolean] = {
-    agentClientMandateConnector.doesAgentHaveMissingEmail(service, arn).map { response =>
+    for{
+      response <- agentClientMandateConnector.doesAgentHaveMissingEmail(service, arn)
+      _ <- agentClientMandateConnector.updateAgentCredId(ac.user.userId)
+    } yield {
       response.status match {
         case OK => true
         case _ => false
@@ -279,6 +257,5 @@ trait AgentClientMandateService extends MandateConstants {
 object AgentClientMandateService extends AgentClientMandateService {
   val dataCacheService = DataCacheService
   val agentClientMandateConnector = AgentClientMandateConnector
-  val ggConnector = GovernmentGatewayConnector
   val businessCustomerConnector = BusinessCustomerConnector
 }
