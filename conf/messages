@@ -8,7 +8,7 @@ edit-link = Edit
 confirm-button = Confirm
 mandate.back = Back
 agent.all-my-clients.button = View all my clients
-mandate.agent.change.details = Change Details
+mandate.agent.change.details = Change details
 save-button = Save
 
 mandate.checkbox-i-agree.confirm.error = Please confirm that you want to submit this
