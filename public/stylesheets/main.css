@@ -269,6 +269,21 @@ html.noScroll {
 
 }
 
+.icon-important {
+    background-repeat: no-repeat;
+    float: left;
+    height: 38px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    margin-top: 0px;
+    width: 36px;
+}
+
+.ated-icon-important-text {
+    width:82%;
+    float:left;
+}
+
 /* errors */
 .validation-summary h1 {
     margin-top: 10px;
