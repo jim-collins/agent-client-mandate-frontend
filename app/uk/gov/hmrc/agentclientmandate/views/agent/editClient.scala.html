@@ -20,22 +20,22 @@
   </div>
 
   @form(action = routes.EditMandateDetailsController.submit(service, mandateId)) {
-  <div class="form-group">
+  <fieldset>
+    <legend class="visuallyhidden">@Messages("agent.edit-mandate-details.header", if(clientParty.isDefined) clientParty.get else "")</legend>
 
-    <div class="form-field">
     @mandateInput(editMandateDetailsForm("displayName"),
     '_label -> Messages("agent.edit-mandate-details.displayName"),
     '_labelClass -> "form-label-bold",
     '_hintText -> Messages("agent.edit-mandate-details.hint"),
     '_showConstraints -> false)
-    </div>
 
-    <div class="form-field">
+
     @mandateInput(editMandateDetailsForm("email"),
     '_label -> Messages("agent.edit-mandate-details.email"),
     '_labelClass -> "form-label-bold",
     '_showConstraints -> false)
-    </div>
+
+  </fieldset>
 
     @if(showRemoveClient){
       <div class="form-field">
@@ -47,7 +47,7 @@
 
     <button class="button" id="submit" type="submit">@Messages("agent.edit-mandate-details.submit")</button>
 
-  </div>
+
   }
 }
 
