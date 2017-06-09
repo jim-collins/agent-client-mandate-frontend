@@ -17,9 +17,9 @@
     </h1>
 
     <div class="form-group">
-        <span id="info" class="paragraph">
+        <p id="info">
             @Messages("agent.client-display-name.text", service.toUpperCase)
-        </span>
+        </p>
     </div>
 
     @form(action = routes.ClientDisplayNameController.submit(service, redirectUrl)) {

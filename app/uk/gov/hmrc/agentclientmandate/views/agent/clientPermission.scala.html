@@ -21,9 +21,9 @@ Some(mandateErrorSummary(clientPermissionForm, "agent.client-permission.error.ge
 </h1>
 
 <div class="form-group">
-  <span class="paragraph" id="permission-text">
+  <p id="permission-text">
     @Html(Messages("agent.client-permission.hasPermission.selected.ated.yes.notice"))
-  </span>
+  </p>
 </div>
 
 @form(action = routes.ClientPermissionController.submit(service, callingPage)) {

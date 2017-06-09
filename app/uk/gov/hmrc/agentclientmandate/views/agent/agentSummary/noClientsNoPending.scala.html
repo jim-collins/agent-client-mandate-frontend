@@ -17,7 +17,7 @@
     @Messages("client.summary.title", service.toUpperCase)
   </h1>
 
-  <h2 class="heading-medium">@Messages("client.summary.no-clients")</h2>
+  <p><span class="heading-medium">@Messages("client.summary.no-clients")</span></p>
   <a href="@routes.CollectAgentEmailController.addClient(service)" id="add-client-btn" class="button" data-journey-click="agent-client-mandate:click:add-client-btn">@Messages("client.summary.add-client")</a>
 
 }

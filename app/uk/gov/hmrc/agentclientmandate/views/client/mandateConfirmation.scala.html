@@ -16,13 +16,13 @@
 <div class="transaction-banner--complete" id="banner">
     <h1 id="banner-text">@Messages("client.agent-confirmation.banner-text",
         agentName)</h1>
-    <span class="heading-small" id="date">
+    <p><span class="heading-small" id="date">
       @Messages("client.agent-confirmation.banner-confirmation.submitted.date", DateTimeFormat.forPattern("dd MMM yyyy").print(new LocalDate()))
-    </span>
+    </span></p>
 </div>
 
 <div class="form-group">
-    <span id="notification" class="heading-small">@Messages("client.agent-confirmation.notification")</span>
+    <p><span id="notification" class="heading-small">@Messages("client.agent-confirmation.notification")</span></p>
 </div>
 
 
