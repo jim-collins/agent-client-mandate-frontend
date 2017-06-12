@@ -19,9 +19,11 @@
     @Html(Messages("client.agent-declaration.declaration-info", mandate.subscription.service.name.toUpperCase))
   </p>
 
-  <span class="heading-medium" id="declare-title">
-    @Messages("client.agent-declaration.declare-header")
-  </span>
+  <p>
+    <span class="heading-medium" id="declare-title">
+      @Messages("client.agent-declaration.declare-header")
+    </span>
+  </p>
 
   <ul class="bullets">
     <li id="agent-name">@Messages("client.agent-declaration.agent-name", mandate.agentParty.name, mandate.subscription.service.name.toUpperCase)</li>

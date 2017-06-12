@@ -21,9 +21,9 @@
     </h1>
 
     <div class="form-group">
-        <span id="info" class="paragraph">
+        <p id="info">
           @Messages("agent.missing-email.text", service.toUpperCase)
-        </span>
+        </p>
     </div>
 
     @form(action=routes.AgentMissingEmailController.submit(service)) {
