@@ -228,6 +228,12 @@ agent.unique-reference.ated.list.text1 = register their company to use the new <
 agent.unique-reference.ated.list.text2 = enter the unique authorisation number you gave them
 agent.unique-reference.text3 = Once they have done this you will receive an email notification. You have 28 days to sign in and accept their request.
 agent.unique-reference.button = View all my clients
+agent.unique-reference.details.title = Instructions to give to your client
+agent.unique-reference.details.text.1 = Make sure you have your agent''s unique authorisation number.
+agent.unique-reference.details.text.2 = You need to use your organisation Government Gateway account, or create a new one, to enter the service.
+agent.unique-reference.details.text.3 = Once you are in the service you need to register by entering your registered company name and Unique Taxpayer Reference (UTR).
+agent.unique-reference.details.text.4 = You need to add a contact email address during registration, this can be your email, or your agent''s.
+agent.unique-reference.details.text.5 = To authorise your agent you need to enter the unique authorisation number that they gave you.
 
 # agent client details
 agent.check-client-details.title = Add a client

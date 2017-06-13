@@ -33,6 +33,21 @@
 
   <p id="email-instruction">@Messages("agent.unique-reference.text3")</p>
 
+  <details role="group">
+    <summary role="button" aria-controls="details-content-0" tabindex="0">
+      <span class="summary" id="clientInfo">@Messages("agent.unique-reference.details.title")</span>
+    </summary>
+    <div id="details-content-0">
+        <ol>
+            <li>@Messages("agent.unique-reference.details.text.1")</li>
+            <li>@Messages("agent.unique-reference.details.text.2")</li>
+            <li>@Messages("agent.unique-reference.details.text.3")</li>
+            <li>@Messages("agent.unique-reference.details.text.4")</li>
+            <li>@Messages("agent.unique-reference.details.text.5")</li>
+        </ol>
+    </div>
+  </details>
+
 </div>
 
 <form action="@routes.AgentSummaryController.view(service)" id="view-clients-form">
