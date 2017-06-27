@@ -47,6 +47,9 @@ client.summary.filter-display_name = Display name (optional)
 client.summary.filter-update = Update
 client.summary.no_clients_found = No clients found
 
+client.summary.client-cancelled.title = Your clients have recently changed
+client.summary.client-cancelled.text = The following clients have removed your authority to act for them for {0}. This message will be available for 28 days.
+
 #client collect email
 client.collect-email.title = What is your email address?
 client.collect-email.preheader = Appoint an agent

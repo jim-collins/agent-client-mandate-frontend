@@ -23,6 +23,8 @@ import org.scalatest.{BeforeAndAfterEach, FeatureSpec, GivenWhenThen}
 import org.scalatestplus.play.OneServerPerSuite
 import play.api.test.FakeRequest
 import uk.gov.hmrc.agentclientmandate.models._
+import uk.gov.hmrc.agentclientmandate.service.Mandates
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.FilterClientsForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.domain.Generator
 import unit.uk.gov.hmrc.agentclientmandate.builders.AgentBuilder
@@ -49,11 +51,14 @@ class noClientsNoPendingViewSpec extends FeatureSpec with OneServerPerSuite with
       Given("An agent visits the page and has no mandates")
       When("The agent views the empty page")
 
-      val html = views.html.agent.agentSummary.noClientsNoPending("ATED", agentDetails)
+      val html = views.html.agent.agentSummary.noClientsNoPending("ATED", agentDetails, None)
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - ATED clients")
       assert(document.title() === "ATED clients")
+
+      And("I should not see the clients cancelled panel")
+      assert(document.getElementById("client-cancelled-title") === null)
 
       And("The Pre Header should be the agents name - ABC Ltd.")
       assert(document.getElementById("pre-header").text() === "Org Name")
@@ -66,6 +71,20 @@ class noClientsNoPendingViewSpec extends FeatureSpec with OneServerPerSuite with
 
       And("The sign out link should return to ATED")
       assert(document.getElementById("logOutNavHref").attr("href") === ("http://localhost:9916/ated/logout"))
+    }
+
+    scenario("agent visits summary page with clients cancelled in last 28 days") {
+      Given("agent visits page and client has cancelled mandate")
+      When("agent views the mandates")
+
+      val html = views.html.agent.agentSummary.noClientsNoPending("ATED", agentDetails, Some(List("AAA")))
+      val document = Jsoup.parse(html.toString())
+
+      Then("I should see the clients cancelled panel")
+      assert(document.getElementById("client-cancelled-title").text === "Your clients have recently changed")
+
+      And("I should see the name of the client")
+      assert(document.getElementById("client-cancelled-name-0").text === "AAA")
     }
   }
 }

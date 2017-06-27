@@ -65,13 +65,16 @@ class pendingViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
 
       val pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)
 
-      val html = views.html.agent.agentSummary.pending("ATED", Mandates(Nil, pendingMandates), agentDetails, "")
+      val html = views.html.agent.agentSummary.pending("ATED", Mandates(Nil, pendingMandates), agentDetails, None, "")
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - ATED clients")
       assert(document.title() === "ATED clients")
+
+      And("I should not see the clients cancelled panel")
+      assert(document.getElementById("client-cancelled-title") === null)
       
-      And("The Pending Clients tab - should not exist")
+      And("The Pending Clients tab - should exist")
       assert(document.getElementById("pending-clients").text === "Requests (4)")
 
       And("The Pending Clients table - should have a name and action")
@@ -98,6 +101,21 @@ class pendingViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       assert(document.getElementById("add-client-btn") === null)
       And("The Add Client Link - should exist")
       assert(document.getElementById("add-client-link").text() === "Add a new client")
+    }
+
+    scenario("agent visits summary page with clients cancelled in last 28 days") {
+      Given("agent visits page and client has cancelled mandate")
+      When("agent views the mandates")
+
+      val pendingMandates = Seq(mandateNew, mandatePendingActivation, mandateApproved, mandatePendingCancellation)
+      val html = views.html.agent.agentSummary.pending("ATED", Mandates(Nil, pendingMandates), agentDetails, Some(List("AAA")), "")
+      val document = Jsoup.parse(html.toString())
+
+      Then("I should see the clients cancelled panel")
+      assert(document.getElementById("client-cancelled-title").text === "Your clients have recently changed")
+
+      And("I should see the name of the client")
+      assert(document.getElementById("client-cancelled-name-0").text === "AAA")
     }
   }
 }

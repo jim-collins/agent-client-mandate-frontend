@@ -245,6 +245,15 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
       val response = await(TestAgentClientMandateConnector.updateAgentCredId("credId"))
       response.status must be(OK)
     }
+
+    "get clients that have cancelled" in {
+      when(mockWSHttp.GET[HttpResponse]
+        (Matchers.any())
+        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200)))
+
+      val response = TestAgentClientMandateConnector.fetchClientsCancelled("arn", "ated")
+      await(response).status must be(OK)
+    }
   }
 
 

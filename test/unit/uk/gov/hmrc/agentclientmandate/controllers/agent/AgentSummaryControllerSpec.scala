@@ -50,7 +50,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     }
 
     "return check client details view for agent" when {
-      "when they have no data" in {
+      "they have no data" in {
         val mockMandates = Some(Mandates(activeMandates = Nil, pendingMandates = Nil))
         viewAuthorisedAgent(mockMandates) { result =>
 
@@ -308,6 +308,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
     when(mockDataCacheService.fetchAndGetFormData[String](Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some("text"))
     when(mockDataCacheService.cacheFormData[String](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful("text")
+    when(mockAgentClientMandateService.fetchClientsCancelled(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
 
     val result = TestAgentSummaryController.view(service, tabName).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
@@ -348,6 +349,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     when(mockAgentClientMandateService.fetchAgentDetails()(Matchers.any(), Matchers.any())) thenReturn Future.successful(agentDetails)
     when(mockDataCacheService.fetchAndGetFormData[String](Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some("text"))
     when(mockDataCacheService.cacheFormData[String](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful("text")
+    when(mockAgentClientMandateService.fetchClientsCancelled(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(None)
 
     val result = TestAgentSummaryController.update(service).apply(SessionBuilder.updateRequestFormWithSession(request, userId))
     test(result)

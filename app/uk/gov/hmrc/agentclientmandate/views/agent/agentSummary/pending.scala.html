@@ -8,7 +8,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 @import uk.gov.hmrc.agentclientmandate.models.Mandate
 
-@(service: String, mandates: Mandates, agentDetails: AgentDetails, screenReaderText: String)(implicit request: Request[_], messages: Messages)
+@(service: String, mandates: Mandates, agentDetails: AgentDetails, clientsCancelled: Option[Seq[String]], screenReaderText: String)(implicit request: Request[_], messages: Messages)
 
 @pageScripts = {
 <script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/agent-summary.js")'></script>
@@ -24,6 +24,7 @@
     @Messages("client.summary.title", service.toUpperCase)
   </h1>
 
+  @clientsCancelledPartial(clientsCancelled, service)
 
   <div class="form-group">
     <a href="@routes.CollectAgentEmailController.addClient(service)" id="add-client-link" class="link" tabindex="0" data-journey-click="agent-client-mandate:click:add-client-link">@Messages("client.summary.add-client")</a>

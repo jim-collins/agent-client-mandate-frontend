@@ -54,9 +54,10 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
         screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
         mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service)
         agentDetails <- agentClientMandateService.fetchAgentDetails()
+        clientsCancelled <- agentClientMandateService.fetchClientsCancelled(AuthUtils.getArn, service)
         _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
       } yield {
-        showView(service, mandates, agentDetails, screenReaderText.getOrElse(""), tabName)
+        showView(service, mandates, agentDetails, clientsCancelled, screenReaderText.getOrElse(""), tabName)
       }
   }
 
@@ -99,18 +100,20 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
   private def showView(service: String,
                        mandates: Option[Mandates],
                        agentDetails: AgentDetails,
+                       clientsCancelled: Option[Seq[String]],
                        screenReaderText: String,
                        tabName: Option[String] = None)(implicit request: Request[AnyContent]) = {
 
+    Logger.debug("XXXXXXXXXXX" + clientsCancelled)
     mandates match {
       case Some(x) if (x.pendingMandates.size > 0 && tabName.equals(Some("pending-clients"))) =>
-        Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, screenReaderText))
+        Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, clientsCancelled, screenReaderText))
       case Some(x) if (x.activeMandates.size > 0) =>
-        Ok(views.html.agent.agentSummary.clients(service, x, agentDetails, screenReaderText,filterClientsForm.fill(FilterClients(None, "allClients"))))
+        Ok(views.html.agent.agentSummary.clients(service, x, agentDetails, clientsCancelled, screenReaderText,filterClientsForm.fill(FilterClients(None, "allClients"))))
       case Some(x) if (x.pendingMandates.size > 0) =>
-        Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, screenReaderText))
+        Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, clientsCancelled, screenReaderText))
       case _ =>
-        Ok(views.html.agent.agentSummary.noClientsNoPending(service, agentDetails))
+        Ok(views.html.agent.agentSummary.noClientsNoPending(service, agentDetails, clientsCancelled))
     }
   }
 
@@ -123,9 +126,10 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
            screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
            mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service)
            agentDetails <- agentClientMandateService.fetchAgentDetails()
+           clientsCancelled <- agentClientMandateService.fetchClientsCancelled(AuthUtils.getArn, service)
            _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
          } yield {
-          BadRequest(views.html.agent.agentSummary.noClientsNoPending(service, agentDetails))
+          BadRequest(views.html.agent.agentSummary.noClientsNoPending(service, agentDetails, clientsCancelled))
          }
       },
       data => {
@@ -133,9 +137,10 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
           screenReaderText <- dataCacheService.fetchAndGetFormData[String](screenReaderTextId)
           mandates <- agentClientMandateService.fetchAllClientMandates(AuthUtils.getArn, service, data.showAllClients == "allClients", data.displayName, true)
           agentDetails <- agentClientMandateService.fetchAgentDetails()
+          clientsCancelled <- agentClientMandateService.fetchClientsCancelled(AuthUtils.getArn, service)
           _ <- dataCacheService.cacheFormData[String](screenReaderTextId, "")
         } yield {
-          Ok(views.html.agent.agentSummary.clients(service, mandates.getOrElse(Mandates(Seq(), Seq())), agentDetails, "", filterClientsForm.fill(data), true))
+          Ok(views.html.agent.agentSummary.clients(service, mandates.getOrElse(Mandates(Seq(), Seq())), agentDetails, clientsCancelled, "", filterClientsForm.fill(data), true))
         }
       }
     )

@@ -68,7 +68,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       val activeMandates = Seq(mandateActive)
       val pendingMandates = Seq(mandateNew)
 
-      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, pendingMandates), agentDetails, "", filterClientsForm)
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, pendingMandates), agentDetails, None, "", filterClientsForm)
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - ATED clients")
@@ -93,7 +93,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
 
       val activeMandates = Seq(mandateActive)
 
-      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, "", filterClientsForm)
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, None, "", filterClientsForm)
 
       val document = Jsoup.parse(html.toString())
       Then("The title should match - ATED clients")
@@ -125,11 +125,11 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
 
       val activeMandates = Seq(mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive, mandateActive)
 
-      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, "", filterClientsForm)
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, None, "", filterClientsForm)
 
       val document = Jsoup.parse(html.toString())
 
-      And("The Clients tab - should exist and have 15 items")
+      Then("The Clients tab - should exist and have 15 items")
       assert(document.getElementById("clients").text === "Current (15)")
 
       And("The Clients table - has the correct data and View link")
@@ -151,12 +151,15 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       When("The agent views the mandates")
       implicit val request = FakeRequest()
 
-      val html = views.html.agent.agentSummary.clients("ATED", Mandates(Nil, Nil), agentDetails, "", filterClientsForm, true)
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(Nil, Nil), agentDetails, None, "", filterClientsForm, true)
 
       val document = Jsoup.parse(html.toString())
 
-      And("The Clients tab - should exist and have 0 items")
+      Then("The Clients tab - should exist and have 0 items")
       assert(document.getElementById("clients").text === "Current (0)")
+
+      And("I should not see the clients cancelled panel")
+      assert(document.getElementById("client-cancelled-title") === null)
 
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
@@ -168,6 +171,20 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
 
       And("The text for no results should exist")
       assert(document.getElementById("filter-no-results").text === "No clients found")
+    }
+
+    scenario("agent visits summary page with clients cancelled in last 28 days") {
+      Given("agent visits page and client has cancelled mandate")
+      When("agent views the mandates")
+
+      val html = views.html.agent.agentSummary.clients("ATED", Mandates(Nil, Nil), agentDetails, Some(List("AAA")), "", filterClientsForm, true)
+      val document = Jsoup.parse(html.toString())
+
+      Then("I should see the clients cancelled panel")
+      assert(document.getElementById("client-cancelled-title").text === "Your clients have recently changed")
+
+      And("I should see the name of the client")
+      assert(document.getElementById("client-cancelled-name-0").text === "AAA")
     }
   }
 }
