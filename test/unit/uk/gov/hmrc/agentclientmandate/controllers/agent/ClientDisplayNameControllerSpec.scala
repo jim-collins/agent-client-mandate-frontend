@@ -24,12 +24,14 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
+import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayName
+import uk.gov.hmrc.play.binders.ContinueUrl
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
@@ -90,12 +92,18 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
       }
 
       "agent requests(GET) view pre-populated and the data has been cached" in {
-        viewClientDisplayNameAuthorisedAgent(Some(ClientDisplayName("client display name"))) { result =>
+        viewClientDisplayNameAuthorisedAgent(Some(ClientDisplayName("client display name")), Some(ContinueUrl("/api/anywhere"))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What display name do you want to use for this client?")
           document.getElementById("clientDisplayName").`val`() must be("client display name")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientDisplayName](Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
+      "return url is invalid format" in {
+        viewClientDisplayNameAuthorisedAgent(None, Some(ContinueUrl("http://website.com"))) { result =>
+          status(result) must be(BAD_REQUEST)
         }
       }
     }
@@ -112,10 +120,17 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
 
       "to redirectUrl if we have one" in {
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("clientDisplayName" -> "client display name")
-        submitClientDisplayNameAuthorisedAgent(fakeRequest, Some("http://redirectUrl")) { result =>
+        submitClientDisplayNameAuthorisedAgent(fakeRequest, Some(ContinueUrl("/api/anywhere"))) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("http://redirectUrl"))
+          redirectLocation(result) must be(Some("/api/anywhere"))
           verify(mockDataCacheService, times(1)).cacheFormData[ClientDisplayName](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
+      "return url is invalid format" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("clientDisplayName" -> "client display name")
+        submitClientDisplayNameAuthorisedAgent(fakeRequest, Some(ContinueUrl("http://website.com"))) { result =>
+          status(result) must be(BAD_REQUEST)
         }
       }
     }
@@ -165,15 +180,15 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
     reset(mockAuthConnector)
   }
 
-  def viewClientDisplayNameUnAuthenticatedAgent(redirectUrl: Option[String] = None)(test: Future[Result] => Any) {
+  def viewClientDisplayNameUnAuthenticatedAgent()(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestClientDisplayNameController.view(service, redirectUrl).apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestClientDisplayNameController.view(service, None).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def viewClientDisplayNameUnAuthorisedAgent(redirectUrl: Option[String] = None)(test: Future[Result] => Any) {
+  def viewClientDisplayNameUnAuthorisedAgent()(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
@@ -182,7 +197,7 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
     test(result)
   }
 
-  def viewClientDisplayNameAuthorisedAgent(cachedData:  Option[ClientDisplayName] = None, redirectUrl: Option[String] = None)(test: Future[Result] => Any) {
+  def viewClientDisplayNameAuthorisedAgent(cachedData:  Option[ClientDisplayName] = None, redirectUrl: Option[ContinueUrl] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
@@ -193,7 +208,7 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
   }
 
 
-  def submitClientDisplayNameAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded], redirectUrl: Option[String] = None)(test: Future[Result] => Any) {
+  def submitClientDisplayNameAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded], redirectUrl: Option[ContinueUrl] = None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")

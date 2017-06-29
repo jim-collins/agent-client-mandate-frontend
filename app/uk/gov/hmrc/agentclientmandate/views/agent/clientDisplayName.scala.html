@@ -1,6 +1,7 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
-@(clientDisplayNameForm: Form[ClientDisplayName], service: String, redirectUrl: Option[String], backLink: Option[String])(implicit request: Request[_], messages: Messages)
+@import uk.gov.hmrc.play.binders.ContinueUrl
+@(clientDisplayNameForm: Form[ClientDisplayName], service: String, redirectUrl: Option[ContinueUrl], backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._

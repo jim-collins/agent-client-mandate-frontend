@@ -19,7 +19,7 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 import play.api.Logger
 import play.api.i18n.Messages
 import play.api.libs.json.Json
-import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
+import uk.gov.hmrc.agentclientmandate.config.{FrontendAppConfig, FrontendAuthConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
@@ -31,6 +31,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.play.binders.ContinueUrl
 
 import scala.concurrent.Future
 
@@ -56,35 +57,42 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
       }
   }
 
-  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def view(service: String, redirectUrl: Option[ContinueUrl]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
-      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) map {
-        case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(agentEmail), service, redirectUrl, getBackLink(service, redirectUrl)))
-        case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service, redirectUrl, getBackLink(service, redirectUrl)))
+      redirectUrl match {
+        case Some(x) if !x.isRelativeOrDev(FrontendAppConfig.env) => Future.successful(BadRequest("The return url is not correctly formatted"))
+        case _ =>
+          dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) map {
+            case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(agentEmail), service, redirectUrl, getBackLink(service, redirectUrl)))
+            case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service, redirectUrl, getBackLink(service, redirectUrl)))
+          }
       }
   }
 
-  def submit(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def submit(service: String, redirectUrl: Option[ContinueUrl]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      agentEmailForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service, redirectUrl, getBackLink(service, redirectUrl)))),
-        data => {
-          emailService.validate(data.email) flatMap { isValidEmail =>
-            if (isValidEmail) {
-              dataCacheService.cacheFormData[AgentEmail](agentEmailFormId, data) flatMap { cachedData =>
-                redirectUrl match {
-                  case Some(redirect) => Future.successful(Redirect(redirect))
-                  case None => Future.successful(Redirect(routes.ClientDisplayNameController.view(service)))
+      redirectUrl match {
+        case Some(x) if !x.isRelativeOrDev(FrontendAppConfig.env) => Future.successful(BadRequest("The return url is not correctly formatted"))
+        case _ =>
+          agentEmailForm.bindFromRequest.fold(
+            formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service, redirectUrl, getBackLink(service, redirectUrl)))),
+            data => {
+              emailService.validate(data.email) flatMap { isValidEmail =>
+                if (isValidEmail) {
+                  dataCacheService.cacheFormData[AgentEmail](agentEmailFormId, data) flatMap { cachedData =>
+                    redirectUrl match {
+                      case Some(redirect) => Future.successful(Redirect(redirect.url))
+                      case None => Future.successful(Redirect(routes.ClientDisplayNameController.view(service)))
+                    }
+                  }
+                } else {
+                  val errorMsg = Messages("agent.enter-email.error.email.invalid-by-email-service")
+                  val errorForm = agentEmailForm.withError(key = "agent-enter-email-form", message = errorMsg).fill(data)
+                  Future.successful(BadRequest(views.html.agent.agentEnterEmail(errorForm, service, redirectUrl, getBackLink(service, redirectUrl))))
                 }
               }
-            } else {
-              val errorMsg = Messages("agent.enter-email.error.email.invalid-by-email-service")
-              val errorForm = agentEmailForm.withError(key = "agent-enter-email-form", message = errorMsg).fill(data)
-              Future.successful(BadRequest(views.html.agent.agentEnterEmail(errorForm, service, redirectUrl, getBackLink(service, redirectUrl))))
-            }
-          }
-        }
-      )
+            })
+      }
   }
 
   def getAgentEmail(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
@@ -94,9 +102,9 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
       }
   }
 
-  private def getBackLink(service: String, redirectUrl: Option[String]):Option[String] = {
+  private def getBackLink(service: String, redirectUrl: Option[ContinueUrl]):Option[String] = {
     redirectUrl match {
-      case Some(x) => redirectUrl
+      case Some(x) => Some(x.url)
       case None => Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)
     }
   }
