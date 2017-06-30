@@ -30,6 +30,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{AgentEmail, ClientDisplayName, ClientMandateDisplayDetails}
+import uk.gov.hmrc.play.binders.ContinueUrl
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
@@ -95,7 +96,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     "return 'what is your email address' for AUTHORISED agent" when {
 
       "agent requests(GET) for 'what is your email address' view and the data hasn't been cached" in {
-        viewEmailAuthorisedAgent() { result =>
+        viewEmailAuthorisedAgent(None, Some(ContinueUrl("/api/anywhere"))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What email address do you want to use for this client?")
@@ -106,6 +107,12 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           document.getElementById("email").`val`() must be("")
           document.getElementById("submit").text() must be("Continue")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
+      "return url is invalid format" in {
+        viewEmailAuthorisedAgent(None, Some(ContinueUrl("http://website.com"))) { result =>
+          status(result) must be(BAD_REQUEST)
         }
       }
 
@@ -149,12 +156,19 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
       "redirect to redirect Page if one is supplied" in {
 
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com")
-        submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true, redirectUrl = Some("http://redirectUrl")) { result =>
+        submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true, redirectUrl = Some(ContinueUrl("/api/anywhere"))) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("http://redirectUrl"))
+          redirectLocation(result) must be(Some("/api/anywhere"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(0)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[AgentEmail](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
+      "return url is invalid format" in {
+        val fakeRequest = FakeRequest().withFormUrlEncodedBody("email" -> "aa@aa.com")
+        submitEmailAuthorisedAgent(fakeRequest, isValidEmail = true, redirectUrl = Some(ContinueUrl("http://website.com"))) { result =>
+          status(result) must be(BAD_REQUEST)
         }
       }
     }
@@ -239,7 +253,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     test(result)
   }
 
-  def viewEmailAuthorisedAgent(cachedData: Option[AgentEmail] = None, redirectUrl: Option[String]=None)(test: Future[Result] => Any) {
+  def viewEmailAuthorisedAgent(cachedData: Option[AgentEmail] = None, redirectUrl: Option[ContinueUrl]=None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
@@ -249,7 +263,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     test(result)
   }
 
-  def submitEmailAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded], isValidEmail: Boolean = false, redirectUrl: Option[String]=None)(test: Future[Result] => Any) {
+  def submitEmailAuthorisedAgent(request: FakeRequest[AnyContentAsFormUrlEncoded], isValidEmail: Boolean = false, redirectUrl: Option[ContinueUrl]=None)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createRegisteredAgentAuthContext(userId, "name")

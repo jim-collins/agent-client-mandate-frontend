@@ -32,6 +32,7 @@ import uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, ClientEmail}
+import uk.gov.hmrc.play.binders.ContinueUrl
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
@@ -47,12 +48,11 @@ class EditEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mocki
         val result = route(FakeRequest(GET, "/mandate/client/details/clientId/ATED")).get
         status(result) mustNot be(NOT_FOUND)
       }
-
     }
 
     "redirect to login page for UNAUTHENTICATED client" when {
       "client requests(GET) for collect email view" in {
-        viewWithUnAuthenticatedClient() { result =>
+        viewWithUnAuthenticatedClient(ContinueUrl("/api/anywhere")) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/gg/sign-in")
         }
@@ -60,7 +60,7 @@ class EditEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mocki
     }
 
     "client requests(GET) for updating email" in {
-      viewWithAuthorisedClient() { result =>
+      viewWithAuthorisedClient(ContinueUrl("/api/anywhere")) { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
         document.title() must be("Edit your email address")
@@ -71,24 +71,36 @@ class EditEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mocki
       }
     }
 
+    "bad request if continue url is not correctly formatted" in {
+      viewWithAuthorisedClient(ContinueUrl("http://website.com")) { result =>
+        status(result) must be(BAD_REQUEST)
+      }
+    }
+
     "get clients mandate details" when {
       "find the mandate" in {
         val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.Active, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
-        getDetailsWithAuthorisedClient(Some(mandate)) { result =>
+        getDetailsWithAuthorisedClient(Some(mandate), ContinueUrl("/api/anywhere")) { result =>
           status(result) must be(OK)
         }
       }
 
       "cant find the mandate" in {
-        getDetailsWithAuthorisedClient(None) { result =>
+        getDetailsWithAuthorisedClient(None, ContinueUrl("/api/anywhere")) { result =>
           status(result) must be(NOT_FOUND)
         }
       }
 
       "mandate is not active" in {
         val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
-        getDetailsWithAuthorisedClient(Some(mandate)) { result =>
+        getDetailsWithAuthorisedClient(Some(mandate), ContinueUrl("/api/anywhere")) { result =>
           status(result) must be(NOT_FOUND)
+        }
+      }
+
+      "bad request if continue url is not correctly formatted" in {
+        getDetailsWithAuthorisedClient(None, ContinueUrl("http://website.com")) { result =>
+          status(result) must be(BAD_REQUEST)
         }
       }
     }
@@ -187,25 +199,25 @@ class EditEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mocki
 
   val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "Agent Ltd", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 
-  def viewWithUnAuthenticatedClient(redirectUrl: Option[String] = None)(test: Future[Result] => Any) {
+  def viewWithUnAuthenticatedClient(continueUrl: ContinueUrl)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestEditEmailController.view("mandateId", "service", "/api/anywhere").apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestEditEmailController.view("mandateId", "service", continueUrl).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def getDetailsWithAuthorisedClient(mandate: Option[Mandate])(test: Future[Result] => Any) {
+  def getDetailsWithAuthorisedClient(mandate: Option[Mandate], continueUrl: ContinueUrl)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockMandateService.fetchClientMandateByClient(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(mandate)
-    val result = TestEditEmailController.getClientMandateDetails("mandateId", service, "/api/anywhere").apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestEditEmailController.getClientMandateDetails("mandateId", service, continueUrl).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def viewWithAuthorisedClient()(test: Future[Result] => Any) {
+  def viewWithAuthorisedClient(continueUrl: ContinueUrl)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
@@ -215,7 +227,7 @@ class EditEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mocki
     when(mockDataCacheService.cacheFormData[String](Matchers.eq("MANDATE_ID"),
       Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("mandateId"))
     when(mockMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
-    val result = TestEditEmailController.view("mandateId", service, "/api/anywhere").apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestEditEmailController.view("mandateId", service, continueUrl).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

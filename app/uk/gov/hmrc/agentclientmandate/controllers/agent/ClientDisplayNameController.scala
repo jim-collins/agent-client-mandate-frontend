@@ -18,7 +18,7 @@ package uk.gov.hmrc.agentclientmandate.controllers.agent
 
 import play.api.Logger
 import play.api.libs.json.Json
-import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
+import uk.gov.hmrc.agentclientmandate.config.{FrontendAppConfig, FrontendAuthConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
@@ -30,6 +30,8 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.play.binders.ContinueUrl
+
 import scala.concurrent.Future
 
 object ClientDisplayNameController extends ClientDisplayNameController {
@@ -46,27 +48,36 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
 
   def authConnector: AuthConnector
 
-  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def view(service: String, redirectUrl: Option[ContinueUrl]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
-      dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) map {
-        case Some(clientDisplayname) => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm.fill(clientDisplayname), service, redirectUrl, getBackLink(service, redirectUrl)))
-        case None => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm, service, redirectUrl, getBackLink(service, redirectUrl)))
+
+      redirectUrl match {
+        case Some(x) if !x.isRelativeOrDev(FrontendAppConfig.env) => Future.successful(BadRequest("The return url is not correctly formatted"))
+        case _ =>
+          dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) map {
+            case Some(clientDisplayname) => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm.fill(clientDisplayname), service, redirectUrl, getBackLink(service, redirectUrl)))
+            case None => Ok(views.html.agent.clientDisplayName(clientDisplayNameForm, service, redirectUrl, getBackLink(service, redirectUrl)))
+          }
       }
   }
 
 
-  def submit(service: String, redirectUrl: Option[String]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
+  def submit(service: String, redirectUrl: Option[ContinueUrl]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      clientDisplayNameForm.bindFromRequest.fold(
-        formWithError => Future.successful(BadRequest(views.html.agent.clientDisplayName(formWithError, service, redirectUrl, getBackLink(service, redirectUrl)))),
-        data =>
-          dataCacheService.cacheFormData[ClientDisplayName](clientDisplayNameFormId, data) map { cachedData =>
-            redirectUrl match {
-              case Some(redirect) => Redirect(redirect)
-              case None => Redirect(routes.OverseasClientQuestionController.view(service))
-            }
-          }
-      )
+
+      redirectUrl match {
+        case Some(x) if !x.isRelativeOrDev(FrontendAppConfig.env) => Future.successful(BadRequest("The return url is not correctly formatted"))
+        case _ =>
+          clientDisplayNameForm.bindFromRequest.fold(
+            formWithError => Future.successful(BadRequest(views.html.agent.clientDisplayName(formWithError, service, redirectUrl, getBackLink(service, redirectUrl)))),
+            data =>
+              dataCacheService.cacheFormData[ClientDisplayName](clientDisplayNameFormId, data) map { cachedData =>
+                redirectUrl match {
+                  case Some(redirect) => Redirect(redirect.url)
+                  case None => Redirect(routes.OverseasClientQuestionController.view(service))
+                }
+              })
+      }
   }
 
   def getClientDisplayName(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
@@ -76,9 +87,9 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
       }
   }
 
-  private def getBackLink(service: String, redirectUrl: Option[String]):Option[String] = {
+  private def getBackLink(service: String, redirectUrl: Option[ContinueUrl]): Option[String] = {
     redirectUrl match {
-      case Some(x) => redirectUrl
+      case Some(x) => Some(x.url)
       case None => Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.CollectAgentEmailController.view(service).url)
     }
   }

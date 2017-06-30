@@ -32,6 +32,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
+import uk.gov.hmrc.play.binders.ContinueUrl
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
@@ -78,7 +79,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         when(mockAgentClientMandateService.fetchClientMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(Some(mandate))
         when(mockDataCacheService.cacheFormData[String](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("AS12345678"))
         val request = FakeRequest(GET, "/client/remove-agent/1?returnUrl=/app/return").withJsonBody(Json.toJson("""{}"""))
-        viewAuthorisedClient(request) { result =>
+        viewAuthorisedClient(request, ContinueUrl("/app/return")) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Confirm Agent Removal")
@@ -96,9 +97,16 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
         AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
         val request = FakeRequest(GET, "/client/remove-agent/1?returnUrl=/app/return").withJsonBody(Json.toJson("""{}"""))
-        val thrown = the[RuntimeException] thrownBy await(TestRemoveAgentController.view(service, "1", "returnUrl").apply(SessionBuilder.updateRequestWithSession(request, userId)))
+        val thrown = the[RuntimeException] thrownBy await(TestRemoveAgentController.view(service, "1", ContinueUrl("/api/anywhere")).apply(SessionBuilder.updateRequestWithSession(request, userId)))
 
         thrown.getMessage must be("No Mandate returned")
+      }
+
+      "return url is invalid format" in {
+        val request = FakeRequest(GET, "/client/remove-agent/1?returnUrl=http://website.com").withJsonBody(Json.toJson("""{}"""))
+        viewAuthorisedClient(request, ContinueUrl("http://website.com")) { result =>
+          status(result) must be(BAD_REQUEST)
+        }
       }
     }
 
@@ -231,7 +239,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestRemoveAgentController.view(service, "1", "returnUrl").apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestRemoveAgentController.view(service, "1", ContinueUrl("/api/anywhere")).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
@@ -241,16 +249,16 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createInvalidAuthContext(userId, "name")
     AuthBuilder.mockUnAuthorisedClient(userId, mockAuthConnector)
-    val result = TestRemoveAgentController.view(service, "1", "returnUrl").apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestRemoveAgentController.view(service, "1", ContinueUrl("/api/anywhere")).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
-  def viewAuthorisedClient(request: FakeRequest[AnyContentAsJson])(test: Future[Result] => Any) {
+  def viewAuthorisedClient(request: FakeRequest[AnyContentAsJson], continueUrl: ContinueUrl)(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestRemoveAgentController.view(service, "1", "returnUrl").apply(SessionBuilder.updateRequestWithSession(request, userId))
+    val result = TestRemoveAgentController.view(service, "1", continueUrl).apply(SessionBuilder.updateRequestWithSession(request, userId))
     test(result)
   }
 

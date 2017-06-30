@@ -19,14 +19,16 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.mvc.{AnyContent, Request}
-import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
+import uk.gov.hmrc.agentclientmandate.config.{FrontendAppConfig, FrontendAuthConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.YesNoQuestionForm
 import uk.gov.hmrc.agentclientmandate.views
+import uk.gov.hmrc.play.binders.ContinueUrl
 import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.play.http.BadRequestException
+
+import scala.concurrent.Future
 
 object RemoveAgentController extends RemoveAgentController {
   // $COVERAGE-OFF$
@@ -43,15 +45,16 @@ trait RemoveAgentController extends FrontendController with Actions {
   def dataCacheService: DataCacheService
 
 
-  def view(service: String, mandateId: String, returnUrl: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
+  def view(service: String, mandateId: String, returnUrl: ContinueUrl) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
 
-      // $COVERAGE-OFF$
-      if (Option(returnUrl).isEmpty) throw new BadRequestException("The return url is a mandatory parameter")
-      // $COVERAGE-ON$
-
-      dataCacheService.cacheFormData[String]("RETURN_URL", returnUrl).flatMap { cache =>
-        showView(service, mandateId, Some(returnUrl))
+      if (!returnUrl.isRelativeOrDev(FrontendAppConfig.env)) {
+        Future.successful(BadRequest("The return url is not correctly formatted"))
+      }
+      else {
+        dataCacheService.cacheFormData[String]("RETURN_URL", returnUrl.url).flatMap { cache =>
+          showView(service, mandateId, Some(returnUrl.url))
+        }
       }
   }
 

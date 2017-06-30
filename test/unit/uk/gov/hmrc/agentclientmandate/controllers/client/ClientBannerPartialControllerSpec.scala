@@ -25,6 +25,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
+import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -32,10 +33,10 @@ import uk.gov.hmrc.agentclientmandate.controllers.client.ClientBannerPartialCont
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.AgentClientMandateService
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientCache
+import uk.gov.hmrc.play.binders.ContinueUrl
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.HeaderCarrier
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
-import uk.gov.hmrc.play.partials.{HeaderCarrierForPartialsConverter, HtmlPartial}
 
 import scala.concurrent.Future
 
@@ -106,6 +107,12 @@ class ClientBannerPartialControllerSpec extends PlaySpec with OneServerPerSuite 
         document.getElementById("client-banner-text-link").attr("href") must include("/client/email")
       }
     }
+
+    "return url is invalid format" in {
+      viewWithAuthorisedClient(continueUrl = ContinueUrl("http://website.com")) { result =>
+        status(result) must be(BAD_REQUEST)
+      }
+    }
   }
 
 
@@ -133,16 +140,16 @@ class ClientBannerPartialControllerSpec extends PlaySpec with OneServerPerSuite 
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     AuthBuilder.mockUnAuthenticatedClient(userId, mockAuthConnector)
-    val result = TestClientBannerPartialController.getBanner("clientId", "service", "returnUrl").apply(SessionBuilder.buildRequestWithSessionNoUser)
+    val result = TestClientBannerPartialController.getBanner("clientId", "service", ContinueUrl("/api/anywhere")).apply(SessionBuilder.buildRequestWithSessionNoUser)
     test(result)
   }
 
-  def viewWithAuthorisedClient(cachedData: Option[ClientCache] = None)(test: Future[Result] => Any) {
+  def viewWithAuthorisedClient(cachedData: Option[ClientCache] = None, continueUrl: ContinueUrl = ContinueUrl("/api/anywhere"))(test: Future[Result] => Any) {
     val userId = s"user-${UUID.randomUUID}"
     implicit val hc: HeaderCarrier = HeaderCarrier()
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
-    val result = TestClientBannerPartialController.getBanner("clientId", "ated", "returnUrl").apply(SessionBuilder.buildRequestWithSession(userId))
+    val result = TestClientBannerPartialController.getBanner("clientId", "ated", continueUrl).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 
