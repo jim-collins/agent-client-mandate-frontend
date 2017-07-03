@@ -153,6 +153,14 @@ trait AgentClientMandateService extends MandateConstants {
     }
   }
 
+  def fetchClientsCancelled(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Option[Seq[String]]] = {
+    agentClientMandateConnector.fetchClientsCancelled(arn, serviceName).map { response =>
+      response.status match {
+        case OK => Some(response.json.as[Seq[String]])
+        case _ => None
+      }
+    }
+  }
 
   def fetchAgentDetails()(implicit hc: HeaderCarrier, ac: AuthContext): Future[AgentDetails] = {
     agentClientMandateConnector.fetchAgentDetails()

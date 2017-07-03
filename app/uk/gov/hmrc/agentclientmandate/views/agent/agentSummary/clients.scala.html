@@ -8,7 +8,7 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 
 
-@(service: String, mandates: Mandates, agentDetails: AgentDetails, screenReaderText: String, filterClientsForm: Form[FilterClients], isUpdate: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(service: String, mandates: Mandates, agentDetails: AgentDetails, clientsCancelled: Option[Seq[String]], screenReaderText: String, filterClientsForm: Form[FilterClients], isUpdate: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @implicitFormInstance = @{ Some(filterClientsForm) }
 
@@ -20,6 +20,8 @@
 <h1 class="heading-xlarge" id="header">
   @Messages("client.summary.title", service.toUpperCase)
 </h1>
+
+@clientsCancelledPartial(clientsCancelled, service)
 
 <div class="form-group">
   <a href="@routes.CollectAgentEmailController.addClient(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>

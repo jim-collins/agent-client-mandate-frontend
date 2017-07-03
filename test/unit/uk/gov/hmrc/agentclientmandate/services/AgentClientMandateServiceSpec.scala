@@ -457,6 +457,22 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         await(response) must be(None)
       }
     }
+
+    "get clients that have cancelled" when {
+      "call is unsuccessful" in {
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "agent")
+        when(mockAgentClientMandateConnector.fetchClientsCancelled(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(NOT_FOUND))
+        val response = TestAgentClientMandateService.fetchClientsCancelled(arn.utr, service)
+        await(response) must be(None)
+      }
+      "call is successful" in {
+        implicit val user = AuthBuilder.createOrgAuthContext(userId, "agent")
+        val respJson = Json.toJson(List("AAA", "BBB"))
+        when(mockAgentClientMandateConnector.fetchClientsCancelled(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
+        val response = TestAgentClientMandateService.fetchClientsCancelled(arn.utr, service)
+        await(response) must be(Some(Seq("AAA", "BBB")))
+      }
+    }
   }
 
   val registeredAddressDetails = RegisteredAddressDetails("123 Fake Street", "Somewhere", None, None, None, "GB")

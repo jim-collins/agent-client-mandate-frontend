@@ -32,7 +32,6 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
 
   def serviceUrl: String
 
-  val agentMandateUrl = "agent"
   val mandateUri = "mandate"
   val activateUri = "activate"
   val rejectClientUri = "rejectClient"
@@ -145,6 +144,13 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
     val postUrl = s"$serviceUrl$authLink/$mandateUri/updateAgentCredId"
     http.POST[JsValue, HttpResponse](postUrl, jsonData)
   }
+
+  def fetchClientsCancelled(arn: String, serviceName: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
+    val authLink = AuthUtils.getAuthLink
+    val getUrl = s"$serviceUrl$authLink/$mandateUri/clientCancelledNames/$arn/$serviceName"
+    http.GET[HttpResponse](getUrl)
+  }
+
 
   // $COVERAGE-OFF$
   def testOnlyCreateMandate(mandate: Mandate)(implicit hc: HeaderCarrier): Future[HttpResponse] = {

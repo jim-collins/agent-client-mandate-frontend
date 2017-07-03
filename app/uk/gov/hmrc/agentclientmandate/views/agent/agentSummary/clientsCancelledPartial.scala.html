@@ -1,0 +1,15 @@
+
+@(clientsCancelled: Option[Seq[String]], service: String)(implicit request: Request[_], messages: Messages)
+
+@if(clientsCancelled.isDefined) {
+    <div class="highlight-message highlight-message--icon-top highlight-message--content-body" role="alert">
+        <h2 id="client-cancelled-title">@Messages("client.summary.client-cancelled.title")</h2>
+
+        <p class="alert__message">@Messages("client.summary.client-cancelled.text", service.toUpperCase)</p>
+
+        @for((name, index) <- clientsCancelled.get.zipWithIndex) {
+            <p id="client-cancelled-name-@index">@name</p>
+        }
+    </div>
+    </br>
+}

@@ -7,7 +7,7 @@
 @import uk.gov.hmrc.agentclientmandate.views.html.helpers._
 @import uk.gov.hmrc.play.views.html.helpers._
 
-@(service: String, agentDetails: AgentDetails)(implicit request: Request[_], messages: Messages)
+@(service: String, agentDetails: AgentDetails, clientsCancelled: Option[Seq[String]])(implicit request: Request[_], messages: Messages)
 
 
 @main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = if(isUkAgent(agentDetails)) None else Some(_agentSummary_sidebar(agentDetails, service)), delegatedService = Some(service)){
@@ -17,7 +17,10 @@
     @Messages("client.summary.title", service.toUpperCase)
   </h1>
 
+  @clientsCancelledPartial(clientsCancelled, service)
+
   <p><span class="heading-medium">@Messages("client.summary.no-clients")</span></p>
+
   <a href="@routes.CollectAgentEmailController.addClient(service)" id="add-client-btn" class="button" data-journey-click="agent-client-mandate:click:add-client-btn">@Messages("client.summary.add-client")</a>
 
 }
