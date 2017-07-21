@@ -313,6 +313,7 @@ html.noScroll {
 
 .form-field--error .error-notification {
     font-weight: 700;
+    color: #b10e1e;
 }
 
 .validation-summary:focus {
