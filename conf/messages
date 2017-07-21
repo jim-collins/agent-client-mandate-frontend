@@ -204,6 +204,13 @@ agent.client-permission.hasPermission.not-selected.error = You must answer the c
 agent.client-permission.hasPermission.selected.ated.yes.notice = Your client must complete an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1" data-journey-click="agent-client-mandate:click:ATED-1-link">ATED 1</a>, if you already have an ATED 1 for this client, don''t complete another. You do not need to send your ATED 1 to HMRC, but you need to keep it for your records. Submission of form 64-8 does not cover ATED or ATED related CGT.
 agent.client-permission.hasPermission.selected.ated.no.notice =  	You must have permission from your client before you can continue.
 
+# agent - has client registered before page
+agent.client-prev-registered.title = Has your client previously used the ATED online service to submit returns?
+agent.client-prev-registered.header = Has your client previously used the ATED online service to submit returns?
+agent.client-prev-registered.error.general.hasPermission = There is a problem with the client permission question
+agent.client-prev-registered.not-selected.error = You must answer the client permission question
+
+
 # agent enter business details
 agent.enter-business-details-error.businessName = You must enter a company name
 agent.enter-business-details-error.businessName.length = A business name cannot be more than 105 characters

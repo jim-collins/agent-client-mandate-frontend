@@ -29,4 +29,5 @@ trait MandateConstants {
   val overseasTaxRefFormId = "overseas-tax-ref"
   val nrlFormId = "nrl-form-if"
   val clientPermissionFormId = "client-permission-form-id"
+  val prevRegisteredFormId = "previously-registered-form-id"
 }
