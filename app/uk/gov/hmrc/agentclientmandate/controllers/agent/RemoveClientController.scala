@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.agentclientmandate.views
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils.isNonUkClient
 
 import scala.concurrent.Future
 
@@ -75,7 +76,7 @@ trait RemoveClientController extends FrontendController with Actions {
   def showConfirmation(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       acmService.fetchClientMandateClientName(mandateId).map(
-        mandate =>  Ok(views.html.agent.removeClientConfirmation(service, mandate.clientDisplayName))
+        mandate =>  Ok(views.html.agent.removeClientConfirmation(service, mandate.id,  mandate.clientDisplayName, isNonUkClient(mandate)))
       )
     }
 

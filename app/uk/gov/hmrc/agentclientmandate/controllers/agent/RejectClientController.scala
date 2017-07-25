@@ -80,7 +80,7 @@ trait RejectClientController extends FrontendController with Actions {
     implicit authContext => implicit request =>
       acmService.fetchClientMandateClientName(mandateId).map(
         mandate =>
-          Ok(views.html.agent.rejectClientConfirmation(service, mandate.clientDisplayName, isNonUkClient(mandate)))
+          Ok(views.html.agent.rejectClientConfirmation(service, mandate.clientDisplayName))
       )
 
   }

@@ -1,4 +1,4 @@
-@(service: String, clientName: String)(implicit request: Request[_], messages: Messages)
+@(service: String, mandateId: String, clientName: String, isNonUkClient: Boolean)(implicit request: Request[_], messages: Messages)
 
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
@@ -9,7 +9,7 @@
 
     <div class="transaction-banner--complete" id="banner">
         <h1 id="banner-text">
-            @Messages("agent.remove-client-confirmation.banner-text", clientName)
+            @Messages("agent.remove-client-confirmation.banner-text", isNonUkClient)
         </h1>
             <span class="heading-medium" id="date">
                 @Messages("agent.remove-client-confirmation.banner-text-date", DateUtils.getDateAsText(DateTime.now))
@@ -26,7 +26,11 @@
         </div>
 
         <ul id="list" class="bullets">
+            @if(isNonUkClient) {
+            <li>@Messages("agent.remove-client-confirmation.non-uk-client-old-unique-refno ", mandateId)</li>
+            } else {
             <li>@Messages("agent.remove-client-confirmation.request-new-client")</li>
+            }
             <li>@Messages("agent.remove-client-confirmation.submit-returns")</li>
         </ul>
     </div>
