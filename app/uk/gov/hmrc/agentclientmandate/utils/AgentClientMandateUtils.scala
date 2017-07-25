@@ -19,7 +19,7 @@ package uk.gov.hmrc.agentclientmandate.utils
 import java.util.Properties
 
 import play.api.Play
-import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, Status}
+import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, Mandate, Status}
 import uk.gov.hmrc.agentclientmandate.models.Status.Status
 import uk.gov.hmrc.agentclientmandate.views.html.agent.agentSummary._agentSummary_sidebar
 
@@ -93,4 +93,5 @@ object AgentClientMandateUtils {
 
   def isUkAgent(agentDetails: AgentDetails) = agentDetails.addressDetails.countryCode == "GB"
 
+  def isNonUkClient(mandate: Mandate): Boolean = !(mandate.statusHistory.exists(_.status == Status.Active) && mandate.statusHistory.exists(_.status == Status.New))
 }

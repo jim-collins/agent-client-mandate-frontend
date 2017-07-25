@@ -25,6 +25,7 @@ import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils._
 
 import scala.concurrent.Future
 
@@ -42,9 +43,9 @@ trait RejectClientController extends FrontendController with Actions {
   def view(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       acmService.fetchClientMandateClientName(mandateId).map(
-        clientName => Ok(views.html.agent.rejectClient(service,
+        mandate => Ok(views.html.agent.rejectClient(service,
           new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm,
-          clientName, mandateId, getBackLink(service)))
+          mandate.clientDisplayName, mandateId, getBackLink(service)))
       )
   }
 
@@ -54,7 +55,7 @@ trait RejectClientController extends FrontendController with Actions {
       form.yesNoQuestionForm.bindFromRequest.fold(
         formWithError =>
           acmService.fetchClientMandateClientName(mandateId).map(
-            clientName => BadRequest(views.html.agent.rejectClient(service, formWithError, clientName, mandateId, getBackLink(service)))
+            mandate => BadRequest(views.html.agent.rejectClient(service, formWithError, mandate.clientDisplayName, mandateId, getBackLink(service)))
           ),
         data => {
           val rejectClient = data.yesNo.getOrElse(false)
@@ -78,7 +79,8 @@ trait RejectClientController extends FrontendController with Actions {
   def confirmation(service: String, mandateId: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
       acmService.fetchClientMandateClientName(mandateId).map(
-        clientName => Ok(views.html.agent.rejectClientConfirmation(service, clientName))
+        mandate =>
+          Ok(views.html.agent.rejectClientConfirmation(service, mandate.clientDisplayName, isNonUkClient(mandate)))
       )
 
   }
