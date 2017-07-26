@@ -72,7 +72,6 @@ trait ClientPermissionController extends FrontendController with Actions with Ma
           dataCacheService.cacheFormData[ClientPermission](clientPermissionFormId, data)
           if (data.hasPermission.getOrElse(false))
             Redirect(routes.HasClientRegisteredBeforeController.view(service, callingPage))
-//            Redirect(nonUkUri(service, routes.ClientPermissionController.view(service, callingPage).url))
           else
             Redirect(routes.AgentSummaryController.view(service))
         }

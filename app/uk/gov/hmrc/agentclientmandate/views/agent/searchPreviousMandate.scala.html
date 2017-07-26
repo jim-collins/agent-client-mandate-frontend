@@ -1,0 +1,39 @@
+@import uk.gov.hmrc.agentclientmandate.viewModelsAndForms._
+
+@(service: String, mandateRefForm: Form[MandateReference], backLink:Option[String])(implicit request: Request[_], messages: Messages)
+
+@import uk.gov.hmrc.agentclientmandate.controllers.client.routes
+@import uk.gov.hmrc.agentclientmandate.views.html._
+@import uk.gov.hmrc.agentclientmandate.views.html.helpers._
+@import uk.gov.hmrc.play.views.html.helpers._
+
+@main_template(title = Messages("client.search-mandate.title"), delegatedService = Some(service)) {
+  @pageHeadersAndError(backLink, "pre-heading", Messages("client.search-mandate.preheader"),
+    Some(mandateErrorSummary(mandateRefForm, "client.search-mandate.error.general")))
+  <h1 class="heading-xlarge" id="header">
+    @Messages("client.search-mandate.header")
+  </h1>
+
+
+
+    <div class="form-group">
+        <span class="paragraph" id="client.search-mandate.help">
+          @Messages("client.search-mandate.lede")
+        </span>
+    </div>
+
+  @form(action = routes.SearchMandateController.submit(service)) {
+
+    <div class="form-group">
+
+      @mandateInput(mandateRefForm("mandateRef"),
+      '_hintText -> Messages("client.search-mandate.hint"),
+      '_showConstraints -> false)
+
+
+    </div>
+
+    <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+
+  }
+}

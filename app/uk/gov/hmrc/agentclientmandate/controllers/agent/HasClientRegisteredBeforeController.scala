@@ -70,9 +70,9 @@ trait HasClientRegisteredBeforeController extends FrontendController with Action
         formWithErrors => BadRequest(views.html.agent.hasClientRegisteredBefore(formWithErrors, service, callingPage, getBackLink(service, callingPage))),
         data => {
           dataCacheService.cacheFormData[PrevRegistered](prevRegisteredFormId, data)
-          if (data.prevRegistered.getOrElse(false))
-            Redirect(nonUkUri(service, routes.HasClientRegisteredBeforeController.view(service, callingPage).url))
-          else
+          if (data.prevRegistered.getOrElse(false)) {
+            Redirect(routes.PreviousMandateRefController.view(service, callingPage))
+          } else
             Redirect(routes.AgentSummaryController.view(service))
         }
       )

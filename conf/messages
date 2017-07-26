@@ -406,3 +406,5 @@ agent.edit-details.agent.non-uk.header = What is the registered business name an
 agent.edit-details.text.agent= {0} agency set up
 
 
+#prev mandate reference
+agent.client-permission.error.general.prevRegistered = There is a problem with the previously used question
