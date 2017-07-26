@@ -201,7 +201,7 @@ agent.client-permission.header = Do you have permission to register on behalf of
 agent.client-permission.error.general.hasPermission = There is a problem with the client permission question
 agent.client-permission.hasPermission.not-selected.error = You must answer the client permission question
 
-agent.client-permission.hasPermission.selected.ated.yes.notice = Your client must complete an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1" data-journey-click="agent-client-mandate:click:ATED-1-link">ATED 1</a>, if you already have an ATED 1 for this client, don''t complete another. You do not need to send your ATED 1 to HMRC, but you need to keep it for your records. Submission of form 64-8 does not cover ATED or ATED related CGT.
+agent.client-permission.hasPermission.selected.ated.yes.notice = Your client must complete an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1" data-journey-click="agent-client-mandate:click:ATED-1-link">ATED 1</a>, if you already have an ATED 1 for this client, don''t complete another. You do not need to send your ATED 1 to HMRC, but you need to keep it for your records. Submission of form 64-8 does not cover ATED or ATED related Capital Gains Tax (CGT).
 agent.client-permission.hasPermission.selected.ated.no.notice =  	You must have permission from your client before you can continue.
 
 # agent enter business details
