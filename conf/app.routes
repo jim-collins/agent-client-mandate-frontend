@@ -62,6 +62,7 @@ GET     /agent/client-registered-previously/:callingPage/:service   uk.gov.hmrc.
 POST    /agent/client-registered-previously/:callingPage/:service   uk.gov.hmrc.agentclientmandate.controllers.agent.HasClientRegisteredBeforeController.submit(service: String, callingPage: String)
 
 GET     /agent/search-previous/:callingPage/:service       uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.view(service: String, callingPage: String)
+POST     /agent/search-previous/:callingPage/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.submit(service: String, callingPage: String)
 
 GET     /agent/unique-reference/:service    uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 

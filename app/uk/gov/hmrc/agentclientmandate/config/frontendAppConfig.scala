@@ -37,6 +37,7 @@ trait AppConfig {
 
   def serviceSignOutUrl(service: Option[String]): String
   def nonUkUri(service: String, backLinkUrl: String): String
+  def addNonUkClientCorrespondenceUri(service: String, backLinkUrl: String): String
 }
 
 object FrontendAppConfig extends AppConfig with ServicesConfig {
@@ -75,6 +76,13 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
 
     forwardUrl + "?backLinkUrl=" + mandateFrontendHost + backLinkUrl
   }
+
+  override def addNonUkClientCorrespondenceUri(service: String, backLinkUrl: String): String = {
+    val forwardUrl = s"""${configuration.getString(s"microservice.services.${service.toLowerCase}.subscriptionUrl").
+      getOrElse("")}/${service.toLowerCase}"""
+    forwardUrl + "?backLinkUrl=" + mandateFrontendHost + backLinkUrl
+  }
+
 
   override def serviceSignOutUrl(service: Option[String]): String = {
     service match {

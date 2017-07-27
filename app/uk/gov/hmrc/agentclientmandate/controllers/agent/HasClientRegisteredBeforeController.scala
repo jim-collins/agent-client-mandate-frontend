@@ -73,7 +73,7 @@ trait HasClientRegisteredBeforeController extends FrontendController with Action
           if (data.prevRegistered.getOrElse(false)) {
             Redirect(routes.PreviousMandateRefController.view(service, callingPage))
           } else
-            Redirect(routes.AgentSummaryController.view(service))
+            Redirect(nonUkUri(service, routes.HasClientRegisteredBeforeController.view(service, callingPage).url))
         }
       )
   }
