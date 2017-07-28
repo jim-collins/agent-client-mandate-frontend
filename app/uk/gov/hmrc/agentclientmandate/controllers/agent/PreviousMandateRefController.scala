@@ -23,7 +23,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
-import uk.gov.hmrc.agentclientmandate.models.Mandate
+import uk.gov.hmrc.agentclientmandate.models.{Mandate, OldMandateReference}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.MandateReferenceForm.mandateRefForm
@@ -67,7 +67,8 @@ trait PreviousMandateRefController extends FrontendController with Actions with 
           data => {
             mandateService.fetchClientMandate(data.mandateRef.toUpperCase) flatMap {
               case Some(x) =>
-                dataCacheService.cacheFormData[Mandate](oldNonUkMandate, x)
+                dataCacheService.cacheFormData[OldMandateReference](oldNonUkMandate, OldMandateReference(x.id,
+                  x.clientParty.map(_.id).getOrElse(throw new RuntimeException("NO Clinet ated ref no. found!"))))
                 Future.successful(Redirect(addNonUkClientCorrespondenceUri(service, routes.PreviousMandateRefController.view(service, callingPage).url)))
               case None =>
                 val errorMsg = Messages("client.search-mandate.error.mandateRef.not-found-by-mandate-service")
@@ -81,8 +82,9 @@ trait PreviousMandateRefController extends FrontendController with Actions with 
   def getOldMandateFromSession(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext =>
       implicit request =>
-        dataCacheService.fetchAndGetFormData[Mandate](oldNonUkMandate).map { mandate =>
-          Ok(Json.toJson(mandate))
+        println(s"*********************************************************************************************************************************")
+        dataCacheService.fetchAndGetFormData[OldMandateReference](oldNonUkMandate).map { mandateRef =>
+          Ok(Json.toJson(mandateRef))
         }
   }
 
