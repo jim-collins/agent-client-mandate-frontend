@@ -73,7 +73,7 @@ trait PreviousMandateRefController extends FrontendController with Actions with 
               case None =>
                 val errorMsg = Messages("client.search-mandate.error.mandateRef.not-found-by-mandate-service")
                 val errorForm = mandateRefForm.withError(key = "mandateRef", message = errorMsg).fill(data)
-                Future.successful(BadRequest(views.html.client.searchMandate(service, errorForm, getBackLink(service, callingPage))))
+                Future.successful(BadRequest(views.html.agent.searchPreviousMandate(service, callingPage, errorForm)))
             }
           }
         )
@@ -82,7 +82,6 @@ trait PreviousMandateRefController extends FrontendController with Actions with 
   def getOldMandateFromSession(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext =>
       implicit request =>
-        println(s"*********************************************************************************************************************************")
         dataCacheService.fetchAndGetFormData[OldMandateReference](oldNonUkMandate).map { mandateRef =>
           Ok(Json.toJson(mandateRef))
         }
