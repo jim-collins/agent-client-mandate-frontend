@@ -77,7 +77,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
       "agent requests(GET) for 'reject client question' view" in {
         when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-          .thenReturn(Future.successful("ACME Limited"))
+          .thenReturn(Future.successful(mandate))
         viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -90,7 +90,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "returns BAD_REQUEST" when {
       "invalid form is submitted" in {
         when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-          .thenReturn(Future.successful("ACME Limited"))
+          .thenReturn(Future.successful(mandate))
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(BAD_REQUEST)
@@ -106,7 +106,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val hc = new HeaderCarrier()
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "false")
         when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-          .thenReturn(Future.successful("ACME Limited"))
+          .thenReturn(Future.successful(mandate))
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include(s"/agent/summary/$service")
@@ -118,7 +118,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val hc = new HeaderCarrier()
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
         when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-          .thenReturn(Future.successful("ACME Limited"))
+          .thenReturn(Future.successful(mandate))
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must include("/agent/reject/confirmation")
@@ -132,7 +132,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
         when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-          .thenReturn(Future.successful("ACME Limited"))
+          .thenReturn(Future.successful(mandate))
         AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
         val thrown = the[RuntimeException] thrownBy await(TestRejectClientController.submit(service, "ABC123").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
 
@@ -146,7 +146,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
         val hc = new HeaderCarrier()
         when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-          .thenReturn(Future.successful("ACME Limited"))
+          .thenReturn(Future.successful(mandate))
         confirmationWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -154,7 +154,6 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         }
       }
     }
-
   }
 
   val mockAgentClientMandateService = mock[AgentClientMandateService]
@@ -164,7 +163,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   val agentName = "Acme"
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
+  val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "ACME Limited")
 
   object TestRejectClientController extends RejectClientController {
     override val authConnector = mockAuthConnector

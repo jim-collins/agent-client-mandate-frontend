@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HttpResponse
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.PrevRegistered
@@ -41,7 +42,6 @@ object HasClientRegisteredBeforeController extends HasClientRegisteredBeforeCont
   val businessCustomerConnector: BusinessCustomerFrontendConnector = BusinessCustomerFrontendConnector
   val atedSubscriptionConnector: AtedSubscriptionFrontendConnector = AtedSubscriptionFrontendConnector
   val dataCacheService: DataCacheService = DataCacheService
-
   // $COVERAGE-ON$
 }
 
@@ -60,14 +60,14 @@ trait HasClientRegisteredBeforeController extends FrontendController with Action
           if (service.toUpperCase == "ATED") atedSubscriptionConnector.clearCache(service)
           else Future.successful(HttpResponse(OK))
         }
-      } yield Ok(views.html.agent.hasClientRegisteredBefore(prevRegisteredForm.fill(prevRegistered.getOrElse(PrevRegistered())), service, callingPage, getBackLink(service, callingPage)))
+      } yield Ok(views.html.agent.hasClientRegisteredBefore(prevRegisteredForm.fill(prevRegistered.getOrElse(PrevRegistered())), callingPage, service, getBackLink(service, callingPage)))
   }
 
 
   def submit(service: String, callingPage: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
       prevRegisteredForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(views.html.agent.hasClientRegisteredBefore(formWithErrors, service, callingPage, getBackLink(service, callingPage))),
+        formWithErrors => BadRequest(views.html.agent.hasClientRegisteredBefore(formWithErrors, callingPage, service, getBackLink(service, callingPage))),
         data => {
           dataCacheService.cacheFormData[PrevRegistered](prevRegisteredFormId, data)
           if (data.prevRegistered.getOrElse(false)) {
@@ -79,9 +79,6 @@ trait HasClientRegisteredBeforeController extends FrontendController with Action
   }
 
   private def getBackLink(service: String, callingPage: String) = {
-    callingPage match {
-      case PaySAQuestionController.controllerId => Some(routes.PaySAQuestionController.view(service).url)
-      case _ => Some(routes.NRLQuestionController.view(service).url)
-    }
+    Some(routes.ClientPermissionController.view(service, callingPage).url)
   }
 }

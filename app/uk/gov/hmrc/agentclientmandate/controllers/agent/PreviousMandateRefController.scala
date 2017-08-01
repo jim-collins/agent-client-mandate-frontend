@@ -27,7 +27,7 @@ import uk.gov.hmrc.agentclientmandate.models.{Mandate, OldMandateReference}
 import uk.gov.hmrc.agentclientmandate.service.{AgentClientMandateService, DataCacheService}
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.MandateReferenceForm.mandateRefForm
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, MandateReference}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, ClientEmail, MandateReference}
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
@@ -53,8 +53,8 @@ trait PreviousMandateRefController extends FrontendController with Actions with 
       implicit request =>
         dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map { a =>
           a.flatMap(_.mandate) match {
-            case Some(x) => Ok(views.html.agent.searchPreviousMandate(service, callingPage, mandateRefForm.fill(MandateReference(x.id))))
-            case None => Ok(views.html.agent.searchPreviousMandate(service, callingPage, mandateRefForm))
+            case Some(x) => Ok(views.html.agent.searchPreviousMandate(service, mandateRefForm.fill(MandateReference(x.id)), callingPage, getBackLink(service, callingPage)))
+            case None => Ok(views.html.agent.searchPreviousMandate(service, mandateRefForm, callingPage, getBackLink(service, callingPage)))
           }
         }
   }
@@ -63,17 +63,19 @@ trait PreviousMandateRefController extends FrontendController with Actions with 
     implicit authContext =>
       implicit request =>
         mandateRefForm.bindFromRequest.fold(
-          formWithErrors => Future.successful(BadRequest(views.html.agent.searchPreviousMandate(service, callingPage, formWithErrors))),
+          formWithErrors => Future.successful(BadRequest(views.html.agent.searchPreviousMandate(service, formWithErrors, callingPage, getBackLink(service, callingPage)))),
           data => {
             mandateService.fetchClientMandate(data.mandateRef.toUpperCase) flatMap {
               case Some(x) =>
                 dataCacheService.cacheFormData[OldMandateReference](oldNonUkMandate, OldMandateReference(x.id,
-                  x.clientParty.map(_.id).getOrElse(throw new RuntimeException("NO Clinet ated ref no. found!"))))
-                Future.successful(Redirect(addNonUkClientCorrespondenceUri(service, routes.PreviousMandateRefController.view(service, callingPage).url)))
+                  x.clientParty.map(_.id).getOrElse(throw new RuntimeException("No Client Ref no. found!"))))
+                dataCacheService.cacheFormData[ClientCache](clientFormId, ClientCache(Some(ClientEmail(x.clientParty.map(_.contactDetails.email).getOrElse(""))), Some(x))) flatMap { cacheResp =>
+                  Future.successful(Redirect(addNonUkClientCorrespondenceUri(service, routes.PreviousMandateRefController.view(service, callingPage).url)))
+                }
               case None =>
                 val errorMsg = Messages("client.search-mandate.error.mandateRef.not-found-by-mandate-service")
                 val errorForm = mandateRefForm.withError(key = "mandateRef", message = errorMsg).fill(data)
-                Future.successful(BadRequest(views.html.agent.searchPreviousMandate(service, callingPage, errorForm)))
+                Future.successful(BadRequest(views.html.agent.searchPreviousMandate(service, errorForm, callingPage, getBackLink(service, callingPage))))
             }
           }
         )
@@ -88,9 +90,6 @@ trait PreviousMandateRefController extends FrontendController with Actions with 
   }
 
   private def getBackLink(service: String, callingPage: String) = {
-    callingPage match {
-      case PaySAQuestionController.controllerId => Some(routes.PaySAQuestionController.view(service).url)
-      case _ => Some(routes.NRLQuestionController.view(service).url)
-    }
+    Some(routes.HasClientRegisteredBeforeController.view(service, callingPage).url)
   }
 }

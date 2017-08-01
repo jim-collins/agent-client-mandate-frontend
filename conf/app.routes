@@ -68,7 +68,6 @@ POST     /agent/search-previous/:callingPage/:service      uk.gov.hmrc.agentclie
 
 GET     /agent/unique-reference/:service    uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 
-
 GET     /agent/summary/:service                       uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.view(service: String, tabName : Option[String] ?= None)
 GET     /agent/doDelegation/:service/:mandateId       uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.doDelegation(service: String, mandateId: String)
 GET     /agent/summary/:service/activate/:mandateId   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.activate(service: String, mandateId: String)

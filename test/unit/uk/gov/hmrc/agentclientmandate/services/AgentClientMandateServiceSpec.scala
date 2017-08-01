@@ -134,7 +134,7 @@ class AgentClientMandateServiceSpec extends PlaySpec with OneAppPerSuite with Mo
         when(mockAgentClientMandateConnector.fetchMandate(Matchers.any())(Matchers.any(), Matchers.any())) thenReturn Future.successful(HttpResponse(OK, Some(respJson)))
 
         val response = TestAgentClientMandateService.fetchClientMandateClientName(mandateId)
-        await(response) must be(mandateNew.clientDisplayName)
+        await(response) must be(mandateNew)
       }
 
       "throws an exception when no Mandate found" in {

@@ -46,6 +46,8 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   val mandateId = "1"
   val agentName = "Acme"
 
+  val mandate = Mandate(id = "1", createdBy = User("credId", "agentName", Some("agentCode")), None, None, agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)), clientParty = Some(Party("JARN123456", "ACME Limited", PartyType.Organisation, ContactDetails("client@client.com", None))), currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "ACME Limited")
+
   object TestRemoveClientController extends RemoveClientController {
     override val authConnector = mockAuthConnector
     override val acmService = mockAgentClientMandateService
@@ -140,7 +142,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
       val hc = new HeaderCarrier()
       when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful("ACME Limited"))
+        .thenReturn(Future.successful(mandate))
 
       viewWithAuthorisedAgent { result =>
         status(result) must be(OK)
@@ -158,7 +160,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
     "invalid form is submitted" in {
       val hc = new HeaderCarrier()
       when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful("ACME Limited"))
+        .thenReturn(Future.successful(mandate))
 
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "")
       submitWithAuthorisedAgent(fakeRequest) { result =>
@@ -175,7 +177,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       val hc = new HeaderCarrier()
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "false")
       when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful("ACME Limited"))
+        .thenReturn(Future.successful(mandate))
       submitWithAuthorisedAgent(fakeRequest) { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result).get must include(s"/mandate/agent/summary/$service")
@@ -187,7 +189,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       val hc = new HeaderCarrier()
       val fakeRequest = FakeRequest().withFormUrlEncodedBody("yesNo" -> "true")
       when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful("ACME Limited"))
+        .thenReturn(Future.successful(mandate))
       submitWithAuthorisedAgent(fakeRequest) { result =>
         status(result) must be(SEE_OTHER)
         redirectLocation(result).get must include("/agent/remove-client/showConfirmation")
@@ -203,7 +205,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
 
       when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful("ACME Limited"))
+        .thenReturn(Future.successful(mandate))
 
       val thrown = the[RuntimeException] thrownBy await(TestRemoveClientController.confirm(service, "ABC123").apply(SessionBuilder.updateRequestFormWithSession(fakeRequest, userId)))
 
@@ -217,7 +219,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
       val hc = new HeaderCarrier()
       when(mockAgentClientMandateService.fetchClientMandateClientName(Matchers.any())(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful("ACME Limited"))
+        .thenReturn(Future.successful(mandate))
 
       showConfirmationWithAuthorisedAgent { result =>
         status(result) must be(OK)
