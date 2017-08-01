@@ -77,24 +77,7 @@ class pendingViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       And("The Pending Clients tab - should exist")
       assert(document.getElementById("pending-clients").text === "Requests (4)")
 
-      And("The Pending Clients table - should have a name and action")
-      assert(document.getElementById("client-name").text === "Name")
-      assert(document.getElementById("client-action").text === "Action")
 
-      And("The Pending Clients table - has the correct data and Accept link")
-
-      assert(document.getElementById("pending-client-data-0").child(0).text() === "client display name 1")
-      assert(document.getElementById("pending-client-data-0").child(2).text() === "Awaiting client")
-      assert(document.getElementById("reject-client-link-0") === null)
-      assert(document.getElementById("pending-client-data-1").child(0).text() === "client display name 5")
-      assert(document.getElementById("pending-client-data-1").child(2).text() === "Pending")
-      assert(document.getElementById("reject-client-link-1") === null)
-      assert(document.getElementById("pending-client-data-2").child(0).text() === "client display name 3")
-      assert(document.getElementById("pending-client-data-2").child(2).text() === "Accept client display name 3")
-      assert(document.getElementById("reject-client-link-2").text() === "Reject client display name 3")
-      assert(document.getElementById("pending-client-data-3").child(0).text() === "client display name 4")
-      assert(document.getElementById("pending-client-data-3").child(2).text() === "Pending")
-      assert(document.getElementById("reject-client-link-3") === null)
 
 
       And("The Add Client Button - should not exist")

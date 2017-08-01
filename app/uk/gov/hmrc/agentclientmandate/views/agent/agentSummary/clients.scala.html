@@ -85,32 +85,42 @@
   </div>
 }
 
+  <div class="form-group">
 
-<div class="form-group">
-  <table>
-    <tbody>
-      @if(mandates.activeMandates.size > 0) {
-        @for((active, index) <- mandates.activeMandates.zipWithIndex) {
-          <tr>
-            <td id="client-name-@index">@active.clientDisplayName</td>
-            <td>
-              <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)" data-journey-click="agent-client-mandate:click:edit-client-link">
-                @Messages("Edit") <span class="screen-reader-text">@active.clientDisplayName</span>
-              </a>
-            </td>
-            <td class="tdRight">
-              <a id="client-link-@index"
-                 href='@routes.AgentSummaryController.doDelegation(service, active.id)' data-journey-click="agent-client-mandate:click:client-link">@Messages("client.summary.client-view")
-                <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
-              </a>
-            </td>
-          </tr>
-        }
-      } else {
-        <span id="filter-no-results" class="heading-medium">@Messages("client.summary.no_clients_found")</span>
-      }
-    </tbody>
-  </table>
-</div>
+    @if(mandates.activeMandates.size > 0) {
+      @for((active, index) <- mandates.activeMandates.zipWithIndex) {
+
+        <div class="grid-wrapper row-border">
+          <div class="grid grid-1-2 asp-return">
+            <span id="client-name-@index">@active.clientDisplayName</span>
+          </div>
+
+          <div class="grid grid-1-4 asp-status">
+            <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)"
+            data-journey-click="agent-client-mandate:click:edit-client-link">
+              @Messages("Edit")
+            <span class="screen-reader-text">@active.clientDisplayName</span>
+            </a>
+          </div>
+
+          <div class="grid grid-1-4 asp-action">
+            <a id="client-link-@index" href='@routes.AgentSummaryController.doDelegation(service, active.id)'
+            data-journey-click="agent-client-mandate:click:client-link">
+              @Messages("client.summary.client-view")
+            <span class="screen-reader-text">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
+            </a>
+          </div>
+        </div>
+          }
+
+          } else {
+
+
+      <span id="filter-no-results" class="heading-medium">@Messages("client.summary.no_clients_found")</span>
+    }
+    </div>
+
 
 }
+
+
