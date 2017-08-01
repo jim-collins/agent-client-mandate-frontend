@@ -43,48 +43,59 @@
     </ul>
   </div>
 
+  <div class="form-group">
 
-<div class="form-group">
-      <table>
-        <thead>
-        <tr>
-          <th id="client-name">@Messages("client.summary.client-name.title")</th>
-          <th id="client-action">@Messages("client.summary.client-action.title")</th>
-          <td id="noHeader2" colspan="2">  </td>
-        </tr>
-        </thead>
-        <tbody>
-        @for((pending, index) <- mandates.pendingMandates.zipWithIndex) {
-        <tr id="pending-client-data-@index">
-          <td>@pending.clientDisplayName</td>
+    @for((pending, index) <- mandates.pendingMandates.zipWithIndex) {
+
+      <div class="grid-wrapper row-border">
+        <div class="grid grid-1-4 asp-return">
+          <span id="pending-client-data-@index">@pending.clientDisplayName</span>
+
           @if(checkStatus(pending.currentStatus.status) == "Await" || checkStatus(pending.currentStatus.status) == "Pending"){
-          <td>
-            <a id="edit-pending-client-link-@index" href="@routes.EditMandateDetailsController.view(service, pending.id)" data-journey-click="agent-client-mandate:click:edit-pending-client-link">
-              @Messages("Edit") <span class="screen-reader-text">@pending.clientDisplayName</span>
-            </a>
-          </td>
-          } else {
-          <td>
-            <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)"data-journey-click="agent-client-mandate:click:reject-client-link">
-              @Messages("client.summary.client-reject") <span class="screen-reader-text">@pending.clientDisplayName</span>
-            </a>
-          </td>
-          }
-          @checkStatus(pending.currentStatus.status) match {
-            case "Await" => { <td>@Messages("client.summary.client.pending-status")</td> }
-            case "Pending" => { <td>@Messages("client.summary.client-pending")</td> }
-            case _ => { <td id ="accept-client">
-                          <a href="@routes.AgentSummaryController.activate(service, pending.id)" data-journey-click="agent-client-mandate:click:accept-client"
-                             id="accept-@(index+1)">
-                            @Messages("client.summary.client-accept") <span class="screen-reader-text">@pending.clientDisplayName</span>
-                          </a>
-                        </td> }
-          }
-        </tr>
-        }
-        </tbody>
-      </table>
-    </div>
+        </div>
 
+        <div class="grid grid-1-4 asp-action">
+          <a id="edit-pending-client-link-@index" href="@routes.EditMandateDetailsController.view(service, pending.id)"
+            data-journey-click="agent-client-mandate:click:edit-pending-client-link">
+            @Messages("Edit")
+          <span class="screen-reader-text">@pending.clientDisplayName</span>
+          </a>
+        </div>
+
+        } else {
+
+
+          <div class="grid grid-1-2 asp-status">
+            <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)" data-journey-click="agent-client-mandate:click:reject-client-link">
+              @Messages("client.summary.client-reject")
+            <span class="screen-reader-text">@pending.clientDisplayName</span>
+            </a>
+          </div>
+        }
+        @checkStatus(pending.currentStatus.status) match {
+          case "Await" => {
+            <div class="grid grid-1-4 asp-status">
+              <div>@Messages("client.summary.client.pending-status")</div>
+            </div>
+          }
+          case "Pending" => {
+            <div class="grid grid-1-4 asp-status">
+            <div>@Messages("client.summary.client-pending")</div>
+            </div>
+          }
+          case _ => {
+            <div class="grid grid-1-4 asp-action">
+            <div id ="accept-client">
+              <a href="@routes.AgentSummaryController.activate(service, pending.id)" data-journey-click="agent-client-mandate:click:accept-client"
+              id="accept-@(index + 1)">
+                @Messages("client.summary.client-accept") <span class="screen-reader-text">@pending.clientDisplayName</span>
+              </a>
+            </div>
+            </div>
+       }
+
+        }
+      </div>
+    }
 
 }
