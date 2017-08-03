@@ -257,6 +257,20 @@ object ClientPermissionForm {
 
 }
 
+case class PrevRegistered(prevRegistered: Option[Boolean] = None)
+
+object PrevRegisteredForm {
+  implicit val formats = Json.format[PrevRegistered]
+
+  val prevRegisteredForm = Form(
+    mapping(
+      "prevRegistered" -> optional(boolean).verifying(Messages("agent.client-permission.hasPermission.not-selected.error"), a => a.isDefined)
+    )(PrevRegistered.apply)(PrevRegistered.unapply)
+  )
+
+}
+
+
 case class ClientDisplayName(name: String)
 
 object ClientDisplayName {

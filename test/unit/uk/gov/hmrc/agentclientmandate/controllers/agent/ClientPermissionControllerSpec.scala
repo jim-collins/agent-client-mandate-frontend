@@ -137,7 +137,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "true")
         submitWithAuthorisedAgent("", fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include(s"http://localhost:9923/business-customer/agent/register/non-uk-client/${service.toLowerCase}")
+          redirectLocation(result).get must include("/mandate/agent/client-registered-previously//ATED")
         }
       }
     }

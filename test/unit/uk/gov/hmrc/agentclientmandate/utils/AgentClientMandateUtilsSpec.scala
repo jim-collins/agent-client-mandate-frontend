@@ -16,9 +16,10 @@
 
 package unit.uk.gov.hmrc.agentclientmandate.utils
 
+import org.joda.time.DateTime
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import uk.gov.hmrc.agentclientmandate.utils.AgentClientMandateUtils
-import uk.gov.hmrc.agentclientmandate.models.Status
+import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.models.Status.Status
 import unit.uk.gov.hmrc.agentclientmandate.builders.AgentBuilder
 
@@ -52,29 +53,46 @@ class AgentClientMandateUtilsSpec extends PlaySpec with OneServerPerSuite {
 
     "checkStatus" when {
       "a valid status is passed" in {
-        AgentClientMandateUtils.checkStatus(Status.PendingActivation) must be ("Pending")
+        AgentClientMandateUtils.checkStatus(Status.PendingActivation) must be("Pending")
       }
     }
   }
-    "getIsoCodeTupleList" must {
-      "bring the correct country from the file" in {
-        AgentClientMandateUtils.getIsoCodeTupleList must contain(("US", "USA :United States of America"))
-        AgentClientMandateUtils.getIsoCodeTupleList must contain(("GB", "United Kingdom :UK, GB, Great Britain"))
-        AgentClientMandateUtils.getIsoCodeTupleList must contain(("GB", "United Kingdom :UK, GB, Great Britain"))
-      }
+  "getIsoCodeTupleList" must {
+    "bring the correct country from the file" in {
+      AgentClientMandateUtils.getIsoCodeTupleList must contain(("US", "USA :United States of America"))
+      AgentClientMandateUtils.getIsoCodeTupleList must contain(("GB", "United Kingdom :UK, GB, Great Britain"))
+      AgentClientMandateUtils.getIsoCodeTupleList must contain(("GB", "United Kingdom :UK, GB, Great Britain"))
+    }
+  }
+
+  "isUkAgent" must {
+    "return false, when agent country is not UK" in {
+      AgentClientMandateUtils.isUkAgent(AgentBuilder.buildAgentDetails) must be(false)
     }
 
-    "isUkAgent" must {
-      "return false, when agent country is not UK" in {
-        AgentClientMandateUtils.isUkAgent(AgentBuilder.buildAgentDetails) must be(false)
-      }
+    "return true, when agent country is UK" in {
+      AgentClientMandateUtils.isUkAgent(AgentBuilder.buildUkAgentDetails) must be(true)
+    }
+  }
 
-      "return true, when agent country is UK" in {
-        AgentClientMandateUtils.isUkAgent(AgentBuilder.buildUkAgentDetails) must be(true)
-      }
+
+  "isNonUkClient" must {
+    "return false, when mandate history has status = ACTIVE/NEW" in {
+      AgentClientMandateUtils.isNonUkClient(mandate) must be(false)
     }
 
+    "return true, when mandate history does not have status = ACTIVE/NEW" in {
+      AgentClientMandateUtils.isNonUkClient(mandate1) must be(true)
+    }
+  }
 
+  val mandate: Mandate = Mandate(id = "12345678", createdBy = User("credId", "agentName", Some("agentCode")), None, None,
+    agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)),
+    clientParty = Some(Party("X0101000000101", "client name", PartyType.Organisation, ContactDetails("agent@agent.com", None))),
+    currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Seq(MandateStatus(Status.New, DateTime.now(), "updatedby"), MandateStatus(Status.Active, DateTime.now(), "updatedby")), Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 
-
+  val mandate1: Mandate = Mandate(id = "12345678", createdBy = User("credId", "agentName", Some("agentCode")), None, None,
+    agentParty = Party("JARN123456", "agency name", PartyType.Organisation, ContactDetails("agent@agent.com", None)),
+    clientParty = Some(Party("X0101000000101", "client name", PartyType.Organisation, ContactDetails("agent@agent.com", None))),
+    currentStatus = MandateStatus(Status.New, DateTime.now(), "credId"), statusHistory = Nil, Subscription(None, Service("ated", "ATED")), clientDisplayName = "client display name")
 }

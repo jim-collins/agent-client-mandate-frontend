@@ -63,9 +63,9 @@ trait AgentClientMandateService extends MandateConstants {
     }
   }
 
-  def fetchClientMandateClientName(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[String] = {
+  def fetchClientMandateClientName(mandateId: String)(implicit hc: HeaderCarrier, ac: AuthContext): Future[Mandate] = {
     fetchClientMandate(mandateId).map {
-      case Some(mandate) => mandate.clientDisplayName
+      case Some(mandate) => mandate
       case _ => throw new RuntimeException(s"[AgentClientMandateService][fetchClientMandateClientName] No Mandate returned for id $mandateId")
     }
   }

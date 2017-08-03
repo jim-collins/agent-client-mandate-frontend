@@ -157,7 +157,7 @@ agent.enter-email.error.general.confirmEmail = There is a problem with the confi
 agent.enter-email.error.email = You must answer the email address question
 client.enter-email.error.email = You must answer the email address question
 agent.enter-email.error.confirmEmail = You must answer the confirm email address question
-agent.enter-email.info.text = We will use this email address to send you notifications about this client. We won’t send confidential information by email. You can use a group email address and change it.
+agent.enter-email.info.text = We will use this email address to send you notifications about this client. We won?t send confidential information by email. You can use a group email address and change it.
 
 agent.enter-email.field.email.label = Email address
 agent.enter-email.field.confirmEmail.label = Confirm email address
@@ -203,6 +203,13 @@ agent.client-permission.hasPermission.not-selected.error = You must answer the c
 
 agent.client-permission.hasPermission.selected.ated.yes.notice = Your client must complete an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1" data-journey-click="agent-client-mandate:click:ATED-1-link">ATED 1</a>, if you already have an ATED 1 for this client, don''t complete another. You do not need to send your ATED 1 to HMRC, but you need to keep it for your records. Submission of form 64-8 does not cover ATED or ATED related Capital Gains Tax (CGT).
 agent.client-permission.hasPermission.selected.ated.no.notice =  	You must have permission from your client before you can continue.
+
+# agent - has client registered before page
+agent.client-prev-registered.title = Has your client previously used the ATED online service to submit returns?
+agent.client-prev-registered.header = Has your client previously used the ATED online service to submit returns?
+agent.client-prev-registered.error.general.hasPermission = There is a problem with the client permission question
+agent.client-prev-registered.not-selected.error = You must answer the client permission question
+
 
 # agent enter business details
 agent.enter-business-details-error.businessName = You must enter a company name
@@ -304,6 +311,7 @@ agent.remove-client-confirmation.banner-text-date = on {0}
 agent.remove-client-confirmation.notification = Your client will receive an email notification.
 agent.remove-client-confirmation.what-next = What happens next
 agent.remove-client-confirmation.request-new-client = you can add a new client
+agent.remove-client-confirmation.non-uk-client-old-unique-refno = You need to give your client your old unique agent reference, {0}.
 agent.remove-client-confirmation.submit-returns = submit returns for an existing client
 agent.remove-client-confirmation.view-all-clients = View all your clients
 
@@ -396,3 +404,18 @@ agent.edit-details-error.country = You must enter a country
 
 agent.edit-details.agent.non-uk.header = What is the registered business name and address of your overseas agency?
 agent.edit-details.text.agent= {0} agency set up
+
+
+#prev mandate reference
+agent.client-permission.error.general.prevRegistered = There is a problem with the previously used question
+
+#search previous mandate
+agent.search-previous-mandate.title = What is the previous unique authorisation number for the client?
+agent.search-previous-mandate.header = What is the previous unique authorisation number for the client?
+agent.search-previous-mandate.header.lede = If your client has previously registered with a different agent using the ATED online service you need to enter the old agent's unique authorisation number to access their previous returns.
+agent.search-previous-mandate.error.general.mandateRef= There is a problem with the unique authorisation number question
+agent.search-previous-mandate.error.mandateRef = You must answer unique authorisation number question
+agent.search-previous-mandate.error.mandateRef.length = A unique authorisation number cannot be more than 8 characters
+agent.search-previous-mandate.error.general.mandate-ref-form = The unique authorisation number you entered was not found. Please check and try again.
+agent.search-previous-mandate.error.mandateRef.not-found-by-mandate-service = The unique authorisation number you entered cannot be found. Check the number, or enter a different number.
+agent.search-previous-mandate.error.mandateRef.already-used-by-mandate-service = The unique authorisation number you entered has already been used. Check the number, or enter a different number.

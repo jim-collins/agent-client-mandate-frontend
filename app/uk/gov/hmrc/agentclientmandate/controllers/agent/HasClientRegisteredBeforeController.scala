@@ -21,7 +21,7 @@ import uk.gov.hmrc.agentclientmandate.config.FrontendAppConfig._
 import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
 import uk.gov.hmrc.agentclientmandate.connectors.{AtedSubscriptionFrontendConnector, BusinessCustomerFrontendConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.AgentRegime
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientPermissionForm._
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.PrevRegisteredForm._
 import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
@@ -29,23 +29,23 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HttpResponse
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientPermission
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.PrevRegistered
 
 import scala.concurrent.Future
 
-object ClientPermissionController extends ClientPermissionController {
+object HasClientRegisteredBeforeController extends HasClientRegisteredBeforeController {
   // $COVERAGE-OFF$
   val authConnector: AuthConnector = FrontendAuthConnector
   val businessCustomerConnector: BusinessCustomerFrontendConnector = BusinessCustomerFrontendConnector
   val atedSubscriptionConnector: AtedSubscriptionFrontendConnector = AtedSubscriptionFrontendConnector
   val dataCacheService: DataCacheService = DataCacheService
-
   // $COVERAGE-ON$
 }
 
-trait ClientPermissionController extends FrontendController with Actions with MandateConstants {
+trait HasClientRegisteredBeforeController extends FrontendController with Actions with MandateConstants {
 
   def businessCustomerConnector: BusinessCustomerFrontendConnector
   def atedSubscriptionConnector: AtedSubscriptionFrontendConnector
@@ -54,34 +54,31 @@ trait ClientPermissionController extends FrontendController with Actions with Ma
   def view(service: String, callingPage: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
       for {
-        clientPermission <- dataCacheService.fetchAndGetFormData[ClientPermission](clientPermissionFormId)
+        prevRegistered <- dataCacheService.fetchAndGetFormData[PrevRegistered](prevRegisteredFormId)
         clearBcResp <- businessCustomerConnector.clearCache(service)
         serviceResp <- {
           if (service.toUpperCase == "ATED") atedSubscriptionConnector.clearCache(service)
           else Future.successful(HttpResponse(OK))
         }
-      } yield Ok(views.html.agent.clientPermission(clientPermissionForm.fill(clientPermission.getOrElse(ClientPermission())), service, callingPage, getBackLink(service, callingPage)))
+      } yield Ok(views.html.agent.hasClientRegisteredBefore(prevRegisteredForm.fill(prevRegistered.getOrElse(PrevRegistered())), callingPage, service, getBackLink(service, callingPage)))
   }
 
 
   def submit(service: String, callingPage: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence) {
     implicit user => implicit request =>
-      clientPermissionForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(views.html.agent.clientPermission(formWithErrors, service, callingPage, getBackLink(service, callingPage))),
+      prevRegisteredForm.bindFromRequest.fold(
+        formWithErrors => BadRequest(views.html.agent.hasClientRegisteredBefore(formWithErrors, callingPage, service, getBackLink(service, callingPage))),
         data => {
-          dataCacheService.cacheFormData[ClientPermission](clientPermissionFormId, data)
-          if (data.hasPermission.getOrElse(false))
-            Redirect(routes.HasClientRegisteredBeforeController.view(service, callingPage))
-          else
-            Redirect(routes.AgentSummaryController.view(service))
+          dataCacheService.cacheFormData[PrevRegistered](prevRegisteredFormId, data)
+          if (data.prevRegistered.getOrElse(false)) {
+            Redirect(routes.PreviousMandateRefController.view(service, callingPage))
+          } else
+            Redirect(nonUkUri(service, routes.HasClientRegisteredBeforeController.view(service, callingPage).url))
         }
       )
   }
 
   private def getBackLink(service: String, callingPage: String) = {
-    callingPage match {
-      case PaySAQuestionController.controllerId => Some(routes.PaySAQuestionController.view(service).url)
-      case _ => Some(routes.NRLQuestionController.view(service).url)
-    }
+    Some(routes.ClientPermissionController.view(service, callingPage).url)
   }
 }

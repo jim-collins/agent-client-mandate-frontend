@@ -46,6 +46,8 @@ GET     /agent/client-display-name/:service           uk.gov.hmrc.agentclientman
 POST    /agent/client-display-name/:service           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.submit(service: String, redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
 GET     /agent/client-display-name-session/:service   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.getClientDisplayName(service: String)
 
+GET     /agent/old-nonuk-mandate-from-session/:service   uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.getOldMandateFromSession(service: String)
+
 GET     /agent/overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.view(service: String)
 POST    /agent/overseas-client-question/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.submit(service: String)
 
@@ -58,8 +60,13 @@ POST    /agent/paySA-question/:service            uk.gov.hmrc.agentclientmandate
 GET     /agent/client-permission/:callingPage/:service   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.view(service: String, callingPage: String)
 POST    /agent/client-permission/:callingPage/:service   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.submit(service: String, callingPage: String)
 
-GET     /agent/unique-reference/:service    uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
+GET     /agent/client-registered-previously/:callingPage/:service   uk.gov.hmrc.agentclientmandate.controllers.agent.HasClientRegisteredBeforeController.view(service: String, callingPage: String)
+POST    /agent/client-registered-previously/:callingPage/:service   uk.gov.hmrc.agentclientmandate.controllers.agent.HasClientRegisteredBeforeController.submit(service: String, callingPage: String)
 
+GET     /agent/search-previous/:callingPage/:service       uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.view(service: String, callingPage: String)
+POST     /agent/search-previous/:callingPage/:service      uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.submit(service: String, callingPage: String)
+
+GET     /agent/unique-reference/:service    uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service: String)
 
 GET     /agent/summary/:service                       uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.view(service: String, tabName : Option[String] ?= None)
 GET     /agent/doDelegation/:service/:mandateId       uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.doDelegation(service: String, mandateId: String)
