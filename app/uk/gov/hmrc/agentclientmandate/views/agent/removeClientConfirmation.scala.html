@@ -27,7 +27,7 @@
 
         <ul id="list" class="bullets">
             @if(isNonUkClient) {
-            <li>@Messages("agent.remove-client-confirmation.non-uk-client-old-unique-refno", mandateId)</li>
+            <li>@Messages("agent.remove-client-confirmation.non-uk-client-old-unique-refno") <span id="mandateRef">@Messages(mandateId)</span></li>
             } else {
             <li>@Messages("agent.remove-client-confirmation.request-new-client")</li>
             }
