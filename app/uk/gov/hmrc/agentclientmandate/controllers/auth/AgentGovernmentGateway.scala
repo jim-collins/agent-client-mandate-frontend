@@ -24,4 +24,6 @@ case class AgentGovernmentGateway(service: String) extends GovernmentGateway {
   override val loginURL = s"$companyAuthHost/$loginPath"
   override def continueURL = s"$loginCallbackAgent/$service"
 
+  override val defaultTimeoutSeconds = 1800
+
 }
