@@ -78,7 +78,7 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   }
 
   override def addNonUkClientCorrespondenceUri(service: String, backLinkUrl: String): String = {
-    val forwardUrl = s"""${configuration.getString(s"microservice.services.${service.toLowerCase}.subscriptionUrl").
+    val forwardUrl = s"""${configuration.getString(s"microservice.services.ated-subscription-frontend.subscriptionUrl").
       getOrElse("")}"""
     forwardUrl + "?backLinkUrl=" + mandateFrontendHost + backLinkUrl
   }
