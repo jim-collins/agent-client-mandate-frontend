@@ -194,10 +194,10 @@ class PreviousMandateRefControllerSpec extends PlaySpec with OneServerPerSuite w
       contactDetails = ContactDetails("aa@aa.com", None)),
     clientParty = None,
     currentStatus = MandateStatus(status = Status.New, DateTime.now(), updatedBy = ""),
-    statusHistory = Nil, subscription = Subscription(referenceNumber = None,
+    statusHistory = Nil, subscription = Subscription(referenceNumber = Some("atedref"),
       service = Service(id = "ated-ref-no", name = "")),
     clientDisplayName = "client display name")
-  val mandate1 = Mandate(id = mandateId, createdBy = User("cerdId", "Joe Bloggs"),
+  val mandate1 = Mandate(id = mandateId, createdBy = User("credId", "Joe Bloggs"),
     agentParty = Party("ated-ref-no", "name", `type` = PartyType.Organisation,
       contactDetails = ContactDetails("aa@aa.com", None)),
     clientParty = None,

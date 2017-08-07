@@ -104,7 +104,6 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
                        screenReaderText: String,
                        tabName: Option[String] = None)(implicit request: Request[AnyContent]) = {
 
-    Logger.debug("XXXXXXXXXXX" + clientsCancelled)
     mandates match {
       case Some(x) if (x.pendingMandates.size > 0 && tabName.equals(Some("pending-clients"))) =>
         Ok(views.html.agent.agentSummary.pending(service, x, agentDetails, clientsCancelled, screenReaderText))
