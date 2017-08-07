@@ -68,7 +68,7 @@ trait PreviousMandateRefController extends FrontendController with Actions with 
             mandateService.fetchClientMandate(data.mandateRef.toUpperCase) flatMap {
               case Some(x) =>
                 dataCacheService.cacheFormData[OldMandateReference](oldNonUkMandate, OldMandateReference(x.id,
-                  x.clientParty.map(_.id).getOrElse(throw new RuntimeException("No Client Ref no. found!"))))
+                  x.subscription.referenceNumber.getOrElse(throw new RuntimeException("No Client Ref no. found!"))))
                 dataCacheService.cacheFormData[ClientCache](clientFormId, ClientCache(Some(ClientEmail(x.clientParty.map(_.contactDetails.email).getOrElse(""))), Some(x))) flatMap { cacheResp =>
                   Future.successful(Redirect(addNonUkClientCorrespondenceUri(service, routes.PreviousMandateRefController.view(service, callingPage).url)))
                 }
