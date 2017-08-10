@@ -413,6 +413,7 @@ agent.client-permission.error.general.prevRegistered = There is a problem with t
 agent.search-previous-mandate.title = What is the previous unique authorisation number for the client?
 agent.search-previous-mandate.header = What is the previous unique authorisation number for the client?
 agent.search-previous-mandate.header.lede = If your client has previously registered with a different agent using the ATED online service you need to enter the old agent's unique authorisation number to access their previous returns.
+agent.search-previous-mandate.label = unique authorisation number
 agent.search-previous-mandate.error.general.mandateRef= There is a problem with the unique authorisation number question
 agent.search-previous-mandate.error.mandateRef = You must answer unique authorisation number question
 agent.search-previous-mandate.error.mandateRef.length = A unique authorisation number cannot be more than 8 characters
