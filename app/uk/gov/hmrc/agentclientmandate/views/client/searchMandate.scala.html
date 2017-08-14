@@ -8,12 +8,8 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 
 @main_template(title = Messages("client.search-mandate.title"), delegatedService = Some(service)) {
-  @pageHeadersAndError(backLink, "pre-heading", Messages("client.search-mandate.preheader"),
+  @pageHeadersAndError(backLink, "pre-heading", Messages("client.search-mandate.preheader"), "header", Messages("client.search-mandate.header"),
     Some(mandateErrorSummary(mandateRefForm, "client.search-mandate.error.general")))
-  <h1 class="heading-xlarge" id="header">
-    @Messages("client.search-mandate.header")
-  </h1>
-
 
 
     <div class="form-group">

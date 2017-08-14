@@ -21,6 +21,9 @@ agent.add-a-client.sub-header = Add a client
 mandate.main-title = Submit and view your {0} returns
 mandate.sign-out = Sign out
 
+ated.screen-reader.section = This section is:
+ated.screen-reader.name = this is for:
+
 #agent client summary
 client.summary.title = {0} clients
 client.summary.header = {0} clients

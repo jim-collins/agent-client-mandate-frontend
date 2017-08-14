@@ -101,7 +101,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("What email address do you want to use for this client?")
           document.getElementById("header").text() must include("What email address do you want to use for this client?")
-          document.getElementById("pre-header").text() must be("Add a client")
+          document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("info").text() must include(s"We will use this email address to send you notifications about this client.")
           document.getElementById("email_field").text() must be("Email address")
           document.getElementById("email").`val`() must be("")

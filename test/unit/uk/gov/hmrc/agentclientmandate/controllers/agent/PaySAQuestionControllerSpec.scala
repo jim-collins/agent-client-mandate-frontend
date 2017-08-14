@@ -76,7 +76,7 @@ class PaySAQuestionControllerSpec extends PlaySpec with OneServerPerSuite with B
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Does your client pay tax in the UK through self assessment?")
           document.getElementById("header").text() must include("Does your client pay tax in the UK through self assessment?")
-          document.getElementById("pre-header").text() must be("Add a client")
+          document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("paySA_legend").text() must be("Does your client pay tax in the UK through self assessment?")
           document.getElementById("submit").text() must be("Continue")
         }

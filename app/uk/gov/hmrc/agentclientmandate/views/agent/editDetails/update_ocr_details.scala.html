@@ -29,10 +29,7 @@
 
 @main_template(title = Messages("agent.edit-details.title"),scriptElem = Some(pageScripts), delegatedService = Some(service)) {
 
-@pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase))
-<h1 class="heading-xlarge" id="header">
-    @Messages("agent.edit-mandate-details.ocr.header")
-</h1>
+@pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase), "header", Messages("agent.edit-mandate-details.ocr.header"))
 
 @mandateErrorSummary(identificationForm, "agent.edit-mandate-details-error.general")
 

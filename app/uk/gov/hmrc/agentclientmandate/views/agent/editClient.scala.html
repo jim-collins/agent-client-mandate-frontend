@@ -9,11 +9,10 @@
 @(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, clientDisplayName: String, clientParty: Option[String], backLink: Option[String], showRemoveClient: Boolean)(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("agent.edit-mandate-details.title", if(clientParty.isDefined) clientParty.get else ""), delegatedService = Some(service)) {
-  @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase),
+
+
+  @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase), "header", Messages("agent.edit-mandate-details.header", if(clientParty.isDefined) clientParty.get else ""),
     Some(mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")))
-  <h1 class="heading-xlarge" id="header">
-    @Messages("agent.edit-mandate-details.header", if(clientParty.isDefined) clientParty.get else "")
-  </h1>
 
   <div class="form-group">
     <span class="heading-medium" id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</span>

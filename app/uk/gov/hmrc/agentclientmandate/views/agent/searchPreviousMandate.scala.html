@@ -8,11 +8,8 @@
 @import uk.gov.hmrc.play.views.html.helpers._
 
 @main_template(title = Messages("agent.search-previous-mandate.title"), delegatedService = Some(service)) {
-  @pageHeadersAndError(backLink, "pre-heading", Messages("agent.add-a-client.sub-header"),
+  @pageHeadersAndError(backLink, "pre-heading", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.search-previous-mandate.header"),
     Some(mandateErrorSummary(mandateRefForm, "agent.search-previous-mandate.error")))
-  <h1 class="heading-xlarge" id="header">
-    @Messages("agent.search-previous-mandate.header")
-  </h1>
 
     <div class="form-group">
         <span class="paragraph" id="agent.previous-search-mandate.help">

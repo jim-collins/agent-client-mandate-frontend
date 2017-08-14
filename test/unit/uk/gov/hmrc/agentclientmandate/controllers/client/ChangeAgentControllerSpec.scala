@@ -84,7 +84,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Do you want to appoint another agent to act for you?")
           document.getElementById("header").text() must include("Do you want to appoint another agent to act for you?")
-          document.getElementById("pre-heading").text() must be("Manage your ATED service")
+          document.getElementById("pre-heading").text() must be("This section is: Manage your ATED service")
           document.getElementById("yesNo_legend").text() must be("Do you want to appoint another agent to act for you?")
           document.getElementById("submit").text() must be("Confirm")
         })
