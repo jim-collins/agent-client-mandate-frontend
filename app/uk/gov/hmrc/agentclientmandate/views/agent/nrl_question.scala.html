@@ -10,11 +10,8 @@
 @implicitFormInstance = @{ Some(nrlQuestionForm) }
 
 @main_template(title = Messages("agent.nrl-question.title"), delegatedService = Some(service)) {
-  @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"),
+  @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.nrl-question.header"),
     Some(mandateErrorSummary(nrlQuestionForm, "agent.nrl-question.error.general")))
-  <h1 class="heading-xlarge" id="header">
-    @Messages("agent.nrl-question.header")
-  </h1>
 
   @form(action = routes.NRLQuestionController.submit(service)) {
 

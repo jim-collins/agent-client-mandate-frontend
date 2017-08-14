@@ -11,11 +11,10 @@
 
 @main_template(title = Messages("agent.client-display-name.title"), delegatedService = Some(service)) {
 
-    @pageHeadersAndError(backLink,"pre-header", Messages("agent.add-a-client.sub-header"),
+
+    @pageHeadersAndError(backLink,"pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.client-display-name.header"),
+
         Some(mandateErrorSummary(clientDisplayNameForm, "agent.client-display-name.error.general")))
-    <h1 class="heading-xlarge" id="header">
-        @Messages("agent.client-display-name.header")
-    </h1>
 
     <div class="form-group">
         <p id="info">

@@ -84,7 +84,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Confirm Agent Removal")
           document.getElementById("header").text() must include("Are you sure you want to cancel the authority for Agent Ltd to act on your behalf for ATED?")
-          document.getElementById("pre-header").text() must be("Manage your ATED service")
+          document.getElementById("pre-header").text() must be("This section is: Manage your ATED service")
           document.getElementById("yesNo_legend").text() must be("Are you sure you want to cancel the authority for Agent Ltd to act on your behalf for ATED?")
           document.getElementById("submit").text() must be("Confirm")
         }

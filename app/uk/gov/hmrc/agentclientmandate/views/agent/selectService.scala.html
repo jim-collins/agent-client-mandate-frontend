@@ -10,11 +10,8 @@
 @implicitFormInstance = @{ Some(selectServiceForm) }
 
 @main_template(title = Messages("agent.select-service.title")) {
-  @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"),
+  @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.select-service.header"),
     Some(mandateErrorSummary(selectServiceForm, "agent.select-service.error.general")))
-  <h1 class="heading-xlarge" id="header">
-    @Messages("agent.select-service.header")
-  </h1>
 
   @form(action = routes.SelectServiceController.submit()) {
 

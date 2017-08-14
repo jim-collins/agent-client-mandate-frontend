@@ -14,11 +14,8 @@
 }
 
 @main_template(title = Messages("agent.client-prev-registered.title"), scriptElem = Some(pageScripts), delegatedService = Some(service)) {
-@pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"),
+@pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.client-prev-registered.header"),
 Some(mandateErrorSummary(prevRegisteredForm, "agent.client-permission.error.general")))
-<h1 class="heading-xlarge" id="header">
-  @Messages("agent.client-prev-registered.header")
-</h1>
 
 @form(action = routes.HasClientRegisteredBeforeController.submit(service, callingPage)) {
 

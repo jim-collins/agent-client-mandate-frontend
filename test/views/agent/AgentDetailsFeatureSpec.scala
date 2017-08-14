@@ -46,7 +46,7 @@ class AgentDetailsFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       assert(document.title() === "Your details")
 
       And("The pre-header text is - Edit details")
-      assert(document.getElementById("pre-header").text() === "Edit details")
+      assert(document.getElementById("pre-header").text() === "This section is: Edit details")
       And("The header text is - Your details")
       assert(document.getElementById("agency-details-header").text() === "Your details")
 

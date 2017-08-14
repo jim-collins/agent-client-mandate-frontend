@@ -10,11 +10,8 @@
 @implicitFormInstance = @{ Some(paySAQuestionForm) }
 
 @main_template(title = Messages("agent.paySA-question.title"), delegatedService = Some(service)) {
-    @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"),
+    @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.paySA-question.header"),
         Some(mandateErrorSummary(paySAQuestionForm, "agent.paySA-question.error.general")))
-    <h1 class="heading-xlarge" id="header">
-        @Messages("agent.paySA-question.header")
-    </h1>
 
 @form(action = routes.PaySAQuestionController.submit(service)) {
 

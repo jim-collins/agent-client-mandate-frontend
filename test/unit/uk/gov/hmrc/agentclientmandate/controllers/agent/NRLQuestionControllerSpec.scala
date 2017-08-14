@@ -79,7 +79,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Is your client a non-resident landlord?")
           document.getElementById("header").text() must include("Is your client a non-resident landlord?")
-          document.getElementById("pre-header").text() must be("Add a client")
+          document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("nrl_legend").text() must be("Is your client a non-resident landlord?")
           document.getElementById("submit").text() must be("Continue")
         }
@@ -91,7 +91,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Is your client a non-resident landlord?")
           document.getElementById("header").text() must include("Is your client a non-resident landlord?")
-          document.getElementById("pre-header").text() must be("Add a client")
+          document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("nrl_legend").text() must be("Is your client a non-resident landlord?")
           document.getElementById("nrl-true").attr("checked") must be("checked")
           document.getElementById("submit").text() must be("Continue")

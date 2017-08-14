@@ -84,7 +84,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
           val document = Jsoup.parse(contentAsString(result))
           document.title() must be("Select a service")
           document.getElementById("header").text() must include("Select a service")
-          document.getElementById("pre-header").text() must be("Add a client")
+          document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("service_legend").text() must be("Select a service")
           document.getElementById("submit").text() must be("Submit")
         }

@@ -7,11 +7,8 @@
 @(service: String, addEmailForm: Form[ClientEmail], mode: Option[String], backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("client.collect-email.title"), delegatedService = Some(service)) {
-  @pageHeadersAndError(backLink, "pre-heading", Messages("client.collect-email.preheader"),
+  @pageHeadersAndError(backLink, "pre-heading", Messages("client.collect-email.preheader"), "header", Messages("client.collect-email.header"),
     Some(mandateErrorSummary(addEmailForm, "client.collect-email.error.general")))
-  <h1 class="heading-xlarge" id="header">
-    @Messages("client.collect-email.header")
-  </h1>
 
   <div class="form-group">
     <p id="lede">

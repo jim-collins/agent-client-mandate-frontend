@@ -7,11 +7,8 @@
 @(service: String, changeAgentForm: Form[YesNoQuestion], mandateId: String, backLink: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(title = Messages("client.change-agent.title")) {
-    @pageHeadersAndError(backLink, "pre-heading", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase),
+    @pageHeadersAndError(backLink, "pre-heading", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase), "header", Messages("client.change-agent.header"),
         Some(mandateErrorSummary(changeAgentForm, "yes-no.error.general", Some("client.agent-change.error"))))
-    <h1 class="heading-xlarge" id="header">
-        @Messages("client.change-agent.header")
-    </h1>
 
     @form(action = routes.ChangeAgentController.submit(service, mandateId)) {
 
