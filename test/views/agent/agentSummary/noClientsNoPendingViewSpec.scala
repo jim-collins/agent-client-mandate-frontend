@@ -61,7 +61,7 @@ class noClientsNoPendingViewSpec extends FeatureSpec with OneServerPerSuite with
       assert(document.getElementById("client-cancelled-title") === null)
 
       And("The Pre Header should be the agents name - ABC Ltd.")
-      assert(document.getElementById("pre-header").text() === "Org Name")
+      assert(document.getElementById("pre-header").text() === "this is for: Org Name")
 
       And("The Add Client Button - should exist")
       assert(document.getElementById("add-client-btn").text() === "Add a new client")
