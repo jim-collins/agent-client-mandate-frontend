@@ -75,7 +75,7 @@ class pendingViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       assert(document.getElementById("client-cancelled-title") === null)
       
       And("The Pending Clients tab - should exist")
-      assert(document.getElementById("pending-clients").text === "Requests (4)")
+      assert(document.getElementById("pending-clients").text === "Requests (4) selected")
 
 
 

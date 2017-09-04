@@ -75,7 +75,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       assert(document.title() === "ATED clients")
 
       And("The Clients tab - should exist and have 1 item")
-      assert(document.getElementById("clients").text === "Current (1)")
+      assert(document.getElementById("clients").text === "Current (1) selected")
       And("The Pending Clients tab - should not exist")
       assert(document.getElementById("pending-clients").text === "Requests (1)")
 
@@ -100,7 +100,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       assert(document.title() === "ATED clients")
 
       And("The Clients tab - should exist and have 1 item")
-      assert(document.getElementById("clients").text === "Current (1)")
+      assert(document.getElementById("clients").text === "Current (1) selected")
       And("The Pending Clients tab - should not exist")
       assert(document.getElementById("pending-clients") === null)
 
@@ -130,7 +130,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       val document = Jsoup.parse(html.toString())
 
       Then("The Clients tab - should exist and have 15 items")
-      assert(document.getElementById("clients").text === "Current (15)")
+      assert(document.getElementById("clients").text === "Current (15) selected")
 
       And("The Clients table - has the correct data and View link")
       assert(document.getElementById("client-name-0").text === "client display name 2")
@@ -156,7 +156,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       val document = Jsoup.parse(html.toString())
 
       Then("The Clients tab - should exist and have 0 items")
-      assert(document.getElementById("clients").text === "Current (0)")
+      assert(document.getElementById("clients").text === "Current (0) selected")
 
       And("I should not see the clients cancelled panel")
       assert(document.getElementById("client-cancelled-title") === null)

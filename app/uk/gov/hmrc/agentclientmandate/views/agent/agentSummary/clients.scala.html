@@ -30,11 +30,12 @@
 <div class="form-group">
   <ul class="ated-tabs">
     <li id="clients" class="selected heading-small">
-      @Messages("client.summary.client-active.title", mandates.activeMandates.size)
+      @Messages("client.summary.client-active.title", mandates.activeMandates.size) <span class="visuallyhidden">@Messages("selected")</span>
     </li>
     @if(!mandates.pendingMandates.isEmpty){
     <li id="pending-clients" class="heading-small">
-      <a href="@routes.AgentSummaryController.view(service, Some("pending-clients"))" id="view-pending-clients" data-journey-click="agent-client-mandate:click:view-pending-clients">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)</a>
+      <a href="@routes.AgentSummaryController.view(service, Some("pending-clients"))" id="view-pending-clients" data-journey-click="agent-client-mandate:click:view-pending-clients">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)
+      </a>
     </li>
     }
   </ul>
