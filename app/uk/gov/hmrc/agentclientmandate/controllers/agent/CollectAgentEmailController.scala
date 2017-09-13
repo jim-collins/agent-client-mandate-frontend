@@ -75,7 +75,9 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
         case Some(x) if !x.isRelativeOrDev(FrontendAppConfig.env) => Future.successful(BadRequest("The return url is not correctly formatted"))
         case _ =>
           agentEmailForm.bindFromRequest.fold(
-            formWithError => Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service, redirectUrl, getBackLink(service, redirectUrl)))),
+            formWithError => {
+              Future.successful(BadRequest(views.html.agent.agentEnterEmail(formWithError, service, redirectUrl, getBackLink(service, redirectUrl))))
+            },
             data => {
               emailService.validate(data.email) flatMap { isValidEmail =>
                 if (isValidEmail) {
@@ -87,7 +89,7 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
                   }
                 } else {
                   val errorMsg = Messages("agent.enter-email.error.email.invalid-by-email-service")
-                  val errorForm = agentEmailForm.withError(key = "agent-enter-email-form", message = errorMsg).fill(data)
+                  val errorForm = agentEmailForm.withError(key = "email", message = errorMsg).fill(data)
                   Future.successful(BadRequest(views.html.agent.agentEnterEmail(errorForm, service, redirectUrl, getBackLink(service, redirectUrl))))
                 }
               }
