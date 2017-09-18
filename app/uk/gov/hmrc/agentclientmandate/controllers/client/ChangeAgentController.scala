@@ -26,6 +26,8 @@ import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.play.binders.ContinueUrl
+
 import scala.concurrent.Future
 
 
@@ -63,7 +65,7 @@ trait ChangeAgentController extends FrontendController with Actions{
           val changeAgent = data.yesNo.getOrElse(false)
           if (changeAgent) {
             val backLink = routes.ChangeAgentController.view(service, mandateId).url
-            Future.successful(Redirect(routes.CollectEmailController.view(service, Some(backLink))))
+            Future.successful(Redirect(routes.CollectEmailController.view(service, Some(ContinueUrl(backLink)))))
           }
           else {
             Future.successful(Redirect(routes.RemoveAgentController.confirmation(service, mandateId)))

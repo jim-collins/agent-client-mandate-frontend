@@ -19,19 +19,21 @@ package uk.gov.hmrc.agentclientmandate.controllers.client
 import play.api.i18n.Messages
 import play.api.libs.json.Format
 import play.api.mvc.{AnyContent, Request}
-import uk.gov.hmrc.agentclientmandate.config.FrontendAuthConnector
+import uk.gov.hmrc.agentclientmandate.config.{FrontendAppConfig, FrontendAuthConnector}
 import uk.gov.hmrc.agentclientmandate.controllers.auth.ClientRegime
 import uk.gov.hmrc.agentclientmandate.service.{DataCacheService, EmailService}
 import uk.gov.hmrc.agentclientmandate.utils.{DelegationUtils, MandateConstants}
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{YesNoQuestionForm, ClientCache}
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, YesNoQuestionForm}
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientEmailForm._
 import uk.gov.hmrc.agentclientmandate.views
-import uk.gov.hmrc.play.frontend.auth.{AuthContext, Actions}
+import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.play.binders.ContinueUrl
 import uk.gov.hmrc.play.http.HeaderCarrier
+
 import scala.concurrent.Future
 
 object CollectEmailController extends CollectEmailController {
@@ -46,10 +48,18 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
 
   def emailService: EmailService
 
-  def view(service: String, redirectUrl: Option[String]) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
+  def view(service: String, redirectUrl: Option[ContinueUrl]) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      saveBackLink(service, redirectUrl).flatMap { cache =>
-        showView(service, None)
+      redirectUrl match {
+        case Some(x) if !x.isRelativeOrDev(FrontendAppConfig.env) => Future.successful(BadRequest("The return url is not correctly formatted"))
+        case Some(x) =>
+          saveBackLink(service, Some(x.url)).flatMap { cache =>
+            showView(service, None)
+          }
+        case _ =>
+          saveBackLink(service, None).flatMap { cache =>
+            showView(service, None)
+          }
       }
   }
 
