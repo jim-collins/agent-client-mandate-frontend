@@ -9,7 +9,7 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.auth.ExternalUrls
 
 @pageScripts = {
-<script type="text/javascript" src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/mandate-country-auto-complete.js")'></script>
+<script src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/mandate-country-auto-complete.js")'></script>
 <script>
     $(document).ready(function() {
       countryCodeAutoComplete("#businessAddress\\.country")
