@@ -231,12 +231,7 @@ html.noScroll {
 
 .ated-tabs a {
     text-decoration: none;
-    color: #005ea5;
-}
-
-.ated-tabs a:hover {
-    text-decoration: none;
-    color: #2e8aca;
+    color: #005EA5;
 }
 
 .ated-tabs:after {
@@ -252,11 +247,14 @@ html.noScroll {
 .ated-tabs li {
     position: relative;
     margin: 0 2px;
-    padding: 20 20px;
+    padding: 20px;
     border: 1px solid #FFF;
-    background: #ECECEC;
     display: inline-block;
     z-index: 0;
+}
+
+.ated-tabs li:hover {
+    background: #ECECEC;
 }
 
 .ated-tabs li.selected {
@@ -520,4 +518,9 @@ table td {
         margin-right: 0px;
     }
 }
+
+#tab-clients:focus, #tab-pending:focus {
+    outline: 0px solid transparent;
+}
+
 
