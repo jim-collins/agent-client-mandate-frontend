@@ -234,11 +234,6 @@ html.noScroll {
     color: #005ea5;
 }
 
-.ated-tabs a:hover {
-    text-decoration: none;
-    color: #2e8aca;
-}
-
 .ated-tabs:after {
     position: absolute;
     content: "";
@@ -254,9 +249,12 @@ html.noScroll {
     margin: 0 2px;
     padding: 20 20px;
     border: 1px solid #FFF;
-    background: #ECECEC;
     display: inline-block;
     z-index: 0;
+}
+
+.ated-tabs li:hover {
+    background: #ECECEC;
 }
 
 .ated-tabs li.selected {
