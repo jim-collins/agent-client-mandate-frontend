@@ -234,7 +234,7 @@ agent.enter-business-details-error.businessName.businessName = There is a proble
 agent.enter-business-details-error.businessName.utr = There is a problem with the Unique Taxpayer Reference field
 
 # agent unique reference
-agent.unique-reference.title = Your unique authorisation number for {0} is {1}
+agent.unique-reference.title = Your unique authorisation number is {0}
 agent.unique-reference.header = Your unique authorisation number for {0} is<br><span id="mandate-reference">{1}</span>
 agent.unique-reference.next.heading.text = What happens next
 agent.unique-reference.text1 =  You need to give this unique authorisation number to your client so they can authorise you to act for them. You can view this number when you sign back into the {0} online service.
