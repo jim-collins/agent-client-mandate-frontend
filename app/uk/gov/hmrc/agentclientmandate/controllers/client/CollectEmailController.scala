@@ -32,9 +32,9 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
 import uk.gov.hmrc.play.binders.ContinueUrl
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 object CollectEmailController extends CollectEmailController {
   val authConnector: AuthConnector = FrontendAuthConnector
@@ -127,7 +127,7 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
   }
 
   val backLinkId = "CollectEmailController:BackLink"
-  private def saveBackLink(service: String, redirectUrl: Option[String])(implicit hc: uk.gov.hmrc.play.http.HeaderCarrier) = {
+  private def saveBackLink(service: String, redirectUrl: Option[String])(implicit hc: _root_.uk.gov.hmrc.http.HeaderCarrier) = {
     dataCacheService.cacheFormData[String](backLinkId, redirectUrl.getOrElse(DelegationUtils.getDelegatedServiceRedirectUrl(service)))
   }
 

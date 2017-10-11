@@ -16,11 +16,10 @@
 
 package uk.gov.hmrc.agentclientmandate.connectors
 
-import play.api.Logger
 import uk.gov.hmrc.agentclientmandate.config.WSHttp
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpPost, HttpResponse}
-
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import scala.concurrent.Future
 
 object EmailServiceConnector extends EmailServiceConnector {
@@ -32,7 +31,7 @@ trait EmailServiceConnector extends ServicesConfig with RawResponseReads {
 
   def serviceUrl: String
 
-  def http: HttpGet with HttpPost
+  def http: CoreGet
 
   def validate(email: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val getUrl = s"$serviceUrl/hmrc/validate-email-address"

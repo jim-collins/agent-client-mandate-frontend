@@ -19,10 +19,10 @@ package uk.gov.hmrc.agentclientmandate.service
 import play.api.libs.json.Format
 import uk.gov.hmrc.agentclientmandate.config.AgentClientMandateSessionCache
 import uk.gov.hmrc.http.cache.client.SessionCache
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpResponse }
 
 trait DataCacheService {
 

@@ -25,19 +25,17 @@ import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.connectors.BusinessCustomerFrontendConnector
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
-import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
-import uk.gov.hmrc.play.http._
 import unit.uk.gov.hmrc.agentclientmandate.builders.AuthBuilder._
 
 import scala.concurrent.Future
 
 class BusinessCustomerFrontendConnectorSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
-  class MockHttp extends WSGet with WSPost with WSDelete {
-    override val hooks = NoneRequired
-  }
+  trait MockedVerbs extends CoreGet
+  val mockWSHttp: CoreGet = mock[MockedVerbs]
 
   override def beforeEach(): Unit = {
     reset(mockWSHttp)
@@ -46,10 +44,9 @@ class BusinessCustomerFrontendConnectorSpec extends PlaySpec with OneServerPerSu
   implicit val ac: AuthContext = createRegisteredAgentAuthContext("agent", "agentId")
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val request: Request[_] = FakeRequest(GET, "")
-  val mockWSHttp = mock[MockHttp]
 
   object TestBusinessCustomerFrontendConnector extends BusinessCustomerFrontendConnector {
-    override def http: HttpGet with HttpPost with HttpDelete = mockWSHttp
+    override val http = mockWSHttp
     override def crypto: (String) => String = SessionCookieCryptoFilter.encrypt _
   }
 
@@ -57,7 +54,7 @@ class BusinessCustomerFrontendConnectorSpec extends PlaySpec with OneServerPerSu
     "clear cache" in {
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())
-        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200)))
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200)))
 
       val response = TestBusinessCustomerFrontendConnector.clearCache("")
       await(response).status must be(OK)

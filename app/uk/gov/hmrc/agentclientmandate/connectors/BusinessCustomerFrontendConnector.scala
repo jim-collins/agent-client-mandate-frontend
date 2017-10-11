@@ -16,21 +16,20 @@
 
 package uk.gov.hmrc.agentclientmandate.connectors
 
-import play.api.Logger
 import play.api.mvc.Request
 import uk.gov.hmrc.agentclientmandate.config.WSHttp
+import uk.gov.hmrc.http.{CoreGet, HttpResponse}
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
-import uk.gov.hmrc.play.http.{HttpGet, HttpResponse}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
-
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import scala.concurrent.Future
 
 trait BusinessCustomerFrontendConnector extends ServicesConfig with RawResponseReads with HeaderCarrierForPartialsConverter {
 
   def serviceUrl: String = baseUrl("business-customer-frontend")
-  def http: HttpGet
+  def http: CoreGet
   val businessCustomerUri = "business-customer"
   val clearCacheUri = "clear-cache"
 

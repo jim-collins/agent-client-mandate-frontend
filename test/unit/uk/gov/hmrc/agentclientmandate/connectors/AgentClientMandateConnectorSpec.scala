@@ -26,30 +26,26 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.connectors.AgentClientMandateConnector
 import uk.gov.hmrc.agentclientmandate.models.{CreateMandateDto, _}
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.frontend.auth.AuthContext
-import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost}
-import unit.uk.gov.hmrc.agentclientmandate.builders.{AgentBuilder, AgentBusinessUtrGenerator}
 import unit.uk.gov.hmrc.agentclientmandate.builders.AuthBuilder._
+import unit.uk.gov.hmrc.agentclientmandate.builders.{AgentBuilder, AgentBusinessUtrGenerator}
 
 import scala.concurrent.Future
 
 class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
-  class MockHttp extends WSGet with WSPost with WSDelete {
-    override val hooks = NoneRequired
-  }
+  trait MockedVerbs extends CoreGet with CorePost with CoreDelete
+  val mockWSHttp: CoreGet with CorePost with CoreDelete = mock[MockedVerbs]
 
   override def beforeEach(): Unit = {
     reset(mockWSHttp)
   }
 
-  val mockWSHttp = mock[MockHttp]
-
   object TestAgentClientMandateConnector extends AgentClientMandateConnector {
     override def serviceUrl: String = baseUrl("agent-client-mandate")
 
-    override def http: HttpGet with HttpPost with HttpDelete = mockWSHttp
+    override val http = mockWSHttp
   }
 
   val mandateId = "12345678"
@@ -82,7 +78,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
       val response = TestAgentClientMandateConnector.createMandate(mandateDto)
       await(response).status must be(OK)
@@ -94,7 +90,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())
-        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
       val response = TestAgentClientMandateConnector.fetchMandate(mandateId)
       await(response).status must be(OK)
@@ -106,7 +102,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
       val response = await(TestAgentClientMandateConnector.approveMandate(mandate))
       response.status must be(OK)
@@ -117,7 +113,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())
-        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
       val response = TestAgentClientMandateConnector.fetchAllMandates(arn.utr, serviceName, true, None)
       await(response).status must be(OK)
@@ -128,7 +124,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())
-        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
       val response = TestAgentClientMandateConnector.fetchAllMandates(arn.utr, serviceName, false, None)
       await(response).status must be(OK)
@@ -137,7 +133,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "reject a client" in {
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
       val response = await(TestAgentClientMandateConnector.rejectClient(mandateId))
       response.status must be(OK)
@@ -146,7 +142,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "get agent details" in {
       when(mockWSHttp.GET[AgentDetails]
         (Matchers.any())
-        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(agentDetails))
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(agentDetails))
 
       val response = await(TestAgentClientMandateConnector.fetchAgentDetails())
       response.agentName must be("Org Name")
@@ -155,7 +151,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "activate a client" in {
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
       val response = await(TestAgentClientMandateConnector.activateMandate(mandateId))
       response.status must be(OK)
@@ -164,7 +160,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "remove an agent" in {
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
       val response = await(TestAgentClientMandateConnector.remove(mandateId))
       response.status must be(OK)
@@ -173,7 +169,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "remove a client" in {
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
       val response = await(TestAgentClientMandateConnector.remove(mandateId))
       response.status must be(OK)
@@ -184,7 +180,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
       val response = await(TestAgentClientMandateConnector.importExistingRelationships(ggRelationshipDtoList))
       response.status must be(OK)
@@ -193,7 +189,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "edit client mandate" in {
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
       val response = await(TestAgentClientMandateConnector.editMandate(mandate))
       response.status must be(OK)
@@ -204,7 +200,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
 
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())
-        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, Some(successResponse))))
 
       val response = TestAgentClientMandateConnector.fetchMandateByClient("clientId", "service")
       await(response).status must be(OK)
@@ -213,7 +209,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "does an agent have a missing email" in {
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())
-        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200)))
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200)))
 
       val response = TestAgentClientMandateConnector.doesAgentHaveMissingEmail("ated", "arn")
       await(response).status must be(OK)
@@ -222,7 +218,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "update an agents email address" in {
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
       val response = await(TestAgentClientMandateConnector.updateAgentMissingEmail("test@mail.com", "arn", "ated"))
       response.status must be(OK)
@@ -231,7 +227,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "update a client email address" in {
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
       val response = await(TestAgentClientMandateConnector.updateClientEmail("test@mail.com", "mandateId"))
       response.status must be(OK)
@@ -240,7 +236,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "update an agent cred id" in {
       when(mockWSHttp.POST[JsValue, HttpResponse]
         (Matchers.any(), Matchers.any(), Matchers.any())
-        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
+        (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200, None)))
 
       val response = await(TestAgentClientMandateConnector.updateAgentCredId("credId"))
       response.status must be(OK)
@@ -249,7 +245,7 @@ class AgentClientMandateConnectorSpec extends PlaySpec with OneServerPerSuite wi
     "get clients that have cancelled" in {
       when(mockWSHttp.GET[HttpResponse]
         (Matchers.any())
-        (Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200)))
+        (Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(200)))
 
       val response = TestAgentClientMandateConnector.fetchClientsCancelled("arn", "ated")
       await(response).status must be(OK)
