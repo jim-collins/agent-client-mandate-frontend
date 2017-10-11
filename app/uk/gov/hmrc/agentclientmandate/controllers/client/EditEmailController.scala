@@ -34,9 +34,9 @@ import uk.gov.hmrc.play.binders.ContinueUrl
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 object EditEmailController extends EditEmailController {
   // $COVERAGE-OFF$
@@ -127,7 +127,7 @@ trait EditEmailController extends FrontendController with Actions with MandateCo
   }
 
   val backLinkId = "EditEmailController:BackLink"
-  private def saveBackLink(redirectUrl: String)(implicit hc: uk.gov.hmrc.play.http.HeaderCarrier) = {
+  private def saveBackLink(redirectUrl: String)(implicit hc: _root_.uk.gov.hmrc.http.HeaderCarrier) = {
     dataCacheService.cacheFormData[String](backLinkId, redirectUrl)
   }
 

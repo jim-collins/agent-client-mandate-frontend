@@ -21,11 +21,10 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.agentclientmandate.config.WSHttp
 import uk.gov.hmrc.agentclientmandate.models.{AgentDetails, CreateMandateDto, GGRelationshipDto, Mandate}
 import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientDisplayName
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.AuthContext
-import uk.gov.hmrc.play.http._
-
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import scala.concurrent.Future
 
 trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
@@ -40,7 +39,7 @@ trait AgentClientMandateConnector extends ServicesConfig with RawResponseReads {
   val editMandate = "edit"
   val deleteMandate = "delete"
 
-  def http: HttpGet with HttpPost with HttpDelete
+  def http: CoreGet with CorePost with CoreDelete
 
   def createMandate(mandateDto: CreateMandateDto)(implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
     val agentLink = ac.principal.accounts.agent.map(_.link).getOrElse("")

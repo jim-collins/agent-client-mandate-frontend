@@ -27,10 +27,10 @@ import uk.gov.hmrc.agentclientmandate.connectors.{BusinessCustomerConnector, Ema
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.ws.{WSGet, WSPost}
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import unit.uk.gov.hmrc.agentclientmandate.builders.AuthBuilder.createRegisteredAgentAuthContext
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{CoreGet, CorePost, HeaderCarrier, HttpResponse}
 
 class BusinessCustomerConnectorSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
@@ -48,7 +48,7 @@ class BusinessCustomerConnectorSpec extends PlaySpec with OneServerPerSuite with
         implicit val hc: HeaderCarrier = HeaderCarrier()
         implicit val ac: AuthContext = createRegisteredAgentAuthContext("agent", "agentId")
         val updateRegDetails = UpdateRegistrationDetailsRequest(false,None,Some(Organisation("Org Name",Some(true),Some("org_type"))),RegisteredAddressDetails("address1","address2",None,None,None,"FR"),EtmpContactDetails(None,None,None,None),true,true,Some(Identification("idnumber","FR","issuingInstitution")))
-        when(mockWSHttp.POST[UpdateRegistrationDetailsRequest, HttpResponse](Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(OK, responseJson = Some(responseJson))))
+        when(mockWSHttp.POST[UpdateRegistrationDetailsRequest, HttpResponse](Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(OK, responseJson = Some(responseJson))))
         val result = await(TestBusinessCustomerConnector.updateRegistrationDetails("safeId", updateRegDetails))
         result.status must be(OK)
       }
@@ -60,7 +60,7 @@ class BusinessCustomerConnectorSpec extends PlaySpec with OneServerPerSuite with
         implicit val hc: HeaderCarrier = HeaderCarrier()
         implicit val ac: AuthContext = createRegisteredAgentAuthContext("agent", "agentId")
         val updateRegDetails = UpdateRegistrationDetailsRequest(false,None,Some(Organisation("Org Name",Some(true),Some("org_type"))),RegisteredAddressDetails("address1","address2",None,None,None,"FR"),EtmpContactDetails(None,None,None,None),true,true,Some(Identification("idnumber","FR","issuingInstitution")))
-        when(mockWSHttp.POST[UpdateRegistrationDetailsRequest, HttpResponse](Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(INTERNAL_SERVER_ERROR, responseJson = Some(responseJson))))
+        when(mockWSHttp.POST[UpdateRegistrationDetailsRequest, HttpResponse](Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(INTERNAL_SERVER_ERROR, responseJson = Some(responseJson))))
         val result = await(TestBusinessCustomerConnector.updateRegistrationDetails("safeId", updateRegDetails))
         result.status must be(INTERNAL_SERVER_ERROR)
       }
@@ -68,11 +68,8 @@ class BusinessCustomerConnectorSpec extends PlaySpec with OneServerPerSuite with
 
   }
 
-  class MockHttp extends WSGet with WSPost {
-    override val hooks = NoneRequired
-  }
-
-  val mockWSHttp = mock[MockHttp]
+  trait MockedVerbs extends CoreGet with CorePost
+  val mockWSHttp: CoreGet with CorePost = mock[MockedVerbs]
 
   override def beforeEach(): Unit = {
     reset(mockWSHttp)

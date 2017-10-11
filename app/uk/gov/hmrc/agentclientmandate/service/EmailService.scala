@@ -20,10 +20,10 @@ import play.api.Logger
 import play.api.libs.json.Json
 import play.mvc.Http.Status.OK
 import uk.gov.hmrc.agentclientmandate.connectors.EmailServiceConnector
-import uk.gov.hmrc.play.http.{HeaderCarrier, InternalServerException}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, InternalServerException }
 
 object EmailService extends EmailService {
   val emailServiceConnector: EmailServiceConnector = EmailServiceConnector

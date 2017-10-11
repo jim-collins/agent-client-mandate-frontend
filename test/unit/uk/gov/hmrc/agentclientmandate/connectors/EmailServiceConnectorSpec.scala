@@ -24,8 +24,7 @@ import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.connectors.EmailServiceConnector
-import uk.gov.hmrc.play.http.ws.{WSGet, WSPost}
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{CoreGet, HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
 
@@ -44,7 +43,7 @@ class EmailServiceConnectorSpec extends PlaySpec with OneServerPerSuite with Moc
     "return HttpResponse" when {
       "email service responds with a HttpResponse" in {
         implicit val hc: HeaderCarrier = HeaderCarrier()
-        when(mockWSHttp.GET[HttpResponse](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(OK, responseJson = Some(responseJson))))
+        when(mockWSHttp.GET[HttpResponse](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(OK, responseJson = Some(responseJson))))
         val result = await(TestEmailServiceConnector.validate("aa@mail.com"))
         result.status must be(OK)
       }
@@ -52,11 +51,8 @@ class EmailServiceConnectorSpec extends PlaySpec with OneServerPerSuite with Moc
 
   }
 
-  class MockHttp extends WSGet with WSPost {
-    override val hooks = NoneRequired
-  }
-
-  val mockWSHttp = mock[MockHttp]
+  trait MockedVerbs extends CoreGet
+  val mockWSHttp: CoreGet = mock[MockedVerbs]
 
   override def beforeEach(): Unit = {
     reset(mockWSHttp)

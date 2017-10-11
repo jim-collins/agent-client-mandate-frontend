@@ -19,18 +19,15 @@ package uk.gov.hmrc.agentclientmandate.connectors
 
 import play.api.Logger
 import play.api.http.Status._
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
-import play.api.i18n.Messages
 import play.api.libs.json.Json
 import uk.gov.hmrc.agentclientmandate.config.WSHttp
 import uk.gov.hmrc.agentclientmandate.models.UpdateRegistrationDetailsRequest
 import uk.gov.hmrc.agentclientmandate.utils.AuthUtils
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.AuthContext
-import uk.gov.hmrc.play.http.{HeaderCarrier, _}
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait BusinessCustomerConnector extends ServicesConfig with RawResponseReads {
@@ -41,7 +38,7 @@ trait BusinessCustomerConnector extends ServicesConfig with RawResponseReads {
 
   def updateRegistrationDetailsURI: String
 
-  def http: HttpGet with HttpPost
+  def http: CoreGet with CorePost
 
   def updateRegistrationDetails(safeId: String, updateRegistrationDetails: UpdateRegistrationDetailsRequest)
                                (implicit hc: HeaderCarrier, ac: AuthContext): Future[HttpResponse] = {
@@ -65,6 +62,6 @@ object BusinessCustomerConnector extends BusinessCustomerConnector {
   val serviceUrl = baseUrl("business-customer")
   val baseUri = "business-customer"
   val updateRegistrationDetailsURI = "update"
-  val http: HttpGet with HttpPost = WSHttp
+  val http = WSHttp
   // $COVERAGE-ON$
 }

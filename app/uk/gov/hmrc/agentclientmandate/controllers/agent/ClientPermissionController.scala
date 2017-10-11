@@ -26,7 +26,6 @@ import uk.gov.hmrc.agentclientmandate.views
 import uk.gov.hmrc.play.frontend.auth.Actions
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-import uk.gov.hmrc.play.http.HttpResponse
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
@@ -34,6 +33,7 @@ import uk.gov.hmrc.agentclientmandate.utils.MandateConstants
 import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientPermission
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HttpResponse
 
 object ClientPermissionController extends ClientPermissionController {
   // $COVERAGE-OFF$

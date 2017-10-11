@@ -25,9 +25,9 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.connectors.EmailServiceConnector
 import uk.gov.hmrc.agentclientmandate.service.EmailService
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse, InternalServerException}
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpResponse, InternalServerException }
 
 class EmailServiceSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 

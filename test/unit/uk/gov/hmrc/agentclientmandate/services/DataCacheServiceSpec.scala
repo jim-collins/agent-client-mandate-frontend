@@ -26,9 +26,9 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.config.AgentClientMandateSessionCache
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
 import uk.gov.hmrc.http.cache.client.{CacheMap, SessionCache}
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpResponse }
 
 class DataCacheServiceSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
@@ -47,7 +47,7 @@ class DataCacheServiceSpec extends PlaySpec with OneServerPerSuite with MockitoS
     "return None" when {
       "formId of the cached form does not exist for defined data type" in {
 
-        when(mockSessionCache.fetchAndGetEntry[FormData](key = Matchers.eq(formIdNotExist))(Matchers.any(), Matchers.any())) thenReturn {
+        when(mockSessionCache.fetchAndGetEntry[FormData](key = Matchers.eq(formIdNotExist))(Matchers.any(), Matchers.any(), Matchers.any())) thenReturn {
           Future.successful(None)
         }
         await(TestDataCacheService.fetchAndGetFormData[FormData](formIdNotExist)) must be(None)
@@ -57,7 +57,7 @@ class DataCacheServiceSpec extends PlaySpec with OneServerPerSuite with MockitoS
     "return Some" when {
       "formId of the cached form does exist for defined data type" in {
 
-        when(mockSessionCache.fetchAndGetEntry[FormData](key = Matchers.eq(formIdNotExist))(Matchers.any(), Matchers.any())) thenReturn {
+        when(mockSessionCache.fetchAndGetEntry[FormData](key = Matchers.eq(formIdNotExist))(Matchers.any(), Matchers.any(), Matchers.any())) thenReturn {
           Future.successful(Some(formData))
         }
         await(TestDataCacheService.fetchAndGetFormData[FormData](formIdNotExist)) must be(Some(formData))
@@ -66,7 +66,7 @@ class DataCacheServiceSpec extends PlaySpec with OneServerPerSuite with MockitoS
 
     "save form data" when {
       "valid form data with a valid form id is passed" in {
-        when(mockSessionCache.cache[FormData](Matchers.eq(formId), Matchers.eq(formData))(Matchers.any(), Matchers.any())) thenReturn {
+        when(mockSessionCache.cache[FormData](Matchers.eq(formId), Matchers.eq(formData))(Matchers.any(), Matchers.any(), Matchers.any())) thenReturn {
           Future.successful(cacheMap)
         }
         await(TestDataCacheService.cacheFormData[FormData](formId, formData)) must be(formData)
@@ -75,7 +75,7 @@ class DataCacheServiceSpec extends PlaySpec with OneServerPerSuite with MockitoS
 
     "clear cache" when {
       "asked to do so" in {
-        when(mockSessionCache.remove()(Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
+        when(mockSessionCache.remove()(Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(OK)))
         await(TestDataCacheService.clearCache()).status must be(OK)
       }
     }
