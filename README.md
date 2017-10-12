@@ -1,13 +1,16 @@
 agent-client-mandate-frontend
 =============================
 
+[![Build Status](https://travis-ci.org/hmrc/agent-client-mandate-frontend.svg)](https://travis-ci.org/hmrc/agent-client-mandate-frontend) [ ![Download](https://api.bintray.com/packages/hmrc/releases/agent-client-mandate-frontend/images/download.svg) ](https://bintray.com/hmrc/releases/agent-client-mandate-frontend/_latestVersion)
+
 This frontend microservice is used to create or break a relationship between an agent and a client for a given service. 
 The relationship created is in the form of contract called mandate which has details of client & agent among few other things. 
 
 Once the mandate has been agreed it's stored in a datastore and ensures that the agent can work on behalf of the client for that service.
 
-
-[![Build Status](https://travis-ci.org/hmrc/agent-client-mandate-frontend.svg)](https://travis-ci.org/hmrc/agent-client-mandate-frontend) [ ![Download](https://api.bintray.com/packages/hmrc/releases/agent-client-mandate-frontend/images/download.svg) ](https://bintray.com/hmrc/releases/agent-client-mandate-frontend/_latestVersion)
+Mandate life cycle
+------------------
+![madate](https://user-images.githubusercontent.com/13600497/31503440-96592644-af67-11e7-968b-dc7328f49249.png)
 
 Summary
 -------
