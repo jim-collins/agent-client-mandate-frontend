@@ -1,16 +1,21 @@
 agent-client-mandate-frontend
 =============================
 
-This service creates a relationship between an agent and a client for a given service. Once the mandate has been agreed it's stored in a locally and ensures that the agent can work on behalf of the client for that service.
+This frontend microservice is used to create or break a relationship between an agent and a client for a given service. 
+The relationship created is in the form of contract called mandate which has details of client & agent among few other things. 
+
+Once the mandate has been agreed it's stored in a datastore and ensures that the agent can work on behalf of the client for that service.
 
 
 [![Build Status](https://travis-ci.org/hmrc/agent-client-mandate-frontend.svg)](https://travis-ci.org/hmrc/agent-client-mandate-frontend) [ ![Download](https://api.bintray.com/packages/hmrc/releases/agent-client-mandate-frontend/images/download.svg) ](https://bintray.com/hmrc/releases/agent-client-mandate-frontend/_latestVersion)
 
+Summary
+-------
 
 ## Useful Pages for external services to link to
 
-| PATH  | Page Description |
-|------|-------------------|-------------|
+| PATH | Supported Methods |
+|------|-------------------|
 | ```/mandate/agent/service ``` | Shows a list of services that the agent can create mandates for |
 | ```/mandate/agent/summary/:service``` | Shows any pending or current clients for a given service. Also has a link to create a mandate for a new client |
 | ```/mandate/email/:service``` | Starts the process of creating a mandate for a new client |
@@ -20,7 +25,7 @@ This service creates a relationship between an agent and a client for a given se
 # Adding a new service
 
 ## First service to be added after ATED
-Note: If this is the first service to be added after ATED then the feature switch at MandateFeatureSwitches.singleService will have to be removed.
+Note: If this is the first service to be added after ATED then the feature switch at MandateFeatureSwitches.singleService in FeatureSwitches will have to be removed.
 This feature switch causes the ```/mandate/agent/service ``` to be skipped and go straight to the ATED summary page.
 
 ## Adding a new service to the view
@@ -41,12 +46,51 @@ i.e.
 ```
 
 | Property | Description |
-|------|-------------------|-------------|
+|------|-------------------|
 | delegated-service-redirect-url | The page that the agent will return to when they click on a client after it's accepted the mandate |
 | delegated-service-home-url | After the agent has created a mandated they're told to get the client to visit this page to log in and accept it |
 
+Requirements
+------------
+
+This service is written in [Scala] and [Play], so needs at least a [JRE] to run.
 
 
-### License
+Authentication
+------------
 
-This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
+This user logs into this service using the [Government Gateway]
+
+
+Acronyms
+--------
+
+In the context of this service we use the following acronyms:
+
+* [API]: Application Programming Interface
+
+* [HoD]: Head of Duty
+
+* [JRE]: Java Runtime Environment
+
+* [JSON]: JavaScript Object Notation
+
+* [URL]: Uniform Resource Locator
+
+License
+-------
+
+This code is open source software licensed under the [Apache 2.0 License].
+
+[Scala]: http://www.scala-lang.org/
+[Play]: http://playframework.com/
+[JRE]: http://www.oracle.com/technetwork/java/javase/overview/index.html
+
+[Government Gateway]: http://www.gateway.gov.uk/
+
+[API]: https://en.wikipedia.org/wiki/Application_programming_interface
+[HoD]: http://webarchive.nationalarchives.gov.uk/+/http://www.hmrc.gov.uk/manuals/sam/samglossary/samgloss249.htm
+[JSON]: http://json.org/
+[URL]: https://en.wikipedia.org/wiki/Uniform_Resource_Locator
+
+[Apache 2.0 License]: http://www.apache.org/licenses/LICENSE-2.0.html
