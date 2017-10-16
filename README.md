@@ -12,10 +12,9 @@ Mandate life cycle
 ------------------
 ![madate](https://user-images.githubusercontent.com/13600497/31503440-96592644-af67-11e7-968b-dc7328f49249.png)
 
-Summary
--------
+## Summary
 
-## Useful Pages for external services to link to
+### Useful Pages for external services to link to
 
 | PATH | Supported Methods |
 |------|-------------------|
@@ -25,16 +24,16 @@ Summary
 | ```/mandate/client/email``` | Starts the process for the client to accept a mandate |
 
 
-# Adding a new service
+## Adding a new service
 
-## First service to be added after ATED
+### First service to be added after ATED
 Note: If this is the first service to be added after ATED then the feature switch at MandateFeatureSwitches.singleService in FeatureSwitches will have to be removed.
 This feature switch causes the ```/mandate/agent/service ``` to be skipped and go straight to the ATED summary page.
 
-## Adding a new service to the view
+### Adding a new service to the view
 Update the page selectService.scala.html to add any new services that the agent can choose from.
 
-## Update the application.conf to add links back to the new service
+### Update the application.conf to add links back to the new service
 Ensure that you update application.conf with the links back to the dev version of your service.
 i.e.
 
