@@ -10,7 +10,7 @@ Once the mandate has been agreed it's stored in a datastore and ensures that the
 
 Mandate life cycle
 ------------------
-![madate](https://user-images.githubusercontent.com/13600497/31503440-96592644-af67-11e7-968b-dc7328f49249.png)
+![mandate1](https://user-images.githubusercontent.com/13600497/31657897-81b0041a-b327-11e7-8d73-4acec0f5bbe7.png)
 
 ## Summary
 
