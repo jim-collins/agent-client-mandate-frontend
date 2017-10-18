@@ -103,7 +103,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           document.getElementById("header").text() must include("What email address do you want to use for this client?")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("info").text() must include(s"We will use this email address to send you notifications about this client.")
-          document.getElementById("email_field").text() must be("Email address")
+          document.getElementById("email_field").text() must be("What email address do you want to use for this client?")
           document.getElementById("email").`val`() must be("")
           document.getElementById("submit").text() must be("Continue")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
