@@ -11,30 +11,21 @@
 
 @main_template(title = Messages("agent.client-display-name.title"), delegatedService = Some(service)) {
 
-
     @pageHeadersAndError(backLink,"pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.client-display-name.header"),
-
         Some(mandateErrorSummary(clientDisplayNameForm, "agent.client-display-name.error.general")))
 
-    <div class="form-group">
-        <p id="info">
-            @Messages("agent.client-display-name.text", service.toUpperCase)
-        </p>
-    </div>
+    <p id="info">
+       @Messages("agent.client-display-name.text", service.toUpperCase)
+    </p>
 
     @form(action = routes.ClientDisplayNameController.submit(service, redirectUrl)) {
-
         <div id="client-display-name-form" class="form-group">
-
             @mandateInput(clientDisplayNameForm("clientDisplayName"),
             '_label -> Messages("agent.client-display-name.change"),
             '_labelClass ->  "visuallyhidden",
             '_showConstraints -> false)
-
         </div>
-
         <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
-
     }
 
 }
