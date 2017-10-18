@@ -19,42 +19,40 @@
 
   Some(mandateErrorSummary(clientPermissionForm, "agent.client-permission.error.general")))
 
-<div class="form-group">
   <p id="permission-text">
     @Html(Messages("agent.client-permission.hasPermission.selected.ated.yes.notice"))
   </p>
-</div>
 
-@form(action = routes.ClientPermissionController.submit(service, callingPage)) {
+  @form(action = routes.ClientPermissionController.submit(service, callingPage)) {
 
-<div class="form-group" id="hasPermission">
-  @mandateInputRadioGroup(
-  clientPermissionForm("hasPermission"),
-  Seq("true" -> Messages("radio-yes"),
-  "false" -> Messages("radio-no")),
-  '_groupClass -> "inline",
-  '_legend -> Messages("agent.client-permission.header"),
-  '_legendClass -> "visuallyhidden",
-  '_labelClass -> "block-label",
-  '_labelAfter -> true,
-  '_trackGA -> true
-  )
-</div>
-
-<div class="form-group">
-  @if(service.toUpperCase == "ATED") {
-  <div id="client-permission-false-hidden">
-    <div class="icon-important"></div>
-    <div class="ated-icon-important-text"><strong>@Html(Messages("agent.client-permission.hasPermission.selected.ated.no.notice"))</strong></div>
+  <div class="form-group" id="hasPermission">
+    @mandateInputRadioGroup(
+    clientPermissionForm("hasPermission"),
+    Seq("true" -> Messages("radio-yes"),
+    "false" -> Messages("radio-no")),
+    '_groupClass -> "inline",
+    '_legend -> Messages("agent.client-permission.header"),
+    '_legendClass -> "visuallyhidden",
+    '_labelClass -> "block-label",
+    '_labelAfter -> true,
+    '_trackGA -> true
+    )
   </div>
-  }
-</div>
 
-<button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+  <div class="form-group">
+    @if(service.toUpperCase == "ATED") {
+    <div id="client-permission-false-hidden">
+      <div class="icon-important"></div>
+      <div class="ated-icon-important-text"><strong>@Html(Messages("agent.client-permission.hasPermission.selected.ated.no.notice"))</strong></div>
+    </div>
+    }
+  </div>
 
-<div id="view-all-clients-div">
-  <a class="button" id="submit" class="view-all-clients" href="@routes.AgentSummaryController.view(service)" data-journey-click="agent-client-mandate:click:view-all-clients">@Messages("agent.all-my-clients.button")</a>
-</div>
+  <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+
+  <div id="view-all-clients-div">
+    <a class="button" id="submit" class="view-all-clients" href="@routes.AgentSummaryController.view(service)" data-journey-click="agent-client-mandate:click:view-all-clients">@Messages("agent.all-my-clients.button")</a>
+  </div>
 
 }
 
