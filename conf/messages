@@ -186,7 +186,7 @@ agent.client-display-name.text = This will only be displayed on your screens and
 agent.client-display-name.error.not-selected = You must answer the client display name question
 agent.client-display-name.error.length = A client display name cannot be more than 99 characters
 agent.client-display-name.error.general.clientDisplayName = There is a problem with the client display name question
-agent.client-display-name.change = Display name
+agent.client-display-name.change = What display name do you want to use for this client?
 
 # agent - nrl question page
 agent.nrl-question.title = Is your client a non-resident landlord?
