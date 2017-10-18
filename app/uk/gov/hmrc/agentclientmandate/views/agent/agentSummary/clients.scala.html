@@ -28,18 +28,21 @@
 </div>
 
 <div class="form-group">
-  <ul class="ated-tabs">
-    <li id="clients" class="selected heading-small">
+  <ul class="ated-tabs" role="tablist">
+    <li id="clients" class="selected heading-small" role="tab">
         @Messages("client.summary.client-active.title", mandates.activeMandates.size) <span class="visuallyhidden">@Messages("selected")</span>
     </li>
     @if(!mandates.pendingMandates.isEmpty){
-    <li id="pending-clients" class="heading-small">
+    <li id="pending-clients" class="heading-small" role="tab">
       <a href="@routes.AgentSummaryController.view(service, Some("pending-clients"))" id="view-pending-clients" data-journey-click="agent-client-mandate:click:view-pending-clients">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)
       </a>
     </li>
     }
   </ul>
 </div>
+
+
+  <section id="clients-tab" tabindex="-1">
 
 @if(mandates.activeMandates.size >= 15 || isUpdate) {
   <div class="form-group">
@@ -121,7 +124,8 @@
     }
     </div>
 
-
+  </section>
+  <script src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/clients.js")'></script>
 }
 
 
