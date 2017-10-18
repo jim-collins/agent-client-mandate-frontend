@@ -82,7 +82,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
       And("The Add Client Link - should exist")
-      assert(document.getElementById("add-client-link").text() === "Add a new client")
+      assert(document.getElementById("add-client-link").text() === "Add a client")
     }
 
     scenario("agent has visited the page and has clients but no pending clients") {
@@ -106,12 +106,12 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
 
       And("The Clients table - has the correct data and View link")
       assert(document.getElementById("client-name-0").text === "client display name 2")
-      assert(document.getElementById("client-link-0").text === "View details for client display name 2")
+      assert(document.getElementById("client-link-0").text === "View details forclient display name 2")
 
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
       And("The Add Client Link - should exist")
-      assert(document.getElementById("add-client-link").text() === "Add a new client")
+      assert(document.getElementById("add-client-link").text() === "Add a client")
 
       And("The filter box should not exist")
       assert(document.getElementById("filterbox") == null)
@@ -134,12 +134,12 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
 
       And("The Clients table - has the correct data and View link")
       assert(document.getElementById("client-name-0").text === "client display name 2")
-      assert(document.getElementById("client-link-0").text === "View details for client display name 2")
+      assert(document.getElementById("client-link-0").text === "View details forclient display name 2")
 
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
       And("The Add Client Link - should exist")
-      assert(document.getElementById("add-client-link").text() === "Add a new client")
+      assert(document.getElementById("add-client-link").text() === "Add a client")
 
       And("The filter box should exist")
       assert(document.getElementById("filter-clients").text === "Filter clients")
@@ -164,7 +164,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
       And("The Add Client Link - should exist")
-      assert(document.getElementById("add-client-link").text() === "Add a new client")
+      assert(document.getElementById("add-client-link").text() === "Add a client")
 
       And("The filter box should exist")
       assert(document.getElementById("filter-clients").text === "Filter clients")

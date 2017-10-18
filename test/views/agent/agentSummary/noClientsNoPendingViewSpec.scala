@@ -64,7 +64,7 @@ class noClientsNoPendingViewSpec extends FeatureSpec with OneServerPerSuite with
       assert(document.getElementById("pre-header").text() === "this is for: Org Name")
 
       And("The Add Client Button - should exist")
-      assert(document.getElementById("add-client-btn").text() === "Add a new client")
+      assert(document.getElementById("add-client-btn").text() === "Add a client")
 
       And("The Add Client Link - should not exist")
       assert(document.getElementById("add-client-link") === null)

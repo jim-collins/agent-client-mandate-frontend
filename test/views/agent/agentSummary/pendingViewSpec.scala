@@ -83,7 +83,7 @@ class pendingViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
       And("The Add Client Link - should exist")
-      assert(document.getElementById("add-client-link").text() === "Add a new client")
+      assert(document.getElementById("add-client-link").text() === "Add a client")
     }
 
     scenario("agent visits summary page with clients cancelled in last 28 days") {
