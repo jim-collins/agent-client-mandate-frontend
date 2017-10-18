@@ -12,15 +12,11 @@
 @main_template(title = Messages("agent.enter-email.title"), delegatedService = Some(service)) {
 
 @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.enter-email.header"),
-
-
     Some(mandateErrorSummary(agentEmailForm, "agent.enter-email.error.general")))
 
-  <div class="form-group">
-    <p id="info">
-      @Messages("agent.enter-email.info.text")
-    </p>
-  </div>
+  <p id="info">
+    @Messages("agent.enter-email.info.text")
+  </p>
 
   @form(action = routes.CollectAgentEmailController.submit(service, redirectUrl)) {
 
