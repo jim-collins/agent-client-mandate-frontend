@@ -8,14 +8,13 @@
 
 @(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, clientDisplayName: String, clientParty: Option[String], backLink: Option[String], showRemoveClient: Boolean)(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Messages("agent.edit-mandate-details.title", if(clientParty.isDefined) clientParty.get else ""), delegatedService = Some(service)) {
-
+@main_template(title = Messages("agent.edit-mandate-details.title"), delegatedService = Some(service)) {
 
   @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase), "header", Messages("agent.edit-mandate-details.header", if(clientParty.isDefined) clientParty.get else ""),
     Some(mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")))
 
   <div class="form-group">
-    <span class="heading-medium" id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</span>
+    <h2 id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</h2>
   </div>
 
   @form(action = routes.EditMandateDetailsController.submit(service, mandateId)) {
@@ -27,7 +26,6 @@
     '_labelClass -> "form-label-bold",
     '_hintText -> Messages("agent.edit-mandate-details.hint"),
     '_showConstraints -> false)
-
 
     @mandateInput(editMandateDetailsForm("email"),
     '_label -> Messages("agent.edit-mandate-details.email"),
@@ -45,7 +43,6 @@
     }
 
     <button class="button" id="submit" type="submit">@Messages("agent.edit-mandate-details.submit")</button>
-
 
   }
 }
