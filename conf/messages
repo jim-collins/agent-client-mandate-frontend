@@ -194,10 +194,10 @@ agent.nrl-question.error.general.nrl = There is a problem with the non-resident 
 agent.nrl-question.nrl.not-selected.error = You must answer the non-resident landlord question
 
 # agent - paySA question page
-agent.paySA-question.title = Does your client pay tax in the UK through self assessment?
-agent.paySA-question.header = Does your client pay tax in the UK through self assessment?
-agent.paySA-question.error.general.paySA = There is a problem with the do you pay self assessment question
-agent.paySA-question.paySA.not-selected.error = You must answer the self assessment question
+agent.paySA-question.title = Does your client pay tax in the UK through Self Assessment?
+agent.paySA-question.header = Does your client pay tax in the UK through Self Assessment?
+agent.paySA-question.error.general.paySA = There is a problem with the do you pay Self Assessment question
+agent.paySA-question.paySA.not-selected.error = You must answer the Self Assessment question
 
 # agent - client permission page
 agent.client-permission.title = Do you have permission to register on behalf of your client?
