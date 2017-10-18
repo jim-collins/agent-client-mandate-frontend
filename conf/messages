@@ -59,7 +59,7 @@ client.summary.client-cancelled.text = The following clients have removed your a
 client.collect-email.title = What is your email address?
 client.collect-email.preheader = Appoint an agent
 client.collect-email.header = What is your email address?
-client.collect-email.lede = We need this email to send you notifications. For example, when an agent accepts a request to act for you. No confidential information will be sent via email. You should enter your email address, not your agent''s.
+client.collect-email.lede = We need this email to send you notifications. For example, when an agent accepts a request to act for you. No confidential information will be sent via email. You should enter your email address, not your agent’s.
 client.collect-email.email = Email address
 client.collect-email.confirm-email = Confirm email address
 client.collect-email.error.general.email = There is a problem with the email address question
@@ -73,7 +73,7 @@ client.collect-email.error.general.client-collect-email-form = This email is inv
 client.edit-email.title = Edit your email address
 client.edit-email.preheader = Manage your {0} service
 client.edit-email.header = Edit your email address
-client.edit-email.lede = We need this email to send you notifications. For example, when an agent accepts a request to act for you. No confidential information will be sent via email. You should enter your email address, not your agent''s.
+client.edit-email.lede = We need this email to send you notifications. For example, when an agent accepts a request to act for you. No confidential information will be sent via email. You should enter your email address, not your agent’s.
 client.edit-email.email = Email address
 client.edit-email.confirm-email = Confirm email address
 client.edit-email.error.general.email = There is a problem with the email address question
@@ -181,7 +181,7 @@ agent.overseas-client-question.error.isOverseas = You must answer the overseas c
 # agent - client display name question
 agent.client-display-name.title = What display name do you want to use for this client?
 agent.client-display-name.header = What display name do you want to use for this client?
-agent.client-display-name.text = This will only be displayed on your screens and does not change your client''s official company name.
+agent.client-display-name.text = This will only be displayed on your screens and does not change your client’s official company name.
 agent.client-display-name.error.not-selected = You must answer the client display name question
 agent.client-display-name.error.length = A client display name cannot be more than 99 characters
 agent.client-display-name.error.general.clientDisplayName = There is a problem with the client display name question
@@ -205,7 +205,7 @@ agent.client-permission.header = Do you have permission to register on behalf of
 agent.client-permission.error.general.hasPermission = There is a problem with the client permission question
 agent.client-permission.hasPermission.not-selected.error = You must answer the client permission question
 
-agent.client-permission.hasPermission.selected.ated.yes.notice = Your client must complete an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1" data-journey-click="agent-client-mandate:click:ATED-1-link">ATED 1</a>, if you already have an ATED 1 for this client, don''t complete another. You do not need to send your ATED 1 to HMRC, but you need to keep it for your records. Submission of form 64-8 does not cover ATED or ATED related Capital Gains Tax (CGT).
+agent.client-permission.hasPermission.selected.ated.yes.notice = Your client must complete an <a href="https://www.gov.uk/government/publications/annual-tax-on-enveloped-dwellings-ated-1" data-journey-click="agent-client-mandate:click:ATED-1-link">ATED 1</a>, if you already have an ATED 1 for this client, don’t complete another. You do not need to send your ATED 1 to HMRC, but you need to keep it for your records. Submission of form 64-8 does not cover ATED or ATED related Capital Gains Tax (CGT).
 agent.client-permission.hasPermission.selected.ated.no.notice =  	You must have permission from your client before you can continue.
 
 # agent - has client registered before page
@@ -234,24 +234,20 @@ agent.enter-business-details-error.businessName.utr = There is a problem with th
 
 # agent unique reference
 agent.unique-reference.title = Your unique authorisation number is {0}
-agent.unique-reference.header = Your unique authorisation number for {0} is<br><span id="mandate-reference">{1}</span>
-agent.unique-reference.next.heading.text = What happens next
-agent.unique-reference.text1 =  You need to give this unique authorisation number to your client so they can authorise you to act for them. You can view this number when you sign back into the {0} online service.
-agent.unique-reference.text2 =  Your client will then need to:
-agent.unique-reference.ated.list.text1 = register their company to use the new <a href="{0}" id="calling-service" rel="calling-service" data-journey-click="agent-client-mandate:click:new-gateway-account-link">{1} service</a>, they may need to create a new organisational Government Gateway account
-agent.unique-reference.ated.list.text2 = enter the unique authorisation number you gave them
-agent.unique-reference.text3 = Once they have done this you will receive an email notification. You have 28 days to sign in and accept their request.
+agent.unique-reference.header = Your unique authorisation number for {0} is <span id="mandate-reference">{1}</span>
+agent.unique-reference.next.heading.text = What you must do next
+agent.unique-reference.do-next1 = You must give your client the unique authorisation number {0} so they can authorise you to act for them. This number is available from your list of clients.
+agent.unique-reference.do-next2 =  When your client authorises you, we will send you an email. You have 28 days to sign in and accept their request.
+agent.unique-reference.tell-client = What to tell your client
 agent.unique-reference.button = View all my clients
-agent.unique-reference.details.title = Instructions to give to your client
-agent.unique-reference.details.text.1 = Make sure you have your agent''s unique authorisation number.
-agent.unique-reference.details.text.2 = You need to use your organisation Government Gateway account, or create a new one, to enter the service.
-agent.unique-reference.details.text.3 = Once you are in the service you need to register by entering your registered company name and Unique Taxpayer Reference (UTR).
-agent.unique-reference.details.text.4 = You need to add a contact email address during registration, this can be your email, or your agent''s.
-agent.unique-reference.details.text.5 = To authorise your agent you need to enter the unique authorisation number that they gave you.
+agent.unique-reference.details.text.1 = Sign in to your organisation Government Gateway account. If you do not have an account, create a Government Gateway account.
+agent.unique-reference.details.text.2 = When you are signed in, register for {0} using your registered name and Unique Taxpayer Reference (UTR).
+agent.unique-reference.details.text.3 = Add your or your agent’s contact email address.
+agent.unique-reference.details.text.4 = Enter the unique authorisation number {0}.
 
 # agent client details
 agent.check-client-details.title = Add a client
-agent.check-client-details.header = Check your client''s details are correct
+agent.check-client-details.header = Check your client’s details are correct
 agent.check-client-details.service = Service
 agent.check-client-details.your-email = Your email address
 agent.check-client-details.display-name = Display name
