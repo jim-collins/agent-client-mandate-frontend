@@ -28,7 +28,7 @@ ated.screen-reader.name = this is for:
 #agent client summary
 client.summary.title = {0} clients
 client.summary.header = {0} clients
-client.summary.add-client = Add a new client
+client.summary.add-client = Add a client
 client.summary.client-name.title = Name
 client.summary.client-action.title = Action
 client.summary.client-reject = Reject
@@ -38,6 +38,7 @@ client.summary.client-view = View
 client.summary.client-pending.title = Requests ({0})
 client.summary.client-active.title = Current ({0})
 client.summary.client-details-for = details for
+client.summary.client-edit-details-for = details for
 client.summary.client-accept = Accept
 client.summary.client-pending = Pending
 client.summary.client-current = Current
