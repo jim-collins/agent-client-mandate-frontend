@@ -106,7 +106,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
 
       And("The Clients table - has the correct data and View link")
       assert(document.getElementById("client-name-0").text === "client display name 2")
-      assert(document.getElementById("client-link-0").text === "View details forclient display name 2")
+      assert(document.getElementById("client-link-0").text === "View details for client display name 2")
 
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
@@ -134,7 +134,7 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
 
       And("The Clients table - has the correct data and View link")
       assert(document.getElementById("client-name-0").text === "client display name 2")
-      assert(document.getElementById("client-link-0").text === "View details forclient display name 2")
+      assert(document.getElementById("client-link-0").text === "View details for client display name 2")
 
       And("The Add Client Button - should not exist")
       assert(document.getElementById("add-client-btn") === null)
