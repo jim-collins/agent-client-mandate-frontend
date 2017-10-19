@@ -9,35 +9,16 @@
 
     <div class="transaction-banner--complete" id="banner">
         <h1 id="banner-text">
-            @Messages("agent.remove-client-confirmation.banner-text", clientName)
+            @Messages("agent.remove-client-confirmation.banner-text", clientName, DateUtils.getDateAsText(DateTime.now))
         </h1>
-            <span class="heading-medium" id="date">
-                @Messages("agent.remove-client-confirmation.banner-text-date", DateUtils.getDateAsText(DateTime.now))
-            </span>
     </div>
 
-    <div class="form-group">
-        <span id="notification" class="heading-small">@Messages("agent.remove-client-confirmation.notification")</span>
-    </div>
+    <p id="notification">@Messages("agent.remove-client-confirmation.notification")</p>
 
-    <div class="form-group">
-        <div class="divider--top--thick">
-            <h2>@Messages("agent.remove-client-confirmation.what-next")</h2>
-        </div>
+    @if(isNonUkClient) {
+        <p>@Messages("agent.remove-client-confirmation.non-uk-client-old-unique-refno", mandateId)</p>
+    }
 
-        <ul id="list" class="bullets">
-            @if(isNonUkClient) {
-            <li>@Messages("agent.remove-client-confirmation.non-uk-client-old-unique-refno") <span id="mandateRef">@Messages(mandateId)</span></li>
-            } else {
-            <li>@Messages("agent.remove-client-confirmation.request-new-client")</li>
-            }
-            <li>@Messages("agent.remove-client-confirmation.submit-returns")</li>
-        </ul>
-    </div>
-
-    <form action="@routes.AgentSummaryController.view(service)">
-        <button class="button" id="finish_btn" type="submit">@Messages("agent.remove-client-confirmation.view-all-clients")</button>
-    </form>
-
+    <a href="@routes.AgentSummaryController.view(service)" class="button" id="finish_btn" >@Messages("agent.remove-client-confirmation.view-all-clients")</a>
 
 }
