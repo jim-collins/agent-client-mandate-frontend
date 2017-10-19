@@ -307,7 +307,7 @@ agent.remove-client.error = remove client
 
 # agent remove client confirmation
 agent.remove-client-confirmation.title = You have removed your client
-agent.remove-client-confirmation.banner-text = You have removed {0} on {1}
+agent.remove-client-confirmation.banner-text = You have removed {0} on <br/> {1}
 agent.remove-client-confirmation.notification = Your client will get an email notification.
 agent.remove-client-confirmation.non-uk-client-old-unique-refno = You need to give your client your unique authorisation number, {0}.
 agent.remove-client-confirmation.view-all-clients = View all your clients
