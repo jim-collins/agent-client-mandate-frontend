@@ -30,17 +30,19 @@
   </div>
 
   <div class="form-group">
-    <ul class="ated-tabs">
+    <ul class="ated-tabs" role="tablist">
       @if(mandates.activeMandates.size > 0){
-      <li id="clients" class="heading-small">
+      <li id="clients" class="heading-small" role="tab">
         <a href="@routes.AgentSummaryController.view(service)" id="view-clients">@Messages("client.summary.client-active.title", mandates.activeMandates.size)</a>
       </li>
       }
-      <li id="pending-clients" class="selected heading-small">
+      <li id="pending-clients" class="selected heading-small" role="tab">
         @Messages("client.summary.client-pending.title", mandates.pendingMandates.size) <span class="visuallyhidden">@Messages("selected")</span>
       </li>
     </ul>
   </div>
+
+  <section id="pending-tab" tabindex="-1">
 
   <div class="form-group">
     @for((pending, index) <- mandates.pendingMandates.zipWithIndex) {
@@ -94,4 +96,6 @@
       </div>
     }
   </div>
+  </section>
+  <script src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/pending.js")'></script>
 }
