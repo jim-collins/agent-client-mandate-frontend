@@ -235,7 +235,7 @@ agent.enter-business-details-error.businessName.utr = There is a problem with th
 
 # agent unique reference
 agent.unique-reference.title = Your unique authorisation number is {0}
-agent.unique-reference.header = Your unique authorisation number for {0} is <span id="mandate-reference">{1}</span>
+agent.unique-reference.header = Your unique authorisation number for {0} is {1}
 agent.unique-reference.next.heading.text = What you must do next
 agent.unique-reference.do-next1 = You must give your client the unique authorisation number {0} so they can authorise you to act for them. This number is available from your list of clients.
 agent.unique-reference.do-next2 =  When your client authorises you, we will send you an email. You have 28 days to sign in and accept their request.
