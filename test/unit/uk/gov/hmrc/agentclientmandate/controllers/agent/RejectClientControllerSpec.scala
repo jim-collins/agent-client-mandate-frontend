@@ -81,7 +81,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Are you sure you want to reject the request from ACME Limited?")
+          document.title() must be("Are you sure you want to reject the request from this client?")
           document.getElementById("heading").text() must include("Are you sure you want to reject the request from ACME Limited?")
         }
       }
