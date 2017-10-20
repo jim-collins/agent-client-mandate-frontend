@@ -16,7 +16,7 @@
     <p id="notification">@Messages("agent.remove-client-confirmation.notification")</p>
 
     @if(isNonUkClient) {
-        <p>@Messages("agent.remove-client-confirmation.non-uk-client-old-unique-refno", mandateId)</p>
+        <p id="non-uk-with-reference">@Messages("agent.remove-client-confirmation.non-uk-client-old-unique-refno", mandateId)</p>
     }
 
     <a href="@routes.AgentSummaryController.view(service)" class="button" id="finish_btn" >@Messages("agent.remove-client-confirmation.view-all-clients")</a>
