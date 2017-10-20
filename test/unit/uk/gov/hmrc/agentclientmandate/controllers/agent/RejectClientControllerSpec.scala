@@ -150,7 +150,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         confirmationWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Client Rejection Confirmed")
+          document.title() must include("You have rejected this client on")
         }
       }
     }
