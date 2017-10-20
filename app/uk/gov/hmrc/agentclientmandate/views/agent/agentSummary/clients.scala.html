@@ -103,7 +103,7 @@
             <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)"
             data-journey-click="agent-client-mandate:click:edit-client-link">
               @Messages("Edit")
-            <span class="screen-reader-text">@Messages("client.summary.client-edit-details-for")@active.clientDisplayName</span>
+            <span class="visuallyhidden">@Messages("client.summary.client-edit-details-for") @active.clientDisplayName</span>
             </a>
           </div>
 
@@ -111,7 +111,7 @@
             <a id="client-link-@index" href='@routes.AgentSummaryController.doDelegation(service, active.id)'
             data-journey-click="agent-client-mandate:click:client-link">
               @Messages("client.summary.client-view")
-            <span class="screen-reader-text">@Messages("client.summary.client-details-for")@active.clientDisplayName</span>
+            <span class="visuallyhidden">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>
             </a>
           </div>
         </div>

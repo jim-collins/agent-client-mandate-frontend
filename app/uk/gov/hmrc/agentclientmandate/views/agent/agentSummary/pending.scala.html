@@ -58,7 +58,7 @@
           <a id="edit-pending-client-link-@index" href="@routes.EditMandateDetailsController.view(service, pending.id)"
             data-journey-click="agent-client-mandate:click:edit-pending-client-link">
             @Messages("Edit")
-          <span class="screen-reader-text">@Messages("client.summary.client-edit-details-for")@pending.clientDisplayName</span>
+          <span class="visuallyhidden">@Messages("client.summary.client-edit-details-for")@pending.clientDisplayName</span>
           </a>
         </div>
 
@@ -67,7 +67,7 @@
           <div class="grid grid-1-4 asp-action">
             <a id="reject-client-link-@index" href="@routes.RejectClientController.view(service, pending.id)" data-journey-click="agent-client-mandate:click:reject-client-link">
               @Messages("client.summary.client-reject")
-            <span class="screen-reader-text">@pending.clientDisplayName</span>
+            <span class="visuallyhidden">@pending.clientDisplayName</span>
             </a>
           </div>
 
@@ -87,7 +87,7 @@
             <div class="grid grid-1-4 asp-action" id="accept-client">
               <a href="@routes.AgentSummaryController.activate(service, pending.id)" data-journey-click="agent-client-mandate:click:accept-client"
               id="accept-@(index + 1)">
-                @Messages("client.summary.client-accept") <span class="screen-reader-text">@pending.clientDisplayName</span>
+                @Messages("client.summary.client-accept") <span class="visuallyhidden"> @pending.clientDisplayName</span>
               </a>
             </div>
           }
