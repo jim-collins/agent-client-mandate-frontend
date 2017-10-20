@@ -5,21 +5,18 @@
 @import uk.gov.hmrc.agentclientmandate.controllers.agent.routes
 @import uk.gov.hmrc.agentclientmandate.views.html._
 
-@main_template(title = Messages("agent.reject-client-confirmation.title"), delegatedService = Some(service)) {
+@main_template(title = Messages("agent.reject-client-confirmation.title", DateUtils.getDateAsText(DateTime.now)), delegatedService = Some(service)) {
 
     <div class="transaction-banner--complete" id="banner">
-        <h1 id="banner-text"> @Messages("agent.reject-client-confirmation.banner-text", clientName) </h1>
-        <span class="heading-medium" id="banner-text-date"> @Messages("agent.reject-client-confirmation.banner-text-date", DateUtils.getDateAsText(DateTime.now)) </span>
+        <h1 id="banner-text"> @Messages("agent.reject-client-confirmation.banner-text", clientName, DateUtils.getDateAsText(DateTime.now)) </h1>
     </div>
 
-    <div class="form-group">
-        <span id="notification" class="heading-small">@Messages("agent.reject-client-confirmation.notification")</span>
-    </div>
+    <p id="notification">@Messages("agent.reject-client-confirmation.notification")</p>
 
     <div class="form-group">
 
         <div class="divider--top--thick">
-            <h2 id="heading">@Messages("agent.reject-client-confirmation.what-next")<h2>
+            <h2 id="heading">@Messages("agent.reject-client-confirmation.you-can")</h2>
         </div>
 
         <ul id="list" class="bullets">
@@ -29,8 +26,6 @@
         
     </div>
 
-        <form action="@routes.AgentSummaryController.view(service)">
-            <button class="button" id="finish_btn" type="submit">@Messages("agent.reject-client-confirmation.view-all-clients")</button>
-        </form>
+    <a href="@routes.AgentSummaryController.view(service)" class="button" id="finish_btn">@Messages("agent.reject-client-confirmation.view-all-clients")</a>
 
 }
