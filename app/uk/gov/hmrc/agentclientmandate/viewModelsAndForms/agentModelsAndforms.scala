@@ -264,7 +264,7 @@ object PrevRegisteredForm {
 
   val prevRegisteredForm = Form(
     mapping(
-      "prevRegistered" -> optional(boolean).verifying(Messages("agent.client-permission.hasPermission.not-selected.error"), a => a.isDefined)
+      "prevRegistered" -> optional(boolean).verifying(Messages("agent.client-prev-registered.not-selected.field-error"), a => a.isDefined)
     )(PrevRegistered.apply)(PrevRegistered.unapply)
   )
 

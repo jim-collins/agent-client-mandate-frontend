@@ -77,7 +77,7 @@ class HasClientRegisteredBeforeControllerSpec extends PlaySpec with OneServerPer
         viewWithAuthorisedAgent(service, PaySAQuestionController.controllerId, Some(PrevRegistered(Some(true)))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must include("Has your client previously used the ATED online service to submit returns")
+          document.title() must include("Has your client previously had an agent who used the ATED online service to submit returns on their behalf?")
         }
       }
 
@@ -85,7 +85,7 @@ class HasClientRegisteredBeforeControllerSpec extends PlaySpec with OneServerPer
         viewWithAuthorisedAgent(service, PaySAQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must include("Has your client previously used the ATED online service to submit returns")
+          document.title() must include("Has your client previously had an agent who used the ATED online service to submit returns on their behalf?")
         }
       }
     }
@@ -95,7 +95,7 @@ class HasClientRegisteredBeforeControllerSpec extends PlaySpec with OneServerPer
         viewWithAuthorisedAgent("any", PaySAQuestionController.controllerId, Some(PrevRegistered(Some(true)))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must include("Has your client previously used the ATED online service to submit returns")
+          document.title() must include("Has your client previously had an agent who used the ATED online service to submit returns on their behalf?")
         }
       }
     }
@@ -127,8 +127,8 @@ class HasClientRegisteredBeforeControllerSpec extends PlaySpec with OneServerPer
         submitWithAuthorisedAgent("callPage", fakeRequest, Some(PrevRegistered(Some(true)))) { result =>
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
-          document.getElementsByClass("error-list").text() must include("There is a problem with the previously used question")
-          document.getElementsByClass("error-notification").text() must include("You must answer the client permission question")
+          document.getElementsByClass("error-list").text() must include("There is a problem with the previously had an agent question")
+          document.getElementsByClass("error-notification").text() must include("You must answer the previously had an agent question")
         }
       }
     }

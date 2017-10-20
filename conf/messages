@@ -210,11 +210,12 @@ agent.client-permission.hasPermission.selected.ated.yes.notice = Your client mus
 agent.client-permission.hasPermission.selected.ated.no.notice =  	You must have permission from your client before you can continue.
 
 # agent - has client registered before page
-agent.client-prev-registered.title = Has your client previously used the ATED online service to submit returns?
-agent.client-prev-registered.header = Has your client previously used the ATED online service to submit returns?
+agent.client-prev-registered.title = Has your client previously had an agent who used the ATED online service to submit returns on their behalf?
+agent.client-prev-registered.header = Has your client previously had an agent who used the ATED online service to submit returns on their behalf?
 agent.client-prev-registered.error.general.hasPermission = There is a problem with the client permission question
 agent.client-prev-registered.not-selected.error = You must answer the client permission question
-
+agent.client-prev-registered.not-selected.field-error = You must answer the previously had an agent question
+agent.client-permission.error.general.prevRegistered = There is a problem with the previously had an agent question
 
 # agent enter business details
 agent.enter-business-details-error.businessName = You must enter a company name
@@ -401,10 +402,6 @@ agent.edit-details-error.country = You must enter a country
 
 agent.edit-details.agent.non-uk.header = What is the registered business name and address of your overseas agency?
 agent.edit-details.text.agent= {0} agency set up
-
-
-#prev mandate reference
-agent.client-permission.error.general.prevRegistered = There is a problem with the previously used question
 
 #search previous mandate
 agent.search-previous-mandate.title = What is the previous unique authorisation number for the client?
