@@ -41,7 +41,7 @@ class RejectClientFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       val html = views.html.agent.rejectClient("ATED", new YesNoQuestionForm("agent.reject-client.error").yesNoQuestionForm, "ACME Limited", "", Some("http://"))
 
       val document = Jsoup.parse(html.toString())
-      Then("The title should match - Are you sure you want to reject the request from ACME Limited?")
+      Then("The title should match - Are you sure you want to reject the request from this client?")
       assert(document.title() === "Are you sure you want to reject the request from ACME Limited?")
       And("The pre-header text is - Manage your ATED service")
       assert(document.getElementById("pre-heading").text() === "This section is: Manage your ATED service")
