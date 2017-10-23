@@ -12,15 +12,13 @@
 @main_template(title = Messages("Declaration and consent"), delegatedService = Some(mandate.subscription.service.id)) {
   @pageHeadersAndError(backLink, "pre-heading", Messages("client.agent-declaration.pre-heading"), "header", Messages("client.agent-declaration.header"))
 
-  <p id="declaration-info">
-    @Html(Messages("client.agent-declaration.declaration-info", mandate.subscription.service.name.toUpperCase))
-  </p>
+  <p id="declaration-info-1">@Messages("client.agent-declaration.declaration-info-1", mandate.subscription.service.name.toUpperCase)</p>
+  <p id="declaration-info-2">@Messages("client.agent-declaration.declaration-info-2", mandate.subscription.service.name.toUpperCase)</p>
 
-  <p>
-    <span class="heading-medium" id="declare-title">
+    <h2 id="declare-title">
       @Messages("client.agent-declaration.declare-header")
-    </span>
-  </p>
+    </h2>
+
 
   <ul class="bullets">
     <li id="agent-name">@Messages("client.agent-declaration.agent-name", mandate.agentParty.name, mandate.subscription.service.name.toUpperCase)</li>
