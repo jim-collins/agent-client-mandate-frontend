@@ -12,11 +12,9 @@
     Some(mandateErrorSummary(mandateRefForm, "client.search-mandate.error.general")))
 
 
-    <div class="form-group">
-        <span class="paragraph" id="client.search-mandate.help">
-          @Messages("client.search-mandate.lede")
-        </span>
-    </div>
+  <p id="client.search-mandate.help">
+    @Messages("client.search-mandate.lede")
+  </p>
 
   @form(action = routes.SearchMandateController.submit(service)) {
 
@@ -25,7 +23,6 @@
       @mandateInput(mandateRefForm("mandateRef"),
       '_hintText -> Messages("client.search-mandate.hint"),
       '_showConstraints -> false)
-
 
     </div>
 
