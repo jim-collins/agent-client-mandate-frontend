@@ -10,11 +10,9 @@
   @pageHeadersAndError(backLink, "pre-heading", Messages("client.collect-email.preheader"), "header", Messages("client.collect-email.header"),
     Some(mandateErrorSummary(addEmailForm, "client.collect-email.error.general")))
 
-  <div class="form-group">
     <p id="lede">
       @Messages("client.collect-email.lede")
     </p>
-  </div>
 
   @form(action = routes.CollectEmailController.submit(service, mode)) {
 
@@ -22,6 +20,7 @@
 
       @mandateInput(addEmailForm("email"),
         '_label -> Messages("client.collect-email.email"),
+        '_legendClass -> "visuallyhidden",
         '_labelClass -> "form-label-bold",
         '_showConstraints -> false
       )
