@@ -137,10 +137,11 @@ client.remove-agent.error = remove agent
 
 #client remove agent confirmation
 client.remove-agent-confirmation.title = You have successfully removed your agent
-client.remove-agent-confirmation.banner-text = You have removed {0} as your agent
-client.remove-agent-confirmation.create-return = you can create a return
-client.remove-agent-confirmation.appoint-agent = you can appoint another agent to act for you
+client.remove-agent-confirmation.banner-text = You have removed {0} as your agent on {1}
+client.remove-agent-confirmation.create-return = create a return
+client.remove-agent-confirmation.appoint-agent = appoint another agent to act for you
 client.remove-agent-confirmation.service_button = Your {0} online service
+client.remove-agent-confirmation.header = You can 
 
 #client change agent
 client.change-agent.title = Do you want to appoint another agent to act for you?
