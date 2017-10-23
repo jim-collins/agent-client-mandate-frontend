@@ -70,8 +70,8 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
           document.getElementById("header").text() must include("Declaration and consent")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("declare-title").text() must be("I declare that:")
-          document.getElementById("agent-name").text() must be("the nominated agent name has agreed to act on my behalf in respect of ATED")
-          document.getElementById("dec-info").text() must be("that the information I have provided is correct and complete")
+          document.getElementById("agent-name").text() must be("name has agreed to act on my behalf in respect of ATED")
+          document.getElementById("dec-info").text() must be("the information I have provided is correct and complete")
           document.getElementById("submit").text() must be("Agree and submit")
         }
       }

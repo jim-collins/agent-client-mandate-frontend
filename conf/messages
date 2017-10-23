@@ -111,10 +111,11 @@ client.review-agent.service-header = Service
 client.agent-declaration.title = Declaration and consent
 client.agent-declaration.header = Declaration and consent
 client.agent-declaration.pre-heading = Appoint an agent
-client.agent-declaration.declaration-info = <p>This authority allows HMRC to exchange and disclose information about you with your agent and to deal with them on matters relating to {0}.</p><p>You as the property owner will remain responsible for all aspects of you dealings with HMRC, even if your agent submits returns and makes payments on your behalf.</p>
+client.agent-declaration.declaration-info-1 = This authority allows HMRC to exchange and disclose information about you with your agent and to deal with them on matters relating to {0}.
+client.agent-declaration.declaration-info-2 = You as the property owner will remain responsible for all aspects of your dealings with HMRC, even if your agent submits returns and makes payments on your behalf.
 client.agent-declaration.declare-header = I declare that:
-client.agent-declaration.agent-name = the nominated agent {0} has agreed to act on my behalf in respect of {1}
-client.agent-declaration.information = that the information I have provided is correct and complete
+client.agent-declaration.agent-name = {0} has agreed to act on my behalf in respect of {1}
+client.agent-declaration.information = the information I have provided is correct and complete
 
 #client agent confirmation
 client.agent-confirmation.title = Your request to appoint an agent has been successfully submitted
