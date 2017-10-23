@@ -75,7 +75,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.title() must be("What is your email address?")
           document.getElementById("header").text() must include("What is your email address?")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
-          document.getElementById("email_field").text() must be("Email address")
+          document.getElementById("email_field").text() must be("What is your email address?")
           document.getElementById("email").`val`() must be("")
           document.getElementById("submit").text() must be("Continue")
         }
@@ -102,7 +102,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.title() must be("What is your email address?")
           document.getElementById("header").text() must include("What is your email address?")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
-          document.getElementById("email_field").text() must be("Email address")
+          document.getElementById("email_field").text() must be("What is your email address?")
           document.getElementById("email").`val`() must be("")
           document.getElementById("submit").text() must be("Continue")
 
