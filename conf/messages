@@ -118,14 +118,13 @@ client.agent-declaration.information = that the information I have provided is c
 
 #client agent confirmation
 client.agent-confirmation.title = Your request to appoint an agent has been successfully submitted
-client.agent-confirmation.banner-text = Your request to appoint {0} has been successfully submitted
+client.agent-confirmation.banner-text = Your request to appoint {0} has been successfully submitted on {1}
 client.agent-confirmation.banner-confirmation.submitted.date = on {0}
 client.agent-confirmation.notification = Your agent will receive an email notification.
 client.agent-confirmation.header = What happens next
-client.agent-confirmation.this-authority = This authority will remain in place until you change or cancel your agent.
-client.agent-confirmation.sign-in = You can sign in at any point to view <a href="{0}" id="calling-service" rel="calling-service"data-journey-click="agent-client-mandate:click:sign-in-link">your online service</a>
+client.agent-confirmation.sign-in = This authority will remain in place until you change or cancel your agent. You can sign in at any point to view <a href="{0}" id="calling-service" rel="calling-service"data-journey-click="agent-client-mandate:click:sign-in-link">your online service</a>
 
-client.agent-confirmation.finish-signout = Finish and sign out
+client.agent-confirmation.finish-signout = Sign out
 client.declaration.error.general.agree = There is a problem with the checkbox
 
 #client remove agent
