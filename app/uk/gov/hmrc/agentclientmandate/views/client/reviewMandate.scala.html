@@ -13,42 +13,69 @@
 @pageHeadersAndError(backLink, "pre-heading", Messages("client.review-agent.preheader"), "header", Messages("client.review-agent.header"))
 
    @form(action = routes.ReviewMandateController.submit(mandate.subscription.service.id)) {
-     <table>
-       <tr>
-         <th id ="service">@Messages("client.review-agent.service-header")</th>
-         <td id ="service-name">@mandate.subscription.service.name.toUpperCase</td>
-         <td></td>
-       </tr>
-       <tr>
-         <th id ="agency">Agency</th>
-         <td id ="agency-name">@mandate.agentParty.name</td>
-         <td></td>
-       </tr>
-       <tr>
-         <th id="agent-reference-label">@Messages("client.review-agent.agent-reference")</th>
-         <td>@mandate.id</td>
-         <td>
-           <a href="@routes.SearchMandateController.view(service)" id ="edit-agent-reference-number" data-journey-click="agent-client-mandate:click:edit-agent-reference-number">@Messages("edit-link")
-             <span class="screen-reader-text">@Messages("client.review-agent.agent-reference")</span>
-           </a>
-         </td>
-       </tr>
-       <tr>
-         <th id="email-address-label">@Messages("client.review-agent.email")</td>
-         @mandate.clientParty.map { clientParty =>
-         <td>@clientParty.contactDetails.email</td>
-         }
-         <td>
-           <a href='@routes.CollectEmailController.edit(service)' id ="edit-agent-email" data-journey-click="agent-client-mandate:click:edit-agent-email ">@Messages("edit-link")
-             <span class="screen-reader-text">@Messages("client.review-agent.email")</span>
-           </a>
-         </td>
-       </tr>
-     </table>
+     <div class="form-group">
 
-       <button class="button" id="submit" type="submit">
-        @Messages("client.review-agent.submit")
-       </button>
+       <div class="grid-wrapper row-border">
+         <div class="grid grid-2-6 cya-question">
+           <span id="service-name-label" class="heading-small">@Messages("client.review-agent.service-header")</span>
+         </div>
+
+         <div class="grid grid-1-2 cya-answer">
+           <span id="service-name">@mandate.subscription.service.name.toUpperCase</span>
+         </div>
+       </div>
+
+       <div class="grid-wrapper row-border">
+         <div class="grid grid-2-6 cya-question">
+           <span id="agency-name-label" class="heading-small">@Messages("client.review-agent.agency-header")</span>
+         </div>
+
+         <div class="grid grid-1-2 cya-answer">
+           <span id="agency-name">@mandate.agentParty.name</span>
+         </div>
+       </div>
+
+       <div class="grid-wrapper row-border">
+         <div class="grid grid-2-6 cya-question">
+           <span id="your-email-label" class="heading-small">@Messages("client.review-agent.own.email")</span>
+         </div>
+
+         <div class="grid grid-1-2 cya-answer">
+           <span id="your-email">  @mandate.clientParty.map { clientParty =>
+         @clientParty.contactDetails.email
+         }</span>
+         </div>
+
+         <div class="grid grid-1-6 cya-change">
+           <a href='@routes.CollectEmailController.edit(service)' id="edit-clinet-own-email">
+             @Messages("edit-link")
+             <span class="visuallyhidden">@Messages("client.review-agent.email")<</span>
+           </a>
+         </div>
+       </div>
+
+       <div class="grid-wrapper row-border">
+         <div class="grid grid-2-6 cya-question">
+           <span id="agent-ref-name-label" class="heading-small">@Messages("client.review-agent.agent-reference")</span>
+         </div>
+
+         <div class="grid grid-1-2 cya-answer">
+           <span id="agent-ref-name">@mandate.id</span>
+         </div>
+
+         <div class="grid grid-1-6 cya-change">
+           <a href='@routes.SearchMandateController.view(service)' id="edit-agent-reference-number">
+             @Messages("edit-link")
+             <span class="visuallyhidden">>@Messages("client.review-agent.agent-reference")</span>
+           </a>
+         </div>
+       </div>
+
+     </div>
+
+     <button class="button" id="submit" type="submit">
+       @Messages("client.review-agent.submit")
+     </button>
 
    }
 

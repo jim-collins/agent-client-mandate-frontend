@@ -103,9 +103,10 @@ client.review-agent.title = Check that this is the agency you want to appoint
 client.review-agent.header = Check that this is the agency you want to appoint
 client.review-agent.preheader = Appoint an agent
 client.review-agent.agent-reference = Unique authorisation number
-client.review-agent.email = Your email address
+client.review-agent.own.email = Your email address
 client.review-agent.submit = Confirm and appoint agent
 client.review-agent.service-header = Service
+client.review-agent.agency-header = Agency
 
 #client agent declaration
 client.agent-declaration.title = Declaration and consent
