@@ -9,24 +9,20 @@
 @main_template(title = Messages("client.remove-agent-confirmation.title"), delegatedService = Some(service)) {
 
     <div class="transaction-banner--complete" id="banner">
-        <h1 id="banner-text"> @Messages("client.remove-agent-confirmation.banner-text", agentName) </h1>
-        <span class="heading-medium" id="banner-text-date"> @Messages("agent.reject-client-confirmation.banner-text-date", DateUtils.getDateAsText(DateTime.now)) </span>
+        <h1 id="banner-text"> @Messages("client.remove-agent-confirmation.banner-text", agentName,  DateUtils.getDateAsText(DateTime.now)) </h1>
     </div>
 
     <p id="notification" class="heading-small">@Messages("client.agent-confirmation.notification")</p>
 
-    <div class="divider--bottom"></div>
+        <div class="form-group">
 
-    <div class="form-group">
-
-        <h2 id="heading">@Messages("client.agent-confirmation.header")</h2>
+        <h2 id="heading-1">@Messages("client.remove-agent-confirmation.header")</h2>
 
         <ul id="list" class="bullets">
             <li>@Messages("client.remove-agent-confirmation.create-return")</li>
             <li>@Messages("client.remove-agent-confirmation.appoint-agent")</li>
         </ul>
 
-        <a class="link" id="finish_link" href="@FrontendAppConfig.serviceSignOutUrl(Some(service))">@Messages("client.agent-confirmation.finish-signout")</a>
 
     </div>
 

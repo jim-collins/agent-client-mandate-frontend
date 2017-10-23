@@ -204,8 +204,8 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
           document.title() must be("You have successfully removed your agent")
           document.getElementById("banner-text").text() must include("You have removed Agent Limited as your agent")
           document.getElementById("notification").text() must be("Your agent will receive an email notification.")
-          document.getElementById("heading").text() must be("What happens next")
-          document.getElementById("return_to_service_button").text() must be("Your ATED online service")
+          document.getElementById("heading-1").text() must be("You can")
+                    document.getElementById("return_to_service_button").text() must be("Your ATED online service")
         }
       }
     }
