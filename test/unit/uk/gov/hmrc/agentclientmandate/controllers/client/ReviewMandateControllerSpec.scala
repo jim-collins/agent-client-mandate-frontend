@@ -40,7 +40,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
 
-  "ClientReviewAgentControllerSpec" must {
+  "ReviewMandateController" must {
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/review" in {
@@ -78,8 +78,8 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
           document.title() must be("Check that this is the agency you want to appoint")
           document.getElementById("header").text() must include("Check that this is the agency you want to appoint")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
-          document.getElementById("agent-reference-label").text() must be("Unique authorisation number")
-          document.getElementById("email-address-label").text() must be("Your email address")
+          document.getElementById("agent-ref-name-label").text() must be("Unique authorisation number")
+          document.getElementById("your-email-label").text() must be("Your email address")
           document.getElementById("submit").text() must be("Confirm and appoint agent")
         }
       }
