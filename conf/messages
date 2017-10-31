@@ -107,6 +107,7 @@ client.review-agent.own.email = Your email address
 client.review-agent.submit = Confirm and appoint agent
 client.review-agent.service-header = Service
 client.review-agent.agency-header = Agency
+client.review-agent.disclaimer = Appointing {0} will let them see all the details in your old returns.
 
 #client agent declaration
 client.agent-declaration.title = Declaration and consent
