@@ -74,7 +74,7 @@ String.prototype.format = function() {
       logout_url: '/sign-out',
       logout_redirect_url: '/',
       restart_on_yes: true,
-      dialog_width: 340,:
+      dialog_width: 340,
       close_on_escape: false,
       background_no_scroll: false
     }
