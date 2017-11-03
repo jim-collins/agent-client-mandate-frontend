@@ -12,9 +12,9 @@
 
 @implicitFormInstance = @{ Some(filterClientsForm) }
 
-<span class="screen-reader-text">@screenReaderText</span>
-
 @main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = if(isUkAgent(agentDetails)) None else Some(_agentSummary_sidebar(agentDetails, service)), delegatedService = Some(service)){
+
+<span class="screen-reader-text">@screenReaderText</span>
 
 <header class="page-header page-header-margin">
   <h1 id="header" class="heading-xlarge">@Messages("client.summary.title", service.toUpperCase)</h1>
@@ -43,7 +43,7 @@
 
 
   <section id="clients-tab" tabindex="-1">
-
+    
 @if(mandates.activeMandates.size >= 15 || isUpdate) {
   <div class="form-group">
     @if(isUpdate) {

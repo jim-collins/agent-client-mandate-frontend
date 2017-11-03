@@ -14,9 +14,9 @@
 <script src='@uk.gov.hmrc.agentclientmandate.controllers.routes.AssetsController.at("javascript/agent-summary.js")'></script>
 }
 
-<span class="screen-reader-text">@screenReaderText</span>
-
 @main_template(title = Messages("client.summary.title", service.toUpperCase), sidebarLinks = if(isUkAgent(agentDetails)) None else Some(_agentSummary_sidebar(agentDetails, service)), scriptElem = Some(pageScripts), delegatedService = Some(service)){
+
+<span class="screen-reader-text">@screenReaderText</span>
 
 <header class="page-header page-header-margin">
   <h1 id="header" class="heading-xlarge">@Messages("client.summary.title", service.toUpperCase)</h1>
