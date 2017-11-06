@@ -80,6 +80,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("agent-ref-name-label").text() must be("Unique authorisation number")
           document.getElementById("your-email-label").text() must be("Your email address")
+          document.getElementById("agent-disclaimer").text() must be("Appointing name will let them see all the details in your old returns.")
           document.getElementById("submit").text() must be("Confirm and appoint agent")
         }
       }
