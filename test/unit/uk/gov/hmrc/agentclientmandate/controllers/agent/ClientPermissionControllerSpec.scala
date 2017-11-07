@@ -84,8 +84,8 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
-          document.getElementById("permission-text").text() must be("Your client must complete an ATED 1. Once you have registered, send their ATED 1 to HMRC and keep a copy for your records. If you already have an ATED 1 for this client, they do not need to complete another. Form 64-8 does not cover ATED or ATED-related Capital Gains Tax.")
-          document.getElementById("submit").text() must be("Continue")
+          document.getElementById("permission-text").text() must startWith("Your client must complete an ATED 1. Once you have registered, send their ATED 1 to HMRC and keep a copy for your records.")
+          document.getElementById("continue").text() must be("Continue")
 
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ATED")
@@ -100,9 +100,9 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
-          document.getElementById("permission-text").text() must be("Your client must complete an ATED 1. Once you have registered, send their ATED 1 to HMRC and keep a copy for your records. If you already have an ATED 1 for this client, they do not need to complete another. Form 64-8 does not cover ATED or ATED-related Capital Gains Tax.")
+          document.getElementById("permission-text").text() must startWith("Your client must complete an ATED 1. Once you have registered, send their ATED 1 to HMRC and keep a copy for your records.")
           document.getElementById("hasPermission-true").attr("checked") must be("checked")
-          document.getElementById("submit").text() must be("Continue")
+          document.getElementById("continue").text() must be("Continue")
 
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ATED")
@@ -117,7 +117,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
-          document.getElementById("submit").text() must be("Continue")
+          document.getElementById("continue").text() must be("Continue")
 
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/nrl-question/ATED")
