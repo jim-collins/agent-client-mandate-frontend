@@ -48,10 +48,10 @@
     }
   </div>
 
-  <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
+  <button class="button" id="continue" type="submit">@Messages("continue-button")</button>
 
   <div id="view-all-clients-div">
-    <a class="button" id="submit" class="view-all-clients" href="@routes.AgentSummaryController.view(service)" data-journey-click="agent-client-mandate:click:view-all-clients">@Messages("agent.all-my-clients.button")</a>
+    <a id="submit" class="button view-all-clients" href="@routes.AgentSummaryController.view(service)" data-journey-click="agent-client-mandate:click:view-all-clients">@Messages("agent.all-my-clients.button")</a>
   </div>
 
 }
