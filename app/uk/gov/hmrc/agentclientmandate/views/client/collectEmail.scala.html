@@ -16,18 +16,13 @@
 
   @form(action = routes.CollectEmailController.submit(service, mode)) {
 
-    <div class="form-group">
-
-      @mandateInput(addEmailForm("email"),
-        '_label -> Messages("client.collect-email.email.label"),
-        '_labelClass -> "visuallyhidden",
-        '_showConstraints -> false
-      )
-
-    </div>
+    @mandateInput(addEmailForm("email"),
+      '_label -> Messages("client.collect-email.email.label"),
+      '_labelClass -> "visuallyhidden",
+      '_showConstraints -> false
+    )
 
     <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
-
 
   }
 
