@@ -18,13 +18,9 @@
 
   @form(action = routes.SearchMandateController.submit(service)) {
 
-    <div class="form-group">
-
       @mandateInput(mandateRefForm("mandateRef"),
       '_hintText -> Messages("client.search-mandate.hint"),
       '_showConstraints -> false)
-
-    </div>
 
     <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
 
