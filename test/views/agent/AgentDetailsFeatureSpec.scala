@@ -42,8 +42,8 @@ class AgentDetailsFeatureSpec extends FeatureSpec with OneServerPerSuite with Mo
       val html = views.html.agent.agentDetails(AgentBuilder.buildAgentDetails, "service", Some("http://"))
 
       val document = Jsoup.parse(html.toString())
-      Then("The title should match - Your details")
-      assert(document.title() === "Your details")
+      Then("The title should match - Your details - GOV.UK")
+      assert(document.title() === "Your details - GOV.UK")
 
       And("The pre-header text is - Edit details")
       assert(document.getElementById("pre-header").text() === "This section is: Edit details")

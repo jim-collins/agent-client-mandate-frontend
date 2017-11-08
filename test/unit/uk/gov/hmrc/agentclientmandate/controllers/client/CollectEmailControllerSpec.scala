@@ -72,7 +72,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         viewWithAuthorisedClient() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your email address?")
+          document.title() must be("What is your email address? - GOV.UK")
           document.getElementById("header").text() must include("What is your email address?")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("email_field").text() must be("What is your email address?")
@@ -86,7 +86,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         viewWithAuthorisedClient(Some(cached)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your email address?")
+          document.title() must be("What is your email address? - GOV.UK")
           document.getElementById("email").`val`() must be("aa@mail.com")
         }
       }
@@ -99,7 +99,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         editWithAuthorisedClient() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your email address?")
+          document.title() must be("What is your email address? - GOV.UK")
           document.getElementById("header").text() must include("What is your email address?")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("email_field").text() must be("What is your email address?")
@@ -118,7 +118,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         viewWithAuthorisedClient(Some(cached), Some(ContinueUrl("/api/anywhere"))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your email address?")
+          document.title() must be("What is your email address? - GOV.UK")
           document.getElementById("email").`val`() must be("aa@mail.com")
 
           document.getElementById("backLinkHref").text() must be("Back")
@@ -132,7 +132,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         viewWithAuthorisedClient(Some(cached), None) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your email address?")
+          document.title() must be("What is your email address? - GOV.UK")
           document.getElementById("email").`val`() must be("aa@mail.com")
 
           document.getElementById("backLinkHref") must be(null)
@@ -148,7 +148,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         backWithAuthorisedClient(Some(cached), Some(ContinueUrl("http://backlink"))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your email address?")
+          document.title() must be("What is your email address? - GOV.UK")
 
           document.getElementById("backLinkHref").text() must be("Back")
           document.getElementById("backLinkHref").attr("href") must be("http://backlink")

@@ -147,7 +147,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       viewWithAuthorisedAgent { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
-        document.title() must be("Are you sure you want to remove ACME Limited?")
+        document.title() must be("Are you sure you want to remove ACME Limited? - GOV.UK")
         document.getElementById("pre-header").text() must include("Manage your ATED service")
         document.getElementById("header").text() must include("Are you sure you want to remove ACME Limited?")
         document.getElementById("yesNo_legend").text() must be("Are you sure you want to remove ACME Limited?")
@@ -224,7 +224,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
       showConfirmationWithAuthorisedAgent { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
-        document.title() must be("You have removed your client")
+        document.title() must be("You have removed your client - GOV.UK")
       }
     }
   }

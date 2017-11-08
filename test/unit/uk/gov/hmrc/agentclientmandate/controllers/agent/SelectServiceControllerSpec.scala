@@ -82,7 +82,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
         viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Select a service")
+          document.title() must be("Select a service - GOV.UK")
           document.getElementById("header").text() must include("Select a service")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("service_legend").text() must be("Select a service")

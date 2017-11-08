@@ -82,7 +82,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         viewAuthorisedClient(request, ContinueUrl("/app/return")) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Confirm Agent Removal")
+          document.title() must be("Confirm Agent Removal - GOV.UK")
           document.getElementById("header").text() must include("Are you sure you want to cancel the authority for Agent Ltd to act on your behalf for ATED?")
           document.getElementById("pre-header").text() must be("This section is: Manage your ATED service")
           document.getElementById("yesNo_legend").text() must be("Are you sure you want to cancel the authority for Agent Ltd to act on your behalf for ATED?")
@@ -201,7 +201,7 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
         confirmationWithAuthorisedClient { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("You have successfully removed your agent")
+          document.title() must be("You have successfully removed your agent - GOV.UK")
           document.getElementById("banner-text").text() must include("You have removed Agent Limited as your agent")
           document.getElementById("notification").text() must be("Your agent will receive an email notification.")
           document.getElementById("heading-1").text() must be("You can")

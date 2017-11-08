@@ -83,7 +83,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
         viewWithAuthorisedAgent { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Does your client have an overseas company without a UK Unique Taxpayer Reference?")
+          document.title() must be("Does your client have an overseas company without a UK Unique Taxpayer Reference? - GOV.UK")
           document.getElementById("header").text() must include("Does your client have an overseas company without a UK Unique Taxpayer Reference?")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("submit").text() must be("Continue")
@@ -94,7 +94,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
         viewWithAuthorisedAgentWithSomeData { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Does your client have an overseas company without a UK Unique Taxpayer Reference?")
+          document.title() must be("Does your client have an overseas company without a UK Unique Taxpayer Reference? - GOV.UK")
           document.getElementById("header").text() must include("Does your client have an overseas company without a UK Unique Taxpayer Reference?")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("isOverseas-true").attr("checked") must be("checked")

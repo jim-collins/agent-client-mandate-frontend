@@ -76,7 +76,7 @@ class AgentMissingEmailControllerSpec  extends PlaySpec with OneServerPerSuite w
         viewEmailAuthorisedAgent() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Receive email notifications from your clients")
+          document.title() must be("Receive email notifications from your clients - GOV.UK")
           document.getElementById("header").text() must include("Receive email notifications from your clients")
           document.getElementById("pre-header").text() must include("Manage your ATED service")
           document.getElementById("info").text() must be(s"We can send you a notification when a client accepts or rejects your requests in the $service service. You can use a group email address and change it later.")

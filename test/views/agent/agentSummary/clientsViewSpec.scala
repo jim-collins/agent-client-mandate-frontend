@@ -71,8 +71,8 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, pendingMandates), agentDetails, None, "", filterClientsForm)
 
       val document = Jsoup.parse(html.toString())
-      Then("The title should match - ATED clients")
-      assert(document.title() === "ATED clients")
+      Then("The title should match - ATED clients - GOV.UK")
+      assert(document.title() === "ATED clients - GOV.UK")
 
       And("The Clients tab - should exist and have 1 item")
       assert(document.getElementById("clients").text === "Current (1) selected")
@@ -96,8 +96,8 @@ class clientsViewSpec extends FeatureSpec with OneServerPerSuite with MockitoSug
       val html = views.html.agent.agentSummary.clients("ATED", Mandates(activeMandates, Nil), agentDetails, None, "", filterClientsForm)
 
       val document = Jsoup.parse(html.toString())
-      Then("The title should match - ATED clients")
-      assert(document.title() === "ATED clients")
+      Then("The title should match - ATED clients - GOV.UK")
+      assert(document.title() === "ATED clients - GOV.UK")
 
       And("The Clients tab - should exist and have 1 item")
       assert(document.getElementById("clients").text === "Current (1) selected")

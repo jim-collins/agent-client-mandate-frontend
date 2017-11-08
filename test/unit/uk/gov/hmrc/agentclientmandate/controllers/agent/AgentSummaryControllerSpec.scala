@@ -56,7 +56,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("ATED clients")
+          document.title() must be("ATED clients - GOV.UK")
           document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-btn").text() must be("Add a client")
           document.getElementById("add-client-link") must be(null)
@@ -71,7 +71,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("ATED clients")
+          document.title() must be("ATED clients - GOV.UK")
           document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-link").text() must be("Add a client")
           document.getElementById("filter-clients") must be(null)
@@ -88,7 +88,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("ATED clients")
+          document.title() must be("ATED clients - GOV.UK")
           document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-link").text() must be("Add a client")
           document.getElementById("filter-clients").text() must be("Filter clients")
@@ -108,7 +108,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("ATED clients")
+          document.title() must be("ATED clients - GOV.UK")
           document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-link").text() must be("Add a client")
           document.getElementById("view-pending-clients") must be(null)
@@ -125,7 +125,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("ATED clients")
+          document.title() must be("ATED clients - GOV.UK")
           document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-link").text() must be("Add a client")
           document.getElementById("view-pending-clients") must be(null)

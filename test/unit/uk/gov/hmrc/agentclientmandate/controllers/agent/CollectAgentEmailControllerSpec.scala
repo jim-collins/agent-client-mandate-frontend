@@ -84,7 +84,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
         viewEmailAuthorisedAgent(Some(agentEmail)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What email address do you want to use for this client?")
+          document.title() must be("What email address do you want to use for this client? - GOV.UK")
           document.getElementById("email").`val`() must be("aa@aa.com")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
         }
@@ -99,7 +99,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
         viewEmailAuthorisedAgent(None, Some(ContinueUrl("/api/anywhere"))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What email address do you want to use for this client?")
+          document.title() must be("What email address do you want to use for this client? - GOV.UK")
           document.getElementById("header").text() must include("What email address do you want to use for this client?")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("info").text() must include(s"We will use this email address to send you notifications about this client.")
@@ -122,7 +122,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
         addClientAuthorisedAgent(Some(clientMandatDisplay)){ result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What email address do you want to use for this client?")
+          document.title() must be("What email address do you want to use for this client? - GOV.UK")
           document.getElementById("email").`val`() must be("agent@mail.com")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientMandateDisplayDetails](Matchers.any())(Matchers.any(), Matchers.any())
         }
@@ -132,7 +132,7 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
         addClientAuthorisedAgent(None) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What email address do you want to use for this client?")
+          document.title() must be("What email address do you want to use for this client? - GOV.UK")
           document.getElementById("email").`val`() must be("")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientMandateDisplayDetails](Matchers.any())(Matchers.any(), Matchers.any())
         }

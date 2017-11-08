@@ -88,7 +88,7 @@ class PreviousMandateRefControllerSpec extends PlaySpec with OneServerPerSuite w
         viewWithAuthorisedAgent(Some(cached)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is the previous unique authorisation number for the client?")
+          document.title() must be("What is the previous unique authorisation number for the client? - GOV.UK")
           document.getElementById("header").text() must include("What is the previous unique authorisation number for the client?")
           document.getElementById("mandateRef").`val`() must be("ABC123")
           document.getElementById("submit").text() must be("Continue")
