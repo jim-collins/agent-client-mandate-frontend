@@ -63,7 +63,7 @@ class EditEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mocki
       viewWithAuthorisedClient(ContinueUrl("/api/anywhere")) { result =>
         status(result) must be(OK)
         val document = Jsoup.parse(contentAsString(result))
-        document.title() must be("Edit your email address")
+        document.title() must be("Edit your email address - GOV.UK")
         document.getElementById("email").`val`() must be("client@client.com")
 
         document.getElementById("backLinkHref").text() must be("Back")

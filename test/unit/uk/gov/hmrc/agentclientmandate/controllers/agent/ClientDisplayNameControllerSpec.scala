@@ -86,7 +86,7 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
         viewClientDisplayNameAuthorisedAgent() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What display name do you want to use for this client?")
+          document.title() must be("What display name do you want to use for this client? - GOV.UK")
           document.getElementById("header").text() must include("What display name do you want to use for this client?")
         }
       }
@@ -95,7 +95,7 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
         viewClientDisplayNameAuthorisedAgent(Some(ClientDisplayName("client display name")), Some(ContinueUrl("/api/anywhere"))) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What display name do you want to use for this client?")
+          document.title() must be("What display name do you want to use for this client? - GOV.UK")
           document.getElementById("clientDisplayName").`val`() must be("client display name")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientDisplayName](Matchers.any())(Matchers.any(), Matchers.any())
         }

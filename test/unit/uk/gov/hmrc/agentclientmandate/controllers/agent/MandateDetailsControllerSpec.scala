@@ -57,7 +57,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
         viewWithAuthorisedAgent(PaySAQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Check your client’s details are correct")
+          document.title() must be("Check your client’s details are correct - GOV.UK")
           document.getElementById("pre-header").text must be("This section is: Add a client")
           document.getElementById("header").text must be("Check your client’s details are correct")
           document.getElementById("email-address-label").text must be("Your email address")
@@ -74,7 +74,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
         viewWithAuthorisedAgent(OverseasClientQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Check your client’s details are correct")
+          document.title() must be("Check your client’s details are correct - GOV.UK")
           document.getElementById("pre-header").text must be("This section is: Add a client")
           document.getElementById("header").text must be("Check your client’s details are correct")
           document.getElementById("email-address-label").text must be("Your email address")

@@ -79,7 +79,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         viewWithAuthorisedClient() { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your unique authorisation number?")
+          document.title() must be("What is your unique authorisation number? - GOV.UK")
           document.getElementById("header").text() must include("What is your unique authorisation number?")
           document.getElementById("mandateRef").`val`() must be("")
           document.getElementById("submit").text() must be("Continue")
@@ -91,7 +91,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         viewWithAuthorisedClient(Some(cached)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("What is your unique authorisation number?")
+          document.title() must be("What is your unique authorisation number? - GOV.UK")
           document.getElementById("header").text() must include("What is your unique authorisation number?")
           document.getElementById("mandateRef").`val`() must be("ABC123")
           document.getElementById("submit").text() must be("Continue")

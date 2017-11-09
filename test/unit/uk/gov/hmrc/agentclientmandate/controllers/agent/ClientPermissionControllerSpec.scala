@@ -80,7 +80,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
         viewWithAuthorisedAgent(service, PaySAQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Do you have permission to register on behalf of your client?")
+          document.title() must be("Do you have permission to register on behalf of your client? - GOV.UK")
           document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
@@ -96,7 +96,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
         viewWithAuthorisedAgentWithSomeData(service, PaySAQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Do you have permission to register on behalf of your client?")
+          document.title() must be("Do you have permission to register on behalf of your client? - GOV.UK")
           document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
@@ -113,7 +113,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
         viewWithAuthorisedAgent(service, NRLQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Do you have permission to register on behalf of your client?")
+          document.title() must be("Do you have permission to register on behalf of your client? - GOV.UK")
           document.getElementById("header").text() must include("Do you have permission to register on behalf of your client?")
           document.getElementById("pre-header").text() must be("This section is: Add a client")
           document.getElementById("hasPermission_legend").text() must be("Do you have permission to register on behalf of your client?")
@@ -127,7 +127,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
         viewWithAuthorisedAgent(serviceUsed = "otherService", "") { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Do you have permission to register on behalf of your client?")
+          document.title() must be("Do you have permission to register on behalf of your client? - GOV.UK")
         }
       }
     }

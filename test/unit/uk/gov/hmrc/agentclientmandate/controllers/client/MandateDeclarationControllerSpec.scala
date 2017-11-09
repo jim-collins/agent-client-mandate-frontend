@@ -66,7 +66,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
         viewAuthorisedClient(cachedData) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Declaration and consent")
+          document.title() must be("Declaration and consent - GOV.UK")
           document.getElementById("header").text() must include("Declaration and consent")
           document.getElementById("pre-heading").text() must include("Appoint an agent")
           document.getElementById("declare-title").text() must be("I declare that:")
