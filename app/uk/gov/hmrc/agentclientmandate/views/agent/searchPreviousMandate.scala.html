@@ -11,22 +11,14 @@
   @pageHeadersAndError(backLink, "pre-heading", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.search-previous-mandate.header"),
     Some(mandateErrorSummary(mandateRefForm, "agent.search-previous-mandate.error")))
 
-    <div class="form-group">
-        <span class="paragraph" id="agent.previous-search-mandate.help">
-          @Messages("agent.search-previous-mandate.header.lede")
-        </span>
-    </div>
+    <p>@Messages("agent.search-previous-mandate.header.lede")</p>
 
   @form(action = routes.PreviousMandateRefController.submit(service, callingPage)) {
 
-    <div class="form-group">
-
-      @mandateInput(mandateRefForm("mandateRef"),
-      '_label -> Messages("agent.search-previous-mandate.label"),
-      '_labelClass -> "visuallyhidden",
-      '_showConstraints -> false)
-
-    </div>
+    @mandateInput(mandateRefForm("mandateRef"),
+    '_label -> Messages("agent.search-previous-mandate.label"),
+    '_labelClass -> "visuallyhidden",
+    '_showConstraints -> false)
 
     <button class="button" id="submit" type="submit">@Messages("continue-button")</button>
 
