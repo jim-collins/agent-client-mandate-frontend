@@ -21,7 +21,7 @@
       <td id ="email-address-label"><strong>@Messages("agent.check-client-details.your-email")</strong></td>
       <td id ="email-address">@email</td>
       <td>
-        <a href="@routes.CollectAgentEmailController.view(service)" data-journey-click="agent-client-mandate:click:edit-email">@Messages("edit-link")
+        <a href="@routes.CollectAgentEmailController.editFromSummary(service)" data-journey-click="agent-client-mandate:click:edit-email">@Messages("edit-link")
            <span class="screen-reader-text">@Messages("agent.check-client-details.your-email")</span>
         </a>
       </td>
@@ -30,7 +30,7 @@
       <td id ="display-name-label"><strong>@Messages("agent.check-client-details.display-name")</strong></td>
       <td id ="clientDisplayName">@displayName</td>
       <td>
-        <a href="@routes.ClientDisplayNameController.view(service)" data-journey-click="agent-client-mandate:click:edit-display-name">@Messages("edit-link")
+        <a href="@routes.ClientDisplayNameController.editFromSummary(service)" data-journey-click="agent-client-mandate:click:edit-display-name">@Messages("edit-link")
           <span class="screen-reader-text">@Messages("agent.check-client-details.display-name")</span>
         </a>
       </td>
