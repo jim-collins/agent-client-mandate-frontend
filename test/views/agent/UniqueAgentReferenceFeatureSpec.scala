@@ -54,7 +54,7 @@ class UniqueAgentReferenceFeatureSpec extends FeatureSpec with OneServerPerSuite
 
       And("The agents instructions")
       assert(document.getElementById("agent-instruction-1").text() === "You must give your client the unique authorisation number ABC123 so they can authorise you to act for them. This number is available from your list of clients.")
-      assert(document.getElementById("agent-instruction-2").text() === "When your client authorises you, we will send you an email. You have 28 days to sign in and accept their request.")
+      assert(document.getElementById("agent-instruction-2").text() === "When your client authorises you, we will send you an email. You must sign in and accept their request within 28 days or you will need to start from the beginning.")
 
       And("The client-instruction - should be correct for the relevant service")
       assert(document.getElementById("tell-your-client").text() === "What to tell your client")
