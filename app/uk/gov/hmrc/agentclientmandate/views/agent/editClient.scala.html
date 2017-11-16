@@ -8,7 +8,15 @@
 
 @(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, clientDisplayName: String, clientParty: Option[String], backLink: Option[String], showRemoveClient: Boolean)(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Messages("agent.edit-mandate-details.title"), delegatedService = Some(service)) {
+@analyticsJs = {
+var id = "@mandateId";
+var page = document.location.pathname.replace('/' + id, '');
+ga('set', 'page', page);
+}
+
+@main_template(title = Messages("agent.edit-mandate-details.title"),
+  delegatedService = Some(service),
+  analyticsAdditionalJs = Some(analyticsJs)) {
 
   @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase), "header", Messages("agent.edit-mandate-details.header", if(clientParty.isDefined) clientParty.get else ""),
     Some(mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")))
