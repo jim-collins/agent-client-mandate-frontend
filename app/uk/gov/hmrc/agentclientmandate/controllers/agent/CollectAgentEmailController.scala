@@ -69,7 +69,6 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
               case Some(email) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(email), service, redirectUrl, getBackLink(service, redirectUrl)))
               case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service, redirectUrl, getBackLink(service, redirectUrl)))
             }
-
         }
       }
   }
