@@ -31,7 +31,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController
 import uk.gov.hmrc.agentclientmandate.models._
 import uk.gov.hmrc.agentclientmandate.service.DataCacheService
-import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.ClientCache
+import uk.gov.hmrc.agentclientmandate.viewModelsAndForms.{ClientCache, ClientEmail}
 import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import unit.uk.gov.hmrc.agentclientmandate.builders.{AuthBuilder, SessionBuilder}
 
@@ -87,12 +87,24 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     }
 
+
     "redirect to search mandate view for AUTHORISED client" when {
 
       "client requests(GET) for review mandate view, but mandate has not been cached on search mandate submit" in {
-        viewWithAuthorisedClient() { result =>
+        viewWithAuthorisedClient(Some(ClientCache(email = Some(ClientEmail(email = "aa@test.com"))))) { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some("/mandate/client/search/ATED"))
+        }
+      }
+
+    }
+
+    "redirect to collect eamil view for AUTHORISED client" when {
+
+      "client requests(GET) for review mandate view, but there is no cache" in {
+        viewWithAuthorisedClient() { result =>
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result) must be(Some("/mandate/client/email/ATED"))
         }
       }
 
@@ -138,6 +150,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
     AuthBuilder.mockAuthorisedClient(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[ClientCache](Matchers.eq(TestReviewMandateController.clientFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
+    when(mockDataCacheService.cacheFormData[ClientCache](Matchers.eq(TestReviewMandateController.clientFormId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(ClientCache()))
     val result = TestReviewMandateController.view(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
