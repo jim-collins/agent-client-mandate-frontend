@@ -27,6 +27,9 @@ import uk.gov.hmrc.play.frontend.auth.connectors.AuthConnector
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.i18n.Messages.Implicits._
 import play.api.Play.current
+import uk.gov.hmrc.agentclientmandate.models.ContactDetails
+
+import scala.concurrent.Future
 
 object ReviewMandateController extends ReviewMandateController {
   val authConnector: AuthConnector = FrontendAuthConnector
@@ -38,18 +41,30 @@ trait ReviewMandateController extends FrontendController with Actions with Manda
   def dataCacheService: DataCacheService
 
   def view(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence).async {
-    implicit authContext => implicit request =>
-      dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) map {
-        _.flatMap(_.mandate) match {
-          case Some(x) => Ok(views.html.client.reviewMandate(service, x, getBackLink(service)))
-          case None => Redirect(routes.SearchMandateController.view(service))
+    implicit authContext =>
+      implicit request =>
+        dataCacheService.fetchAndGetFormData[ClientCache](clientFormId) flatMap {
+          case Some(cache) =>
+            cache.mandate match {
+              case Some(x) =>
+                val clientContactDetailsUpdated = x.clientParty.map(_.contactDetails).map(_.copy(email = cache.email.map(_.email).getOrElse("")))
+                // $COVERAGE-OFF$
+                val updatedClientParty = x.clientParty.map(_.copy(contactDetails = clientContactDetailsUpdated.getOrElse(ContactDetails(cache.email.map(_.email).getOrElse(throw new RuntimeException("email not cached"))))))
+                // $COVERAGE-ON$
+                val updatedMandate = x.copy(clientParty = updatedClientParty)
+                dataCacheService.cacheFormData[ClientCache](clientFormId, cache.copy(mandate = Some(updatedMandate))) flatMap { cachedData =>
+                  Future.successful(Ok(views.html.client.reviewMandate(service, updatedMandate, getBackLink(service))))
+                }
+              case None => Future.successful(Redirect(routes.SearchMandateController.view(service)))
+            }
+          case None => Future.successful(Redirect(routes.CollectEmailController.view(service)))
         }
-      }
   }
 
   def submit(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence) {
-    implicit authContext => implicit request =>
-      Redirect(routes.MandateDeclarationController.view(service))
+    implicit authContext =>
+      implicit request =>
+        Redirect(routes.MandateDeclarationController.view(service))
   }
 
   private def getBackLink(service: String) = {
