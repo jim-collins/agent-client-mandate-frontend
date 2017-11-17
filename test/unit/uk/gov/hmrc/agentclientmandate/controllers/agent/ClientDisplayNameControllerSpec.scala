@@ -106,6 +106,30 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
           status(result) must be(BAD_REQUEST)
         }
       }
+
+      "agents try to edit client display name but data is not cached" in {
+        editClientDisplayNameAuthorisedAgent() { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What display name do you want to use for this client? - GOV.UK")
+          document.getElementById("header").text() must include("What display name do you want to use for this client?")
+        }
+      }
+
+      "agents try to edit client display name view pre-populated and the data has been cached" in {
+        editClientDisplayNameAuthorisedAgent(Some(ClientDisplayName("client display name")), Some(ContinueUrl("/api/anywhere"))) { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What display name do you want to use for this client? - GOV.UK")
+          document.getElementById("clientDisplayName").`val`() must be("client display name")
+        }
+      }
+
+      "agent tries to client display name but url format is invalied" in {
+        editClientDisplayNameAuthorisedAgent(None, Some(ContinueUrl("http://website.com"))) { result =>
+          status(result) must be(BAD_REQUEST)
+        }
+      }
     }
 
     "redirect when valid form is submitted with valid data" when {
@@ -164,10 +188,7 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
         }
       }
     }
-
   }
-
-
 
   val mockAuthConnector = mock[AuthConnector]
   val mockDataCacheService: DataCacheService = mock[DataCacheService]
@@ -204,6 +225,17 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestClientDisplayNameController.view(service, redirectUrl).apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def editClientDisplayNameAuthorisedAgent(cachedData:  Option[ClientDisplayName] = None, redirectUrl: Option[ContinueUrl] = None)(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestClientDisplayNameController.callingPageCacheId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some("callingPage")))
+    val result = TestClientDisplayNameController.editFromSummary(service, redirectUrl).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

@@ -54,6 +54,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
       "agent requests(GET) for check client details view and email has been cached previously and it's from PaySA" in {
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail(""))))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientDisplayName("client display name"))))
+        when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestMandateDetailsController.callingPageCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("callingPage"))
         viewWithAuthorisedAgent(PaySAQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -71,6 +72,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
       "agent requests(GET) for check client details view and email has been cached previously and it's from Overseas" in {
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail(""))))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientDisplayName("client display name"))))
+        when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestMandateDetailsController.callingPageCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("callingPage"))
         viewWithAuthorisedAgent(OverseasClientQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -90,6 +92,8 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
 
       "agent requests(GET) for check client details view and email has NOT been cached previously" in {
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+        when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientDisplayName("client display name"))))
+        when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestMandateDetailsController.callingPageCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("callingPage"))
         viewWithAuthorisedAgent("") { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some(s"/mandate/agent/add-client/$service"))
@@ -102,6 +106,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
       "agent requests(GET) for check client details view and display name has NOT been cached previously" in {
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail(""))))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+        when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestMandateDetailsController.callingPageCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("callingPage"))
         viewWithAuthorisedAgent("") { result =>
           status(result) must be(SEE_OTHER)
           redirectLocation(result) must be(Some(s"/mandate/agent/client-display-name/$service"))

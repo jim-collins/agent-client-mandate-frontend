@@ -31,4 +31,5 @@ trait MandateConstants {
   val clientPermissionFormId = "client-permission-form-id"
   val prevRegisteredFormId = "previously-registered-form-id"
   val oldNonUkMandate = "old-nonuk-mandate-form-id"
+  val callingPageCacheId = "calling-page-id"
 }
