@@ -64,11 +64,11 @@ trait ChangeAgentController extends FrontendController with Actions{
         data => {
           val changeAgent = data.yesNo.getOrElse(false)
           if (changeAgent) {
-            val backLink = routes.ChangeAgentController.view(service, mandateId).url
-            Future.successful(Redirect(routes.CollectEmailController.view(service, Some(ContinueUrl(backLink)))))
+            val backLink = routes.ChangeAgentController.view(mandateId).url
+            Future.successful(Redirect(routes.CollectEmailController.view(Some(ContinueUrl(backLink)))))
           }
           else {
-            Future.successful(Redirect(routes.RemoveAgentController.confirmation(service, mandateId)))
+            Future.successful(Redirect(routes.RemoveAgentController.confirmation(mandateId)))
           }
         }
       )

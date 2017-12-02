@@ -83,9 +83,9 @@ trait SearchMandateController extends FrontendController with Actions with Manda
                     clientFormId,
                     y.copy(mandate = Some(updatedMandate))
                   ) flatMap { cachedData =>
-                    Future.successful(Redirect(routes.ReviewMandateController.view(service)))
+                    Future.successful(Redirect(routes.ReviewMandateController.view()))
                   }
-                case None => Future.successful(Redirect(routes.CollectEmailController.view(service)))
+                case None => Future.successful(Redirect(routes.CollectEmailController.view()))
               }
             }
           }
@@ -98,6 +98,6 @@ trait SearchMandateController extends FrontendController with Actions with Manda
   }
 
   private def getBackLink(service: String) = {
-    Some(routes.CollectEmailController.back(service).url)
+    Some(routes.CollectEmailController.back().url)
   }
 }

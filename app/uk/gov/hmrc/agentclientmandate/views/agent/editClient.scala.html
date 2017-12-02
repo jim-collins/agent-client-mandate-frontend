@@ -25,7 +25,7 @@ ga('set', 'page', page);
     <h2 id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</h2>
   </div>
 
-  @form(action = routes.EditMandateDetailsController.submit(service, mandateId)) {
+  @form(action = routes.EditMandateDetailsController.submit(mandateId)) {
   <fieldset>
     <legend class="visuallyhidden">@Messages("agent.edit-mandate-details.header", if(clientParty.isDefined) clientParty.get else "")</legend>
 
@@ -44,7 +44,7 @@ ga('set', 'page', page);
 
     @if(showRemoveClient){
       <div class="form-field">
-        <a id="remove-client-link" href="@routes.RemoveClientController.view(service, mandateId)" data-journey-click="agent-client-mandate:click:remove-client-link">
+        <a id="remove-client-link" href="@routes.RemoveClientController.view(mandateId)" data-journey-click="agent-client-mandate:click:remove-client-link">
           @Messages("client.summary.client-remove")
         </a>
       </div>

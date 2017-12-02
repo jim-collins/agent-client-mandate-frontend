@@ -68,7 +68,7 @@ trait UpdateAddressDetailsController extends FrontendController with Actions wit
             updatedDetails <- agentClientMandateService.updateRegisteredDetails(editAgentDetails = Some(updateDetails))
           } yield {
             updatedDetails match {
-              case Some(x) => Redirect(routes.AgencyDetailsController.view(service))
+              case Some(x) => Redirect(routes.AgencyDetailsController.view())
               case None =>
                 val errorMsg = Messages("agent.edit-mandate-detail.save.error")
                 val errorForm = editAgentAddressDetailsForm.withError(key = "addressType", message = errorMsg).fill(updateDetails)
@@ -80,7 +80,7 @@ trait UpdateAddressDetailsController extends FrontendController with Actions wit
   }
 
   private def getBackLink(service: String) = {
-    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgencyDetailsController.view(service).url)
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgencyDetailsController.view().url)
   }
 
   private def displayDetails(service: String) = {

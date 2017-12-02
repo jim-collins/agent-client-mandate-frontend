@@ -24,7 +24,7 @@
 @clientsCancelledPartial(clientsCancelled, service)
 
 <div class="form-group">
-  <a href="@routes.CollectAgentEmailController.addClient(service)" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
+  <a href="@routes.CollectAgentEmailController.addClient()" id="add-client-link" class="link" tabindex="0">@Messages("client.summary.add-client")</a>
 </div>
 
 <div class="form-group">
@@ -34,7 +34,7 @@
     </li>
     @if(!mandates.pendingMandates.isEmpty){
     <li id="pending-clients" class="heading-small" role="tab">
-      <a href="@routes.AgentSummaryController.view(service, Some("pending-clients"))" id="view-pending-clients" data-journey-click="agent-client-mandate:click:view-pending-clients">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)
+      <a href="@routes.AgentSummaryController.view(Some("pending-clients"))" id="view-pending-clients" data-journey-click="agent-client-mandate:click:view-pending-clients">@Messages("client.summary.client-pending.title", mandates.pendingMandates.size)
       </a>
     </li>
     }
@@ -58,7 +58,7 @@
       </summary>
 
       <div class="filterbox">
-        @form(action = routes.AgentSummaryController.update(service)) {
+        @form(action = routes.AgentSummaryController.update()) {
 
         <div class="form-field">
           @mandateInput(filterClientsForm("displayName"),
@@ -100,7 +100,7 @@
           </div>
 
           <div class="grid grid-1-4 asp-status">
-            <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(service, active.id)"
+            <a id="edit-client-link-@index" href="@routes.EditMandateDetailsController.view(active.id)"
             data-journey-click="agent-client-mandate:click:edit-client-link">
               @Messages("Edit")
             <span class="visuallyhidden">@Messages("client.summary.client-edit-details-for") @active.clientDisplayName</span>
@@ -108,7 +108,7 @@
           </div>
 
           <div class="grid grid-1-4 asp-action">
-            <a id="client-link-@index" href='@routes.AgentSummaryController.doDelegation(service, active.id)'
+            <a id="client-link-@index" href='@routes.AgentSummaryController.doDelegation(active.id)'
             data-journey-click="agent-client-mandate:click:client-link">
               @Messages("client.summary.client-view")
             <span class="visuallyhidden">@Messages("client.summary.client-details-for") @active.clientDisplayName</span>

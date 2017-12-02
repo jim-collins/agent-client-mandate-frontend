@@ -25,7 +25,7 @@
     <li id="dec-info">@Messages("client.agent-declaration.information")</li>
   </ul>
 
-  @form(action = routes.MandateDeclarationController.submit(mandate.subscription.service.id)) {
+  @form(action = routes.MandateDeclarationController.submit()) {
 
     <button class="button" id="submit" type="submit">@Messages("agree-submit")</button>
 

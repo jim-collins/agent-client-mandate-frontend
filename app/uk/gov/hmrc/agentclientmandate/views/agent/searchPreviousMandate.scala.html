@@ -13,7 +13,7 @@
 
     <p>@Messages("agent.search-previous-mandate.header.lede")</p>
 
-  @form(action = routes.PreviousMandateRefController.submit(service, callingPage)) {
+  @form(action = routes.PreviousMandateRefController.submit(callingPage)) {
 
     @mandateInput(mandateRefForm("mandateRef"),
     '_label -> Messages("agent.search-previous-mandate.label"),

@@ -63,7 +63,7 @@ trait EditEmailController extends FrontendController with Actions with MandateCo
         mandateService.fetchClientMandateByClient(clientId, service).map {
           case Some(mandate) => mandate.currentStatus.status match {
             case uk.gov.hmrc.agentclientmandate.models.Status.Active =>
-              val clientDetails = ClientDetails(mandate.agentParty.name, mandateFrontendHost + routes.RemoveAgentController.view(service, mandate.id, returnUrl).url, mandate.clientParty.get.contactDetails.email, mandateFrontendHost + routes.EditEmailController.view(mandate.id, service, returnUrl).url)
+              val clientDetails = ClientDetails(mandate.agentParty.name, mandateFrontendHost + routes.RemoveAgentController.view(mandate.id, returnUrl).url, mandate.clientParty.get.contactDetails.email, mandateFrontendHost + routes.EditEmailController.view(mandate.id, returnUrl).url)
               Ok(Json.toJson(clientDetails))
             case _ => NotFound
           }

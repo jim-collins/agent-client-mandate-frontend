@@ -50,16 +50,16 @@ trait PaySAQuestionController extends FrontendController with Actions {
         formWithErrors => BadRequest(views.html.agent.paySAQuestion(formWithErrors, service, getBackLink(service))),
         data => {
           if (data.paySA.getOrElse(false))
-            Redirect(routes.MandateDetailsController.view(service, controllerId)
+            Redirect(routes.MandateDetailsController.view(controllerId)
             )
           else
-            Redirect(routes.ClientPermissionController.view(service, controllerId))
+            Redirect(routes.ClientPermissionController.view(controllerId))
         }
       )
   }
 
 
   private def getBackLink(service: String) = {
-    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.NRLQuestionController.view(service).url)
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.NRLQuestionController.view().url)
   }
 }

@@ -71,7 +71,7 @@ trait UpdateOcrDetailsController extends FrontendController with Actions with Ma
                 updateDetails.issuingInstitution.getOrElse(""), updateDetails.issuingCountryCode.getOrElse(""))))
             } yield {
               updatedDetails match {
-                case Some(x) => Redirect(routes.AgencyDetailsController.view(service))
+                case Some(x) => Redirect(routes.AgencyDetailsController.view())
                 case None =>
                   val errorMsg = Messages("agent.edit-mandate-detail.save.error")
                   val errorForm = nonUkIdentificationForm.withError(key = "addressType", message = errorMsg).fill(updateDetails)
@@ -83,7 +83,7 @@ trait UpdateOcrDetailsController extends FrontendController with Actions with Ma
   }
 
   private def getBackLink(service: String) = {
-    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgencyDetailsController.view(service).url)
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgencyDetailsController.view().url)
   }
 
   private def displayDetails(service: String) = {

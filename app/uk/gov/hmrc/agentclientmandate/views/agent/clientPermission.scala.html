@@ -23,7 +23,7 @@
     @Html(Messages("agent.client-permission.hasPermission.selected.ated.yes.notice"))
   </p>
 
-  @form(action = routes.ClientPermissionController.submit(service, callingPage)) {
+  @form(action = routes.ClientPermissionController.submit(callingPage)) {
 
   <div class="form-group" id="hasPermission">
     @mandateInputRadioGroup(
@@ -51,7 +51,7 @@
   <button class="button" id="continue" type="submit">@Messages("continue-button")</button>
 
   <div id="view-all-clients-div">
-    <a id="submit" class="button view-all-clients" href="@routes.AgentSummaryController.view(service)" data-journey-click="agent-client-mandate:click:view-all-clients">@Messages("agent.all-my-clients.button")</a>
+    <a id="submit" class="button view-all-clients" href="@routes.AgentSummaryController.view()" data-journey-click="agent-client-mandate:click:view-all-clients">@Messages("agent.all-my-clients.button")</a>
   </div>
 
 }

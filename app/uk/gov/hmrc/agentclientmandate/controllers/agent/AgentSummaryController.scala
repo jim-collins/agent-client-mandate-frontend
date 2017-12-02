@@ -73,7 +73,7 @@ trait AgentSummaryController extends FrontendController with Actions with Delega
                 agentDetails <- agentClientMandateService.fetchAgentDetails()
                 _ <- dataCacheService.cacheFormData[String](screenReaderTextId, Messages("client.summary.hidden.client_activated", x.clientDisplayName))
               } yield {
-                Redirect(routes.AgentSummaryController.view(service))
+                Redirect(routes.AgentSummaryController.view(Some(service)))
               }
             case _ => throw new RuntimeException("Failed to fetch client")
           }

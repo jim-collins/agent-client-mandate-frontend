@@ -12,7 +12,7 @@
 
 @pageHeadersAndError(backLink, "pre-heading", Messages("client.review-agent.preheader"), "header", Messages("client.review-agent.header"))
 
-   @form(action = routes.ReviewMandateController.submit(mandate.subscription.service.id)) {
+   @form(action = routes.ReviewMandateController.submit()) {
      <div class="form-group">
 
        <div class="grid-wrapper row-border">
@@ -47,7 +47,7 @@
          </div>
 
          <div class="grid grid-1-6 cya-change">
-           <a href='@routes.CollectEmailController.edit(service)' id="edit-client-own-email">
+           <a href='@routes.CollectEmailController.edit()' id="edit-client-own-email">
              @Messages("edit-link")
              <span class="visuallyhidden">@Messages("client.review-agent.own.email")</span>
            </a>
@@ -64,7 +64,7 @@
          </div>
 
          <div class="grid grid-1-6 cya-change">
-           <a href='@routes.SearchMandateController.view(service)' id="edit-agent-reference-number">
+           <a href='@routes.SearchMandateController.view()' id="edit-agent-reference-number">
              @Messages("edit-link")
              <span class="visuallyhidden">>@Messages("client.review-agent.agent-reference")</span>
            </a>

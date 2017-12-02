@@ -74,7 +74,7 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
               dataCacheService.cacheFormData[ClientDisplayName](clientDisplayNameFormId, data) map { cachedData =>
                 redirectUrl match {
                   case Some(redirect) => Redirect(redirect.url)
-                  case None => Redirect(routes.OverseasClientQuestionController.view(service))
+                  case None => Redirect(routes.OverseasClientQuestionController.view())
                 }
               })
       }
@@ -90,7 +90,7 @@ trait ClientDisplayNameController extends FrontendController with Actions with M
   private def getBackLink(service: String, redirectUrl: Option[ContinueUrl]): Option[String] = {
     redirectUrl match {
       case Some(x) => Some(x.url)
-      case None => Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.CollectAgentEmailController.view(service).url)
+      case None => Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.CollectAgentEmailController.view().url)
     }
   }
 }

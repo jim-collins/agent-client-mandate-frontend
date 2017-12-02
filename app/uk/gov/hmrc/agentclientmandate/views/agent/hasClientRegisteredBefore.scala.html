@@ -13,7 +13,7 @@
   @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.client-prev-registered.header"),
   Some(mandateErrorSummary(prevRegisteredForm, "agent.client-permission.error.general")))
 
-  @form(action = routes.HasClientRegisteredBeforeController.submit(service, callingPage)) {
+  @form(action = routes.HasClientRegisteredBeforeController.submit(callingPage)) {
 
     <div class="form-group" id="registeredBefore">
       @mandateInputRadioGroup(

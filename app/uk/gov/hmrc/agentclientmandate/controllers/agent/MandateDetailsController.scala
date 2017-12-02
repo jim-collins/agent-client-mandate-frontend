@@ -50,9 +50,9 @@ trait MandateDetailsController extends FrontendController with Actions with Mand
         case Some(agentEmail) =>
           dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) map {
             case Some(x) => Ok(views.html.agent.mandateDetails(agentEmail.email, service, x.name, getBackLink(service, callingPage)))
-            case _ => Redirect(routes.ClientDisplayNameController.view(service))
+            case _ => Redirect(routes.ClientDisplayNameController.view())
           }
-        case _ => Future.successful(Redirect(routes.CollectAgentEmailController.addClient(service)))
+        case _ => Future.successful(Redirect(routes.CollectAgentEmailController.addClient()))
       }
   }
 
@@ -61,14 +61,14 @@ trait MandateDetailsController extends FrontendController with Actions with Mand
     for {
       mandateId <- mandateService.createMandate(service)
     } yield {
-      Redirect(routes.UniqueAgentReferenceController.view(service))
+      Redirect(routes.UniqueAgentReferenceController.view())
     }
   }
 
   private def getBackLink(service: String, callingPage: String) = {
     callingPage match {
-      case PaySAQuestionController.controllerId => Some(routes.PaySAQuestionController.view(service).url)
-      case _ => Some(routes.OverseasClientQuestionController.view(service).url)
+      case PaySAQuestionController.controllerId => Some(routes.PaySAQuestionController.view().url)
+      case _ => Some(routes.OverseasClientQuestionController.view().url)
     }
   }
 }

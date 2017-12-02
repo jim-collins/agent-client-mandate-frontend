@@ -121,8 +121,8 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
 
   private def redirect(service: String, mode: Option[String]) = {
     mode match {
-      case Some("edit") => Redirect(routes.ReviewMandateController.view(service))
-      case _ => Redirect(routes.SearchMandateController.view(service))
+      case Some("edit") => Redirect(routes.ReviewMandateController.view())
+      case _ => Redirect(routes.SearchMandateController.view())
     }
   }
 
@@ -133,7 +133,7 @@ trait CollectEmailController extends FrontendController with Actions with Mandat
 
   private def getBackLink(service: String, mode: Option[String])(implicit hc: HeaderCarrier, ac: AuthContext, request: Request[AnyContent]) :Future[Option[String]]= {
     mode match {
-      case Some("edit") => Future.successful(Some(routes.ReviewMandateController.view(service).url))
+      case Some("edit") => Future.successful(Some(routes.ReviewMandateController.view().url))
       case _ => {
         dataCacheService.fetchAndGetFormData[String](backLinkId).map(backLink =>
           backLink match {

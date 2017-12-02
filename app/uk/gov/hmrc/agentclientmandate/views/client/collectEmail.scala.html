@@ -14,7 +14,7 @@
       @Messages("client.collect-email.lede")
     </p>
 
-  @form(action = routes.CollectEmailController.submit(service, mode)) {
+  @form(action = routes.CollectEmailController.submit(mode)) {
 
     @mandateInput(addEmailForm("email"),
       '_label -> Messages("client.collect-email.email.label"),
