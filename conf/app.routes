@@ -38,11 +38,13 @@ GET     /agent/service             uk.gov.hmrc.agentclientmandate.controllers.ag
 POST    /agent/service             uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.submit
 
 GET     /agent/add-client      uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.addClient(service = "ated")
+GET     /agent/edit-email      uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.editFromSummary(service = "ated")
 GET     /agent/email           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.view(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
 POST    /agent/email           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.submit(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
 GET     /agent/email-session     uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.getAgentEmail(service = "ated")
 
 GET     /agent/client-display-name           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.view(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
+GET     /agent/edit-client-display-name      uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.editFromSummary(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
 POST    /agent/client-display-name           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.submit(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
 GET     /agent/client-display-name-session   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.getClientDisplayName(service = "ated")
 

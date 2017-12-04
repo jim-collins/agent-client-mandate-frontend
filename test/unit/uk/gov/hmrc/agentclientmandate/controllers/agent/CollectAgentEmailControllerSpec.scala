@@ -53,7 +53,6 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
         val result = route(FakeRequest(POST, s"/mandate/agent/email")).get
         status(result) mustNot be(NOT_FOUND)
       }
-
     }
 
     "redirect to login page for UNAUTHENTICATED agent" when {
@@ -64,7 +63,6 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           redirectLocation(result).get must include("/gg/sign-in")
         }
       }
-
     }
 
     "redirect to unauthorised page for UNAUTHORISED agent" when {
@@ -75,7 +73,6 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           redirectLocation(result).get must include("/gg/sign-in")
         }
       }
-
     }
 
     "return 'what is your email address' for AUTHORISED agent who is editing the details of new client to be added" when {
@@ -90,8 +87,15 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
         }
       }
 
+      "agents try to edit their email address redirecting to 'what is your email address' view pre-populated and the data has been cached" in {
+        editEmailAuthorisedAgent(Some(agentEmail)) { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What email address do you want to use for this client? - GOV.UK")
+          document.getElementById("email").`val`() must be("aa@aa.com")
+        }
+      }
     }
-
 
     "return 'what is your email address' for AUTHORISED agent" when {
 
@@ -107,6 +111,20 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
           document.getElementById("email").`val`() must be("")
           document.getElementById("submit").text() must be("Continue")
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[AgentEmail](Matchers.any())(Matchers.any(), Matchers.any())
+        }
+      }
+
+      "agents try to edit their email address redirecting to 'what is your email address' view and the data hasn't been cached" in {
+        editEmailAuthorisedAgent(None, Some(ContinueUrl("/api/anywhere"))) { result =>
+          status(result) must be(OK)
+          val document = Jsoup.parse(contentAsString(result))
+          document.title() must be("What email address do you want to use for this client? - GOV.UK")
+          document.getElementById("header").text() must include("What email address do you want to use for this client?")
+          document.getElementById("pre-header").text() must be("This section is: Add a client")
+          document.getElementById("info").text() must include(s"We will use this email address to send you notifications about this client.")
+          document.getElementById("email_field").text() must be("What email address do you want to use for this client?")
+          document.getElementById("email").`val`() must be("")
+          document.getElementById("submit").text() must be("Continue")
         }
       }
 
@@ -261,6 +279,17 @@ class CollectAgentEmailControllerSpec extends PlaySpec with OneServerPerSuite wi
     AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
     when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(formId1))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
     val result = TestCollectAgentEmailController.view(service, redirectUrl).apply(SessionBuilder.buildRequestWithSession(userId))
+    test(result)
+  }
+
+  def editEmailAuthorisedAgent(cachedData: Option[AgentEmail] = None, redirectUrl: Option[ContinueUrl]=None)(test: Future[Result] => Any) {
+    val userId = s"user-${UUID.randomUUID}"
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val user = AuthBuilder.createOrgAuthContext(userId, "name")
+    AuthBuilder.mockAuthorisedAgent(userId, mockAuthConnector)
+    when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(formId1))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(cachedData))
+    when(mockDataCacheService.fetchAndGetFormData[String](Matchers.eq(TestCollectAgentEmailController.callingPageCacheId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some("callingPage")))
+    val result = TestCollectAgentEmailController.editFromSummary(service).apply(SessionBuilder.buildRequestWithSession(userId))
     test(result)
   }
 

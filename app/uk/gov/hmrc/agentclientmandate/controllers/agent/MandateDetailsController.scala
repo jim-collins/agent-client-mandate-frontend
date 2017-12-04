@@ -46,13 +46,19 @@ trait MandateDetailsController extends FrontendController with Actions with Mand
 
   def view(service: String, callingPage: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit authContext => implicit request =>
-      dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) flatMap {
-        case Some(agentEmail) =>
-          dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId) map {
-            case Some(x) => Ok(views.html.agent.mandateDetails(agentEmail.email, service, x.name, getBackLink(service, callingPage)))
-            case _ => Redirect(routes.ClientDisplayNameController.view())
-          }
-        case _ => Future.successful(Redirect(routes.CollectAgentEmailController.addClient()))
+      for {
+        agentEmail <- dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId)
+        clientDisplayName <- dataCacheService.fetchAndGetFormData[ClientDisplayName](clientDisplayNameFormId)
+        _ <- dataCacheService.cacheFormData[String](callingPageCacheId, callingPage)
+      } yield  {
+        agentEmail match {
+          case Some(email) =>
+            clientDisplayName match {
+              case Some(x) => Ok(views.html.agent.mandateDetails(email.email, service, x.name, getBackLink(service, callingPage)))
+              case _ => Redirect(routes.ClientDisplayNameController.view())
+            }
+          case _ => Redirect(routes.CollectAgentEmailController.addClient())
+        }
       }
   }
 
