@@ -6,7 +6,13 @@
 @import uk.gov.hmrc.agentclientmandate.views.html._
 @import uk.gov.hmrc.agentclientmandate.utils.DelegationUtils
 
-@main_template(title = Messages("agent.unique-reference.title", clientDisplayDetails.mandateId), delegatedService = Some(service)) {
+@analyticsJs = {
+  var id = "@clientDisplayDetails.mandateId";
+  var title = document.title.replace(id, 'provided');
+  ga('set', 'title', title);
+}
+
+@main_template(title = Messages("agent.unique-reference.title", clientDisplayDetails.mandateId), delegatedService = Some(service), analyticsAdditionalJs = Some(analyticsJs)) {
 
     <div class="transaction-banner--complete" id="banner">
       <h1 id="banner-text">
