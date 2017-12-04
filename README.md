@@ -16,7 +16,7 @@ Mandate life cycle
 
 ### Useful Pages for external services to link to
 
-| PATH | Supported Methods |
+| PATH | Supported Methods |.conf
 |------|-------------------|
 | ```/mandate/agent/service ``` | Shows a list of services that the agent can create mandates for |
 | ```/mandate/agent/summary/:service``` | Shows any pending or current clients for a given service. Also has a link to create a mandate for a new client |
@@ -55,7 +55,7 @@ i.e.
 Requirements
 ------------
 
-This service is written in [Scala] and [Play], so needs at least a [JRE] to run.
+This service is written in [Scala] and [Play], so needs the latest [JRE] to run.
 
 
 Authentication
