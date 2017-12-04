@@ -10,15 +10,18 @@
 
 @analyticsJs = {
   var id = "@mandateId";
+  var client = "@clientParty";
   var page = document.location.pathname.replace('/' + id, '');
+  var title = document.title.replace(client, 'client');
   ga('set', 'page', page);
+  ga('set', 'title', title);
 }
 
-@main_template(title = Messages("agent.edit-mandate-details.title"),
+@main_template(title = Messages("agent.edit-mandate-details.title", clientParty.getOrElse("")),
   delegatedService = Some(service),
   analyticsAdditionalJs = Some(analyticsJs)) {
 
-  @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase), "header", Messages("agent.edit-mandate-details.header"),
+  @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase), "header", Messages("agent.edit-mandate-details.header", clientParty.getOrElse("")),
     Some(mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")))
 
   <div class="form-group">

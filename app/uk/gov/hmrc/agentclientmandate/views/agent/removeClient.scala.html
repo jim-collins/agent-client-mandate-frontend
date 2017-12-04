@@ -8,8 +8,11 @@
 
 @analyticsJs = {
   var id = "@mandateId";
+  var client = "@clientName";
   var page = document.location.pathname.replace('/' + id, '');
+  var title = document.title.replace(client, 'client');
   ga('set', 'page', page);
+  ga('set', 'title', title);
 }
 
 @main_template(title = Messages("agent.remove-client.header", clientName), delegatedService = Some(service), analyticsAdditionalJs = Some(analyticsJs)) {
