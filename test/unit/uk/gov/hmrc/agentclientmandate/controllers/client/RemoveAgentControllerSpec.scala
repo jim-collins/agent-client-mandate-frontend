@@ -44,12 +44,12 @@ class RemoveAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
   "RemoveAgentController" must {
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/remove/1" in {
-        val result = route(FakeRequest(GET, "/mandate/client/remove/ATED/1")).get
+        val result = route(FakeRequest(GET, "/mandate/client/remove/1")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/client/remove/1" in {
-        val result = route(FakeRequest(POST, s"/mandate/client/remove/ATED/1/Acme")).get
+        val result = route(FakeRequest(POST, s"/mandate/client/remove/1/Acme")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }

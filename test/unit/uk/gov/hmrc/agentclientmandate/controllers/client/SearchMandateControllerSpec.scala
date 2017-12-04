@@ -45,7 +45,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/client/search" in {
-        val result = route(FakeRequest(GET, "/mandate/client/search/ATED")).get
+        val result = route(FakeRequest(GET, "/mandate/client/search")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -111,7 +111,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val returnCache = cachedData.copy(mandate = Some(mandate1))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/review"))
         }
       }
 
@@ -124,7 +124,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val returnCache = cachedData.copy(mandate = Some(mandate1))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/review"))
         }
       }
 
@@ -148,7 +148,7 @@ class SearchMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
         val returnCache = ClientCache(mandate = Some(mandate))
         submitWithAuthorisedClient(request = fakeRequest, cachedData = None, mandate = Some(mandate), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/email/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/email"))
         }
       }
     }

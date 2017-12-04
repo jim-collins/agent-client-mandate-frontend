@@ -44,7 +44,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/review" in {
-        val result = route(FakeRequest(GET, "/mandate/client/review/ATED")).get
+        val result = route(FakeRequest(GET, "/mandate/client/review")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -93,7 +93,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       "client requests(GET) for review mandate view, but mandate has not been cached on search mandate submit" in {
         viewWithAuthorisedClient(Some(ClientCache(email = Some(ClientEmail(email = "aa@test.com"))))) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/search/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/search"))
         }
       }
 
@@ -104,7 +104,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       "client requests(GET) for review mandate view, but there is no cache" in {
         viewWithAuthorisedClient() { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/email/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/email"))
         }
       }
 
@@ -114,7 +114,7 @@ class ReviewMandateControllerSpec extends PlaySpec with OneServerPerSuite with M
       "client submits form" in {
         submitWithAuthorisedClient { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/declaration/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/declaration"))
         }
       }
     }

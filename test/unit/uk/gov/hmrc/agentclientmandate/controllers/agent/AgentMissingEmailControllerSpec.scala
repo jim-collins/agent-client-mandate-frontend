@@ -42,12 +42,12 @@ class AgentMissingEmailControllerSpec  extends PlaySpec with OneServerPerSuite w
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/agent/email/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/email/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/email")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/agent/email/:service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/email/$service")).get
+        val result = route(FakeRequest(POST, s"/mandate/agent/email")).get
         status(result) mustNot be(NOT_FOUND)
       }
 

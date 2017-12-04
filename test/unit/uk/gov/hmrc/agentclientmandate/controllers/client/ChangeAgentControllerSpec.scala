@@ -43,12 +43,12 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
   "ChangeAgentController" must {
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/change/agentName" in {
-        val result = route(FakeRequest(GET, "/mandate/client/change/ATED/1")).get
+        val result = route(FakeRequest(GET, "/mandate/client/change/1")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/client/change/agentName" in {
-        val result = route(FakeRequest(POST, s"/mandate/client/change/ATED/1")).get
+        val result = route(FakeRequest(POST, s"/mandate/client/change/1")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -121,7 +121,7 @@ class ChangeAgentControllerSpec extends PlaySpec with OneServerPerSuite with Moc
           .thenReturn(Future.successful("Agent Limited"))
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/client/remove/1/confirmation/ATED")
+          redirectLocation(result).get must include("/client/remove/1/confirmation")
         }
       }
     }

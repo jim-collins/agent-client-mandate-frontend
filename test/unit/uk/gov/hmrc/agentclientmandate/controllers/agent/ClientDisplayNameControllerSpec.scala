@@ -45,17 +45,17 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/agent/client-display-name/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/client-display-name/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/client-display-name")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "GET /mandate/agent/client-display-name/:service?redirectUrl=http://" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/client-display-name/$service?redirectUrl=http://")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/client-display-name?redirectUrl=http://")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/agent/client-display-name/:service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/client-display-name/$service")).get
+        val result = route(FakeRequest(POST, s"/mandate/agent/client-display-name")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -113,7 +113,7 @@ class ClientDisplayNameControllerSpec extends PlaySpec with OneServerPerSuite wi
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("clientDisplayName" -> "client display name")
         submitClientDisplayNameAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/agent/overseas-client-question/ATED"))
+          redirectLocation(result) must be(Some("/mandate/agent/overseas-client-question"))
           verify(mockDataCacheService, times(1)).cacheFormData[ClientDisplayName](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
         }
       }

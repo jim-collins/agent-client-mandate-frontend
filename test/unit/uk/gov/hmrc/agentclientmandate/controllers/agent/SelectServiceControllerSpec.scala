@@ -97,7 +97,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
         when(mockAgentClientMandateService.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(false))
         viewWithAuthorisedAgent { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/agent/summary/ated"))
+          redirectLocation(result) must be(Some("/mandate/agent/summary"))
         }
       }
 
@@ -105,7 +105,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
         when(mockAgentClientMandateService.doesAgentHaveMissingEmail(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())) thenReturn (Future.successful(true))
         viewWithAuthorisedAgent { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/agent/missing-email/ated"))
+          redirectLocation(result) must be(Some("/mandate/agent/missing-email"))
         }
       }
     }
@@ -116,7 +116,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("service" -> "ated")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/agent/summary/ated"))
+          redirectLocation(result) must be(Some("/mandate/agent/summary"))
         }
       }
 
@@ -125,7 +125,7 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("service" -> "ated")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/agent/missing-email/ated"))
+          redirectLocation(result) must be(Some("/mandate/agent/missing-email"))
         }
       }
     }
@@ -142,17 +142,6 @@ class SelectServiceControllerSpec extends PlaySpec with OneServerPerSuite with M
       }
     }
 
-
-//    "redirect to missing email page" when {
-//      "agent is missing emails from mandates" in {
-//
-//        viewAuthorisedAgent(None, agentMissingEmail = true) { result =>
-//
-//          status(result) must be(SEE_OTHER)
-//          redirectLocation(result).get must include("/mandate/agent/missing-email/ATED")
-//        }
-//      }
-//    }
   }
 
   val mockAuthConnector = mock[AuthConnector]

@@ -5,70 +5,70 @@ GET     /keep-alive                     uk.gov.hmrc.agentclientmandate.controlle
 
 ## Client URIs ##
 
-GET     /client/email/          uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.view(service = "ated", returnUrl: Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
+GET     /client/email          uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.view(service = "ated", returnUrl: Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
 GET     /client/email/back     uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.back(service = "ated")
 GET     /client/email/edit     uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.edit(service = "ated")
-POST    /client/email/          uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.submit(service = "ated", mode: Option[String] ?= None)
+POST    /client/email          uk.gov.hmrc.agentclientmandate.controllers.client.CollectEmailController.submit(service = "ated", mode: Option[String] ?= None)
 
-GET     /client/search/         uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.view(service = "ated")
-POST    /client/search/         uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.submit(service = "ated")
+GET     /client/search         uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.view(service = "ated")
+POST    /client/search         uk.gov.hmrc.agentclientmandate.controllers.client.SearchMandateController.submit(service = "ated")
 
-GET     /client/review/         uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.view(service = "ated")
-POST    /client/review/             uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.submit(service = "ated")
+GET     /client/review         uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.view(service = "ated")
+POST    /client/review             uk.gov.hmrc.agentclientmandate.controllers.client.ReviewMandateController.submit(service = "ated")
 
-GET     /client/declaration/        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.view(service = "ated")
-POST    /client/declaration/        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.submit(service = "ated")
+GET     /client/declaration        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.view(service = "ated")
+POST    /client/declaration        uk.gov.hmrc.agentclientmandate.controllers.client.MandateDeclarationController.submit(service = "ated")
 
-GET     /client/confirmation/     uk.gov.hmrc.agentclientmandate.controllers.client.MandateConfirmationController.view(service = "ated")
+GET     /client/confirmation     uk.gov.hmrc.agentclientmandate.controllers.client.MandateConfirmationController.view(service = "ated")
 
 GET     /client/remove/return-to-service           uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.returnToService
-GET     /client/remove/:id/                uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(service = "ated", id: String, returnUrl: uk.gov.hmrc.play.binders.ContinueUrl)
-POST    /client/remove/:id/                uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.submit(service = "ated", id: String)
-GET     /client/remove/:id/confirmation/   uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.confirmation(service = "ated", id: String)
+GET     /client/remove/:id                uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.view(service = "ated", id: String, returnUrl: uk.gov.hmrc.play.binders.ContinueUrl)
+POST    /client/remove/:id                uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.submit(service = "ated", id: String)
+GET     /client/remove/:id/confirmation   uk.gov.hmrc.agentclientmandate.controllers.client.RemoveAgentController.confirmation(service = "ated", id: String)
 
 GET     /client/change/:mandateId         uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.view(service = "ated", mandateId: String)
 POST    /client/change/:mandateId         uk.gov.hmrc.agentclientmandate.controllers.client.ChangeAgentController.submit(service = "ated", mandateId: String)
 
 ## Agent URIs ##
 
-GET     /agent/details/:callingPage/  uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.view(service = "ated", callingPage: String)
-POST    /agent/details/               uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.submit(service = "ated")
+GET     /agent/details/:callingPage  uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.view(service = "ated", callingPage: String)
+POST    /agent/details               uk.gov.hmrc.agentclientmandate.controllers.agent.MandateDetailsController.submit(service = "ated")
 
 GET     /agent/service             uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.view
 POST    /agent/service             uk.gov.hmrc.agentclientmandate.controllers.agent.SelectServiceController.submit
 
-GET     /agent/add-client/      uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.addClient(service = "ated")
-GET     /agent/email/           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.view(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
-POST    /agent/email/           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.submit(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
-GET     /agent/email-session/     uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.getAgentEmail(service = "ated")
+GET     /agent/add-client      uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.addClient(service = "ated")
+GET     /agent/email           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.view(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
+POST    /agent/email           uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.submit(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
+GET     /agent/email-session     uk.gov.hmrc.agentclientmandate.controllers.agent.CollectAgentEmailController.getAgentEmail(service = "ated")
 
-GET     /agent/client-display-name/           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.view(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
-POST    /agent/client-display-name/           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.submit(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
-GET     /agent/client-display-name-session/   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.getClientDisplayName(service = "ated")
+GET     /agent/client-display-name           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.view(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
+POST    /agent/client-display-name           uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.submit(service = "ated", redirectUrl : Option[uk.gov.hmrc.play.binders.ContinueUrl] ?= None)
+GET     /agent/client-display-name-session   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientDisplayNameController.getClientDisplayName(service = "ated")
 
-GET     /agent/old-nonuk-mandate-from-session/   uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.getOldMandateFromSession(service = "ated")
+GET     /agent/old-nonuk-mandate-from-session   uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.getOldMandateFromSession(service = "ated")
 
-GET     /agent/overseas-client-question/      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.view(service = "ated")
-POST    /agent/overseas-client-question/      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.submit(service = "ated")
+GET     /agent/overseas-client-question      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.view(service = "ated")
+POST    /agent/overseas-client-question      uk.gov.hmrc.agentclientmandate.controllers.agent.OverseasClientQuestionController.submit(service = "ated")
 
-GET     /agent/nrl-question/            uk.gov.hmrc.agentclientmandate.controllers.agent.NRLQuestionController.view(service = "ated")
-POST    /agent/nrl-question/            uk.gov.hmrc.agentclientmandate.controllers.agent.NRLQuestionController.submit(service = "ated")
+GET     /agent/nrl-question            uk.gov.hmrc.agentclientmandate.controllers.agent.NRLQuestionController.view(service = "ated")
+POST    /agent/nrl-question            uk.gov.hmrc.agentclientmandate.controllers.agent.NRLQuestionController.submit(service = "ated")
 
-GET     /agent/paySA-question/            uk.gov.hmrc.agentclientmandate.controllers.agent.PaySAQuestionController.view(service = "ated")
-POST    /agent/paySA-question/            uk.gov.hmrc.agentclientmandate.controllers.agent.PaySAQuestionController.submit(service = "ated")
+GET     /agent/paySA-question            uk.gov.hmrc.agentclientmandate.controllers.agent.PaySAQuestionController.view(service = "ated")
+POST    /agent/paySA-question            uk.gov.hmrc.agentclientmandate.controllers.agent.PaySAQuestionController.submit(service = "ated")
 
-GET     /agent/client-permission/:callingPage/   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.view(service = "ated", callingPage: String)
-POST    /agent/client-permission/:callingPage/   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.submit(service = "ated", callingPage: String)
+GET     /agent/client-permission/:callingPage   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.view(service = "ated", callingPage: String)
+POST    /agent/client-permission/:callingPage   uk.gov.hmrc.agentclientmandate.controllers.agent.ClientPermissionController.submit(service = "ated", callingPage: String)
 
-GET     /agent/client-registered-previously/:callingPage/   uk.gov.hmrc.agentclientmandate.controllers.agent.HasClientRegisteredBeforeController.view(service = "ated", callingPage: String)
-POST    /agent/client-registered-previously/:callingPage/   uk.gov.hmrc.agentclientmandate.controllers.agent.HasClientRegisteredBeforeController.submit(service = "ated", callingPage: String)
+GET     /agent/client-registered-previously/:callingPage   uk.gov.hmrc.agentclientmandate.controllers.agent.HasClientRegisteredBeforeController.view(service = "ated", callingPage: String)
+POST    /agent/client-registered-previously/:callingPage   uk.gov.hmrc.agentclientmandate.controllers.agent.HasClientRegisteredBeforeController.submit(service = "ated", callingPage: String)
 
-GET     /agent/search-previous/:callingPage/       uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.view(service = "ated", callingPage: String)
-POST     /agent/search-previous/:callingPage/      uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.submit(service = "ated", callingPage: String)
+GET     /agent/search-previous/:callingPage       uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.view(service = "ated", callingPage: String)
+POST     /agent/search-previous/:callingPage      uk.gov.hmrc.agentclientmandate.controllers.agent.PreviousMandateRefController.submit(service = "ated", callingPage: String)
 
-GET     /agent/unique-reference/    uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service = "ated")
+GET     /agent/unique-reference    uk.gov.hmrc.agentclientmandate.controllers.agent.UniqueAgentReferenceController.view(service = "ated")
 
-GET     /agent/summary/                      uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.view(service = "ated", tabName : Option[String] ?= None)
+GET     /agent/summary                      uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.view(service = "ated", tabName : Option[String] ?= None)
 GET     /agent/doDelegation/:mandateId       uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.doDelegation(service = "ated", mandateId: String)
 GET     /agent/summary/activate/:mandateId   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.activate(service = "ated", mandateId: String)
 POST    /agent/summary/update                uk.gov.hmrc.agentclientmandate.controllers.agent.AgentSummaryController.update(service = "ated")
@@ -85,16 +85,16 @@ GET     /agent/remove-client/showConfirmation/:mandateId   uk.gov.hmrc.agentclie
 GET     /agent/edit-client/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.view(service = "ated", mandateId: String)
 POST    /agent/edit-client/:mandateId             uk.gov.hmrc.agentclientmandate.controllers.agent.EditMandateDetailsController.submit(service = "ated", mandateId: String)
 
-GET     /agent/missing-email/                   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentMissingEmailController.view(service = "ated")
-POST    /agent/missing-email/                   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentMissingEmailController.submit(service = "ated")
+GET     /agent/missing-email                   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentMissingEmailController.view(service = "ated")
+POST    /agent/missing-email                   uk.gov.hmrc.agentclientmandate.controllers.agent.AgentMissingEmailController.submit(service = "ated")
 
-GET     /client/partial-banner/:clientId/       uk.gov.hmrc.agentclientmandate.controllers.client.ClientBannerPartialController.getBanner(clientId: String, service = "ated", returnUrl: uk.gov.hmrc.play.binders.ContinueUrl)
+GET     /client/partial-banner/:clientId       uk.gov.hmrc.agentclientmandate.controllers.client.ClientBannerPartialController.getBanner(clientId: String, service = "ated", returnUrl: uk.gov.hmrc.play.binders.ContinueUrl)
 
-GET     /client/details/:clientId/              uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.getClientMandateDetails(clientId: String, service = "ated", returnUrl: uk.gov.hmrc.play.binders.ContinueUrl)
-GET     /client/update-email/:clientId/         uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.view(clientId: String, service = "ated", returnUrl: uk.gov.hmrc.play.binders.ContinueUrl)
-POST    /client/update-email/                   uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.submit(service = "ated")
+GET     /client/details/:clientId              uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.getClientMandateDetails(clientId: String, service = "ated", returnUrl: uk.gov.hmrc.play.binders.ContinueUrl)
+GET     /client/update-email/:clientId         uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.view(clientId: String, service = "ated", returnUrl: uk.gov.hmrc.play.binders.ContinueUrl)
+POST    /client/update-email                   uk.gov.hmrc.agentclientmandate.controllers.client.EditEmailController.submit(service = "ated")
 
-GET     /agent/edit/                    uk.gov.hmrc.agentclientmandate.controllers.agent.AgencyDetailsController.view(service = "ated")
+GET     /agent/edit                    uk.gov.hmrc.agentclientmandate.controllers.agent.AgencyDetailsController.view(service = "ated")
 
 GET     /agent/details/edit/businessDetails        uk.gov.hmrc.agentclientmandate.controllers.agent.UpdateAddressDetailsController.view(service = "ated")
 POST    /agent/details/edit/businessDetails        uk.gov.hmrc.agentclientmandate.controllers.agent.UpdateAddressDetailsController.submit(service = "ated")
