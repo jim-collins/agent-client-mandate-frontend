@@ -30,7 +30,7 @@ object DelegationUtils extends ServicesConfig {
       principalName = clientName,
       attorneyName = ac.principal.name.getOrElse("Agent"),
       link = Link(
-        url = getReturnUrl(service),
+        url = getReturnUrl,
         text = Messages("mandate.agent.delegation.url.text")
     ),
       principalTaxIdentifiers = getPrincipalTaxIdentifiers(service, serviceId)
@@ -44,7 +44,7 @@ object DelegationUtils extends ServicesConfig {
     }
   }
 
-  def getReturnUrl(service: String): String = s"""${getString("microservice.return-part-url")}/$service"""
+  def getReturnUrl: String = s"""${getString("microservice.return-part-url")}"""
 
   def getDelegatedServiceRedirectUrl(service: String): String = {
     getString(s"microservice.delegated-service-redirect-url.${service.toLowerCase}")
