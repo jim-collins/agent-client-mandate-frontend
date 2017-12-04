@@ -53,8 +53,8 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         viewWithAuthorisedAgent(Some(mandate)) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
-          document.title() must be("Edit client - GOV.UK")
-          document.getElementById("header").text() must include("Edit client")
+          document.title() must be("Edit test client4 - GOV.UK")
+          document.getElementById("header").text() must include("Edit test client4")
           document.getElementById("pre-header").text() must include("Manage your ATED service")
           document.getElementById("sub-heading").text() must be("Unique authorisation number AS123456")
           document.getElementById("displayName_field").text() must include("Display name")
