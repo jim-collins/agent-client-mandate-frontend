@@ -18,7 +18,7 @@
         <td id="agency-name-header" class="text-bold">@Messages("agent.edit-details.agency.name")</td>
         <td id="agency-name-val" colspan="2">@agentDetails.agentName</td>
         <td valign="top">
-            <a href='@routes.UpdateAddressDetailsController.view(service)' id="agency-name-edit" aria-label='@Messages("ated.review-details.edit-registered-address.title")'>@Messages("edit-link")
+            <a href='@routes.UpdateAddressDetailsController.view()' id="agency-name-edit" aria-label='@Messages("ated.review-details.edit-registered-address.title")'>@Messages("edit-link")
                 <span class="screen-reader-text">@Messages("edit-link")</span>
             </a>
         </td>
@@ -36,7 +36,7 @@
             </div>
         </td>
         <td valign="top">
-            <a href='@routes.UpdateAddressDetailsController.view(service)' id="agency-address-edit" aria-label='@Messages("ated.review-details.edit-registered-address.title")'>@Messages("edit-link")
+            <a href='@routes.UpdateAddressDetailsController.view()' id="agency-address-edit" aria-label='@Messages("ated.review-details.edit-registered-address.title")'>@Messages("edit-link")
                 <span class="screen-reader-text">@Messages("edit-link-1")</span>
             </a>
         </td>
@@ -52,7 +52,7 @@
             </div>
         </td>
         <td valign="top">
-            <a href='@routes.UpdateOcrDetailsController.view(service)' id="overseas-tax-reference-edit" aria-label='@Messages("ated.review-details.edit-overseas-tax-reference.title")'>@Messages("edit-link")
+            <a href='@routes.UpdateOcrDetailsController.view()' id="overseas-tax-reference-edit" aria-label='@Messages("ated.review-details.edit-overseas-tax-reference.title")'>@Messages("edit-link")
                 <span class="screen-reader-text">@Messages("edit-link")</span>
             </a>
         </td>

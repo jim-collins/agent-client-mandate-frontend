@@ -10,7 +10,7 @@
     @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase), "header", Messages("client.remove-agent.header", agentName, service.toUpperCase),
         Some(mandateErrorSummary(removeAgentForm, "yes-no.error.general", Some("client.remove-agent.error"))))
 
-    @form(action = routes.RemoveAgentController.submit(service, mandateId)) {
+    @form(action = routes.RemoveAgentController.submit(mandateId)) {
 
         <div class="form-group" id="removeAgent">
         @mandateInputRadioGroup(

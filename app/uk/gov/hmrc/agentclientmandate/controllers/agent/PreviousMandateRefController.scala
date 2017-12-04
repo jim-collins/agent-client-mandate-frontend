@@ -70,7 +70,7 @@ trait PreviousMandateRefController extends FrontendController with Actions with 
                 dataCacheService.cacheFormData[OldMandateReference](oldNonUkMandate, OldMandateReference(x.id,
                   x.subscription.referenceNumber.getOrElse(throw new RuntimeException("No Client Ref no. found!"))))
                 dataCacheService.cacheFormData[ClientCache](clientFormId, ClientCache(Some(ClientEmail(x.clientParty.map(_.contactDetails.email).getOrElse(""))), Some(x))) flatMap { cacheResp =>
-                  Future.successful(Redirect(addNonUkClientCorrespondenceUri(service, routes.PreviousMandateRefController.view(service, callingPage).url)))
+                  Future.successful(Redirect(addNonUkClientCorrespondenceUri(service, routes.PreviousMandateRefController.view(callingPage).url)))
                 }
               case None =>
                 val errorMsg = Messages("client.search-mandate.error.mandateRef.not-found-by-mandate-service")
@@ -90,6 +90,6 @@ trait PreviousMandateRefController extends FrontendController with Actions with 
   }
 
   private def getBackLink(service: String, callingPage: String) = {
-    Some(routes.HasClientRegisteredBeforeController.view(service, callingPage).url)
+    Some(routes.HasClientRegisteredBeforeController.view(callingPage).url)
   }
 }

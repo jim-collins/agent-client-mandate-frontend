@@ -45,7 +45,7 @@ class PreviousMandateRefControllerSpec extends PlaySpec with OneServerPerSuite w
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/agent/search-previous/nrl/ATED" in {
-        val result = route(FakeRequest(GET, "/mandate/agent/search-previous/nrl/ATED")).get
+        val result = route(FakeRequest(GET, "/mandate/agent/search-previous/nrl")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -108,7 +108,7 @@ class PreviousMandateRefControllerSpec extends PlaySpec with OneServerPerSuite w
         val returnCache = cachedData.copy(mandate = Some(mandate1))
         submitWithAuthorisedAgent(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("http://localhost:9933/ated-subscription/registered-business-address?backLinkUrl=http://localhost:9959/mandate/agent/search-previous/callingPage/ATED"))
+          redirectLocation(result) must be(Some("http://localhost:9933/ated-subscription/registered-business-address?backLinkUrl=http://localhost:9959/mandate/agent/search-previous/callingPage"))
         }
       }
 
@@ -121,7 +121,7 @@ class PreviousMandateRefControllerSpec extends PlaySpec with OneServerPerSuite w
         val returnCache = cachedData.copy(mandate = Some(mandate1))
         submitWithAuthorisedAgent(request = fakeRequest, cachedData = Some(cachedData), mandate = Some(mandate1), returnCache = returnCache) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("http://localhost:9933/ated-subscription/registered-business-address?backLinkUrl=http://localhost:9959/mandate/agent/search-previous/callingPage/ATED"))
+          redirectLocation(result) must be(Some("http://localhost:9933/ated-subscription/registered-business-address?backLinkUrl=http://localhost:9959/mandate/agent/search-previous/callingPage"))
         }
       }
 

@@ -57,14 +57,14 @@ trait OverseasClientQuestionController extends FrontendController with Actions w
         data => {
           dataCacheService.cacheFormData[OverseasClientQuestion](overseasTaxRefFormId, data)
           val isOverSeas = data.isOverseas.getOrElse(false)
-          if (isOverSeas) Redirect(routes.NRLQuestionController.view(service))
+          if (isOverSeas) Redirect(routes.NRLQuestionController.view())
           else
-            Redirect(routes.MandateDetailsController.view(service, controllerId))
+            Redirect(routes.MandateDetailsController.view(controllerId))
         }
       )
   }
 
   private def getBackLink(service: String) = {
-    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.ClientDisplayNameController.view(service).url)
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.ClientDisplayNameController.view().url)
   }
 }

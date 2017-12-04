@@ -44,7 +44,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/email" in {
-        val result = route(FakeRequest(GET, "/mandate/client/email/ATED")).get
+        val result = route(FakeRequest(GET, "/mandate/client/email")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -107,7 +107,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("submit").text() must be("Continue")
 
           document.getElementById("backLinkHref").text() must be("Back")
-          document.getElementById("backLinkHref").attr("href") must be("/mandate/client/review/ATED")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/client/review")
         }
 
       }
@@ -164,7 +164,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com")))
         submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = Some(cachedData), returnCache = returnData, mode = Some("edit")) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/review"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())
@@ -176,7 +176,7 @@ class CollectEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         val returnData = ClientCache(email = Some(ClientEmail("aa@aa.com")))
         submitWithAuthorisedClient(fakeRequest, isValidEmail = true, cachedData = None, returnCache = returnData) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/search/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/search"))
           verify(mockEmailService, times(1)).validate(Matchers.any())(Matchers.any())
           verify(mockDataCacheService, times(1)).fetchAndGetFormData[ClientCache](Matchers.any())(Matchers.any(), Matchers.any())
           verify(mockDataCacheService, times(1)).cacheFormData[ClientCache](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any())

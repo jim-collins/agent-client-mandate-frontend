@@ -40,12 +40,12 @@ class PaySAQuestionControllerSpec extends PlaySpec with OneServerPerSuite with B
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/agent/paySA-question/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/paySA-question/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/paySA-question")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/agent/paySA-question/:service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/paySA-question/$service")).get
+        val result = route(FakeRequest(POST, s"/mandate/agent/paySA-question")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -88,7 +88,7 @@ class PaySAQuestionControllerSpec extends PlaySpec with OneServerPerSuite with B
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("paySA" -> "true")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include(s"/mandate/agent/details/paySA/$service")
+          redirectLocation(result).get must include(s"/mandate/agent/details/paySA")
         }
       }
     }
@@ -98,7 +98,7 @@ class PaySAQuestionControllerSpec extends PlaySpec with OneServerPerSuite with B
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("paySA" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include(s"/mandate/agent/client-permission/paySA/$service")
+          redirectLocation(result).get must include(s"/mandate/agent/client-permission/paySA")
         }
       }
     }

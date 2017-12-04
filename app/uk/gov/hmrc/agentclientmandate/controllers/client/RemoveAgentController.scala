@@ -88,7 +88,7 @@ trait RemoveAgentController extends FrontendController with Actions {
           val removeAgent = data.yesNo.getOrElse(false)
           if (removeAgent) {
             acmService.removeAgent(mandateId).map { removedAgent =>
-              if (removedAgent) Redirect(routes.ChangeAgentController.view(service, mandateId))
+              if (removedAgent) Redirect(routes.ChangeAgentController.view(mandateId))
               else throw new RuntimeException("Agent Removal Failed")
             }
           }

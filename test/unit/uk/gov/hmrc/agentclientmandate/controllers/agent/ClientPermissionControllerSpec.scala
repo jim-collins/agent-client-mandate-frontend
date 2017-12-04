@@ -46,12 +46,12 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/agent/client-permission/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/client-permission/paySa/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/client-permission/paySa")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/agent/client-permission/:service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/client-permission/nrl/$service")).get
+        val result = route(FakeRequest(POST, s"/mandate/agent/client-permission/nrl")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -88,7 +88,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("continue").text() must be("Continue")
 
           document.getElementById("backLinkHref").text() must be("Back")
-          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ATED")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question")
         }
       }
 
@@ -105,7 +105,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("continue").text() must be("Continue")
 
           document.getElementById("backLinkHref").text() must be("Back")
-          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ATED")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question")
         }
       }
 
@@ -120,7 +120,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
           document.getElementById("continue").text() must be("Continue")
 
           document.getElementById("backLinkHref").text() must be("Back")
-          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/nrl-question/ATED")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/nrl-question")
         }
       }
       "agent requests(GET) for 'client permission' view for other service - it doesn't clear session cache for ated-subscription" in {
@@ -137,7 +137,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "true")
         submitWithAuthorisedAgent("", fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/mandate/agent/client-registered-previously//ATED")
+          redirectLocation(result).get must include("/mandate/agent/client-registered-previously")
         }
       }
     }
@@ -147,7 +147,7 @@ class ClientPermissionControllerSpec extends PlaySpec with OneServerPerSuite wit
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("hasPermission" -> "false")
         submitWithAuthorisedAgent("", fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/summary/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/summary?tabName=ATED"))
         }
       }
     }

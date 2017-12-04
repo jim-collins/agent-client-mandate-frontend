@@ -55,19 +55,19 @@ trait ReviewMandateController extends FrontendController with Actions with Manda
                 dataCacheService.cacheFormData[ClientCache](clientFormId, cache.copy(mandate = Some(updatedMandate))) flatMap { cachedData =>
                   Future.successful(Ok(views.html.client.reviewMandate(service, updatedMandate, getBackLink(service))))
                 }
-              case None => Future.successful(Redirect(routes.SearchMandateController.view(service)))
+              case None => Future.successful(Redirect(routes.SearchMandateController.view()))
             }
-          case None => Future.successful(Redirect(routes.CollectEmailController.view(service)))
+          case None => Future.successful(Redirect(routes.CollectEmailController.view()))
         }
   }
 
   def submit(service: String) = AuthorisedFor(ClientRegime(Some(service)), GGConfidence) {
     implicit authContext =>
       implicit request =>
-        Redirect(routes.MandateDeclarationController.view(service))
+        Redirect(routes.MandateDeclarationController.view())
   }
 
   private def getBackLink(service: String) = {
-    Some(routes.SearchMandateController.view(service).url)
+    Some(routes.SearchMandateController.view().url)
   }
 }

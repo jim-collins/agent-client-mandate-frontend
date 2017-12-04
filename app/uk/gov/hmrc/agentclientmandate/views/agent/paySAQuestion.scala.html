@@ -13,7 +13,7 @@
     @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.paySA-question.header"),
         Some(mandateErrorSummary(paySAQuestionForm, "agent.paySA-question.error.general")))
 
-@form(action = routes.PaySAQuestionController.submit(service)) {
+@form(action = routes.PaySAQuestionController.submit()) {
 
 <div class="form-group" id="paySA">
     @mandateInputRadioGroup(

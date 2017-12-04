@@ -43,13 +43,13 @@ class HasClientRegisteredBeforeControllerSpec extends PlaySpec with OneServerPer
 
     "not return NOT_FOUND at route " when {
 
-      "GET /mandate/agent/client-registered-previously/:callingPage/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/client-registered-previously/callingPage/ATED")).get
+      "GET /mandate/agent/client-registered-previously/:callingPage" in {
+        val result = route(FakeRequest(GET, s"/mandate/agent/client-registered-previously/callingPage")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/agent/client-registered-previously/callingPage/ATED" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/client-registered-previously/callingPage/ATED")).get
+        val result = route(FakeRequest(POST, s"/mandate/agent/client-registered-previously/callingPage")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -105,7 +105,7 @@ class HasClientRegisteredBeforeControllerSpec extends PlaySpec with OneServerPer
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("prevRegistered" -> "true")
         submitWithAuthorisedAgent("callPage", fakeRequest, Some(PrevRegistered(Some(true)))) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/mandate/agent/search-previous/callPage/ATED")
+          redirectLocation(result).get must include("/mandate/agent/search-previous/callPage")
         }
       }
     }
@@ -116,7 +116,7 @@ class HasClientRegisteredBeforeControllerSpec extends PlaySpec with OneServerPer
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("prevRegistered" -> "false")
         submitWithAuthorisedAgent("callPage", fakeRequest, Some(PrevRegistered(Some(true)))) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"http://localhost:9923/business-customer/agent/register/non-uk-client/ated?backLinkUrl=http://localhost:9959/mandate/agent/client-registered-previously/callPage/ATED"))
+          redirectLocation(result) must be(Some(s"http://localhost:9923/business-customer/agent/register/non-uk-client/ated?backLinkUrl=http://localhost:9959/mandate/agent/client-registered-previously/callPage"))
         }
       }
     }

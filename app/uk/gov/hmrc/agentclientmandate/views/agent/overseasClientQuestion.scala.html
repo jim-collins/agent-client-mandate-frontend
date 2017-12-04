@@ -13,7 +13,7 @@
   @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.overseas-client-question.header"),
     Some(mandateErrorSummary(overseasClientQuestionForm, "agent.overseas-client-question.error.general")))
 
-  @form(action = routes.OverseasClientQuestionController.submit(service)) {
+  @form(action = routes.OverseasClientQuestionController.submit()) {
 
     <div class="form-group" id="isOverseas">
       @mandateInputRadioGroup(

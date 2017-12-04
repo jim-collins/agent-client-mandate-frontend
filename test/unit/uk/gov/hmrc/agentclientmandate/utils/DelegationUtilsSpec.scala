@@ -48,7 +48,7 @@ class DelegationUtilsSpec extends PlaySpec with OneServerPerSuite {
 
     "getReturnUrl" must {
       "returns return url into mandate for service specific summary page" in {
-        DelegationUtils.getReturnUrl("ated") must be("http://localhost:9959/mandate/agent/summary/ated")
+        DelegationUtils.getReturnUrl must be("http://localhost:9959/mandate/agent/summary")
       }
     }
 

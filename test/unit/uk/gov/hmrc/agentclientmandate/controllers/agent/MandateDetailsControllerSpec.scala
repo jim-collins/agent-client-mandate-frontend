@@ -43,7 +43,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/agent/details/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/details/overseas/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/details/overseas")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -54,6 +54,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
       "agent requests(GET) for check client details view and email has been cached previously and it's from PaySA" in {
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail(""))))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientDisplayName("client display name"))))
+        when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestMandateDetailsController.callingPageCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("callingPage"))
         viewWithAuthorisedAgent(PaySAQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -64,13 +65,14 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
           document.getElementById("submit").text must be("Confirm and add client")
 
           document.getElementById("backLinkHref").text() must be("Back")
-          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ated")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question")
         }
       }
 
       "agent requests(GET) for check client details view and email has been cached previously and it's from Overseas" in {
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail(""))))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientDisplayName("client display name"))))
+        when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestMandateDetailsController.callingPageCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("callingPage"))
         viewWithAuthorisedAgent(OverseasClientQuestionController.controllerId) { result =>
           status(result) must be(OK)
           val document = Jsoup.parse(contentAsString(result))
@@ -81,7 +83,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
           document.getElementById("submit").text must be("Confirm and add client")
 
           document.getElementById("backLinkHref").text() must be("Back")
-          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/overseas-client-question/ated")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/overseas-client-question")
         }
       }
     }
@@ -90,9 +92,11 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
 
       "agent requests(GET) for check client details view and email has NOT been cached previously" in {
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+        when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(ClientDisplayName("client display name"))))
+        when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestMandateDetailsController.callingPageCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("callingPage"))
         viewWithAuthorisedAgent("") { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/add-client/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/add-client"))
         }
       }
     }
@@ -102,9 +106,10 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
       "agent requests(GET) for check client details view and display name has NOT been cached previously" in {
         when(mockDataCacheService.fetchAndGetFormData[AgentEmail](Matchers.eq(TestMandateDetailsController.agentEmailFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(AgentEmail(""))))
         when(mockDataCacheService.fetchAndGetFormData[ClientDisplayName](Matchers.eq(TestMandateDetailsController.clientDisplayNameFormId))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+        when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestMandateDetailsController.callingPageCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("callingPage"))
         viewWithAuthorisedAgent("") { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/client-display-name/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/client-display-name"))
         }
       }
     }
@@ -123,7 +128,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
       "form is submitted" in {
         submitWithAuthorisedAgent { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/unique-reference/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/unique-reference"))
         }
       }
     }

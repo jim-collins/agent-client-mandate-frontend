@@ -10,7 +10,7 @@
     @pageHeadersAndError(backLink, "pre-heading", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase), "header", Messages("client.change-agent.header"),
         Some(mandateErrorSummary(changeAgentForm, "yes-no.error.general", Some("client.agent-change.error"))))
 
-    @form(action = routes.ChangeAgentController.submit(service, mandateId)) {
+    @form(action = routes.ChangeAgentController.submit(mandateId)) {
 
         <div class="form-group" id="yesNo">
         @mandateInputRadioGroup(

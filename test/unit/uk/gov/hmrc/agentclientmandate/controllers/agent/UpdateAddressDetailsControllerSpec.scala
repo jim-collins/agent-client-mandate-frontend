@@ -43,7 +43,7 @@ class UpdateAddressDetailsControllerSpec extends PlaySpec with OneServerPerSuite
 
     "not respond with NOT_FOUND status" when {
       "GET /mandate/agent/details/edit/abc/businessDetails is invoked" in {
-        val result = route(FakeRequest(GET, "/mandate/agent/details/edit/abc/businessDetails")).get
+        val result = route(FakeRequest(GET, "/mandate/agent/details/edit/businessDetails")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -89,7 +89,7 @@ class UpdateAddressDetailsControllerSpec extends PlaySpec with OneServerPerSuite
         val fakeRequest = FakeRequest().withJsonBody(inputJson)
         saveWithAuthorisedUser(updateRegDetails, "abc")(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/mandate/agent/edit/abc")
+          redirectLocation(result).get must include("/mandate/agent/edit")
         }
       }
     }

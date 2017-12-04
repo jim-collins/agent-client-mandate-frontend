@@ -18,7 +18,7 @@
        @Messages("agent.client-display-name.text", service.toUpperCase)
     </p>
 
-    @form(action = routes.ClientDisplayNameController.submit(service, redirectUrl)) {
+    @form(action = routes.ClientDisplayNameController.submit(redirectUrl)) {
         <div id="client-display-name-form" class="form-group">
             @mandateInput(clientDisplayNameForm("clientDisplayName"),
             '_label -> Messages("agent.client-display-name.change"),

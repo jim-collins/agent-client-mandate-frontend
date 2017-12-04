@@ -59,14 +59,31 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
 
   def view(service: String, redirectUrl: Option[ContinueUrl]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
     implicit user => implicit request =>
-      redirectUrl match {
-        case Some(x) if !x.isRelativeOrDev(FrontendAppConfig.env) => Future.successful(BadRequest("The return url is not correctly formatted"))
-        case _ =>
-          dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId) map {
-            case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(agentEmail), service, redirectUrl, getBackLink(service, redirectUrl)))
-            case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service, redirectUrl, getBackLink(service, redirectUrl)))
-          }
+      for {
+        agentEmailCached <- dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId)
+      } yield {
+        redirectUrl match {
+          case Some(url) if !url.isRelativeOrDev(FrontendAppConfig.env) => BadRequest("The return url is not correctly formatted")
+          case _ =>
+            agentEmailCached match {
+              case Some(email) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(email), service, redirectUrl, getBackLink(service, redirectUrl)))
+              case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service, redirectUrl, getBackLink(service, redirectUrl)))
+            }
+        }
       }
+  }
+
+  def editFromSummary(service: String) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async { implicit user => implicit request =>
+    for {
+      agentEmail <- dataCacheService.fetchAndGetFormData[AgentEmail](agentEmailFormId)
+      callingPage <- dataCacheService.fetchAndGetFormData[String](callingPageCacheId)
+    } yield {
+      agentEmail match {
+        case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(AgentEmail(agentEmail.email)), service, None, getBackLink(service,
+          Some(ContinueUrl(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.MandateDetailsController.view(callingPage.getOrElse("")).url)))))
+        case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service,  None, getBackLink(service, None)))
+      }
+    }
   }
 
   def submit(service: String, redirectUrl: Option[ContinueUrl]) = AuthorisedFor(AgentRegime(Some(service)), GGConfidence).async {
@@ -84,7 +101,7 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
                   dataCacheService.cacheFormData[AgentEmail](agentEmailFormId, data) flatMap { cachedData =>
                     redirectUrl match {
                       case Some(redirect) => Future.successful(Redirect(redirect.url))
-                      case None => Future.successful(Redirect(routes.ClientDisplayNameController.view(service)))
+                      case None => Future.successful(Redirect(routes.ClientDisplayNameController.view()))
                     }
                   }
                 } else {
@@ -107,7 +124,7 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
   private def getBackLink(service: String, redirectUrl: Option[ContinueUrl]):Option[String] = {
     redirectUrl match {
       case Some(x) => Some(x.url)
-      case None => Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)
+      case None => Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view().url)
     }
   }
 

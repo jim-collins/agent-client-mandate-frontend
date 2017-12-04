@@ -43,7 +43,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/declaration" in {
-        val result = route(FakeRequest(GET, "/mandate/client/declaration/ATED")).get
+        val result = route(FakeRequest(GET, "/mandate/client/declaration")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -94,7 +94,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
         val mandateReturned = Some(mandate)
         submitWithAuthorisedClient(fakeRequest, cacheReturn, mandateReturned) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/confirmation/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/confirmation"))
         }
       }
     }
@@ -106,7 +106,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
         val cacheReturn = Some(ClientCache(mandate = Some(mandate)))
         submitWithAuthorisedClient(fakeRequest, cacheReturn) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/review"))
         }
       }
     }
@@ -116,7 +116,7 @@ class MandateDeclarationControllerSpec extends PlaySpec with OneServerPerSuite w
         val fakeRequest = FakeRequest().withFormUrlEncodedBody()
         submitWithAuthorisedClient(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some("/mandate/client/review/ATED"))
+          redirectLocation(result) must be(Some("/mandate/client/review"))
         }
       }
     }

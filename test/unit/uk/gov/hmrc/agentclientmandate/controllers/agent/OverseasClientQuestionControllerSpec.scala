@@ -44,12 +44,12 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/agent/overseas-client-question/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/overseas-client-question/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/overseas-client-question")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/agent/overseas-client-question/:service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/overseas-client-question/$service")).get
+        val result = route(FakeRequest(POST, s"/mandate/agent/overseas-client-question")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -109,7 +109,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "true")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/mandate/agent/nrl-question/ATED")
+          redirectLocation(result).get must include("/mandate/agent/nrl-question")
         }
       }
     }
@@ -118,7 +118,7 @@ class OverseasClientQuestionControllerSpec extends PlaySpec with OneServerPerSui
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("isOverseas" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include(s"/mandate/agent/details/overseas/$service")
+          redirectLocation(result).get must include(s"/mandate/agent/details/overseas")
         }
       }
     }

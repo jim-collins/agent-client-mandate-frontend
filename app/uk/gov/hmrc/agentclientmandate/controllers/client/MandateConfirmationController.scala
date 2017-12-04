@@ -40,7 +40,7 @@ trait MandateConfirmationController extends FrontendController with Actions with
     implicit authContext => implicit request =>
       dataCacheService.fetchAndGetFormData[Mandate](clientApprovedMandateId) map {
         case Some(x) => Ok(views.html.client.mandateConfirmation(x.agentParty.name, x.subscription.service.name))
-        case None => Redirect(routes.ReviewMandateController.view(service))
+        case None => Redirect(routes.ReviewMandateController.view())
       }
   }
 

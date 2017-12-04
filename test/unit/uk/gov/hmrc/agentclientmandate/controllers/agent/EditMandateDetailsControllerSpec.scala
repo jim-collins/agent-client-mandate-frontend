@@ -43,7 +43,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
 
     "not return NOT_FOUND at route " when {
       "GET /agent/edit-client/:service/:mandateId " in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/edit-client/$service/$mandateId")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/edit-client/$mandateId")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -118,7 +118,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "disp-name", "email" -> "aa@mail.com")
         submitEditMandateDetails(fakeRequest, true, getMandate = Some(mandate), editMandate = Some(mandate)) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/summary/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/summary"))
         }
       }
     }
@@ -128,7 +128,7 @@ class EditMandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite w
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("displayName" -> "disp-name", "email" -> "aa@mail.com")
         submitEditMandateDetails(fakeRequest, true, getMandate = Some(mandate)) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/edit-client/ATED/AS123456"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/edit-client/AS123456"))
         }
       }
     }

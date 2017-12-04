@@ -71,17 +71,17 @@ trait ClientPermissionController extends FrontendController with Actions with Ma
         data => {
           dataCacheService.cacheFormData[ClientPermission](clientPermissionFormId, data)
           if (data.hasPermission.getOrElse(false))
-            Redirect(routes.HasClientRegisteredBeforeController.view(service, callingPage))
+            Redirect(routes.HasClientRegisteredBeforeController.view(callingPage))
           else
-            Redirect(routes.AgentSummaryController.view(service))
+            Redirect(routes.AgentSummaryController.view(Some(service)))
         }
       )
   }
 
   private def getBackLink(service: String, callingPage: String) = {
     callingPage match {
-      case PaySAQuestionController.controllerId => Some(routes.PaySAQuestionController.view(service).url)
-      case _ => Some(routes.NRLQuestionController.view(service).url)
+      case PaySAQuestionController.controllerId => Some(routes.PaySAQuestionController.view().url)
+      case _ => Some(routes.NRLQuestionController.view().url)
     }
   }
 }

@@ -59,7 +59,7 @@ trait RemoveClientController extends FrontendController with Actions {
           if (removeClient) {
             acmService.removeClient(mandateId).map { removedClient =>
               if (removedClient) {
-                Redirect(routes.RemoveClientController.showConfirmation(service, mandateId))
+                Redirect(routes.RemoveClientController.showConfirmation(mandateId))
               }
               else {
                 throw new RuntimeException(s"Client removal Failed with id $mandateId for service $service")
@@ -67,7 +67,7 @@ trait RemoveClientController extends FrontendController with Actions {
             }
           }
           else {
-            Future.successful(Redirect(routes.AgentSummaryController.view(service)))
+            Future.successful(Redirect(routes.AgentSummaryController.view()))
           }
         }
       )
@@ -81,7 +81,7 @@ trait RemoveClientController extends FrontendController with Actions {
     }
 
   private def getBackLink(service: String) = {
-    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view().url)
   }
 }
 
