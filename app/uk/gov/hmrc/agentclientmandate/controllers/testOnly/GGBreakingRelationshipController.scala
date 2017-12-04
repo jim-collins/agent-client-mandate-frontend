@@ -40,7 +40,7 @@ object GGBreakingRelationshipController extends FrontendController with Actions 
     implicit authContext => implicit request =>
       agentClientMandateConnector.remove(request.body.asFormUrlEncoded.get.apply("mandateId").head).map { x =>
         Logger.info("********" + x.body + "*************")
-        Redirect(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view("ATED"))
+        Redirect(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view())
       }
 
   }

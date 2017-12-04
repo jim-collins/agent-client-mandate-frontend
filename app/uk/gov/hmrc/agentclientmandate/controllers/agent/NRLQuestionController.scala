@@ -58,14 +58,14 @@ trait NRLQuestionController extends FrontendController with Actions with Mandate
         data => {
           dataCacheService.cacheFormData[NRLQuestion](nrlFormId, data)
           if (data.nrl.getOrElse(false))
-            Redirect(routes.PaySAQuestionController.view(service))
+            Redirect(routes.PaySAQuestionController.view())
           else
-            Redirect(routes.ClientPermissionController.view(service, controllerId))
+            Redirect(routes.ClientPermissionController.view( controllerId))
         }
       )
   }
 
   private def getBackLink(service: String) = {
-    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.OverseasClientQuestionController.view(service).url)
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.OverseasClientQuestionController.view().url)
   }
 }

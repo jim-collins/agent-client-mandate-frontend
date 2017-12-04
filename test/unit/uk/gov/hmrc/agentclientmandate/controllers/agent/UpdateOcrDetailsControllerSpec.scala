@@ -43,7 +43,7 @@ class UpdateOcrDetailsControllerSpec extends PlaySpec with OneServerPerSuite wit
 
     "not respond with NOT_FOUND status" when {
       "GET /mandate/agent/details/edit/abc/ocrDetails is invoked" in {
-        val result = route(FakeRequest(GET, "/mandate/agent/details/edit/abc/ocrDetails")).get
+        val result = route(FakeRequest(GET, "/mandate/agent/details/edit/ocrDetails")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -91,7 +91,7 @@ class UpdateOcrDetailsControllerSpec extends PlaySpec with OneServerPerSuite wit
         val fakeRequest = FakeRequest().withJsonBody(inputJson)
         saveWithAuthorisedUser(updateRegDetails, "abc")(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/mandate/agent/edit/abc")
+          redirectLocation(result).get must include("/mandate/agent/edit")
         }
       }
     }

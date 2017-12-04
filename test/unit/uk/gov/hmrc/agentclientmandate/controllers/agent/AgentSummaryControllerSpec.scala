@@ -44,7 +44,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   "AgentClientSummaryController" must {
     "not return NOT_FOUND at route " when {
       "Get /mandate/agent/summary/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/summary/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/summary")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -77,7 +77,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("filter-clients") must be(null)
           document.getElementById("displayName_field") must be(null)
           document.getElementById("add-client-btn") must be(null)
-          document.getElementById("view-pending-clients").attr("href") must be("/mandate/agent/summary/ATED?tabName=pending-clients")
+          document.getElementById("view-pending-clients").attr("href") must be("/mandate/agent/summary?tabName=pending-clients")
           document.getElementById("view-clients") must be(null)
         }
       }
@@ -94,7 +94,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("filter-clients").text() must be("Filter clients")
           document.getElementById("displayName_field").text() must be("Display name (optional)")
           document.getElementById("add-client-btn") must be(null)
-          document.getElementById("view-pending-clients").attr("href") must be("/mandate/agent/summary/ATED?tabName=pending-clients")
+          document.getElementById("view-pending-clients").attr("href") must be("/mandate/agent/summary?tabName=pending-clients")
           document.getElementById("view-clients") must be(null)
         }
       }
@@ -112,7 +112,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           document.getElementById("header").text must be("ATED clients")
           document.getElementById("add-client-link").text() must be("Add a client")
           document.getElementById("view-pending-clients") must be(null)
-          document.getElementById("view-clients").attr("href") must be("/mandate/agent/summary/ATED")
+          document.getElementById("view-clients").attr("href") must be("/mandate/agent/summary")
         }
       }
     }
@@ -193,7 +193,7 @@ class AgentSummaryControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         activateClientByAuthorisedAgent { result =>
 
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include("/mandate/agent/summary/ATED")
+          redirectLocation(result).get must include("/mandate/agent/summary")
         }
       }
 

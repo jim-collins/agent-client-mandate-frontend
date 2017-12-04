@@ -4,7 +4,8 @@
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
   scriptElem: Option[Html] = None,
-  delegatedService: Option[String] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages)
+  delegatedService: Option[String] = None,
+  analyticsAdditionalJs: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages)
 
 @import uk.gov.hmrc.play.views.html.layouts
 
@@ -26,5 +27,6 @@
                mainContent = mainContent,
                serviceInfoContent = serviceInfoContent,
                scriptElem = scriptElem,
-               delegatedService = delegatedService
+               delegatedService = delegatedService,
+               analyticsJs = analyticsAdditionalJs
 )

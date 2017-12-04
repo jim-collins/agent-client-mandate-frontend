@@ -13,7 +13,7 @@
   @pageHeadersAndError(backLink, "pre-header", Messages("agent.add-a-client.sub-header"), "header", Messages("agent.nrl-question.header"),
     Some(mandateErrorSummary(nrlQuestionForm, "agent.nrl-question.error.general")))
 
-  @form(action = routes.NRLQuestionController.submit(service)) {
+  @form(action = routes.NRLQuestionController.submit()) {
 
     <div class="form-group" id="nrl">
       @mandateInputRadioGroup(

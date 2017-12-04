@@ -24,7 +24,7 @@
         </p>
     </div>
 
-    @form(action=routes.AgentMissingEmailController.submit(service)) {
+    @form(action=routes.AgentMissingEmailController.submit()) {
 
         <div class="form-group" id="useEmailAddress">
             @mandateInputRadioGroup(
@@ -53,7 +53,7 @@
 
             <div id="hidden-email-details-no" class="panel-indent">
                 <span id="text_no" class="paragraph">
-                  @Html(Messages("agent.missing-email.answer-no", routes.AgentSummaryController.view(service), service.toUpperCase))
+                  @Html(Messages("agent.missing-email.answer-no", routes.AgentSummaryController.view(), service.toUpperCase))
                 </span>
             </div>
         </div>
@@ -62,12 +62,12 @@
             <button class="button" id="submit_button" type="submit">@Messages("continue-button")</button>
         </div>
         <div class="form-group" id="hidden-submit-link">
-            <a class="button" id="submit_link" href="@routes.AgentSummaryController.view(service)">@Messages("continue-button")</a>
+            <a class="button" id="submit_link" href="@routes.AgentSummaryController.view()">@Messages("continue-button")</a>
         </div>
     }
 
         <span id="skip_question">
-          <a href="@routes.AgentSummaryController.view(service)">@Messages("agent.missing-email.trapdoor")</a>
+          <a href="@routes.AgentSummaryController.view()">@Messages("agent.missing-email.trapdoor")</a>
         </span>
 
 }

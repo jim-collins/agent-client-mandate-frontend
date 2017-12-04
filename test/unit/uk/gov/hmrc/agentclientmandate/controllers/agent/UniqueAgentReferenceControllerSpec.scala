@@ -44,7 +44,7 @@ class UniqueAgentReferenceControllerSpec extends PlaySpec with OneServerPerSuite
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/agent/unique-reference/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/unique-reference/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/unique-reference")).get
         status(result) mustNot be(NOT_FOUND)
       }
 

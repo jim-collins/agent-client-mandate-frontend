@@ -8,7 +8,15 @@
 
 @(editMandateDetailsForm: Form[EditMandateDetails], service: String, mandateId: String, clientDisplayName: String, clientParty: Option[String], backLink: Option[String], showRemoveClient: Boolean)(implicit request: Request[_], messages: Messages)
 
-@main_template(title = Messages("agent.edit-mandate-details.title"), delegatedService = Some(service)) {
+@analyticsJs = {
+var id = "@mandateId";
+var page = document.location.pathname.replace('/' + id, '');
+ga('set', 'page', page);
+}
+
+@main_template(title = Messages("agent.edit-mandate-details.title"),
+  delegatedService = Some(service),
+  analyticsAdditionalJs = Some(analyticsJs)) {
 
   @pageHeadersAndError(backLink, "pre-header", Messages("agent.edit-mandate-details.pre-header", service.toUpperCase), "header", Messages("agent.edit-mandate-details.header", if(clientParty.isDefined) clientParty.get else ""),
     Some(mandateErrorSummary(editMandateDetailsForm, "agent.edit-client.error.general")))
@@ -17,7 +25,7 @@
     <h2 id="sub-heading">@Messages("agent.edit-mandate-details.sub-heading", mandateId)</h2>
   </div>
 
-  @form(action = routes.EditMandateDetailsController.submit(service, mandateId)) {
+  @form(action = routes.EditMandateDetailsController.submit(mandateId)) {
   <fieldset>
     <legend class="visuallyhidden">@Messages("agent.edit-mandate-details.header", if(clientParty.isDefined) clientParty.get else "")</legend>
 
@@ -36,7 +44,7 @@
 
     @if(showRemoveClient){
       <div class="form-field">
-        <a id="remove-client-link" href="@routes.RemoveClientController.view(service, mandateId)" data-journey-click="agent-client-mandate:click:remove-client-link">
+        <a id="remove-client-link" href="@routes.RemoveClientController.view(mandateId)" data-journey-click="agent-client-mandate:click:remove-client-link">
           @Messages("client.summary.client-remove")
         </a>
       </div>

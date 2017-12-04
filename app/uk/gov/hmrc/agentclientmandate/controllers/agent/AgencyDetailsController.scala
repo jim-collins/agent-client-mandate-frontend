@@ -42,7 +42,7 @@ trait AgencyDetailsController extends FrontendController with Actions with Manda
 
         } yield {
           Ok(views.html.agent.agentDetails(agentDetails, service,
-            Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)))
+            Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(Some(service)).url)))
         }
   }
 

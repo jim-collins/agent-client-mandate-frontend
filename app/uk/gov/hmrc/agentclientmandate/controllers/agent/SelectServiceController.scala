@@ -47,10 +47,10 @@ trait SelectServiceController extends FrontendController with Actions {
       if(singleService.enabled) {
         agentClientMandateService.doesAgentHaveMissingEmail("ated", AuthUtils.getArn).map { agentHasMissingEmail =>
             if (agentHasMissingEmail) {
-              Redirect(routes.AgentMissingEmailController.view("ated"))
+              Redirect(routes.AgentMissingEmailController.view())
             }
             else {
-              Redirect(routes.AgentSummaryController.view("ated"))
+              Redirect(routes.AgentSummaryController.view())
             }
         }
       }
@@ -64,10 +64,10 @@ trait SelectServiceController extends FrontendController with Actions {
         val service = selectedService.service.get
         agentClientMandateService.doesAgentHaveMissingEmail(service, AuthUtils.getArn).map { agentHasMissingEmail =>
           if (agentHasMissingEmail) {
-            Redirect(routes.AgentMissingEmailController.view(service))
+            Redirect(routes.AgentMissingEmailController.view())
           }
           else {
-            Redirect(routes.AgentSummaryController.view(service))
+            Redirect(routes.AgentSummaryController.view())
           }
         }
       }

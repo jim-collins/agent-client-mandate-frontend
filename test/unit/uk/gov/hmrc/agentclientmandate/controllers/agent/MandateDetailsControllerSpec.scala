@@ -43,7 +43,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/agent/details/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/details/overseas/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/details/overseas")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -65,7 +65,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
           document.getElementById("submit").text must be("Confirm and add client")
 
           document.getElementById("backLinkHref").text() must be("Back")
-          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question/ated")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/paySA-question")
         }
       }
 
@@ -83,7 +83,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
           document.getElementById("submit").text must be("Confirm and add client")
 
           document.getElementById("backLinkHref").text() must be("Back")
-          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/overseas-client-question/ated")
+          document.getElementById("backLinkHref").attr("href") must be("/mandate/agent/overseas-client-question")
         }
       }
     }
@@ -96,7 +96,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
         when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestMandateDetailsController.callingPageCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("callingPage"))
         viewWithAuthorisedAgent("") { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/add-client/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/add-client"))
         }
       }
     }
@@ -109,7 +109,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
         when(mockDataCacheService.cacheFormData[String](Matchers.eq(TestMandateDetailsController.callingPageCacheId), Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(Future.successful("callingPage"))
         viewWithAuthorisedAgent("") { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/client-display-name/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/client-display-name"))
         }
       }
     }
@@ -128,7 +128,7 @@ class MandateDetailsControllerSpec extends PlaySpec with OneServerPerSuite with 
       "form is submitted" in {
         submitWithAuthorisedAgent { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result) must be(Some(s"/mandate/agent/unique-reference/$service"))
+          redirectLocation(result) must be(Some(s"/mandate/agent/unique-reference"))
         }
       }
     }

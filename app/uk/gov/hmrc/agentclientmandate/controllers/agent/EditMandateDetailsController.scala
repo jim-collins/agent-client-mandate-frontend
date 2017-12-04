@@ -64,8 +64,8 @@ trait EditMandateDetailsController extends FrontendController with Actions {
                 acmService.editMandate(m.copy(clientDisplayName = editMandate.displayName,
                   agentParty = agentParty)) map {
                   case Some(updatedMandate) =>
-                    Redirect(routes.AgentSummaryController.view(service))
-                  case None => Redirect(routes.EditMandateDetailsController.view(service, mandateId))
+                    Redirect(routes.AgentSummaryController.view())
+                  case None => Redirect(routes.EditMandateDetailsController.view( mandateId))
                 }
               case None => throw new RuntimeException(s"No Mandate Found with id $mandateId for service $service")
             }
@@ -90,7 +90,7 @@ trait EditMandateDetailsController extends FrontendController with Actions {
   }
 
   private def getBackLink(service: String) = {
-    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view().url)
   }
 }
 

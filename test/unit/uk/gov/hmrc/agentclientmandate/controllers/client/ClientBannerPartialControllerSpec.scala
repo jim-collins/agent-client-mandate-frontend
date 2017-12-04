@@ -46,7 +46,7 @@ class ClientBannerPartialControllerSpec extends PlaySpec with OneServerPerSuite 
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/partial-banner/clientId/service" in {
-        val result = route(FakeRequest(GET, "/mandate/client/partial-banner/clientId/service")).get
+        val result = route(FakeRequest(GET, "/mandate/client/partial-banner/clientId")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }

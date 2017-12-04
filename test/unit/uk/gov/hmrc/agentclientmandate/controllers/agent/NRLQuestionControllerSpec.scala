@@ -43,12 +43,12 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
     "not return NOT_FOUND at route " when {
 
       "GET /mandate/agent/overseas-client-question/:service" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/nrl-question/$service")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/nrl-question")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/agent/overseas-client-question/:service" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/nrl-question/$service")).get
+        val result = route(FakeRequest(POST, s"/mandate/agent/nrl-question")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
@@ -105,7 +105,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("nrl" -> "true")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include(s"/mandate/agent/paySA-question/$service")
+          redirectLocation(result).get must include(s"/mandate/agent/paySA-question")
         }
       }
     }
@@ -115,7 +115,7 @@ class NRLQuestionControllerSpec extends PlaySpec with OneServerPerSuite with Bef
         val fakeRequest = FakeRequest().withFormUrlEncodedBody("nrl" -> "false")
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include(s"/mandate/agent/client-permission/nrl/$service")
+          redirectLocation(result).get must include(s"/mandate/agent/client-permission/nrl")
         }
       }
     }

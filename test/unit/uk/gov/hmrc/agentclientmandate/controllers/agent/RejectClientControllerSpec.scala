@@ -43,12 +43,12 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   "RejectClientController" must {
     "not return NOT_FOUND at route " when {
       "GET /mandate/agent/reject/:service/:id" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/reject/$service/$mandateId")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/reject/$mandateId")).get
         status(result) mustNot be(NOT_FOUND)
       }
 
       "POST /mandate/agent/reject/:service/:id" in {
-        val result = route(FakeRequest(POST, s"/mandate/agent/reject/$service/$mandateId/$agentName")).get
+        val result = route(FakeRequest(POST, s"/mandate/agent/reject/$mandateId/$agentName")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
@@ -109,7 +109,7 @@ class RejectClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
           .thenReturn(Future.successful(mandate))
         submitWithAuthorisedAgent(fakeRequest) { result =>
           status(result) must be(SEE_OTHER)
-          redirectLocation(result).get must include(s"/agent/summary/$service")
+          redirectLocation(result).get must include(s"/agent/summary")
         }
       }
 

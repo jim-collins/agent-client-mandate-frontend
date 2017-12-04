@@ -104,13 +104,13 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
   "RemoveClientController" must {
     "not return NOT_FOUND at route " when {
       "GET /mandate/agent/remove-client/:service/:id" in {
-        val result = route(FakeRequest(GET, s"/mandate/agent/remove-client/$service/$mandateId")).get
+        val result = route(FakeRequest(GET, s"/mandate/agent/remove-client/$mandateId")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }
 
     "POST /mandate/agent/reject-client/1" in {
-      val result = route(FakeRequest(POST, s"/mandate/agent/remove-client/$service/$mandateId/$agentName")).get
+      val result = route(FakeRequest(POST, s"/mandate/agent/remove-client/$mandateId/$agentName")).get
       status(result) mustNot be(NOT_FOUND)
     }
   }
@@ -180,7 +180,7 @@ class RemoveClientControllerSpec extends PlaySpec with OneServerPerSuite with Mo
         .thenReturn(Future.successful(mandate))
       submitWithAuthorisedAgent(fakeRequest) { result =>
         status(result) must be(SEE_OTHER)
-        redirectLocation(result).get must include(s"/mandate/agent/summary/$service")
+        redirectLocation(result).get must include(s"/mandate/agent/summary")
       }
     }
 

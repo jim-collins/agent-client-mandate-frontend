@@ -62,7 +62,7 @@ trait RejectClientController extends FrontendController with Actions {
           if (rejectClient) {
             acmService.rejectClient(mandateId).map { rejectedClient =>
               if (rejectedClient) {
-                Redirect(routes.RejectClientController.confirmation(service, mandateId))
+                Redirect(routes.RejectClientController.confirmation(mandateId))
               }
               else {
                 throw new RuntimeException(s"Client Rejection Failed with id $mandateId for service $service")
@@ -70,7 +70,7 @@ trait RejectClientController extends FrontendController with Actions {
             }
           }
           else {
-            Future.successful(Redirect(routes.AgentSummaryController.view(service)))
+            Future.successful(Redirect(routes.AgentSummaryController.view()))
           }
         }
       )
@@ -86,6 +86,6 @@ trait RejectClientController extends FrontendController with Actions {
   }
 
   private def getBackLink(service: String) = {
-    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)
+    Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view().url)
   }
 }

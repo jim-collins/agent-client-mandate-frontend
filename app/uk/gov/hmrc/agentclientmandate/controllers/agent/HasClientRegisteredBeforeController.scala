@@ -71,14 +71,14 @@ trait HasClientRegisteredBeforeController extends FrontendController with Action
         data => {
           dataCacheService.cacheFormData[PrevRegistered](prevRegisteredFormId, data)
           if (data.prevRegistered.getOrElse(false)) {
-            Redirect(routes.PreviousMandateRefController.view(service, callingPage))
+            Redirect(routes.PreviousMandateRefController.view( callingPage))
           } else
-            Redirect(nonUkUri(service, routes.HasClientRegisteredBeforeController.view(service, callingPage).url))
+            Redirect(nonUkUri(service, routes.HasClientRegisteredBeforeController.view( callingPage).url))
         }
       )
   }
 
   private def getBackLink(service: String, callingPage: String) = {
-    Some(routes.ClientPermissionController.view(service, callingPage).url)
+    Some(routes.ClientPermissionController.view(callingPage).url)
   }
 }

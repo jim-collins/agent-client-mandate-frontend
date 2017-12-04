@@ -51,7 +51,7 @@ trait AgentMissingEmailController extends FrontendController with Actions {
           emailService.validate(data.email.get) map { isValidEmail =>
             if (isValidEmail) {
               agentClientMandateService.updateAgentMissingEmail(data.email.get, AuthUtils.getArn, service)
-              Redirect(routes.AgentSummaryController.view(service))
+              Redirect(routes.AgentSummaryController.view(Some(service)))
             } else {
               val errorMsg = Messages("agent.enter-email.error.email.invalid-by-email-service")
               val errorForm = agentMissingEmailForm.withError(key = "agent-enter-email-form", message = errorMsg).fill(data)

@@ -45,7 +45,7 @@ class EditEmailControllerSpec extends PlaySpec with OneServerPerSuite with Mocki
 
     "not return NOT_FOUND at route " when {
       "GET /mandate/client/details/:clientId/:service" in {
-        val result = route(FakeRequest(GET, "/mandate/client/details/clientId/ATED")).get
+        val result = route(FakeRequest(GET, "/mandate/client/details/clientId")).get
         status(result) mustNot be(NOT_FOUND)
       }
     }

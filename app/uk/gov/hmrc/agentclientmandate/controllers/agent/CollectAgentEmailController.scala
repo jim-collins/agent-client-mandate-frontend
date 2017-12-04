@@ -80,7 +80,7 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
     } yield {
       agentEmail match {
         case Some(agentEmail) => Ok(views.html.agent.agentEnterEmail(agentEmailForm.fill(AgentEmail(agentEmail.email)), service, None, getBackLink(service,
-          Some(ContinueUrl(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.MandateDetailsController.view(service, callingPage.getOrElse("")).url)))))
+          Some(ContinueUrl(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.MandateDetailsController.view(callingPage.getOrElse("")).url)))))
         case None => Ok(views.html.agent.agentEnterEmail(agentEmailForm, service,  None, getBackLink(service, None)))
       }
     }
@@ -101,7 +101,7 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
                   dataCacheService.cacheFormData[AgentEmail](agentEmailFormId, data) flatMap { cachedData =>
                     redirectUrl match {
                       case Some(redirect) => Future.successful(Redirect(redirect.url))
-                      case None => Future.successful(Redirect(routes.ClientDisplayNameController.view(service)))
+                      case None => Future.successful(Redirect(routes.ClientDisplayNameController.view()))
                     }
                   }
                 } else {
@@ -124,7 +124,7 @@ trait CollectAgentEmailController extends FrontendController with Actions with M
   private def getBackLink(service: String, redirectUrl: Option[ContinueUrl]):Option[String] = {
     redirectUrl match {
       case Some(x) => Some(x.url)
-      case None => Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view(service).url)
+      case None => Some(uk.gov.hmrc.agentclientmandate.controllers.agent.routes.AgentSummaryController.view().url)
     }
   }
 
