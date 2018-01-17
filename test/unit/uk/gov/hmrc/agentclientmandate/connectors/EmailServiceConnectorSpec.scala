@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.agentclientmandate.connectors.EmailServiceConnector
-import uk.gov.hmrc.http.{CoreGet, HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.agentclientmandate.connectors.{EmailServiceConnector, EmailToValidate}
+import uk.gov.hmrc.http.{CorePost, HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
 
@@ -43,7 +43,8 @@ class EmailServiceConnectorSpec extends PlaySpec with OneServerPerSuite with Moc
     "return HttpResponse" when {
       "email service responds with a HttpResponse" in {
         implicit val hc: HeaderCarrier = HeaderCarrier()
-        when(mockWSHttp.GET[HttpResponse](Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(OK, responseJson = Some(responseJson))))
+        when(mockWSHttp.POST[EmailToValidate, HttpResponse](Matchers.any(), Matchers.any(), Matchers.any())
+          (Matchers.any(), Matchers.any(), Matchers.any(), Matchers.any())).thenReturn(Future.successful(HttpResponse(OK, responseJson = Some(responseJson))))
         val result = await(TestEmailServiceConnector.validate("aa@mail.com"))
         result.status must be(OK)
       }
@@ -51,8 +52,8 @@ class EmailServiceConnectorSpec extends PlaySpec with OneServerPerSuite with Moc
 
   }
 
-  trait MockedVerbs extends CoreGet
-  val mockWSHttp: CoreGet = mock[MockedVerbs]
+  trait MockedVerbs extends CorePost
+  val mockWSHttp: CorePost = mock[MockedVerbs]
 
   override def beforeEach(): Unit = {
     reset(mockWSHttp)
